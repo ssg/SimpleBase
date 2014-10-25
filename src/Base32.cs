@@ -90,8 +90,8 @@ namespace SimpleBase32
             {
                 return String.Empty;
             }
-            var encodingTable = alphabet.EncodingTable;
 
+            var encodingTable = alphabet.EncodingTable;
             int bitsLeft = bitsPerByte;
             int i = 0;
             int b = bytes[i];
@@ -138,11 +138,8 @@ namespace SimpleBase32
             {
                 return (((len - 1) / bitsPerChar) + 1) * bitsPerByte;
             }
-            else
-            {
-                int outputLen = len * bitsPerByte / bitsPerChar;
-                return outputLen + paddingRemainders[outputLen % bitsPerChar];
-            }
+            int outputLen = len * bitsPerByte / bitsPerChar;
+            return outputLen + paddingRemainders[outputLen % bitsPerChar];
         }
 
         /// <summary>
