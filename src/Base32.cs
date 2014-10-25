@@ -94,29 +94,29 @@ namespace SimpleBase32
 
             int bitsLeft = bitsPerByte;
             int i = 0;
-            byte b = bytes[i];
+            int b = bytes[i];
             int outputPos = 0;
             int outputLen = getEncodingOutputLength(len, padding);
             var outputBuffer = new char[outputLen];
             while (i < len)
             {
-                byte output;
+                int output;
                 if (bitsLeft > bitsPerChar)
                 {
                     bitsLeft -= bitsPerChar;
-                    output = (byte)(b >> bitsLeft);
+                    output = b >> bitsLeft;
                     outputBuffer[outputPos++] = encodingTable[output];
-                    b &= (byte)((1 << bitsLeft) - 1);
+                    b &= (1 << bitsLeft) - 1;
                 }
                 int nextBits = bitsPerChar - bitsLeft;
-                output = (byte)(b << nextBits);
+                output = b << nextBits;
                 bitsLeft = bitsPerByte - nextBits;
                 i++;
                 if (i < len)
                 {
                     b = bytes[i];
-                    output |= (byte)(b >> bitsLeft);
-                    b &= (byte)((1 << bitsLeft) - 1);
+                    output |= b >> bitsLeft;
+                    b &= (1 << bitsLeft) - 1;
                 }
                 outputBuffer[outputPos++] = encodingTable[output];
             }
@@ -165,9 +165,9 @@ namespace SimpleBase32
             var decodingTable = alphabet.DecodingTable;
             int decodingTableLen = decodingTable.Length;
             int outputPos = 0;
-            int bitsLeft = bitsPerByte;
             int output = 0;
             int i = 0;
+            int bitsLeft = bitsPerByte;
             byte[] outputBuffer = createDecodingOutput(len);
             while (i < len)
             {
