@@ -28,12 +28,12 @@ namespace SimpleBase32
         public static Base32Alphabet Rfc4648 = new Base32Alphabet("ABCDEFGHIJKLMNOPQRSTUVWXYZ234567");
         public static Base32Alphabet ExtendedHex = new Base32Alphabet("0123456789ABCDEFGHIJKLMNOPQRSTUV");
 
-        public string EncodingTable { get; private set; }
+        public char[] EncodingTable { get; private set; }
         public byte[] DecodingTable { get; protected set; }
 
         public Base32Alphabet(string chars)
         {
-            this.EncodingTable = chars;
+            this.EncodingTable = chars.ToCharArray();
             createDecodingTable(chars);
         }
 
