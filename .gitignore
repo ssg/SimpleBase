@@ -6,3 +6,5 @@ _NCrunch*/
 packages/
 *.ncrunch*
 *.nupkg
+*.psess
+*.vspx
