@@ -18,19 +18,23 @@ Usage
 
 To encode:
 
-    using SimpleBase32;
-    // ...
-    byte[] myBuffer;
-    string result = Base32.Crockford.Encode(myBuffer, padding: true);
-    // you can also use "ExtendedHex" or "Rfc4648" as encoder flavors
+```csharp
+using SimpleBase32;
+// ...
+byte[] myBuffer;
+string result = Base32.Crockford.Encode(myBuffer, padding: true);
+// you can also use "ExtendedHex" or "Rfc4648" as encoder flavors
+```
 
 To decode:
 
-    using SimpleBase32;
-    // ...
-    string myText;
-    byte[] result = Base32.Crockford.Decode(myText);
-    // you can also use "ExtendedHex" or "Rfc4648" as decoder flavors
+```csharp
+using SimpleBase32;
+// ...
+string myText;
+byte[] result = Base32.Crockford.Decode(myText);
+// you can also use "ExtendedHex" or "Rfc4648" as decoder flavors
+```
 
 Notes
 -----
