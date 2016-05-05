@@ -8,3 +8,4 @@ packages/
 *.nupkg
 *.psess
 *.vspx
+.vs/
