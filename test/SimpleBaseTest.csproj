@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{A9C1CF86-32B3-40E6-A51A-3E6D17C15EE3}</ProjectGuid>
+    <ProjectGuid>{617BA86D-31E2-41EA-A1C8-E37602D58C07}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>SimpleBase32</RootNamespace>
-    <AssemblyName>SimpleBase32</AssemblyName>
+    <RootNamespace>Base32Test</RootNamespace>
+    <AssemblyName>Base32Test</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
@@ -30,18 +30,30 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <CodeAnalysisRuleSet>BasicDesignGuidelineRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="nunit.framework, Version=3.2.0.0, Culture=neutral, PublicKeyToken=2638cd05610744eb, processorArchitecture=MSIL">
+      <HintPath>..\packages\NUnit.3.2.0\lib\net40\nunit.framework.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Base32.cs" />
-    <Compile Include="Base32Alphabet.cs" />
-    <Compile Include="CrockfordBase32Alphabet.cs" />
+    <Compile Include="CrockfordTest.cs" />
+    <Compile Include="ExtendedHexTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Rfc4648Test.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\src\SimpleBase.csproj">
+      <Project>{a9c1cf86-32b3-40e6-a51a-3e6d17c15ee3}</Project>
+      <Name>SimpleBase</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -13,11 +13,10 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 */
-using System;
-using System.Linq;
-using System.Collections.Generic;
 
-namespace SimpleBase32
+using System;
+
+namespace SimpleBase
 {
     internal sealed class CrockfordBase32Alphabet : Base32Alphabet
     {

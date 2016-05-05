@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
-using SimpleBase32;
+using SimpleBase;
 
 namespace benchmark
 {

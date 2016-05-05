@@ -45,9 +45,9 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\src\SimpleBase32.csproj">
+    <ProjectReference Include="..\src\SimpleBase.csproj">
       <Project>{a9c1cf86-32b3-40e6-a51a-3e6d17c15ee3}</Project>
-      <Name>SimpleBase32</Name>
+      <Name>SimpleBase</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

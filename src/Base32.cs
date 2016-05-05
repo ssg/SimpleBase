@@ -13,24 +13,24 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 */
+
 using System;
-using System.Text;
 using System.Threading;
 
-namespace SimpleBase32
+namespace SimpleBase
 {
     public sealed class Base32
     {
         /// <summary>
         /// Douglas Crockford's Base32 flavor with substitution characters.
         /// </summary>
-        public static Base32 Crockford 
-        { 
-            get 
-            { 
+        public static Base32 Crockford
+        {
+            get
+            {
                 LazyInitializer.EnsureInitialized(ref crockford, () => new Base32(new CrockfordBase32Alphabet()));
                 return crockford;
-            } 
+            }
         }
 
         /// <summary>
@@ -49,13 +49,13 @@ namespace SimpleBase32
         /// Extended Hex variant of Base32 converter
         /// </summary>
         /// <remarks>Also from RFC 4648</remarks>
-        public static Base32 ExtendedHex 
-        { 
-            get 
+        public static Base32 ExtendedHex
+        {
+            get
             {
                 LazyInitializer.EnsureInitialized(ref extendedHex, () => new Base32(Base32Alphabet.ExtendedHex));
-                return extendedHex; 
-            } 
+                return extendedHex;
+            }
         }
 
         private static Base32 crockford;

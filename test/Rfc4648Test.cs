@@ -15,7 +15,7 @@
 */
 using System;
 using System.Text;
-using SimpleBase32;
+using SimpleBase;
 using NUnit.Framework;
 
 namespace Base32Test

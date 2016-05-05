@@ -13,11 +13,10 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 */
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
-namespace SimpleBase32
+using System;
+
+namespace SimpleBase
 {
     internal class Base32Alphabet
     {
