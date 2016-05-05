@@ -13,11 +13,11 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 */
+
 using System;
 using System.Text;
+using NUnit.Framework;
 using SimpleBase32;
-using MbUnit.Framework;
-using System.Diagnostics;
 
 namespace Base32Test
 {
@@ -33,12 +33,12 @@ namespace Base32Test
             new[] { "foob", "CSQPYRG" },
             new[] { "fooba", "CSQPYRK1" },
             new[] { "foobar", "CSQPYRK1E8" },
-            new[] { "1234567890123456789012345678901234567890", "64S36D1N6RVKGE9G64S36D1N6RVKGE9G64S36D1N6RVKGE9G64S36D1N6RVKGE9G" },            
+            new[] { "1234567890123456789012345678901234567890", "64S36D1N6RVKGE9G64S36D1N6RVKGE9G64S36D1N6RVKGE9G64S36D1N6RVKGE9G" },
         };
 
         [Test]
-        [Factory("testData")]
-        void Encode_ReturnsExpectedValues(string input, string expectedOutput)
+        [TestCaseSource("testData")]
+        public void Encode_ReturnsExpectedValues(string input, string expectedOutput)
         {
             byte[] bytes = Encoding.ASCII.GetBytes(input);
             string result = Base32.Crockford.Encode(bytes, padding: false);
@@ -46,8 +46,8 @@ namespace Base32Test
         }
 
         [Test]
-        [Factory("testData")]
-        void Decode_ReturnsExpectedValues(string expectedOutput, string input)
+        [TestCaseSource("testData")]
+        public void Decode_ReturnsExpectedValues(string expectedOutput, string input)
         {
             byte[] bytes = Base32.Crockford.Decode(input);
             string result = Encoding.ASCII.GetString(bytes);
@@ -58,16 +58,16 @@ namespace Base32Test
         }
 
         [Test]
-        void Decode_InvalidInput_ThrowsArgumentException()
+        public void Decode_InvalidInput_ThrowsArgumentException()
         {
             Assert.Throws<ArgumentException>(() => Base32.Crockford.Decode("[];',m."));
         }
 
         [Test]
-        [Row("O0o", "000")]
-        [Row("Ll1", "111")]
-        [Row("I1i", "111")]
-        void Decode_CrockfordChars_DecodedCorrectly(string equivalent, string actual)
+        [TestCase("O0o", "000")]
+        [TestCase("Ll1", "111")]
+        [TestCase("I1i", "111")]
+        public void Decode_CrockfordChars_DecodedCorrectly(string equivalent, string actual)
         {
             var expectedResult = Base32.Crockford.Decode(actual);
             var result = Base32.Crockford.Decode(equivalent);
@@ -75,13 +75,13 @@ namespace Base32Test
         }
 
         [Test]
-        void Encode_NullBytes_ThrowsArgumentNullException([Column(true, false)]bool padding)
+        public void Encode_NullBytes_ThrowsArgumentNullException([Values(true, false)]bool padding)
         {
             Assert.Throws<ArgumentNullException>(() => Base32.Crockford.Encode(null, padding));
         }
 
         [Test]
-        void Decode_NullString_ThrowsArgumentNullException()
+        public void Decode_NullString_ThrowsArgumentNullException()
         {
             Assert.Throws<ArgumentNullException>(() => Base32.Crockford.Decode(null));
         }

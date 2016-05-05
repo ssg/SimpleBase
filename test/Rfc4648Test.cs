@@ -16,7 +16,7 @@
 using System;
 using System.Text;
 using SimpleBase32;
-using MbUnit.Framework;
+using NUnit.Framework;
 
 namespace Base32Test
 {
@@ -39,8 +39,8 @@ namespace Base32Test
         };
 
         [Test]
-        [Factory("testData")]
-        void Encode_ReturnsExpectedValues(string input, string expectedOutput)
+        [TestCaseSource("testData")]
+        public void Encode_ReturnsExpectedValues(string input, string expectedOutput)
         {
             byte[] bytes = Encoding.ASCII.GetBytes(input);
             string result = Base32.Rfc4648.Encode(bytes, padding: true);
@@ -48,8 +48,8 @@ namespace Base32Test
         }
 
         [Test]
-        [Factory("testData")]
-        void Decode_ReturnsExpectedValues(string expectedOutput, string input)
+        [TestCaseSource("testData")]
+        public void Decode_ReturnsExpectedValues(string expectedOutput, string input)
         {
             byte[] bytes = Base32.Rfc4648.Decode(input);
             string result = Encoding.ASCII.GetString(bytes);
@@ -60,23 +60,21 @@ namespace Base32Test
         }
 
         [Test]
-        void Encode_NullBytes_ThrowsArgumentNullException([Column(true, false)]bool padding)
+        public void Encode_NullBytes_ThrowsArgumentNullException([Values(true, false)]bool padding)
         {
             Assert.Throws<ArgumentNullException>(() => Base32.Crockford.Encode(null, padding));
         }
 
         [Test]
-        void Decode_NullString_ThrowsArgumentNullException()
+        public void Decode_NullString_ThrowsArgumentNullException()
         {
             Assert.Throws<ArgumentNullException>(() => Base32.Crockford.Decode(null));
         }
 
         [Test]
-        void Decode_InvalidInput_ThrowsArgumentException()
+        public void Decode_InvalidInput_ThrowsArgumentException()
         {
             Assert.Throws<ArgumentException>(() => Base32.Rfc4648.Decode("[];',m."));
         }
-
-
     }
 }
