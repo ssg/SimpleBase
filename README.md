@@ -1,15 +1,18 @@
-SimpleBase32
-============
+SimpleBase
+==========
+This is my own take for a Base32 encoder/decoder. I started to write it around a year ago as 
+a coding practice and kept it as a small pet project. I suggest anyone who wants to brush up 
+their coding skills to give Base32 a shot. It turned out to be more challenging than I expected. 
+I had to get a pen and paper to see where bits go. 
 
-This is my own take for a Base32 encoder/decoder. I started to write it around a year ago as a coding practice and
-kept it as a small pet project. I suggest anyone who wants to brush up their coding skills to give Base32 
-a shot. It turned out to be more challenging than I expected. I had to get a pen and paper to see where 
-bits go. I think in the end, I spent 20 hours on this in total.
+Now I needed a Base58 encoder, I decided to add it to the library so the name becomes a little
+more generic (SimpleBase).
 
 Features
 --------
- - Supports RFC 4648, Crockford and Extended Hex (BASE32-HEX) flavors.
- - Supports Crockford character substitution
+ - Base32: RFC 4648, Crockford and Extended Hex (BASE32-HEX) alphabets with Crockford 
+character substitution
+ - Base58: 
  - Thread-safe
  - Simple to use
 

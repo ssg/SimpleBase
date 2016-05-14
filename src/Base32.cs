@@ -81,10 +81,7 @@ namespace SimpleBase
         /// <returns>Encoded string</returns>
         public string Encode(byte[] bytes, bool padding)
         {
-            if (bytes == null)
-            {
-                throw new ArgumentNullException("bytes");
-            }
+            Require.NotNull(bytes, "bytes");
             int len = bytes.Length;
             if (len == 0)
             {
