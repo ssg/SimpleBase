@@ -5,14 +5,10 @@ a coding practice and kept it as a small pet project. I suggest anyone who wants
 their coding skills to give Base32 a shot. It turned out to be more challenging than I expected. 
 I had to get a pen and paper to see where bits go. 
 
-Now I needed a Base58 encoder, I decided to add it to the library so the name becomes a little
-more generic (SimpleBase).
-
 Features
 --------
  - Base32: RFC 4648, Crockford and Extended Hex (BASE32-HEX) alphabets with Crockford 
 character substitution
- - Base58: 
  - Thread-safe
  - Simple to use
 
@@ -22,7 +18,7 @@ Usage
 To encode:
 
 ```csharp
-using SimpleBase32;
+using SimpleBase;
 // ...
 byte[] myBuffer;
 string result = Base32.Crockford.Encode(myBuffer, padding: true);
@@ -32,7 +28,7 @@ string result = Base32.Crockford.Encode(myBuffer, padding: true);
 To decode:
 
 ```csharp
-using SimpleBase32;
+using SimpleBase;
 // ...
 string myText;
 byte[] result = Base32.Crockford.Decode(myText);
