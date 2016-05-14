@@ -146,10 +146,7 @@ namespace SimpleBase
         /// <returns>Decoded byte array</returns>
         public byte[] Decode(string base32)
         {
-            if (base32 == null)
-            {
-                throw new ArgumentNullException("base32");
-            }
+            Require.NotNull(base32, "base32");
             base32 = base32.TrimEnd(paddingChar);
             int len = base32.Length;
             if (len == 0)
