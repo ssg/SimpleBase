@@ -9,11 +9,20 @@ Features
 --------
  - Base32: RFC 4648, Crockford and Extended Hex (BASE32-HEX) alphabets with Crockford 
 character substitution
+ - Base58: Bitcoin, Ripple and Flickr alphabets (and any custom alphabet you might have)
  - Thread-safe
  - Simple to use
 
-Base32 Usage
+NuGet
+------
+To install it from NuGet:
+
+  `Install-Package SimpleBase`
+
+Usage
 ------------
+
+### Base32
 
 To encode:
 
@@ -34,6 +43,27 @@ string myText;
 byte[] result = Base32.Crockford.Decode(myText);
 // you can also use "ExtendedHex" or "Rfc4648" as decoder flavors
 ```
+
+### Base58
+
+```csharp
+using SimpleBase;
+// ...
+byte[] myBuffer;
+string result = Base58.Bitcoin.Encode(myBuffer);
+// you can also use "Ripple" or "Flickr" as encoder flavors
+```
+
+To decode:
+
+```csharp
+using SimpleBase;
+// ...
+string myText;
+byte[] result = Base58.Bitcoin.Decode(myText);
+// you can also use "Ripple" or "Flickr" as decoder flavors
+```
+
 
 Notes
 -----
