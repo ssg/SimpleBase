@@ -18,7 +18,7 @@ namespace benchmark
             Console.ReadLine();
         }
 
-        const int iterations = 100;
+        const int iterations = 1000;
         const int testBufSize = 1024 * 1024;
 
         static void Encode()
@@ -32,13 +32,21 @@ namespace benchmark
             }
             w.Stop();
             var first = w.Elapsed;
-            w.Start();
+            w.Restart();
             for (int n = 0; n < iterations; n++)
             {
                 result = Base32.Crockford.Encode(buf, padding: true);
             }
             w.Stop();
-            Dump("Encode benchmark", w.Elapsed, first);
+            var base32 = w.Elapsed;
+            w.Restart();
+            for (int n = 0; n < iterations; n++)
+            {
+                result = Base58.Bitcoin.Encode(buf);
+            }
+            w.Stop();
+            var base58 = w.Elapsed;
+            Dump("Encode benchmark", base58, base32, first);
         }
 
         static void Decode()
@@ -58,21 +66,30 @@ namespace benchmark
                 result = Base32.Crockford.Decode(input);
             }
             w.Stop();
-            Dump("Decode benchmark", w.Elapsed, first);
+            var base32 = w.Elapsed;
+            w.Restart();
+            for (int n = 0; n < iterations; n++)
+            {
+                result = Base58.Bitcoin.Decode(input);
+            }
+            w.Stop();
+            var base58 = w.Elapsed;
+            Dump("Decode benchmark", base58, base32, first);
         }
 
-        static void Dump(string name, TimeSpan current, TimeSpan baseline)
+        static void Dump(string name, TimeSpan base58, TimeSpan base32, TimeSpan base64)
         {
             Console.WriteLine("*** " + name);
-            Console.WriteLine(" Baseline (.NET base64): {0}", baseline);
-            Console.WriteLine(" SimpleBase32          : {0}", current);
-            if (current > baseline)
+            Console.WriteLine(" Baseline (.NET base64): {0}", base64);
+            Console.WriteLine(" SimpleBase Base32     : {0}", base32);
+            Console.WriteLine(" SimpleBase Base58     : {0}", base58);
+            if (base32 > base64)
             {
-                Console.WriteLine("{0}x slower than baseline", Math.Floor(current.TotalMilliseconds / baseline.TotalMilliseconds));
+                Console.WriteLine("{0}x slower than baseline", Math.Floor(base32.TotalMilliseconds / base64.TotalMilliseconds));
             }
             else
             {
-                Console.WriteLine("YAY! {0}x faster than baseline", Math.Floor(baseline.TotalMilliseconds / current.TotalMilliseconds));
+                Console.WriteLine("YAY! {0}x faster than baseline", Math.Floor(base64.TotalMilliseconds / base32.TotalMilliseconds));
             }
         }
     }
