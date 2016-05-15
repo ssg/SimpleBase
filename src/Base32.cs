@@ -15,7 +15,6 @@
 */
 
 using System;
-using System.Threading;
 
 namespace SimpleBase
 {
@@ -24,43 +23,18 @@ namespace SimpleBase
         /// <summary>
         /// Douglas Crockford's Base32 flavor with substitution characters.
         /// </summary>
-        public static Base32 Crockford
-        {
-            get
-            {
-                LazyInitializer.EnsureInitialized(ref crockford, () => new Base32(new CrockfordBase32Alphabet()));
-                return crockford;
-            }
-        }
+        public static readonly Base32 Crockford = new Base32(new CrockfordBase32Alphabet());
 
         /// <summary>
         /// RFC 4648 variant of Base32 converter
         /// </summary>
-        public static Base32 Rfc4648
-        {
-            get
-            {
-                LazyInitializer.EnsureInitialized(ref rfc4648, () => new Base32(Base32Alphabet.Rfc4648));
-                return rfc4648;
-            }
-        }
+        public static readonly Base32 Rfc4648 = new Base32(Base32Alphabet.Rfc4648);
 
         /// <summary>
         /// Extended Hex variant of Base32 converter
         /// </summary>
         /// <remarks>Also from RFC 4648</remarks>
-        public static Base32 ExtendedHex
-        {
-            get
-            {
-                LazyInitializer.EnsureInitialized(ref extendedHex, () => new Base32(Base32Alphabet.ExtendedHex));
-                return extendedHex;
-            }
-        }
-
-        private static Base32 crockford;
-        private static Base32 rfc4648;
-        private static Base32 extendedHex;
+        public static readonly Base32 ExtendedHex = new Base32(Base32Alphabet.ExtendedHex);
 
         private const int bitsPerByte = 8;
         private const int bitsPerChar = 5;
