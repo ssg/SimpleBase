@@ -13,6 +13,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 */
+
 using System;
 
 namespace SimpleBase
@@ -22,9 +23,17 @@ namespace SimpleBase
         public const int Length = 32;
         const char highestAsciiCharSupported = 'z';
 
-        public static Base32Alphabet Crockford = new CrockfordBase32Alphabet();
-        public static Base32Alphabet Rfc4648 = new Base32Alphabet("ABCDEFGHIJKLMNOPQRSTUVWXYZ234567");
-        public static Base32Alphabet ExtendedHex = new Base32Alphabet("0123456789ABCDEFGHIJKLMNOPQRSTUV");
+        private static Base32Alphabet crockford = new CrockfordBase32Alphabet();
+
+        private static Base32Alphabet rfc4648 =
+            new Base32Alphabet("ABCDEFGHIJKLMNOPQRSTUVWXYZ234567");
+
+        private static Base32Alphabet extendedHex =
+            new Base32Alphabet("0123456789ABCDEFGHIJKLMNOPQRSTUV");
+
+        public static Base32Alphabet Crockford { get { return crockford; } }
+        public static Base32Alphabet Rfc4648 { get { return rfc4648; } }
+        public static Base32Alphabet ExtendedHex { get { return extendedHex; } }
 
         public char[] EncodingTable { get; private set; }
         public byte[] DecodingTable { get; protected set; }
