@@ -13,20 +13,29 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 */
+
 using System;
 using System.Numerics;
 using System.Text;
 
 namespace SimpleBase
 {
-    public static class Base58
+    public sealed class Base58
     {
-        public static readonly Base58Alphabet BitcoinAlphabet = new Base58Alphabet("123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz");
-        public static readonly Base58Alphabet RippleAlphabet = new Base58Alphabet("rpshnaf39wBUDNEGHJKLM4PQRST7VWXYZ2bcdeCg65jkm8oFqi1tuvAxyz");
-        public static readonly Base58Alphabet FlickrAlphabet = new Base58Alphabet("123456789abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ");
+        public static readonly Base58 Bitcoin = new Base58(Base58Alphabet.Bitcoin);
+        public static readonly Base58 Ripple = new Base58(Base58Alphabet.Ripple);
+        public static readonly Base58 Flickr = new Base58(Base58Alphabet.Flickr);
 
-        public static string Encode(byte[] bytes, Base58Alphabet alphabet)
-        {            
+        private Base58Alphabet alphabet;
+
+        public Base58(Base58Alphabet alphabet)
+        {
+            Require.NotNull(alphabet, "alphabet");
+            this.alphabet = alphabet;
+        }
+
+        public string Encode(byte[] bytes)
+        {
             Require.NotNull(bytes, "buffer");
             Require.NotNull(alphabet, "alphabet");
             int buflen = bytes.Length;
@@ -52,7 +61,7 @@ namespace SimpleBase
                 convertToLittleEndian(ref newBuffer, newLen);
             }
             var builder = new StringBuilder(buflen * 2);
-            var num = new BigInteger(newBuffer);            
+            var num = new BigInteger(newBuffer);
             while (num > 0)
             {
                 int remainder = (int)(num % Base58Alphabet.Length);
@@ -87,7 +96,7 @@ namespace SimpleBase
             return builder.ToString();
         }
 
-        public static byte[] Decode(string text, string alphabet)
+        public byte[] Decode(string text)
         {
             return null;
         }

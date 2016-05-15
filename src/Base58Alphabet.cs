@@ -13,12 +13,26 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 */
+
 using System;
 
 namespace SimpleBase
 {
     public sealed class Base58Alphabet
     {
+        private static readonly Base58Alphabet bitcoin =
+            new Base58Alphabet("123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz");
+
+        private static readonly Base58Alphabet ripple =
+            new Base58Alphabet("rpshnaf39wBUDNEGHJKLM4PQRST7VWXYZ2bcdeCg65jkm8oFqi1tuvAxyz");
+
+        private static readonly Base58Alphabet flickr =
+            new Base58Alphabet("123456789abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ");
+
+        public static Base58Alphabet Bitcoin { get { return bitcoin; } }
+        public static Base58Alphabet Ripple { get { return ripple; } }
+        public static Base58Alphabet Flickr { get { return flickr; } }
+
         public const int Length = 58;
 
         public string Value { get; private set; }

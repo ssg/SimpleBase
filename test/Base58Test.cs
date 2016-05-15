@@ -27,19 +27,19 @@ namespace Base32Test
         [Test]
         public void Encode_NullBuffer_ThrowsArgumentNullException()
         {
-            Assert.Throws<ArgumentNullException>(() => Base58.Encode(null, Base58.BitcoinAlphabet));
+            Assert.Throws<ArgumentNullException>(() => Base58.Bitcoin.Encode(null));
         }
 
         [Test]
-        public void Encode_NullAlphabet_ThrowsArgumentNullException()
+        public void Ctor_NullAlphabet_Throws()
         {
-            Assert.Throws<ArgumentNullException>(() => Base58.Encode(new byte[1], null));
+            Assert.Throws<ArgumentNullException>(() => new Base58(null));
         }
 
         [Test]
         public void Encode_EmptyBuffer_ReturnsEmptyString()
         {
-            Assert.AreEqual(String.Empty, Base58.Encode(new byte[] { }, Base58.BitcoinAlphabet));
+            Assert.AreEqual(String.Empty, Base58.Bitcoin.Encode(new byte[] { }));
         }
 
         [Test]
@@ -50,7 +50,7 @@ namespace Base32Test
         public void Encode_Bitcoin_ReturnsExpectedResults(string input, string expectedOutput)
         {
             var buffer = SoapHexBinary.Parse(input).Value;
-            string result = Base58.Encode(buffer, Base58.BitcoinAlphabet);
+            string result = Base58.Bitcoin.Encode(buffer);
             Assert.AreEqual(expectedOutput, result);
         }
     }
