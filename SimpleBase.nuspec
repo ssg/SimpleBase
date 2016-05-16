@@ -7,14 +7,14 @@
         <authors>Sedat Kapanoglu</authors>
         <owners>Sedat Kapanoglu</owners>
         <licenseUrl>http://www.apache.org/licenses/</licenseUrl>
-        <projectUrl>https://github.com/ssg/SimpleBase32</projectUrl>
+        <projectUrl>https://github.com/ssg/SimpleBase</projectUrl>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <description>Base32, Base58 encoding/decoding library</description>
         <copyright>Copyright 2014-2016 Sedat Kapanoglu</copyright>
-        <tags>base32 base58 crockford extended hex rfc4648</tags>
+        <tags>base32 base58 bitcoin ripple flickr crockford extended hex rfc4648</tags>
     </metadata>
     <files>
-        <file src="src\bin\Release\SimpleBase32.dll" target="lib\net40\SimpleBase.dll" />
-        <file src="src\bin\Release\SimpleBase32.pdb" target="lib\net40\SimpleBase.pdb" />
+        <file src="src\bin\Release\SimpleBase.dll" target="lib\net45\SimpleBase.dll" />
+        <file src="src\bin\Release\SimpleBase.pdb" target="lib\net45\SimpleBase.pdb" />
     </files>
 </package>
