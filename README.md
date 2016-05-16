@@ -8,7 +8,7 @@ than I expected. To grasp the algorithms I had to get a pen and paper to see how
 Features
 --------
  - Base32: RFC 4648, Crockford and Extended Hex (BASE32-HEX) alphabets with Crockford 
-character substitution
+character substitution (or any other custom alphabets you might want to use)
  - Base58: Bitcoin, Ripple and Flickr alphabets (and any custom alphabet you might have)
  - Thread-safe
  - Simple to use
@@ -24,7 +24,7 @@ Usage
 
 ### Base32
 
-To encode:
+Encode a byte array:
 
 ```csharp
 using SimpleBase;
@@ -34,7 +34,7 @@ string result = Base32.Crockford.Encode(myBuffer, padding: true);
 // you can also use "ExtendedHex" or "Rfc4648" as encoder flavors
 ```
 
-To decode:
+Decode a Base32-encoded string:
 
 ```csharp
 using SimpleBase;
@@ -46,6 +46,8 @@ byte[] result = Base32.Crockford.Decode(myText);
 
 ### Base58
 
+Encode a byte array:
+
 ```csharp
 using SimpleBase;
 // ...
@@ -54,7 +56,7 @@ string result = Base58.Bitcoin.Encode(myBuffer);
 // you can also use "Ripple" or "Flickr" as encoder flavors
 ```
 
-To decode:
+Decode a Base58-encoded string:
 
 ```csharp
 using SimpleBase;
