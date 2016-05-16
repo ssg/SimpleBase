@@ -18,78 +18,55 @@ namespace benchmark
             Console.ReadLine();
         }
 
-        const int iterations = 1000;
-        const int testBufSize = 1024 * 1024;
+        const int iterations = 1000000;
+        const int testBufSize = 64; // typical buffer size -- needs to be legit Base64 length w/o padding
 
-        static void Encode()
+        static TimeSpan test(Action func)
         {
-            var buf = new byte[testBufSize];
-            string result;
             Stopwatch w = Stopwatch.StartNew();
             for (int n = 0; n < iterations; n++)
             {
-                result = Convert.ToBase64String(buf);
+                func();
             }
             w.Stop();
-            var first = w.Elapsed;
-            w.Restart();
-            for (int n = 0; n < iterations; n++)
-            {
-                result = Base32.Crockford.Encode(buf, padding: true);
-            }
-            w.Stop();
-            var base32 = w.Elapsed;
-            w.Restart();
-            for (int n = 0; n < iterations; n++)
-            {
-                result = Base58.Bitcoin.Encode(buf);
-            }
-            w.Stop();
-            var base58 = w.Elapsed;
-            Dump("Encode benchmark", base58, base32, first);
+            return w.Elapsed;
+        }
+
+        static void Encode()
+        {
+            byte[] buf = new byte[testBufSize];
+            var base64 = test(() => Convert.ToBase64String(buf));
+            var base32 = test(() => Base32.Crockford.Encode(buf, padding: true));
+            var base58 = test(() => Base58.Bitcoin.Encode(buf));
+            Dump("Encode benchmark", base64, base32, base58);
         }
 
         static void Decode()
         {
             var input = new string('a', testBufSize);
-            byte[] result;
-            Stopwatch w = Stopwatch.StartNew();
-            for (int n = 0; n < iterations; n++)
-            {
-                result = Convert.FromBase64String(input);
-            }
-            w.Stop();
-            var first = w.Elapsed;
-            w.Restart();
-            for (int n = 0; n < iterations; n++)
-            {
-                result = Base32.Crockford.Decode(input);
-            }
-            w.Stop();
-            var base32 = w.Elapsed;
-            w.Restart();
-            for (int n = 0; n < iterations; n++)
-            {
-                result = Base58.Bitcoin.Decode(input);
-            }
-            w.Stop();
-            var base58 = w.Elapsed;
-            Dump("Decode benchmark", base58, base32, first);
+            var base64 = test(() => Convert.FromBase64String(input));
+            var base32 = test(() => Base32.Crockford.Decode(input));
+            var base58 = test(() => Base58.Bitcoin.Decode(input));
+            Dump("Decode benchmark", base64, base32, base58);
         }
 
-        static void Dump(string name, TimeSpan base58, TimeSpan base32, TimeSpan base64)
+        static void Dump(string name, TimeSpan base64, TimeSpan base32, TimeSpan base58)
         {
             Console.WriteLine("*** " + name);
             Console.WriteLine(" Baseline (.NET base64): {0}", base64);
-            Console.WriteLine(" SimpleBase Base32     : {0}", base32);
-            Console.WriteLine(" SimpleBase Base58     : {0}", base58);
-            if (base32 > base64)
+            Console.WriteLine(" SimpleBase Base32     : {0} ({1})", base32, compare(base32, base64));
+            Console.WriteLine(" SimpleBase Base58     : {0} ({1})", base58, compare(base58, base64));
+        }
+
+        private static string compare(TimeSpan bench, TimeSpan baseline)
+        {
+            if (bench > baseline)
             {
-                Console.WriteLine("{0}x slower than baseline", Math.Floor(base32.TotalMilliseconds / base64.TotalMilliseconds));
+                return String.Format("{0:0.#}x slower", bench.TotalMilliseconds / baseline.TotalMilliseconds);
             }
             else
             {
-                Console.WriteLine("YAY! {0}x faster than baseline", Math.Floor(base64.TotalMilliseconds / base32.TotalMilliseconds));
+                return String.Format("YAY! {0:0.#}x faster", baseline.TotalMilliseconds / bench.TotalMilliseconds);
             }
         }
     }
