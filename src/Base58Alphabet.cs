@@ -72,10 +72,5 @@ namespace SimpleBase
             this.value = text;
             this.reverseLookupTable = text.Select((c, i) => new KeyValuePair<char, int>(c, i)).ToDictionary(i => i.Key, i => i.Value);
         }
-
-        public override string ToString()
-        {
-            return value;
-        }
     }
 }

@@ -45,6 +45,7 @@
   <ItemGroup>
     <Compile Include="Base32\CrockfordTest.cs" />
     <Compile Include="Base32\ExtendedHexTest.cs" />
+    <Compile Include="Base58AlphabetTest.cs" />
     <Compile Include="Base58Test.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Base32\Rfc4648Test.cs" />
