@@ -35,6 +35,7 @@ namespace benchmark
         static void Encode()
         {
             byte[] buf = new byte[testBufSize];
+            buf[10] = 1;
             var base64 = test(() => Convert.ToBase64String(buf));
             var base32 = test(() => Base32.Crockford.Encode(buf, padding: true));
             var base58 = test(() => Base58.Bitcoin.Encode(buf));

@@ -16,6 +16,7 @@
 
 using System;
 using System.Numerics;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace SimpleBase
@@ -36,8 +37,9 @@ namespace SimpleBase
 
         public string Encode(byte[] bytes)
         {
+            const int growthPercentage = 138;
+
             Require.NotNull(bytes, "buffer");
-            Require.NotNull(alphabet, "alphabet");
             int buflen = bytes.Length;
             if (buflen == 0)
             {
@@ -48,34 +50,41 @@ namespace SimpleBase
             {
                 numZeroes++;
             }
+            string zeroes = new String(alphabet[0], numZeroes);
             if (numZeroes == buflen)
             {
-                return new String(alphabet.Value[0], numZeroes);
+                return zeroes;
             }
             var newBuffer = bytes;
-            if (numZeroes > 0)
+            unchecked
             {
-                int newLen = buflen - numZeroes;
-                newBuffer = new byte[newLen + 1];
-                Array.Copy(bytes, numZeroes, newBuffer, 0, newLen);
-                convertToLittleEndian(ref newBuffer, newLen);
+                if (numZeroes > 0)
+                {
+                    int newLen = buflen - numZeroes;
+                    newBuffer = new byte[newLen + 1];
+                    Array.Copy(bytes, numZeroes, newBuffer, 0, newLen);
+                    reverse(ref newBuffer, newLen);
+                }
+                char[] output = new char[buflen * growthPercentage / 100 + 1];
+                int outputLen = output.Length;
+                int outputPos = outputLen - 1;
+                BigInteger baseLen = 58;
+                var num = new BigInteger(newBuffer);
+                while (num > 0)
+                {
+                    BigInteger remainder;
+                    num = BigInteger.DivRem(num, baseLen, out remainder);
+                    output[outputPos--] = alphabet[(int)remainder];
+                }
+                while (output[outputPos] == 0)
+                {
+                    outputPos++;
+                }
+                return zeroes + new String(output, outputPos, outputLen - outputPos);
             }
-            var builder = new StringBuilder(buflen * 2);
-            var num = new BigInteger(newBuffer);
-            while (num > 0)
-            {
-                int remainder = (int)(num % Base58Alphabet.Length);
-                builder.Append(alphabet.Value[remainder]);
-                num /= Base58Alphabet.Length;
-            }
-            if (numZeroes > 0)
-            {
-                builder.Append(new String(alphabet.Value[0], numZeroes));
-            }
-            return reverse(builder.ToString());
         }
 
-        private static void convertToLittleEndian(ref byte[] newBuffer, int length)
+        private static void reverse(ref byte[] newBuffer, int length)
         {
             int endPos = length - 1;
             for (int n = 0; n <= endPos / 2; n++)
@@ -86,19 +95,49 @@ namespace SimpleBase
             }
         }
 
-        private static string reverse(string input)
-        {
-            var builder = new StringBuilder();
-            for (int n = input.Length - 1; n >= 0; n--)
-            {
-                builder.Append(input[n]);
-            }
-            return builder.ToString();
-        }
-
         public byte[] Decode(string text)
         {
-            return null;
+            Require.NotNull(text, "text");
+            char zeroVal = alphabet[0];
+            var textLen = text.Length;
+            if (textLen == 0)
+            {
+                return new byte[] { };
+            }
+
+            int numZeroes = 0;
+            while (numZeroes < textLen && text[numZeroes] == zeroVal)
+            {
+                numZeroes++;
+            }
+            if (numZeroes == textLen)
+            {
+                return new byte[numZeroes]; // initialized to zero
+            }
+            BigInteger num = 0; 
+            for (int i = numZeroes; i < textLen; i++)
+            {
+                char c = text[i];
+                int val = alphabet[c];
+                num = num * 58 + val;
+            }
+
+            var bytes = num.ToByteArray();
+            int resultLen = bytes.Length;
+            reverse(ref bytes, resultLen);
+            int resultIndex = 0;
+            while (resultIndex < resultLen)
+            {
+                if (bytes[resultIndex] != 0)
+                {
+                    break;
+                }
+                resultIndex++;
+            }
+            int outputLen = resultLen + numZeroes - resultIndex;
+            byte[] result = new byte[outputLen];
+            Array.Copy(bytes, resultIndex, result, numZeroes, resultLen - resultIndex);
+            return result;
         }
     }
 }

@@ -15,6 +15,8 @@
 */
 
 using System;
+using System.Linq;
+using System.Collections.Generic;
 
 namespace SimpleBase
 {
@@ -35,7 +37,30 @@ namespace SimpleBase
 
         public const int Length = 58;
 
-        public string Value { get; private set; }
+        private Dictionary<char, int> reverseLookupTable;
+
+        private string value;
+
+        public char this[int value]
+        {
+            get
+            {
+                return this.value[value];
+            }
+        }
+
+        public int this[char c]
+        {
+            get
+            {
+                int val;
+                if (!reverseLookupTable.TryGetValue(c, out val))
+                {
+                    throw new InvalidOperationException(String.Format("invalid character: {0}", c));
+                }
+                return val;
+            }
+        }
 
         public Base58Alphabet(string text)
         {
@@ -44,12 +69,13 @@ namespace SimpleBase
             {
                 throw new ArgumentException("Base58 alphabets need to be 58-characters long", "text");
             }
-            this.Value = text;
+            this.value = text;
+            this.reverseLookupTable = text.Select((c, i) => new KeyValuePair<char, int>(c, i)).ToDictionary(i => i.Key, i => i.Value);
         }
 
         public override string ToString()
         {
-            return Value;
+            return value;
         }
     }
 }

@@ -24,10 +24,30 @@ namespace Base32Test
     [Parallelizable]
     class Base58Test
     {
+        private static TestCaseData[] bitcoinTestData = new TestCaseData[]
+        {
+            new TestCaseData("0000010203", "11Ldp"),
+            new TestCaseData("009C1CA2CBA6422D3988C735BB82B5C880B0441856B9B0910F", "1FESiat4YpNeoYhW3Lp7sW1T6WydcW7vcE"),
+            new TestCaseData("000860C220EBBAF591D40F51994C4E2D9C9D88168C33E761F6", "1mJKRNca45GU2JQuHZqZjHFNktaqAs7gh"),
+            new TestCaseData("00313E1F905554E7AE2580CD36F86D0C8088382C9E1951C44D010203", "17f1hgANcLE5bQhAGRgnBaLTTs23rK4VGVKuFQ"),
+            new TestCaseData("0000000000", "11111"),
+            new TestCaseData("00", "1"),
+            new TestCaseData("21", "a"),
+        };
+
         [Test]
         public void Encode_NullBuffer_ThrowsArgumentNullException()
         {
             Assert.Throws<ArgumentNullException>(() => Base58.Bitcoin.Encode(null));
+        }
+
+        [Test]
+        [TestCaseSource("bitcoinTestData")]
+        public void Encode_Bitcoin_ReturnsExpectedResults(string input, string expectedOutput)
+        {
+            var buffer = SoapHexBinary.Parse(input).Value;
+            string result = Base58.Bitcoin.Encode(buffer);
+            Assert.AreEqual(expectedOutput, result);
         }
 
         [Test]
@@ -43,15 +63,32 @@ namespace Base32Test
         }
 
         [Test]
-        [TestCase("0000010203", "11Ldp")]
-        [TestCase("009C1CA2CBA6422D3988C735BB82B5C880B0441856B9B0910F", "1FESiat4YpNeoYhW3Lp7sW1T6WydcW7vcE")]
-        [TestCase("000860C220EBBAF591D40F51994C4E2D9C9D88168C33E761F6", "1mJKRNca45GU2JQuHZqZjHFNktaqAs7gh")]
-        [TestCase("0000000000", "11111")]
-        public void Encode_Bitcoin_ReturnsExpectedResults(string input, string expectedOutput)
+        public void Decode_EmptyString_ReturnsEmptyBuffer()
         {
-            var buffer = SoapHexBinary.Parse(input).Value;
-            string result = Base58.Bitcoin.Encode(buffer);
+            var result = Base58.Bitcoin.Decode(String.Empty);
+            Assert.AreEqual(0, result.Length);
+        }
+
+        [Test]
+        public void Decode_NullBuffer_ThrowsArgumentNullException()
+        {
+            Assert.Throws<ArgumentNullException>(() => Base58.Bitcoin.Decode(null));
+        }
+
+        [Test]
+        public void Decode_InvalidCharacter_Throws()
+        {
+            Assert.Throws<InvalidOperationException>(() => Base58.Bitcoin.Decode("?"));
+        }
+
+        [Test]
+        [TestCaseSource("bitcoinTestData")]
+        public void Decode_Bitcoin_ReturnsExpectedResults(string expectedOutput, string input)
+        {
+            byte[] buffer = Base58.Bitcoin.Decode(input);
+            string result = BitConverter.ToString(buffer).Replace("-", "");
             Assert.AreEqual(expectedOutput, result);
         }
+
     }
 }
