@@ -91,5 +91,5 @@ preliminary test vectors.
 
 Thanks
 ------
-Chatting about this pet project with my friends @detaybey, @vhallac, @alkimake and @Utopians last night actually encouraged me to 
+Chatting about this pet project with my friends [@detaybey](https://github.com/detaybey), [@vhallac](https://github.com/vhallac), [@alkimake](https://github.com/alkimake) and [@Utopians](https://github.com/Utopians) last night actually encouraged me to 
 finish this. Thanks guys. Special thanks to my wife for unlimited tea and love.
