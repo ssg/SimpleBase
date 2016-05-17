@@ -74,11 +74,11 @@ numeric base conversions.
 
 1,000,000 iterations in Release build.
 
-Implementation       | Encode | Decode
----------------------|--------|------------
-Microsoft.NET Base64 | 0.15s  | 0.17s
-SimpleBase Base32    | 0.36s (~2.5x slower) | 0.25s (~1.5x slower)
-SimpleBase Base58    | 13.9s (~85x slower) | 12.1s (~70x slower)
+Implementation       | Growth | Encode | Decode
+---------------------|--------|--------|-------
+Microsoft.NET Base64 | 1.33x  | 0.15s  | 0.17s
+SimpleBase Base32    | 1.6x   | 0.36s (~2.5x slower) | 0.25s (~1.5x slower)
+SimpleBase Base58    | 1.38x  | 13.9s (~85x slower) | 12.1s (~70x slower)
 
 Notes
 -----
