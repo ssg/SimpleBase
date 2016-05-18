@@ -72,7 +72,7 @@ namespace SimpleBase
             fixed (char* textPtr = text)
             {
                 byte* op = outputPtr;                
-                for (char* ip = textPtr, ep = ip + textLen; ip != ep;)
+                for (char* ip = textPtr, ep = ip + textLen; ip != ep; op++)
                 {
                     char c1 = *ip++;
                     validateHex(c1);
@@ -81,7 +81,6 @@ namespace SimpleBase
                     validateHex(c2);
                     var b2 = getHexByte(c2);
                     *op = (byte)(b1 << 4 | b2);
-                    op++;
                 }            
             }
             return output;
