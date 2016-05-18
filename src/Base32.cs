@@ -23,7 +23,7 @@ namespace SimpleBase
         /// <summary>
         /// Douglas Crockford's Base32 flavor with substitution characters.
         /// </summary>
-        public static readonly Base32 Crockford = new Base32(new CrockfordBase32Alphabet());
+        public static readonly Base32 Crockford = new Base32(Base32Alphabet.Crockford);
 
         /// <summary>
         /// RFC 4648 variant of Base32 converter
@@ -167,7 +167,7 @@ namespace SimpleBase
 
         private static ArgumentException invalidInput(char c)
         {
-            return new ArgumentException(String.Format("Invalid character value in input: 0x{0:X}", (int)c), "base32");
+            return new ArgumentException(String.Format("Invalid character value in input: 0x{0:X}", (int)c), "c");
         }
 
         private static byte[] createDecodingOutput(int len)
