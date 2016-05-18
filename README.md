@@ -10,6 +10,7 @@ Features
  - Base32: RFC 4648, Crockford and Extended Hex (BASE32-HEX) alphabets with Crockford 
 character substitution (or any other custom alphabets you might want to use)
  - Base58: Bitcoin, Ripple and Flickr alphabets (and any custom alphabet you might have)
+ - An experimental Base16 just to see how far I can take the optimizations compared to .NET's implementations.
  - Thread-safe
  - Simple to use
 
@@ -66,19 +67,40 @@ byte[] result = Base58.Bitcoin.Decode(myText);
 // you can also use "Ripple" or "Flickr" as decoder flavors
 ```
 
+### Base16
+
+Encode a byte array to hex string:
+
+```csharp
+using SimpleBase;
+
+string result = Base16.EncodeUpper(myBuffer); // encode to uppercase
+// or 
+string result = Base16.EncodeLower(myBuffer); // encode to lowercase
+```
+
+To decode a valid hex string:
+
+```csharp
+using SimpleBase;
+
+byte[] result = Base16.Decode(text); // decodes both upper and lowercase
+```
+
 Benchmark Results
 -----------------
 Small buffer sizes are used (64 characters). They are closer to real life applications. Base58 
 performs really bad in decoding of larger buffer sizes, due to exponential complexity of 
 numeric base conversions.
 
-1,000,000 iterations in Release build.
+1,000,000 iterations on 64 byte buffer (encode) / 64 character string (decode)
 
-Implementation       | Growth | Encode | Decode
----------------------|--------|--------|-------
-Microsoft.NET Base64 | 1.33x  | 0.15s  | 0.17s
-SimpleBase Base32    | 1.6x   | 0.36s (~2.5x slower) | 0.25s (~1.5x slower)
-SimpleBase Base58    | 1.38x  | 13.9s (~85x slower) | 12.1s (~70x slower)
+Implementation              | Growth | Encode                   | Decode
+----------------------------|--------|--------------------------|------------------
+.NET Framework Base64       | 1.33x  | 0.11s                    | 0.16s
+SimpleBase Base16           | 2x     | 0.20s (1.7x slower)      | 0.25s (1.6x slower)
+SimpleBase Base32 Crockford | 1.6x   | 0.32s (2.8x slower)      | 0.25s (1.5x slower)
+SimpleBase Base58           | 1.38x  | 17.72s (153x slower)     | 11.77s (71x slower)
 
 Notes
 -----
@@ -88,6 +110,8 @@ would hurt readability and extensibility. I might experiment on them in the futu
 Test suite for Base32 isn't complete, I took most of it from RFC4648. Base58 really 
 lacks a good spec or test vectors needed. I had to resort to using online converters to generate
 preliminary test vectors.
+
+It's interesting that I wasn't able to reach .NET Base64 performance on 
 
 Thanks
 ------

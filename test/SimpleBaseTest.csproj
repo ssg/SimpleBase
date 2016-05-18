@@ -43,6 +43,7 @@
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Base16Test.cs" />
     <Compile Include="Base32\CrockfordTest.cs" />
     <Compile Include="Base32\ExtendedHexTest.cs" />
     <Compile Include="Base58AlphabetTest.cs" />
