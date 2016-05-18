@@ -31,6 +31,8 @@ namespace Base32Test
             new TestCaseData("000860C220EBBAF591D40F51994C4E2D9C9D88168C33E761F6", "1mJKRNca45GU2JQuHZqZjHFNktaqAs7gh"),
             new TestCaseData("00313E1F905554E7AE2580CD36F86D0C8088382C9E1951C44D010203", "17f1hgANcLE5bQhAGRgnBaLTTs23rK4VGVKuFQ"),
             new TestCaseData("0000000000", "11111"),
+            new TestCaseData("1111111111", "2vgLdhi"),
+            new TestCaseData("FFEEDDCCBBAA", "3CSwN61PP"),
             new TestCaseData("00", "1"),
             new TestCaseData("21", "a"),
         };

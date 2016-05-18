@@ -15,6 +15,7 @@
 */
 
 using System;
+using System.Diagnostics;
 using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -34,6 +35,8 @@ namespace SimpleBase
             Require.NotNull(alphabet, "alphabet");
             this.alphabet = alphabet;
         }
+
+        private static readonly BigInteger baseLength = Base58Alphabet.Length;
 
         public string Encode(byte[] bytes)
         {
@@ -58,28 +61,21 @@ namespace SimpleBase
             var newBuffer = bytes;
             unchecked
             {
-                if (numZeroes > 0)
-                {
-                    int newLen = buflen - numZeroes;
-                    newBuffer = new byte[newLen + 1];
-                    Array.Copy(bytes, numZeroes, newBuffer, 0, newLen);
-                    reverse(ref newBuffer, newLen);
-                }
+                int newLen = buflen - numZeroes;
+                newBuffer = new byte[newLen + 1];
+                Array.Copy(bytes, numZeroes, newBuffer, 0, newLen);
+                reverse(ref newBuffer, newLen);
                 char[] output = new char[buflen * growthPercentage / 100 + 1];
                 int outputLen = output.Length;
                 int outputPos = outputLen - 1;
-                BigInteger baseLen = 58;
                 var num = new BigInteger(newBuffer);
                 while (num > 0)
                 {
                     BigInteger remainder;
-                    num = BigInteger.DivRem(num, baseLen, out remainder);
+                    num = BigInteger.DivRem(num, baseLength, out remainder);
                     output[outputPos--] = alphabet[(int)remainder];
                 }
-                while (output[outputPos] == 0)
-                {
-                    outputPos++;
-                }
+                outputPos++;
                 return zeroes + new String(output, outputPos, outputLen - outputPos);
             }
         }
