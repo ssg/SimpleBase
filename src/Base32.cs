@@ -42,7 +42,7 @@ namespace SimpleBase
 
         private Base32Alphabet alphabet;
 
-        private Base32(Base32Alphabet alphabet)
+        public Base32(Base32Alphabet alphabet)
         {
             this.alphabet = alphabet;
         }

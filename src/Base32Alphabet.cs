@@ -18,7 +18,7 @@ using System;
 
 namespace SimpleBase
 {
-    internal class Base32Alphabet
+    public class Base32Alphabet
     {
         public const int Length = 32;
         const char highestAsciiCharSupported = 'z';
