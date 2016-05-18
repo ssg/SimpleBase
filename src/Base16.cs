@@ -55,7 +55,7 @@ namespace SimpleBase
             }
         }
 
-        public static byte[] Decode(string text)
+        public static unsafe byte[] Decode(string text)
         {
             Require.NotNull(text, "text");
             int textLen = text.Length;
@@ -67,40 +67,36 @@ namespace SimpleBase
             {
                 throw new ArgumentException("Text cannot be odd length", "text");
             }
-            unchecked
+            byte[] output = new byte[textLen / 2];
+            fixed (byte* outputPtr = output)
+            fixed (char* textPtr = text)
             {
-                byte[] output = new byte[textLen / 2];
-                for (int i = 0, j = 0; i < textLen; j++)
+                byte* op = outputPtr;                
+                for (char* ip = textPtr, ep = ip + textLen; ip != ep;)
                 {
-                    char c1 = text[i++];
-                    if (!isValidHexChar(c1))
-                    {
-                        throw new InvalidOperationException(String.Format("Invalid hex character: ", c1));
-                    }
-                    int b1 = getHexByte(c1);
-
-                    char c2 = text[i++];
-                    if (!isValidHexChar(c2))
-                    {
-                        throw new InvalidOperationException(String.Format("Invalid hex character: ", c2));
-                    }
-                    int b2 = getHexByte(c2);
-                    output[j] = (byte)(b1 << 4 | b2);
-                }
-                return output;
+                    char c1 = *ip++;
+                    validateHex(c1);
+                    var b1 = getHexByte(c1);
+                    char c2 = *ip++;
+                    validateHex(c2);
+                    var b2 = getHexByte(c2);
+                    *op = (byte)(b1 << 4 | b2);
+                    op++;
+                }            
             }
+            return output;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static int getHexByte(int c)
+        private static int getHexByte(int character)
         {
-            c -= numberOffset;
-            if (c < 10)
+            int c = character - numberOffset;
+            if (c < 10) // is number?
             {
                 return c;
             }
             c -= upperNumberDiff;
-            if (c < 16)
+            if (c < 16) // is uppercase?
             {
                 return c;
             }
@@ -108,11 +104,14 @@ namespace SimpleBase
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static bool isValidHexChar(int c)
+        private static void validateHex(char c)
         {
-            return (c >= '0' && c <= '9')
+            if (!((c >= '0' && c <= '9')
                 || (c >= 'A' && c <= 'F')
-                || (c >= 'a' && c <= 'f');
+                || (c >= 'a' && c <= 'f')))
+            {
+                throw new InvalidOperationException(String.Format("Invalid hex character: ", c));
+            }
         }
     }
 }
