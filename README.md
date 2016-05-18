@@ -10,7 +10,8 @@ Features
  - Base32: RFC 4648, Crockford and Extended Hex (BASE32-HEX) alphabets with Crockford 
 character substitution (or any other custom alphabets you might want to use)
  - Base58: Bitcoin, Ripple and Flickr alphabets (and any custom alphabet you might have)
- - An experimental Base16 just to see how far I can take the optimizations compared to .NET's implementations.
+ - An experimental Base16 just to see how far I can take the optimizations compared to .NET's 
+ implementations.
  - Thread-safe
  - Simple to use
 
@@ -115,4 +116,7 @@ It's interesting that I wasn't able to reach .NET Base64 performance on
 
 Thanks
 ------
-Chatting about this pet project with my friends [@detaybey](https://github.com/detaybey), [@vhallac](https://github.com/vhallac), [@alkimake](https://github.com/alkimake) and [@Utopians](https://github.com/Utopians) at one of our friend's birthday encouraged me to finish this. Thanks guys. Special thanks to my wife for unlimited tea and love.
+Chatting about this pet project with my friends [@detaybey](https://github.com/detaybey), 
+[@vhallac](https://github.com/vhallac), [@alkimake](https://github.com/alkimake) and 
+[@Utopians](https://github.com/Utopians) at one of our friend's birthday encouraged me to 
+finish this. Thanks guys. Special thanks to my wife for unlimited tea and love.
