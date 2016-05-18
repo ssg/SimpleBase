@@ -30,7 +30,7 @@ Encode a byte array:
 
 ```csharp
 using SimpleBase;
-// ...
+
 byte[] myBuffer;
 string result = Base32.Crockford.Encode(myBuffer, padding: true);
 // you can also use "ExtendedHex" or "Rfc4648" as encoder flavors
@@ -40,7 +40,7 @@ Decode a Base32-encoded string:
 
 ```csharp
 using SimpleBase;
-// ...
+
 string myText;
 byte[] result = Base32.Crockford.Decode(myText);
 // you can also use "ExtendedHex" or "Rfc4648" as decoder flavors
@@ -52,7 +52,7 @@ Encode a byte array:
 
 ```csharp
 using SimpleBase;
-// ...
+
 byte[] myBuffer;
 string result = Base58.Bitcoin.Encode(myBuffer);
 // you can also use "Ripple" or "Flickr" as encoder flavors
@@ -62,7 +62,7 @@ Decode a Base58-encoded string:
 
 ```csharp
 using SimpleBase;
-// ...
+
 string myText;
 byte[] result = Base58.Bitcoin.Decode(myText);
 // you can also use "Ripple" or "Flickr" as decoder flavors
