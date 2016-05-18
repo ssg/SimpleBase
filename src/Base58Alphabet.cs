@@ -41,11 +41,11 @@ namespace SimpleBase
 
         private string value;
 
-        public char this[int value]
+        public char this[int index]
         {
             get
             {
-                return this.value[value];
+                return this.value[index];
             }
         }
 
