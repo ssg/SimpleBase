@@ -60,6 +60,7 @@ namespace SimpleBase
                     pInput++;
                 }
                 int numZeroes = (int)(pInput - inputPtr);
+
                 char zeroChar = alphabetPtr[0];
                 if (pInput == pEnd)
                 {
@@ -106,28 +107,6 @@ namespace SimpleBase
                     }
                     return result;
                 }
-            }
-        }
-
-        internal static unsafe void Reverse(byte[] buffer, int length)
-        {
-            fixed (byte* inputPtr = buffer)
-            {
-                Reverse(inputPtr, length);
-            }
-        }
-
-        internal static unsafe void Reverse(byte* inputPtr, int length)
-        {
-            if (length < 2)
-            {
-                return;
-            }
-            for (byte* pStart = inputPtr, pEnd = inputPtr + length - 1; pStart < pEnd; pStart++, pEnd--)
-            {
-                byte tmp = *pEnd;
-                *pEnd = *pStart;
-                *pStart = tmp;
             }
         }
 
