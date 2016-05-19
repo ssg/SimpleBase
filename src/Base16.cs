@@ -34,7 +34,7 @@ namespace SimpleBase
             return encode(bytes, lowerAlphabet);
         }
 
-        private static string encode(byte[] bytes, string alphabet)
+        private static unsafe string encode(byte[] bytes, string alphabet)
         {
             Require.NotNull(bytes, "bytes");
             int bytesLen = bytes.Length;
@@ -42,17 +42,21 @@ namespace SimpleBase
             {
                 return String.Empty;
             }
-            unchecked
+            var output = new String('\0', bytesLen * 2);
+            fixed (char *outputPtr = output)
+            fixed (byte *bytesPtr = bytes)
+            fixed (char *alphabetPtr = alphabet)
             {
-                char[] output = new char[bytesLen * 2];
-                for (int i = 0, j = 0; i < bytesLen; i++)
+                char* pOutput = outputPtr;
+                char* pAlphabet = alphabetPtr;                
+                for (byte* pInput = bytesPtr, pEnd = pInput + bytesLen; pInput != pEnd; pInput++)
                 {
-                    int b = bytes[i];
-                    output[j++] = alphabet[b >> 4];
-                    output[j++] = alphabet[b & 0x0F];
+                    int b = *pInput;
+                    *pOutput++ = pAlphabet[b >> 4];
+                    *pOutput++ = pAlphabet[b & 0x0F];
                 }
-                return new String(output);
             }
+            return output;
         }
 
         public static unsafe byte[] Decode(string text)
@@ -71,16 +75,16 @@ namespace SimpleBase
             fixed (byte* outputPtr = output)
             fixed (char* textPtr = text)
             {
-                byte* op = outputPtr;                
-                for (char* ip = textPtr, ep = ip + textLen; ip != ep; op++)
+                byte* pOutput = outputPtr;                
+                for (char* pInput = textPtr, pEnd = pInput + textLen; pInput != pEnd; pOutput++)
                 {
-                    char c1 = *ip++;
+                    char c1 = *pInput++;
                     validateHex(c1);
                     var b1 = getHexByte(c1);
-                    char c2 = *ip++;
+                    char c2 = *pInput++;
                     validateHex(c2);
                     var b2 = getHexByte(c2);
-                    *op = (byte)(b1 << 4 | b2);
+                    *pOutput = (byte)(b1 << 4 | b2);
                 }            
             }
             return output;
