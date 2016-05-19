@@ -112,9 +112,10 @@ Test suite for Base32 isn't complete, I took most of it from RFC4648. Base58 rea
 lacks a good spec or test vectors needed. I had to resort to using online converters to generate
 preliminary test vectors.
 
-It's interesting that I wasn't able to reach .NET Base64's performance with Base16 although it's
-much simpler. I was only able to match it after I converted Base16 to unsafe code with good 
+It's interesting that I wasn't able to reach .NET Base64's performance with Base16 with a straightforward
+managed code despite that it's much simpler. I was only able to match it after I converted Base16 to unsafe code with good 
 independent interleaving so CPU pipeline optimizations could take place. Still not satisfied though.
+Is .NET's Base64 implementation native? Perhaps.
 
 Thanks
 ------
