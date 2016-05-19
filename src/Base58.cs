@@ -15,10 +15,7 @@
 */
 
 using System;
-using System.Diagnostics;
 using System.Numerics;
-using System.Runtime.CompilerServices;
-using System.Text;
 
 namespace SimpleBase
 {
@@ -38,6 +35,11 @@ namespace SimpleBase
 
         private static readonly BigInteger baseLength = Base58Alphabet.Length;
 
+        /// <summary>
+        /// Encode to Base58 representation
+        /// </summary>
+        /// <param name="bytes">Bytes to encode</param>
+        /// <returns>Encoded string</returns>
         public string Encode(byte[] bytes)
         {
             const int growthPercentage = 138;
@@ -64,7 +66,7 @@ namespace SimpleBase
                 int newLen = buflen - numZeroes;
                 newBuffer = new byte[newLen + 1];
                 Array.Copy(bytes, numZeroes, newBuffer, 0, newLen);
-                reverse(ref newBuffer, newLen);
+                Reverse(newBuffer, newLen);
                 char[] output = new char[buflen * growthPercentage / 100 + 1];
                 int outputLen = output.Length;
                 int outputPos = outputLen - 1;
@@ -80,60 +82,86 @@ namespace SimpleBase
             }
         }
 
-        private static void reverse(ref byte[] newBuffer, int length)
+        internal static unsafe void Reverse(byte[] buffer, int length)
         {
-            int endPos = length - 1;
-            for (int n = 0; n <= endPos / 2; n++)
+            fixed (byte* inputPtr = buffer)
             {
-                byte tmp = newBuffer[n];
-                newBuffer[n] = newBuffer[endPos - n];
-                newBuffer[endPos - n] = tmp;
+                Reverse(inputPtr, length);
             }
         }
 
-        public byte[] Decode(string text)
+        internal static unsafe void Reverse(byte* inputPtr, int length)
+        {
+            if (length < 2)
+            {
+                return;
+            }
+            for (byte* pStart = inputPtr, pEnd = inputPtr + length - 1; pStart < pEnd; pStart++, pEnd--)
+            {
+                byte tmp = *pEnd;
+                *pEnd = *pStart;
+                *pStart = tmp;
+            }
+        }
+
+        /// <summary>
+        /// Decode a Base58 representation
+        /// </summary>
+        /// <param name="text">Base58 encoded text</param>
+        /// <returns>Array of decoded bytes</returns>
+        public unsafe byte[] Decode(string text)
         {
             Require.NotNull(text, "text");
-            char zeroVal = alphabet[0];
             var textLen = text.Length;
             if (textLen == 0)
             {
                 return new byte[] { };
             }
 
-            int numZeroes = 0;
-            while (numZeroes < textLen && text[numZeroes] == zeroVal)
+            fixed (char* inputPtr = text)
             {
-                numZeroes++;
-            }
-            if (numZeroes == textLen)
-            {
-                return new byte[numZeroes]; // initialized to zero
-            }
-            BigInteger num = 0; 
-            for (int i = numZeroes; i < textLen; i++)
-            {
-                char c = text[i];
-                int val = alphabet[c];
-                num = num * 58 + val;
-            }
-
-            var bytes = num.ToByteArray();
-            int resultLen = bytes.Length;
-            reverse(ref bytes, resultLen);
-            int resultIndex = 0;
-            while (resultIndex < resultLen)
-            {
-                if (bytes[resultIndex] != 0)
+                char* pEnd = inputPtr + textLen;
+                char* pInput = inputPtr;
+                char zeroChar = alphabet[0];
+                while (*pInput == zeroChar && pInput != pEnd)
                 {
-                    break;
+                    pInput++;
                 }
-                resultIndex++;
+
+                int numZeroes = (int)(pInput - inputPtr);
+                if (pInput == pEnd)
+                {
+                    return new byte[numZeroes]; // initialized to zero
+                }
+
+                int outputLen = textLen * 733 / 1000 + 1; // https://github.com/bitcoin/bitcoin/blob/master/src/base58.cpp
+                byte[] output = new byte[outputLen]; 
+                fixed (byte* outputPtr = output)
+                {
+                    byte* pOutputEnd = outputPtr + outputLen - 1;
+                    while (pInput != pEnd)
+                    {
+                        int carry = alphabet[*pInput++];
+                        for (byte* pDigit = pOutputEnd; pDigit >= outputPtr; pDigit--)
+                        {
+                            carry += 58 * (*pDigit);
+                            *pDigit = (byte)carry;
+                            carry /= 256;
+                        }
+                    }
+
+                    byte* pOutput = outputPtr;
+                    while (pOutput != pOutputEnd && *pOutput == 0)
+                    {
+                        pOutput++;
+                    }
+
+                    int resultLen = (int)(pOutputEnd - pOutput) + 1;
+                    byte[] result = new byte[numZeroes + resultLen];                    
+                    Array.Copy(output, (int)(pOutput - outputPtr), result, numZeroes, resultLen);
+                    return result;
+                }
             }
-            int outputLen = resultLen + numZeroes - resultIndex;
-            byte[] result = new byte[outputLen];
-            Array.Copy(bytes, resultIndex, result, numZeroes, resultLen - resultIndex);
-            return result;
         }
     }
 }

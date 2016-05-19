@@ -39,13 +39,13 @@ namespace SimpleBase
 
         private Dictionary<char, int> reverseLookupTable;
 
-        private string value;
+        public string Value;
 
         public char this[int index]
         {
             get
             {
-                return this.value[index];
+                return this.Value[index];
             }
         }
 
@@ -69,7 +69,7 @@ namespace SimpleBase
             {
                 throw new ArgumentException("Base58 alphabets need to be 58-characters long", "text");
             }
-            this.value = text;
+            this.Value = text;
             this.reverseLookupTable = text.Select((c, i) => new KeyValuePair<char, int>(c, i)).ToDictionary(i => i.Key, i => i.Value);
         }
     }
