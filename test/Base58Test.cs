@@ -18,7 +18,7 @@ using System.Runtime.Remoting.Metadata.W3cXsd2001;
 using NUnit.Framework;
 using SimpleBase;
 
-namespace Base32Test
+namespace SimpleBaseTest
 {
     [TestFixture]
     [Parallelizable]
@@ -92,5 +92,23 @@ namespace Base32Test
             Assert.AreEqual(expectedOutput, result);
         }
 
+        [Test]
+        [TestCase(new byte[0], new byte[0])]
+        [TestCase(new byte[] { 1, 2, 3 }, new byte[] { 3, 2, 1 })]
+        [TestCase(new byte[] { 1, 2 }, new byte[] { 2, 1 })]
+        [TestCase(new byte[] { 1, 2, 3, 4 }, new byte[] { 4, 3, 2, 1 })]
+        public void Reverse_Reverses(byte[] buf, byte[] expectedOutput)
+        {
+            Base58.Reverse(buf, buf.Length);
+            CollectionAssert.AreEqual(expectedOutput, buf);
+        }
+
+        [Test]
+        public void Reverse_PartialLength_Works()
+        {
+            var buf = new byte[] { 1, 2, 3, 0, 0 };
+            Base58.Reverse(buf, 3);
+            CollectionAssert.AreEqual(new byte[] { 3, 2, 1, 0, 0 }, buf);
+        }
     }
 }

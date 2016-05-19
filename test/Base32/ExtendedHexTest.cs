@@ -18,7 +18,7 @@ using System.Text;
 using SimpleBase;
 using NUnit.Framework;
 
-namespace Base32Test
+namespace SimpleBaseTest
 {
     [TestFixture]
     class ExtendedHexTest

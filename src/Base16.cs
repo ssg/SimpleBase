@@ -3,6 +3,9 @@ using System.Runtime.CompilerServices;
 
 namespace SimpleBase
 {
+    /// <summary>
+    /// Hexadecimal encoding/decoding
+    /// </summary>
     public static class Base16
     {
         private const byte upperCaseOffset = 55;

@@ -7,8 +7,8 @@
     <ProjectGuid>{617BA86D-31E2-41EA-A1C8-E37602D58C07}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Base32Test</RootNamespace>
-    <AssemblyName>Base32Test</AssemblyName>
+    <RootNamespace>SimpleBaseTest</RootNamespace>
+    <AssemblyName>SimpleBaseTest</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
