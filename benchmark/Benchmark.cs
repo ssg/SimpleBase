@@ -26,14 +26,15 @@ namespace benchmark
 
         private static string compare(TimeSpan bench, TimeSpan baseline)
         {
-            if (bench > baseline)
+            bool faster = bench < baseline;
+            double factor = faster ? baseline.TotalMilliseconds / bench.TotalMilliseconds
+                : bench.TotalMilliseconds / baseline.TotalMilliseconds;
+            string formatted = String.Format("{0:0.#}", factor);
+            if (formatted == "1")
             {
-                return String.Format("{0:0.#}x slower", bench.TotalMilliseconds / baseline.TotalMilliseconds);
+                return "about the same";
             }
-            else
-            {
-                return String.Format("YAY! {0:0.#}x faster", baseline.TotalMilliseconds / bench.TotalMilliseconds);
-            }
+            return String.Format("{0}x {1}", formatted, faster ? "faster! YAY!" : "slower");
         }
 
         public string GetEncodeText(Benchmark baseline)
