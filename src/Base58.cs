@@ -40,45 +40,72 @@ namespace SimpleBase
         /// </summary>
         /// <param name="bytes">Bytes to encode</param>
         /// <returns>Encoded string</returns>
-        public string Encode(byte[] bytes)
+        public unsafe string Encode(byte[] bytes)
         {
             const int growthPercentage = 138;
 
             Require.NotNull(bytes, "buffer");
-            int buflen = bytes.Length;
-            if (buflen == 0)
+            int bytesLen = bytes.Length;
+            if (bytesLen == 0)
             {
                 return String.Empty;
             }
-            int numZeroes = 0;
-            while (numZeroes < buflen && bytes[numZeroes] == 0)
+            fixed (byte* inputPtr = bytes)
+            fixed (char* alphabetPtr = alphabet.Value)
             {
-                numZeroes++;
-            }
-            string zeroes = new String(alphabet[0], numZeroes);
-            if (numZeroes == buflen)
-            {
-                return zeroes;
-            }
-            var newBuffer = bytes;
-            unchecked
-            {
-                int newLen = buflen - numZeroes;
-                newBuffer = new byte[newLen + 1];
-                Array.Copy(bytes, numZeroes, newBuffer, 0, newLen);
-                Reverse(newBuffer, newLen);
-                char[] output = new char[buflen * growthPercentage / 100 + 1];
-                int outputLen = output.Length;
-                int outputPos = outputLen - 1;
-                var num = new BigInteger(newBuffer);
-                while (num > 0)
+                byte* pInput = inputPtr;
+                byte* pEnd = inputPtr + bytesLen;
+                while (pInput != pEnd && *pInput == 0)
                 {
-                    BigInteger remainder;
-                    num = BigInteger.DivRem(num, baseLength, out remainder);
-                    output[outputPos--] = alphabet[(int)remainder];
+                    pInput++;
                 }
-                outputPos++;
-                return zeroes + new String(output, outputPos, outputLen - outputPos);
+                int numZeroes = (int)(pInput - inputPtr);
+                char zeroChar = alphabetPtr[0];
+                if (pInput == pEnd)
+                {
+                    return new String(zeroChar, numZeroes);
+                }
+
+                int outputLen = bytesLen * growthPercentage / 100 + 1;
+                int length = 0;
+                byte[] output = new byte[outputLen];
+                fixed (byte* outputPtr = output)
+                {
+                    byte* pOutputEnd = outputPtr + outputLen - 1;
+                    while (pInput != pEnd)
+                    {
+                        int carry = *pInput;
+                        int i = 0;
+                        for (byte* pDigit = pOutputEnd; (carry != 0 || i < length) 
+                            && pDigit >= outputPtr; pDigit--, i++)
+                        {
+                            carry += 256 * (*pDigit);
+                            *pDigit = (byte)(carry % 58);
+                            carry /= 58;
+                        }
+                        length = i;
+                        pInput++;
+                    }
+
+                    pOutputEnd++;
+                    byte* pOutput = outputPtr;
+                    while (pOutput != pOutputEnd && *pOutput == 0)
+                    {
+                        pOutput++;
+                    }
+
+                    int resultLen = numZeroes + (int)(pOutputEnd - pOutput);
+                    string result = new String(zeroChar, resultLen);
+                    fixed (char* resultPtr = result)
+                    {
+                        char* pResult = resultPtr + numZeroes;
+                        while (pOutput != pOutputEnd)
+                        {
+                            *pResult++ = alphabetPtr[*pOutput++];
+                        }
+                    }
+                    return result;
+                }
             }
         }
 
@@ -111,6 +138,8 @@ namespace SimpleBase
         /// <returns>Array of decoded bytes</returns>
         public unsafe byte[] Decode(string text)
         {
+            const int reductionFactor = 733; // https://github.com/bitcoin/bitcoin/blob/master/src/base58.cpp
+
             Require.NotNull(text, "text");
             var textLen = text.Length;
             if (textLen == 0)
@@ -134,7 +163,7 @@ namespace SimpleBase
                     return new byte[numZeroes]; // initialized to zero
                 }
 
-                int outputLen = textLen * 733 / 1000 + 1; // https://github.com/bitcoin/bitcoin/blob/master/src/base58.cpp
+                int outputLen = textLen * reductionFactor / 1000 + 1;
                 byte[] output = new byte[outputLen]; 
                 fixed (byte* outputPtr = output)
                 {
@@ -157,6 +186,10 @@ namespace SimpleBase
                     }
 
                     int resultLen = (int)(pOutputEnd - pOutput) + 1;
+                    if (resultLen == outputLen)
+                    {
+                        return output;
+                    }
                     byte[] result = new byte[numZeroes + resultLen];                    
                     Array.Copy(output, (int)(pOutput - outputPtr), result, numZeroes, resultLen);
                     return result;
