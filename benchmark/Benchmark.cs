@@ -48,7 +48,7 @@ namespace benchmark
 
         private string getPrintable(TimeSpan time, TimeSpan baseline)
         {
-            string result = String.Format("{0:0.00s}", time.Milliseconds / 1000.0);
+            string result = String.Format("{0:F2}", time.TotalMilliseconds / 1000.0);
             if (time == baseline)
             {
                 return result;
