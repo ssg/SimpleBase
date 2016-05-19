@@ -10,8 +10,8 @@ Features
  - Base32: RFC 4648, Crockford and Extended Hex (BASE32-HEX) alphabets with Crockford 
 character substitution (or any other custom alphabets you might want to use)
  - Base58: Bitcoin, Ripple and Flickr alphabets (and any custom alphabet you might have)
- - An experimental Base16 just to see how far I can take the optimizations compared to .NET's 
- implementations.
+ - Base16: An experimental hexadecimal encoder/decoder just to see how far I can take 
+ the optimizations compared to .NET's  implementations. It's quite fast now.
  - Thread-safe
  - Simple to use
 
