@@ -98,10 +98,10 @@ numeric base conversions.
 
 Implementation              | Growth | Encode                   | Decode
 ----------------------------|--------|--------------------------|------------------
-.NET Framework Base64       | 1.33x  | 0.16                     | 0.20
-SimpleBase Base16           | 2x     | 0.14 (1.1x faster! YAY!) | 0.19 (about the same)
-SimpleBase Base32 Crockford | 1.6x   | 0.33 (2.1x slower)       | 0.25 (1.3x slower)
-SimpleBase Base58           | 1.38x  | 17.85 (110.8x slower)    | 11.92 (60.6x slower)
+.NET Framework Base64       | 1.33x  | 0.14                     | 0.19
+SimpleBase Base16           | 2x     | 0.15 (1.1x slower)       | 0.18 (about the same)
+SimpleBase Base32 Crockford | 1.6x   | 0.36 (2.7x slower)       | 0.19 (about the same)
+SimpleBase Base58           | 1.38x  | 18.00 (131.5x slower)    | 12.18 (65.7x slower)
 
 Notes
 -----

@@ -116,51 +116,54 @@ namespace SimpleBase
         /// <summary>
         /// Decode a Base32 encoded string into a byte array.
         /// </summary>
-        /// <param name="base32">Encoded Base32 string</param>
+        /// <param name="text">Encoded Base32 string</param>
         /// <returns>Decoded byte array</returns>
-        public byte[] Decode(string base32)
+        public unsafe byte[] Decode(string text)
         {
-            Require.NotNull(base32, "base32");
-            base32 = base32.TrimEnd(paddingChar);
-            int len = base32.Length;
-            if (len == 0)
+            Require.NotNull(text, "base32");
+            text = text.TrimEnd(paddingChar);
+            int textLen = text.Length;
+            if (textLen == 0)
             {
                 return new byte[0];
             }
             var decodingTable = alphabet.DecodingTable;
             int decodingTableLen = decodingTable.Length;
-            int outputPos = 0;
-            int output = 0;
-            int i = 0;
             int bitsLeft = bitsPerByte;
-            byte[] outputBuffer = createDecodingOutput(len);
-            while (i < len)
+            int outputLen = textLen * bitsPerChar / bitsPerByte;
+            var outputBuffer = new byte[outputLen];
+            int outputPad = 0;
+            fixed (byte* outputPtr = outputBuffer)
+            fixed (char* inputPtr = text)
+            fixed (byte* decodingPtr = decodingTable)
             {
-                char c = base32[i];
-                if (c >= decodingTableLen)
+                byte* pOutput = outputPtr;
+                byte* pDecodingTable = decodingPtr;
+                for (char* pInput = inputPtr, pEnd = inputPtr + textLen;  pInput != pEnd; pInput++)
                 {
-                    throw invalidInput(c);
+                    char c = *pInput;
+                    if (c >= decodingTableLen)
+                    {
+                        throw invalidInput(c);
+                    }
+                    int b = pDecodingTable[c] - 1;
+                    if (b < 0)
+                    {
+                        throw invalidInput(c);
+                    }
+                    if (bitsLeft > bitsPerChar)
+                    {
+                        bitsLeft -= bitsPerChar;
+                        outputPad |= b << bitsLeft;
+                        continue;
+                    }
+                    int shiftBits = bitsPerChar - bitsLeft;
+                    outputPad |= b >> shiftBits;
+                    *pOutput++ = (byte)outputPad;
+                    b &= (1 << shiftBits) - 1;
+                    bitsLeft = bitsPerByte - shiftBits;
+                    outputPad = b << bitsLeft;
                 }
-                int b = decodingTable[c] - 1;
-                if (b < 0)
-                {
-                    throw invalidInput(c);
-                }
-                if (bitsLeft > bitsPerChar)
-                {
-                    bitsLeft -= bitsPerChar;
-                    output |= b << bitsLeft;
-                    i++;
-                    continue;
-                }
-                int shiftBits = bitsPerChar - bitsLeft;
-                output |= b >> shiftBits;
-                outputBuffer[outputPos] = (byte)output;
-                outputPos++;
-                b &= (1 << shiftBits) - 1;
-                bitsLeft = bitsPerByte - shiftBits;
-                output = b << bitsLeft;
-                i++;
             }
             return outputBuffer;
         }
@@ -170,10 +173,5 @@ namespace SimpleBase
             return new ArgumentException(String.Format("Invalid character value in input: 0x{0:X}", (int)c), "c");
         }
 
-        private static byte[] createDecodingOutput(int len)
-        {
-            int outputLen = len * bitsPerChar / bitsPerByte;
-            return new byte[outputLen];
-        }
     }
 }
