@@ -94,14 +94,14 @@ Small buffer sizes are used (64 characters). They are closer to real life applic
 performs really bad in decoding of larger buffer sizes, due to exponential complexity of 
 numeric base conversions.
 
-1,000,000 iterations on 64 byte buffer (encode) / 64 character string (decode)
+10,000,000 iterations on 64 byte buffer (encode) / 64 character string (decode)
 
 Implementation              | Growth | Encode                   | Decode
 ----------------------------|--------|--------------------------|------------------
-.NET Framework Base64       | 1.33x  | 0.14                     | 0.19
-SimpleBase Base16           | 2x     | 0.15 (1.1x slower)       | 0.18 (about the same)
-SimpleBase Base32 Crockford | 1.6x   | 0.36 (2.7x slower)       | 0.19 (about the same)
-SimpleBase Base58           | 1.38x  | 18.00 (131.5x slower)    | 12.18 (65.7x slower)
+.NET Framework Base64       | 1.33x  | 1.27                     | 1.68
+SimpleBase Base16           | 2x     | 1.19 (1.1x faster! YAY!) | 1.76 (about the same)
+SimpleBase Base32 Crockford | 1.6x   | 3.24 (2.6x slower)       | 1.93 (1.1x slower)
+SimpleBase Base58           | 1.38x  | 180.92 (142.7x slower)   | 118.45 (70.6x slower)
 
 Notes
 -----
