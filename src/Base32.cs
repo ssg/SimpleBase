@@ -53,65 +53,64 @@ namespace SimpleBase
         /// <param name="bytes">Buffer to be encoded</param>
         /// <param name="padding">Append padding characters in the output</param>
         /// <returns>Encoded string</returns>
-        public string Encode(byte[] bytes, bool padding)
+        public unsafe string Encode(byte[] bytes, bool padding)
         {
             Require.NotNull(bytes, "bytes");
-            int len = bytes.Length;
-            if (len == 0)
+            int bytesLen = bytes.Length;
+            if (bytesLen == 0)
             {
                 return String.Empty;
             }
 
-            var encodingTable = alphabet.EncodingTable;
-            int bitsLeft = bitsPerByte;
-            int i = 0;
-            int b = bytes[i];
-            int outputPos = 0;
-            int outputLen = getEncodingOutputLength(len, padding);
+            // we are ok with slightly larger buffer since the output string will always
+            // have the exact length of the output produced.
+            int outputLen = (((bytesLen - 1) / bitsPerChar) + 1) * bitsPerByte;
             var outputBuffer = new char[outputLen];
-            while (i < len)
+
+            fixed (byte* inputPtr = bytes)
+            fixed (char* encodingTablePtr = alphabet.EncodingTable)
+            fixed (char* outputPtr = outputBuffer)
             {
-                int output;
-                if (bitsLeft > bitsPerChar)
+                char* pEncodingTable = encodingTablePtr;
+                char* pOutput = outputPtr;
+                char* pOutputEnd = outputPtr + outputLen;
+                byte* pInput = inputPtr;
+
+                int bitsLeft = bitsPerByte;
+                int currentByte = *pInput;
+                for (byte* pEnd = inputPtr + bytesLen; pInput != pEnd;)
                 {
-                    bitsLeft -= bitsPerChar;
-                    output = b >> bitsLeft;
-                    outputBuffer[outputPos++] = encodingTable[output];
-                    b &= (1 << bitsLeft) - 1;
+                    int outputPad;
+                    if (bitsLeft > bitsPerChar)
+                    {
+                        bitsLeft -= bitsPerChar;
+                        outputPad = currentByte >> bitsLeft;
+                        *pOutput++ = pEncodingTable[outputPad];
+                        currentByte &= (1 << bitsLeft) - 1;
+                    }
+                    int nextBits = bitsPerChar - bitsLeft;
+                    bitsLeft = bitsPerByte - nextBits;
+                    outputPad = currentByte << nextBits;
+                    if (++pInput != pEnd)
+                    {
+                        currentByte = *pInput;
+                        outputPad |= currentByte >> bitsLeft;
+                        currentByte &= (1 << bitsLeft) - 1;
+                    }
+                    *pOutput++ = pEncodingTable[outputPad];
                 }
-                int nextBits = bitsPerChar - bitsLeft;
-                output = b << nextBits;
-                bitsLeft = bitsPerByte - nextBits;
-                i++;
-                if (i < len)
+                if (padding)
                 {
-                    b = bytes[i];
-                    output |= b >> bitsLeft;
-                    b &= (1 << bitsLeft) - 1;
+                    while (pOutput != pOutputEnd)
+                    {
+                        *pOutput++ = paddingChar;
+                    }
                 }
-                outputBuffer[outputPos++] = encodingTable[output];
-            }
-            if (padding)
-            {
-                while (outputPos < outputLen)
-                {
-                    outputBuffer[outputPos++] = paddingChar;
-                }
-            }
-            return new string(outputBuffer, 0, outputPos);
+                return new String(outputPtr, 0, (int)(pOutput - outputPtr));
+            }            
         }
 
         private static readonly int[] paddingRemainders = new int[] { 0, 2, 4, 5, 7 };
-
-        private static int getEncodingOutputLength(int len, bool padding)
-        {
-            if (padding)
-            {
-                return (((len - 1) / bitsPerChar) + 1) * bitsPerByte;
-            }
-            int outputLen = len * bitsPerByte / bitsPerChar;
-            return outputLen + paddingRemainders[outputLen % bitsPerChar];
-        }
 
         /// <summary>
         /// Decode a Base32 encoded string into a byte array.
@@ -133,6 +132,7 @@ namespace SimpleBase
             int outputLen = textLen * bitsPerChar / bitsPerByte;
             var outputBuffer = new byte[outputLen];
             int outputPad = 0;
+
             fixed (byte* outputPtr = outputBuffer)
             fixed (char* inputPtr = text)
             fixed (byte* decodingPtr = decodingTable)
