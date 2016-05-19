@@ -3,12 +3,6 @@ using System.Runtime.CompilerServices;
 
 namespace SimpleBase
 {
-    public enum Base16Style
-    {
-        Lowercase,
-        Uppercase
-    }
-
     public static class Base16
     {
         private const byte upperCaseOffset = 55;
@@ -22,13 +16,20 @@ namespace SimpleBase
         private const string upperAlphabet = "0123456789ABCDEF";
 
         /// <summary>
-        /// Encode using uppercase lettering
+        /// Encode to Base16 representation using uppercase lettering
         /// </summary>
+        /// <param name="bytes">Bytes to encode</param>
+        /// <returns>Base16 string</returns>
         public static string EncodeUpper(byte[] bytes)
         {
             return encode(bytes, upperAlphabet);
         }
 
+        /// <summary>
+        /// Encode to Base16 representation using lowercase lettering
+        /// </summary>
+        /// <param name="bytes">Bytes to encode</param>
+        /// <returns>Base16 string</returns>
         public static string EncodeLower(byte[] bytes)
         {
             return encode(bytes, lowerAlphabet);
