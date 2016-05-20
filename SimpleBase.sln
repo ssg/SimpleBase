@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleBaseTest", "test\Simp
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{4ECCE094-D6EC-4938-A209-FA9B78AED7DA}"
 	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
+		.travis.yml = .travis.yml
 		LICENSE.txt = LICENSE.txt
 		README.md = README.md
 		SimpleBase.nuspec = SimpleBase.nuspec
