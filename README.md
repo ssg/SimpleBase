@@ -1,5 +1,8 @@
 SimpleBase
 ==========
+[![NuGet Version](https://img.shields.io/nuget/v/SimpleBase.svg)](https://www.nuget.org/packages/SimpleBase/)
+[![Build Status](https://travis-ci.org/ssg/SimpleBase.svg?branch=master)](https://travis-ci.org/ssg/SimpleBase)
+
 This is my own take for exotic base encodings like Base32 and Base58. I started to write it in 2013 
 as coding practice and kept it as a small pet project. I suggest anyone who wants to brush up 
 their coding skills to give those encoding problems a shot. They turned out to be more challenging 
