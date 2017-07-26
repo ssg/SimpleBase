@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.26711.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleBase", "src\SimpleBase.csproj", "{A9C1CF86-32B3-40E6-A51A-3E6D17C15EE3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimpleBase", "src\SimpleBase.csproj", "{A9C1CF86-32B3-40E6-A51A-3E6D17C15EE3}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleBaseTest", "test\SimpleBaseTest.csproj", "{617BA86D-31E2-41EA-A1C8-E37602D58C07}"
 EndProject
@@ -11,6 +11,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		.gitignore = .gitignore
 		.travis.yml = .travis.yml
+		appveyor.yml = appveyor.yml
 		LICENSE.txt = LICENSE.txt
 		README.md = README.md
 		SimpleBase.nuspec = SimpleBase.nuspec
