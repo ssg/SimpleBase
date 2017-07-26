@@ -1,5 +1,7 @@
 language: csharp
 solution: SimpleBase.sln
+dotnet: 1.1
+mono: none
 install:
   - dotnet restore
 script:
