@@ -5,7 +5,7 @@ namespace benchmark
 {
     class Benchmark
     {
-        public const int Iterations = 1000000;
+        public const int Iterations = 1_000_000;
         
         public const int BufSize = 64; // typical buffer size -- needs to be legit Base64 length w/o padding
 

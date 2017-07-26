@@ -1,8 +1,6 @@
 language: csharp
 solution: SimpleBase.sln
 install:
-  - nuget restore SimpleBase.sln
-  - nuget install NUnit.Runners -Version 3.2.0 -OutputDirectory bin
+  - dotnet restore
 script:
-  - xbuild /p:Configuration=Release SimpleBase.sln
-  - mono ./bin/NUnit.ConsoleRunner.3.2.0/tools/nunit3-console.exe ./test/bin/Release/SimpleBaseTest.dll
+  - dotnet test test\SimpleBaseTest.csproj

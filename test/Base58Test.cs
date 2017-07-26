@@ -14,7 +14,6 @@
    limitations under the License.
 */
 using System;
-using System.Runtime.Remoting.Metadata.W3cXsd2001;
 using NUnit.Framework;
 using SimpleBase;
 
@@ -47,7 +46,7 @@ namespace SimpleBaseTest
         [TestCaseSource("bitcoinTestData")]
         public void Encode_Bitcoin_ReturnsExpectedResults(string input, string expectedOutput)
         {
-            var buffer = SoapHexBinary.Parse(input).Value;
+            var buffer = Base16.Decode(input);
             string result = Base58.Bitcoin.Encode(buffer);
             Assert.AreEqual(expectedOutput, result);
         }
