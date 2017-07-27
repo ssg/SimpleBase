@@ -14,7 +14,7 @@ Features
 character substitution (or any other custom alphabets you might want to use)
  - Base58: Bitcoin, Ripple and Flickr alphabets (and any custom alphabet you might have)
  - Base16: An experimental hexadecimal encoder/decoder just to see how far I can take 
- the optimizations compared to .NET's  implementations. It's quite fast now.
+ the optimizations compared to .NET's  implementations. It's quite fast now. It can also be used as a replacement for `SoapHexBinary.Parse` method since it's missing from .NET Core.
  - Thread-safe
  - Simple to use
 
