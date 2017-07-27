@@ -5,16 +5,15 @@
     <AssemblyName>SimpleBaseTest</AssemblyName>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <TestRunner>nunit</TestRunner>
   </PropertyGroup>
-  <ItemGroup>
-    <PackageReference Include="NUnit" Version="3.7.1" />
-  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\src\SimpleBase.csproj" />
   </ItemGroup>
-  <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp1.1'">
-    <PackageReference Include="dotnet-test-nunit">
-      <Version>3.4.0-beta-3</Version>
-    </PackageReference>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.0.0" />
+    <PackageReference Include="Microsoft.TestPlatform.TestHost" Version="15.0.0" />
+    <PackageReference Include="NUnit" Version="3.7.1" />
+    <PackageReference Include="NUnit3TestAdapter" Version="3.8.0" />
   </ItemGroup>
 </Project>
