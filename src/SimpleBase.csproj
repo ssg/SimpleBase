@@ -9,6 +9,11 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <None Remove="SimpleBase.net45.v3.ncrunchproject" />
+	  <None Remove="SimpleBase.netstandard1.3.v3.ncrunchproject" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<PackageReference Include="System.Runtime.Numerics">
 			<Version>4.3.0</Version>
 		</PackageReference>

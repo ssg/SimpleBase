@@ -3,11 +3,12 @@ using System.Diagnostics;
 
 namespace benchmark
 {
-    class Benchmark
+    internal class Benchmark
     {
         public const int Iterations = 1_000_000;
-        
-        public const int BufSize = 64; // typical buffer size -- needs to be legit Base64 length w/o padding
+
+        // buffer size for average use case scenarios -- needs to be legit Base64 length w/o padding
+        public const int BufSize = 64;
 
         public string Name { get; private set; }
         public float Growth { get; private set; }

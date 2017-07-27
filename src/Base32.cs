@@ -78,7 +78,8 @@ namespace SimpleBase
 
                 int bitsLeft = bitsPerByte;
                 int currentByte = *pInput;
-                for (byte* pEnd = inputPtr + bytesLen; pInput != pEnd;)
+                byte* pEnd = Pointer.Offset(pInput, bytesLen);
+                while (pInput != pEnd)
                 {
                     int outputPad;
                     if (bitsLeft > bitsPerChar)
@@ -107,7 +108,7 @@ namespace SimpleBase
                     }
                 }
                 return new String(outputPtr, 0, (int)(pOutput - outputPtr));
-            }            
+            }
         }
 
         private static readonly int[] paddingRemainders = new int[] { 0, 2, 4, 5, 7 };
@@ -139,9 +140,11 @@ namespace SimpleBase
             {
                 byte* pOutput = outputPtr;
                 byte* pDecodingTable = decodingPtr;
-                for (char* pInput = inputPtr, pEnd = inputPtr + textLen;  pInput != pEnd; pInput++)
+                char* pInput = inputPtr;
+                char* pEnd = Pointer.Offset(inputPtr, textLen);
+                while (pInput != pEnd)
                 {
-                    char c = *pInput;
+                    char c = *pInput++;
                     if (c >= decodingTableLen)
                     {
                         throw invalidInput(c);
@@ -172,6 +175,5 @@ namespace SimpleBase
         {
             return new ArgumentException(String.Format("Invalid character value in input: 0x{0:X}", (int)c), "c");
         }
-
     }
 }

@@ -18,9 +18,11 @@ using System.Runtime.CompilerServices;
 
 namespace SimpleBase
 {
-    static class Require
+    internal static class Require
     {
+#if !DEBUG
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
         internal static void NotNull<T>(T value, string argName) where T : class
         {
             if (value == null)

@@ -54,7 +54,7 @@ namespace SimpleBase
             fixed (char* alphabetPtr = alphabet.Value)
             {
                 byte* pInput = inputPtr;
-                byte* pEnd = inputPtr + bytesLen;
+                byte* pEnd = Pointer.Offset(inputPtr, bytesLen);
                 while (pInput != pEnd && *pInput == 0)
                 {
                     pInput++;
@@ -128,7 +128,7 @@ namespace SimpleBase
 
             fixed (char* inputPtr = text)
             {
-                char* pEnd = inputPtr + textLen;
+                char* pEnd = Pointer.Offset(inputPtr, textLen);
                 char* pInput = inputPtr;
                 char zeroChar = alphabet[0];
                 while (*pInput == zeroChar && pInput != pEnd)

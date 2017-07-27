@@ -52,12 +52,15 @@ namespace SimpleBase
             fixed (char *alphabetPtr = alphabet)
             {
                 char* pOutput = outputPtr;
-                char* pAlphabet = alphabetPtr;                
-                for (byte* pInput = bytesPtr, pEnd = pInput + bytesLen; pInput != pEnd; pInput++)
+                char* pAlphabet = alphabetPtr;
+                byte* pInput = bytesPtr;
+                byte* pEnd = Pointer.Offset(pInput, bytesLen);
+                while (pInput != pEnd)
                 {
                     int b = *pInput;
                     *pOutput++ = pAlphabet[b >> 4];
                     *pOutput++ = pAlphabet[b & 0x0F];
+                    pInput++;
                 }
             }
             return output;
@@ -79,8 +82,10 @@ namespace SimpleBase
             fixed (byte* outputPtr = output)
             fixed (char* textPtr = text)
             {
-                byte* pOutput = outputPtr;                
-                for (char* pInput = textPtr, pEnd = pInput + textLen; pInput != pEnd; pOutput++)
+                byte* pOutput = outputPtr;
+                char* pInput = textPtr;
+                char* pEnd = Pointer.Offset(pInput, textLen);
+                while (pInput != pEnd)
                 {
                     char c1 = *pInput++;
                     validateHex(c1);
@@ -89,6 +94,7 @@ namespace SimpleBase
                     validateHex(c2);
                     var b2 = getHexByte(c2);
                     *pOutput = (byte)(b1 << 4 | b2);
+                    pOutput++;
                 }            
             }
             return output;
