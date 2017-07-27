@@ -6,4 +6,4 @@ dist: trusty
 install:
   - dotnet restore
 script:
-  - dotnet test test\SimpleBaseTest.csproj
+  - dotnet test test/SimpleBaseTest.csproj
