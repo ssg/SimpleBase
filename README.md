@@ -14,7 +14,7 @@ Features
 character substitution (or any other custom alphabets you might want to use)
  - Base58: Bitcoin, Ripple and Flickr alphabets (and any custom alphabet you might have)
  - Base16: An experimental hexadecimal encoder/decoder just to see how far I can take 
- the optimizations compared to .NET's  implementations. It's quite fast now.
+ the optimizations compared to .NET's  implementations. It's quite fast now. It can also be used as a replacement for `SoapHexBinary.Parse` method since it's missing from .NET Core.
  - Thread-safe
  - Simple to use
 
@@ -97,14 +97,15 @@ Small buffer sizes are used (64 characters). They are closer to real life applic
 performs really bad in decoding of larger buffer sizes, due to exponential complexity of 
 numeric base conversions.
 
-1,000,000 iterations on 64 byte buffer (encode) / 64 character string (decode)
+CPU: Intel Core i7-7700 @ 3.60Ghz
+1,000,000 iterations on 64 byte buffer (encode) / 64 character string (decode) 
 
 Implementation              | Growth | Encode                   | Decode
 ----------------------------|--------|--------------------------|------------------
-.NET Framework Base64       | 1.33x  | 0.14                     | 0.20
-SimpleBase Base16           | 2x     | 0.16 (1.1x slower)       | 0.19 (about the same)
-SimpleBase Base32 Crockford | 1.6x   | 0.33 (2.4x slower)       | 0.19 (about the same)
-SimpleBase Base58           | 1.38x  | 11.02 (78.7x slower)     | 5.71 (28.6x slower)
+.NET Framework Base64       | 1.33x  | 0.14                     | 0.19
+SimpleBase Base16           | 2x     | 0.14 (about the same)    | 0.13 (1.5x faster! YAY!)
+SimpleBase Base32 Crockford | 1.6x   | 0.27 (2x slower)         | 0.15 (1.2x faster! YAY!)
+SimpleBase Base58           | 1.38x  | 8.90 (65.4x slower)      | 5.52 (29x slower)
 
 Notes
 -----
