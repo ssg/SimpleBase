@@ -9,3 +9,4 @@ packages/
 *.psess
 *.vspx
 .vs/
+*.userprefs
