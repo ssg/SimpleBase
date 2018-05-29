@@ -94,7 +94,7 @@ byte[] result = Base16.Decode(text); // decodes both upper and lowercase
 Benchmark Results
 -----------------
 Small buffer sizes are used (64 characters). They are closer to real life applications. Base58 
-performs really bad in decoding of larger buffer sizes, due to exponential complexity of 
+performs really bad in decoding of larger buffer sizes, due to polynomial complexity of 
 numeric base conversions.
 
 CPU: Intel Core i7-7700 @ 3.60Ghz
