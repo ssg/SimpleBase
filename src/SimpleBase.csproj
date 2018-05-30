@@ -6,11 +6,18 @@
 		<AssemblyName>SimpleBase</AssemblyName>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+		<SignAssembly>true</SignAssembly>
+		<AssemblyOriginatorKeyFile>E:\DEV\redefined\repos\SimpleBase\SimpleBase.snk</AssemblyOriginatorKeyFile>
+		<DelaySign>false</DelaySign>
 	</PropertyGroup>
 
 	<ItemGroup>
 	  <None Remove="SimpleBase.net45.v3.ncrunchproject" />
 	  <None Remove="SimpleBase.netstandard1.3.v3.ncrunchproject" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Include="..\SimpleBase.snk" Link="SimpleBase.snk" />
 	</ItemGroup>
 
 	<ItemGroup>
