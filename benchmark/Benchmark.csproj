@@ -3,7 +3,13 @@
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp1.1</TargetFramework>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>..\SimpleBase.snk</AssemblyOriginatorKeyFile>
+    <DelaySign>false</DelaySign>
   </PropertyGroup>
+  <ItemGroup>
+    <None Include="..\SimpleBase.snk" Link="SimpleBase.snk" />
+  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\src\SimpleBase.csproj" />
   </ItemGroup>  
