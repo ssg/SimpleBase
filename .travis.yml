@@ -1,6 +1,6 @@
 language: csharp
 solution: SimpleBase.sln
-dotnet: 2.0
+dotnet: 2.1.200
 mono: none
 dist: trusty
 install:
