@@ -7,7 +7,7 @@
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <TestRunner>nunit</TestRunner>
     <SignAssembly>true</SignAssembly>
-    <AssemblyOriginatorKeyFile>E:\DEV\redefined\repos\SimpleBase\SimpleBase.snk</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>..\SimpleBase.snk</AssemblyOriginatorKeyFile>
     <DelaySign>false</DelaySign>
   </PropertyGroup>
   <ItemGroup>

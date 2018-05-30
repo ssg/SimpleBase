@@ -7,7 +7,7 @@
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
 		<SignAssembly>true</SignAssembly>
-		<AssemblyOriginatorKeyFile>E:\DEV\redefined\repos\SimpleBase\SimpleBase.snk</AssemblyOriginatorKeyFile>
+		<AssemblyOriginatorKeyFile>..\SimpleBase.snk</AssemblyOriginatorKeyFile>
 		<DelaySign>false</DelaySign>
 	</PropertyGroup>
 
