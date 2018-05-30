@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
   <PropertyGroup>
-    <TargetFrameworks>netcoreapp1.1</TargetFrameworks>
+    <TargetFrameworks>netcoreapp2.0</TargetFrameworks>
     <RootNamespace>SimpleBaseTest</RootNamespace>
     <AssemblyName>SimpleBaseTest</AssemblyName>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
