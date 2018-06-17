@@ -5,7 +5,7 @@ namespace benchmark
 {
     class Program
     {
-        static Benchmark[] benchmarks = new[]
+        static readonly Benchmark[] benchmarks = new[]
         {
             new Benchmark(".NET Framework Base64", 1.33f,
                 (buf) => Convert.ToBase64String(buf),
@@ -42,7 +42,7 @@ namespace benchmark
             Console.WriteLine();
             Console.WriteLine("{0:#,#} iterations on {1} byte buffer (encode) / {1} character string (decode)",
                 Benchmark.Iterations, Benchmark.BufSize);
-            Console.WriteLine(
+            Console.WriteLine("\n\r" +
                 "Implementation              | Growth | Encode                   | Decode\n\r" +
                 "----------------------------|--------|--------------------------|------------------");
             var baseline = benchmarks[0];

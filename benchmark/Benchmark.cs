@@ -5,7 +5,7 @@ namespace benchmark
 {
     internal class Benchmark
     {
-        public const int Iterations = 3_000_000;
+        public const int Iterations = 5_000_000;
 
         // buffer size for average use case scenarios -- needs to be legit Base64 length w/o padding
         public const int BufSize = 64;
@@ -40,12 +40,12 @@ namespace benchmark
 
         public string GetEncodeText(Benchmark baseline)
         {
-            return getPrintable(this.EncodeTime, baseline.EncodeTime);
+            return getPrintable(EncodeTime, baseline.EncodeTime);
         }
 
         public string GetDecodeText(Benchmark baseline)
         {
-            return getPrintable(this.DecodeTime, baseline.DecodeTime);
+            return getPrintable(DecodeTime, baseline.DecodeTime);
         }
 
         private string getPrintable(TimeSpan time, TimeSpan baseline)
