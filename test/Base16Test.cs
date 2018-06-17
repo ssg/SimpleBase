@@ -1,12 +1,12 @@
-﻿using System;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using SimpleBase;
+using System;
 
 namespace SimpleBaseTest
 {
     [TestFixture]
     [Parallelizable]
-    class Base16Test
+    internal class Base16Test
     {
         private static TestCaseData[] testData = new[]
         {
@@ -18,7 +18,7 @@ namespace SimpleBaseTest
         };
 
         [Test]
-        [TestCaseSource("testData")]
+        [TestCaseSource(nameof(testData))]
         public void EncodeUpper(byte[] input, string expectedOutput)
         {
             var result = Base16.EncodeUpper(input);
@@ -26,7 +26,7 @@ namespace SimpleBaseTest
         }
 
         [Test]
-        [TestCaseSource("testData")]
+        [TestCaseSource(nameof(testData))]
         public void EncodeLower(byte[] input, string expectedOutput)
         {
             var result = Base16.EncodeLower(input);
@@ -34,7 +34,7 @@ namespace SimpleBaseTest
         }
 
         [Test]
-        [TestCaseSource("testData")]
+        [TestCaseSource(nameof(testData))]
         public void Decode(byte[] expectedOutput, string input)
         {
             var result = Base16.Decode(input);
@@ -42,7 +42,7 @@ namespace SimpleBaseTest
         }
 
         [Test]
-        [TestCaseSource("testData")]
+        [TestCaseSource(nameof(testData))]
         public void Decode_LowerCase(byte[] expectedOutput, string input)
         {
             var result = Base16.Decode(input.ToLowerInvariant());
@@ -53,7 +53,7 @@ namespace SimpleBaseTest
         [TestCase("ZAAA")]
         public void Decode_InvalidChar_Throws(string input)
         {
-            Assert.Throws<InvalidOperationException>(() => Base16.Decode(input));
+            Assert.Throws<ArgumentException>(() => Base16.Decode(input));
         }
 
         [TestCase("12345")]

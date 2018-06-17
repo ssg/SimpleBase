@@ -40,7 +40,7 @@ namespace SimpleBase
         private const int bitsPerChar = 5;
         private const char paddingChar = '=';
 
-        private Base32Alphabet alphabet;
+        private readonly Base32Alphabet alphabet;
 
         public Base32(Base32Alphabet alphabet)
         {
@@ -55,7 +55,7 @@ namespace SimpleBase
         /// <returns>Encoded string</returns>
         public unsafe string Encode(byte[] bytes, bool padding)
         {
-            Require.NotNull(bytes, "bytes");
+            Require.NotNull(bytes, nameof(bytes));
             int bytesLen = bytes.Length;
             if (bytesLen == 0)
             {
@@ -68,17 +68,15 @@ namespace SimpleBase
             var outputBuffer = new char[outputLen];
 
             fixed (byte* inputPtr = bytes)
-            fixed (char* encodingTablePtr = alphabet.EncodingTable)
             fixed (char* outputPtr = outputBuffer)
             {
-                char* pEncodingTable = encodingTablePtr;
                 char* pOutput = outputPtr;
                 char* pOutputEnd = outputPtr + outputLen;
                 byte* pInput = inputPtr;
 
                 int bitsLeft = bitsPerByte;
                 int currentByte = *pInput;
-                byte* pEnd = Pointer.Offset(pInput, bytesLen);
+                byte* pEnd = pInput + bytesLen;
                 while (pInput != pEnd)
                 {
                     int outputPad;
@@ -86,7 +84,7 @@ namespace SimpleBase
                     {
                         bitsLeft -= bitsPerChar;
                         outputPad = currentByte >> bitsLeft;
-                        *pOutput++ = pEncodingTable[outputPad];
+                        *pOutput++ = alphabet[outputPad];
                         currentByte &= (1 << bitsLeft) - 1;
                     }
                     int nextBits = bitsPerChar - bitsLeft;
@@ -98,7 +96,7 @@ namespace SimpleBase
                         outputPad |= currentByte >> bitsLeft;
                         currentByte &= (1 << bitsLeft) - 1;
                     }
-                    *pOutput++ = pEncodingTable[outputPad];
+                    *pOutput++ = alphabet[outputPad];
                 }
                 if (padding)
                 {
@@ -111,8 +109,6 @@ namespace SimpleBase
             }
         }
 
-        private static readonly int[] paddingRemainders = new int[] { 0, 2, 4, 5, 7 };
-
         /// <summary>
         /// Decode a Base32 encoded string into a byte array.
         /// </summary>
@@ -120,15 +116,13 @@ namespace SimpleBase
         /// <returns>Decoded byte array</returns>
         public unsafe byte[] Decode(string text)
         {
-            Require.NotNull(text, "base32");
+            Require.NotNull(text, nameof(text));
             text = text.TrimEnd(paddingChar);
             int textLen = text.Length;
             if (textLen == 0)
             {
                 return new byte[0];
             }
-            var decodingTable = alphabet.DecodingTable;
-            int decodingTableLen = decodingTable.Length;
             int bitsLeft = bitsPerByte;
             int outputLen = textLen * bitsPerChar / bitsPerByte;
             var outputBuffer = new byte[outputLen];
@@ -136,24 +130,14 @@ namespace SimpleBase
 
             fixed (byte* outputPtr = outputBuffer)
             fixed (char* inputPtr = text)
-            fixed (byte* decodingPtr = decodingTable)
             {
                 byte* pOutput = outputPtr;
-                byte* pDecodingTable = decodingPtr;
                 char* pInput = inputPtr;
-                char* pEnd = Pointer.Offset(inputPtr, textLen);
+                char* pEnd = inputPtr + textLen;
                 while (pInput != pEnd)
                 {
                     char c = *pInput++;
-                    if (c >= decodingTableLen)
-                    {
-                        throw invalidInput(c);
-                    }
-                    int b = pDecodingTable[c] - 1;
-                    if (b < 0)
-                    {
-                        throw invalidInput(c);
-                    }
+                    int b = alphabet[c];
                     if (bitsLeft > bitsPerChar)
                     {
                         bitsLeft -= bitsPerChar;
@@ -169,11 +153,6 @@ namespace SimpleBase
                 }
             }
             return outputBuffer;
-        }
-
-        private static ArgumentException invalidInput(char c)
-        {
-            return new ArgumentException(String.Format("Invalid character value in input: 0x{0:X}", (int)c), "c");
         }
     }
 }

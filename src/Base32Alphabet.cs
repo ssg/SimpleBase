@@ -18,44 +18,30 @@ using System;
 
 namespace SimpleBase
 {
-    public class Base32Alphabet
+    public class Base32Alphabet : EncodingAlphabet
     {
-        public const int Length = 32;
-        const char highestAsciiCharSupported = 'z';
+        public static Base32Alphabet Crockford { get; } = new CrockfordBase32Alphabet();
 
-        private static Base32Alphabet crockford = new CrockfordBase32Alphabet();
+        public static Base32Alphabet Rfc4648 { get; }
+            = new Base32Alphabet("ABCDEFGHIJKLMNOPQRSTUVWXYZ234567");
 
-        private static Base32Alphabet rfc4648 =
-            new Base32Alphabet("ABCDEFGHIJKLMNOPQRSTUVWXYZ234567");
+        public static Base32Alphabet ExtendedHex { get; }
+            = new Base32Alphabet("0123456789ABCDEFGHIJKLMNOPQRSTUV");
 
-        private static Base32Alphabet extendedHex =
-            new Base32Alphabet("0123456789ABCDEFGHIJKLMNOPQRSTUV");
-
-        public static Base32Alphabet Crockford { get { return crockford; } }
-        public static Base32Alphabet Rfc4648 { get { return rfc4648; } }
-        public static Base32Alphabet ExtendedHex { get { return extendedHex; } }
-
-        public char[] EncodingTable { get; private set; }
-        public byte[] DecodingTable { get; protected set; }
-
-        public Base32Alphabet(string chars)
+        public Base32Alphabet(string alphabet) : base(32, alphabet)
         {
-            this.EncodingTable = chars.ToCharArray();
-            createDecodingTable(chars);
+            mapLowerCaseCounterparts(alphabet);
         }
 
-        private void createDecodingTable(string chars)
+        private void mapLowerCaseCounterparts(string alphabet)
         {
-            var bytes = new byte[highestAsciiCharSupported + 1];
-            int len = chars.Length;
-            for (int n = 0; n < len; n++)
+            foreach (char c in alphabet)
             {
-                char c = chars[n];
-                byte b = (byte)(n + 1);
-                bytes[c] = b;
-                bytes[Char.ToLowerInvariant(c)] = b;
+                if (Char.IsUpper(c))
+                {
+                    Map(Char.ToLowerInvariant(c), this[c]);
+                }
             }
-            this.DecodingTable = bytes;
         }
     }
 }

@@ -21,6 +21,8 @@ namespace SimpleBase
 {
     public sealed class Base58
     {
+        private static readonly BigInteger baseLength = 58;
+
         public static readonly Base58 Bitcoin = new Base58(Base58Alphabet.Bitcoin);
         public static readonly Base58 Ripple = new Base58(Base58Alphabet.Ripple);
         public static readonly Base58 Flickr = new Base58(Base58Alphabet.Flickr);
@@ -29,11 +31,9 @@ namespace SimpleBase
 
         public Base58(Base58Alphabet alphabet)
         {
-            Require.NotNull(alphabet, "alphabet");
+            Require.NotNull(alphabet, nameof(alphabet));
             this.alphabet = alphabet;
         }
-
-        private static readonly BigInteger baseLength = Base58Alphabet.Length;
 
         /// <summary>
         /// Encode to Base58 representation
@@ -54,7 +54,7 @@ namespace SimpleBase
             fixed (char* alphabetPtr = alphabet.Value)
             {
                 byte* pInput = inputPtr;
-                byte* pEnd = Pointer.Offset(inputPtr, bytesLen);
+                byte* pEnd = inputPtr + bytesLen;
                 while (pInput != pEnd && *pInput == 0)
                 {
                     pInput++;
@@ -123,12 +123,12 @@ namespace SimpleBase
             var textLen = text.Length;
             if (textLen == 0)
             {
-                return new byte[] { };
+                return new byte[0];
             }
 
             fixed (char* inputPtr = text)
             {
-                char* pEnd = Pointer.Offset(inputPtr, textLen);
+                char* pEnd = inputPtr + textLen;
                 char* pInput = inputPtr;
                 char zeroChar = alphabet[0];
                 while (*pInput == zeroChar && pInput != pEnd)

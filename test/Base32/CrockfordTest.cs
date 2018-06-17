@@ -24,7 +24,7 @@ namespace SimpleBaseTest
     [TestFixture]
     class CrockfordTest
     {
-        private static string[][] testData = new[]
+        private static readonly string[][] testData = new[]
         {
             new[] { "", "" },
             new[] { "f", "CR" },
@@ -37,7 +37,7 @@ namespace SimpleBaseTest
         };
 
         [Test]
-        [TestCaseSource("testData")]
+        [TestCaseSource(nameof(testData))]
         public void Encode_ReturnsExpectedValues(string input, string expectedOutput)
         {
             byte[] bytes = Encoding.ASCII.GetBytes(input);
@@ -46,7 +46,7 @@ namespace SimpleBaseTest
         }
 
         [Test]
-        [TestCaseSource("testData")]
+        [TestCaseSource(nameof(testData))]
         public void Decode_ReturnsExpectedValues(string expectedOutput, string input)
         {
             byte[] bytes = Base32.Crockford.Decode(input);

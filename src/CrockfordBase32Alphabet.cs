@@ -23,17 +23,16 @@ namespace SimpleBase
         public CrockfordBase32Alphabet()
             : base("0123456789ABCDEFGHJKMNPQRSTVWXYZ")
         {
-            var buf = DecodingTable;
-            map(buf, 'O', '0');
-            map(buf, 'I', '1');
-            map(buf, 'L', '1');
+            mapAlternate('O', '0');
+            mapAlternate('I', '1');
+            mapAlternate('L', '1');
         }
 
-        private static void map(byte[] buffer, char source, char destination)
+        private void mapAlternate(char source, char destination)
         {
-            var result = buffer[destination];
-            buffer[source] = result;
-            buffer[Char.ToLowerInvariant(source)] = result;
+            int result = this[destination];
+            Map(source, result);
+            Map(Char.ToLowerInvariant(source), result);
         }
     }
 }

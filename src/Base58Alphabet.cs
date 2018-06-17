@@ -14,63 +14,22 @@
    limitations under the License.
 */
 
-using System;
-using System.Linq;
-using System.Collections.Generic;
-
 namespace SimpleBase
 {
-    public sealed class Base58Alphabet
+    public sealed class Base58Alphabet : EncodingAlphabet
     {
-        private static readonly Base58Alphabet bitcoin =
-            new Base58Alphabet("123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz");
+        public static Base58Alphabet Bitcoin { get; }
+            = new Base58Alphabet("123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz");
 
-        private static readonly Base58Alphabet ripple =
-            new Base58Alphabet("rpshnaf39wBUDNEGHJKLM4PQRST7VWXYZ2bcdeCg65jkm8oFqi1tuvAxyz");
+        public static Base58Alphabet Ripple { get; }
+            = new Base58Alphabet("rpshnaf39wBUDNEGHJKLM4PQRST7VWXYZ2bcdeCg65jkm8oFqi1tuvAxyz");
 
-        private static readonly Base58Alphabet flickr =
-            new Base58Alphabet("123456789abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ");
+        public static Base58Alphabet Flickr { get; }
+            = new Base58Alphabet("123456789abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ");
 
-        public static Base58Alphabet Bitcoin { get { return bitcoin; } }
-        public static Base58Alphabet Ripple { get { return ripple; } }
-        public static Base58Alphabet Flickr { get { return flickr; } }
-
-        public const int Length = 58;
-
-        private Dictionary<char, int> reverseLookupTable;
-
-        public string Value;
-
-        public char this[int index]
+        public Base58Alphabet(string alphabet)
+            : base(58, alphabet)
         {
-            get
-            {
-                return this.Value[index];
-            }
-        }
-
-        public int this[char c]
-        {
-            get
-            {
-                int val;
-                if (!reverseLookupTable.TryGetValue(c, out val))
-                {
-                    throw new InvalidOperationException(String.Format("invalid character: {0}", c));
-                }
-                return val;
-            }
-        }
-
-        public Base58Alphabet(string text)
-        {
-            Require.NotNull(text, "text");
-            if (text.Length != Length)
-            {
-                throw new ArgumentException("Base58 alphabets need to be 58-characters long", "text");
-            }
-            this.Value = text;
-            this.reverseLookupTable = text.Select((c, i) => new KeyValuePair<char, int>(c, i)).ToDictionary(i => i.Key, i => i.Value);
         }
     }
 }

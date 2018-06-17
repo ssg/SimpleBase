@@ -60,7 +60,7 @@ namespace SimpleBaseTest
         [Test]
         public void Encode_EmptyBuffer_ReturnsEmptyString()
         {
-            Assert.AreEqual(String.Empty, Base58.Bitcoin.Encode(new byte[] { }));
+            Assert.AreEqual(String.Empty, Base58.Bitcoin.Encode(new byte[0]));
         }
 
         [Test]
@@ -79,7 +79,7 @@ namespace SimpleBaseTest
         [Test]
         public void Decode_InvalidCharacter_Throws()
         {
-            Assert.Throws<InvalidOperationException>(() => Base58.Bitcoin.Decode("?"));
+            Assert.Throws<ArgumentException>(() => Base58.Bitcoin.Decode("?"));
         }
 
         [Test]
