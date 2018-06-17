@@ -42,9 +42,9 @@ namespace benchmark
             Console.WriteLine();
             Console.WriteLine("{0:#,#} iterations on {1} byte buffer (encode) / {1} character string (decode)",
                 Benchmark.Iterations, Benchmark.BufSize);
-            Console.WriteLine(@"
-Implementation              | Growth | Encode                   | Decode
-----------------------------|--------|--------------------------|------------------");
+            Console.WriteLine(
+                "Implementation              | Growth | Encode                   | Decode\n\r" +
+                "----------------------------|--------|--------------------------|------------------");
             var baseline = benchmarks[0];
             foreach (var benchmark in benchmarks)
             {
