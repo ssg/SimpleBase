@@ -27,7 +27,9 @@ namespace benchmark
         static void Main(string[] args)
         {
 #if DEBUG
-            Console.WriteLine("WARNING: DEBUG mode");
+            Console.WriteLine("***************************************");
+            Console.WriteLine("********* WARNING: DEBUG mode *********");
+            Console.WriteLine("***************************************");
 #else
             Console.WriteLine("Release mode");
 #endif
