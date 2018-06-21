@@ -130,7 +130,7 @@ namespace SimpleBase
             {
                 char* pEnd = inputPtr + textLen;
                 char* pInput = inputPtr;
-                char zeroChar = alphabet[0];
+                char zeroChar = alphabet.Value[0];
                 while (*pInput == zeroChar && pInput != pEnd)
                 {
                     pInput++;
@@ -143,13 +143,19 @@ namespace SimpleBase
                 }
 
                 int outputLen = textLen * reductionFactor / 1000 + 1;
-                byte[] output = new byte[outputLen]; 
+                byte[] table = alphabet.ReverseLookupTable;
+                byte[] output = new byte[outputLen];
                 fixed (byte* outputPtr = output)
                 {
                     byte* pOutputEnd = outputPtr + outputLen - 1;
                     while (pInput != pEnd)
                     {
-                        int carry = alphabet[*pInput++];
+                        char c = *pInput++;
+                        int carry = table[c] - 1;
+                        if (carry < 0)
+                        {
+                            throw alphabet.InvalidCharacter(c);
+                        }
                         for (byte* pDigit = pOutputEnd; pDigit >= outputPtr; pDigit--)
                         {
                             carry += 58 * (*pDigit);

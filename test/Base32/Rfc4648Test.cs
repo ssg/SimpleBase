@@ -18,7 +18,7 @@ using System.Text;
 using SimpleBase;
 using NUnit.Framework;
 
-namespace SimpleBaseTest
+namespace SimpleBaseTest.Base32Test
 {
     [TestFixture]
     class Rfc4648Test

@@ -8,7 +8,8 @@ namespace benchmark
         public const int Iterations = 1_000_000;
 
         // buffer size for average use case scenarios -- needs to be legit Base64 length w/o padding
-        public const int BufSize = 64;
+        public const int EncodeSize = 64;
+        public const int DecodeSize = 80;
 
         public string Name { get; private set; }
         public float Growth { get; private set; }
@@ -60,9 +61,9 @@ namespace benchmark
 
         public void TestEncode()
         {
-            byte[] buf = new byte[BufSize];
+            byte[] buf = new byte[EncodeSize];
             buf[0] = 1;
-            buf[BufSize - 1] = 1; // avoid all-zero optimizations of Base58
+            buf[EncodeSize - 1] = 1; // avoid all-zero optimizations of Base58
             Stopwatch w = Stopwatch.StartNew();
             for (int n = 0; n < Iterations; n++)
             {
@@ -74,7 +75,7 @@ namespace benchmark
 
         public void TestDecode()
         {
-            string str = new String('a', BufSize);
+            string str = new String('a', DecodeSize);
             Stopwatch w = Stopwatch.StartNew();
             for (int n = 0; n < Iterations; n++)
             {

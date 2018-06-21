@@ -19,9 +19,14 @@ namespace benchmark
                 (buf) => Base32.Crockford.Encode(buf, padding: true),
                 (s) => Base32.Crockford.Decode(s)),
 
+            new Benchmark("SimpleBase Base85 Z85", 1.25f,
+                (buf) => Base85.Z85.Encode(buf),
+                (s) => Base85.Z85.Decode(s)),
+
             new Benchmark("SimpleBase Base58", 1.38f,
                 (buf) => Base58.Bitcoin.Encode(buf),
                 (s) => Base58.Bitcoin.Decode(s)),
+
         };
 
         static void Main(string[] args)
@@ -30,8 +35,6 @@ namespace benchmark
             Console.WriteLine("***************************************");
             Console.WriteLine("********* WARNING: DEBUG mode *********");
             Console.WriteLine("***************************************");
-#else
-            Console.WriteLine("Release mode");
 #endif
             runTests();
             Console.WriteLine();
@@ -41,9 +44,9 @@ namespace benchmark
 
         static void runTests()
         {
-            Console.WriteLine();
-            Console.WriteLine("{0:#,#} iterations on {1} byte buffer (encode) / {1} character string (decode)",
-                Benchmark.Iterations, Benchmark.BufSize);
+            Console.WriteLine($"{Benchmark.Iterations:#,#} iterations");
+            Console.WriteLine($"{Benchmark.EncodeSize} byte buffer for encoding");
+            Console.WriteLine($"{Benchmark.DecodeSize} character string for decoding");
             Console.WriteLine("\n\r" +
                 "Implementation              | Growth | Encode                   | Decode\n\r" +
                 "----------------------------|--------|--------------------------|------------------");

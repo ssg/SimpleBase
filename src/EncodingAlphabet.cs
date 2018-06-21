@@ -36,24 +36,9 @@ namespace SimpleBase
         /// and would cause an exception.
         /// </summary>
         /// byte[] has no discernible perf impact and saves memory
-        private readonly byte[] reverseLookupTable = new byte[lookupLength]; 
+        internal readonly byte[] ReverseLookupTable = new byte[lookupLength]; 
 
-        public char this[int index] => Value[index];
-
-        public int this[char c]
-        {
-            get
-            {
-                int value = reverseLookupTable[c] - 1;
-                if (value < 0)
-                {
-                    throw invalidChar(c);
-                }
-                return value;
-            }
-        }
-
-        private static Exception invalidChar(char c)
+        public Exception InvalidCharacter(char c)
         {
             return new ArgumentException($"Invalid character: {c}");
         }
@@ -75,13 +60,13 @@ namespace SimpleBase
             }
         }
 
-        protected void Map(char c, int i)
+        protected void Map(char c, int value)
         {
             if (c >= lookupLength)
             {
                 throw new InvalidOperationException($"Alphabet contains character above {lookupLength}");
             }
-            reverseLookupTable[c] = (byte)(i + 1);
+            ReverseLookupTable[c] = (byte)(value + 1);
         }
 
         public override string ToString()

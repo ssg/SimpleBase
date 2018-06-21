@@ -30,7 +30,7 @@ namespace SimpleBase
 
         private void mapAlternate(char source, char destination)
         {
-            int result = this[destination];
+            int result = ReverseLookupTable[destination] - 1;
             Map(source, result);
             Map(Char.ToLowerInvariant(source), result);
         }

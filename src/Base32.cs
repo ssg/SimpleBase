@@ -67,6 +67,7 @@ namespace SimpleBase
             int outputLen = (((bytesLen - 1) / bitsPerChar) + 1) * bitsPerByte;
             var outputBuffer = new char[outputLen];
 
+            string table = alphabet.Value;
             fixed (byte* inputPtr = bytes)
             fixed (char* outputPtr = outputBuffer)
             {
@@ -84,7 +85,7 @@ namespace SimpleBase
                     {
                         bitsLeft -= bitsPerChar;
                         outputPad = currentByte >> bitsLeft;
-                        *pOutput++ = alphabet[outputPad];
+                        *pOutput++ = table[outputPad];
                         currentByte &= (1 << bitsLeft) - 1;
                     }
                     int nextBits = bitsPerChar - bitsLeft;
@@ -96,7 +97,7 @@ namespace SimpleBase
                         outputPad |= currentByte >> bitsLeft;
                         currentByte &= (1 << bitsLeft) - 1;
                     }
-                    *pOutput++ = alphabet[outputPad];
+                    *pOutput++ = alphabet.Value[outputPad];
                 }
                 if (padding)
                 {
@@ -127,6 +128,7 @@ namespace SimpleBase
             int outputLen = textLen * bitsPerChar / bitsPerByte;
             var outputBuffer = new byte[outputLen];
             int outputPad = 0;
+            byte[] table = alphabet.ReverseLookupTable;
 
             fixed (byte* outputPtr = outputBuffer)
             fixed (char* inputPtr = text)
@@ -137,7 +139,11 @@ namespace SimpleBase
                 while (pInput != pEnd)
                 {
                     char c = *pInput++;
-                    int b = alphabet[c];
+                    int b = table[c] - 1;
+                    if (b < 0)
+                    {
+                        throw alphabet.InvalidCharacter(c);
+                    }
                     if (bitsLeft > bitsPerChar)
                     {
                         bitsLeft -= bitsPerChar;

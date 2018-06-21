@@ -19,7 +19,7 @@ using System.Text;
 using NUnit.Framework;
 using SimpleBase;
 
-namespace SimpleBaseTest
+namespace SimpleBaseTest.Base32Test
 {
     [TestFixture]
     class CrockfordTest

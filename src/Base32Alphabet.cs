@@ -39,7 +39,7 @@ namespace SimpleBase
             {
                 if (Char.IsUpper(c))
                 {
-                    Map(Char.ToLowerInvariant(c), this[c]);
+                    Map(Char.ToLowerInvariant(c), ReverseLookupTable[c] - 1);
                 }
             }
         }
