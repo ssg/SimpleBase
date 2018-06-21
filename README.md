@@ -71,6 +71,28 @@ byte[] result = Base58.Bitcoin.Decode(myText);
 // you can also use "Ripple" or "Flickr" as decoder flavors
 ```
 
+### Base85
+
+Encode a byte array to Ascii85 string:
+
+```csharp
+using SimpleBase;
+
+string result = Base85.Ascii85.Encode(myBuffer);
+// you can also use Z85 as a flavor
+```
+
+Decode an encoded Ascii85 string:
+
+```csharp
+using SimpleBase;
+
+string result = Base85.Ascii85.Decode(encodedString);
+// you can also use Z85 as a flavor
+```
+
+Both "zero" and "space" shortcuts are supported for Ascii85. Z85 is still vanilla.
+
 ### Base16
 
 Encode a byte array to hex string:
@@ -97,15 +119,17 @@ Small buffer sizes are used (64 characters). They are closer to real life applic
 performs really bad in decoding of larger buffer sizes, due to polynomial complexity of 
 numeric base conversions.
 
-CPU: Intel Core i7-7700 @ 3.60Ghz
-1,000,000 iterations on 64 byte buffer (encode) / 64 character string (decode) 
+1,000,000 iterations
+64 byte buffer for encoding
+80 character string for decoding
 
 Implementation              | Growth | Encode                   | Decode
 ----------------------------|--------|--------------------------|------------------
-.NET Framework Base64       | 1.33x  | 0.14                     | 0.19
-SimpleBase Base16           | 2x     | 0.14 (about the same)    | 0.13 (1.5x faster! YAY!)
-SimpleBase Base32 Crockford | 1.6x   | 0.27 (2x slower)         | 0.15 (1.2x faster! YAY!)
-SimpleBase Base58           | 1.38x  | 8.90 (65.4x slower)      | 5.52 (29x slower)
+.NET Framework Base64       | 1.33x  | 0.09                     | 0.20
+SimpleBase Base16           | 2x     | 0.13 (1.5x slower)       | 0.09 (2.3x faster! YAY!)
+SimpleBase Base32 Crockford | 1.6x   | 0.26 (3x slower)         | 0.18 (1.1x faster! YAY!)
+SimpleBase Base85 Z85       | 1.25x  | 0.18 (2x slower)         | 0.25 (1.2x slower)
+SimpleBase Base58           | 1.38x  | 6.07 (68.4x slower)      | 5.43 (27.5x slower)
 
 Notes
 -----
