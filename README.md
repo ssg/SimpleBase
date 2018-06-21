@@ -3,7 +3,7 @@ SimpleBase
 [![NuGet Version](https://img.shields.io/nuget/v/SimpleBase.svg)](https://www.nuget.org/packages/SimpleBase/)
 [![Build Status](https://travis-ci.org/ssg/SimpleBase.svg?branch=master)](https://travis-ci.org/ssg/SimpleBase)
 
-This is my own take for exotic base encodings like Base32 and Base58. I started to write it in 2013 
+This is my own take for exotic base encodings like Base32, Base58 and Base85. I started to write it in 2013 
 as coding practice and kept it as a small pet project. I suggest anyone who wants to brush up 
 their coding skills to give those encoding problems a shot. They turned out to be more challenging 
 than I expected. To grasp the algorithms I had to get a pen and paper to see how the math worked.
@@ -13,6 +13,7 @@ Features
  - Base32: RFC 4648, Crockford and Extended Hex (BASE32-HEX) alphabets with Crockford 
 character substitution (or any other custom alphabets you might want to use)
  - Base58: Bitcoin, Ripple and Flickr alphabets (and any custom alphabet you might have)
+ - Base85: Both Ascii85 and Z85 alphabets are supported
  - Base16: An experimental hexadecimal encoder/decoder just to see how far I can take 
  the optimizations compared to .NET's  implementations. It's quite fast now. It can also be used as a replacement for `SoapHexBinary.Parse` method since it's missing from .NET Core.
  - Thread-safe
@@ -71,6 +72,28 @@ byte[] result = Base58.Bitcoin.Decode(myText);
 // you can also use "Ripple" or "Flickr" as decoder flavors
 ```
 
+### Base85
+
+Encode a byte array to Ascii85 string:
+
+```csharp
+using SimpleBase;
+
+string result = Base85.Ascii85.Encode(myBuffer);
+// you can also use Z85 as a flavor
+```
+
+Decode an encoded Ascii85 string:
+
+```csharp
+using SimpleBase;
+
+byte[] result = Base85.Ascii85.Decode(encodedString);
+// you can also use Z85 as a flavor
+```
+
+Both "zero" and "space" shortcuts are supported for Ascii85. Z85 is still vanilla.
+
 ### Base16
 
 Encode a byte array to hex string:
@@ -97,15 +120,17 @@ Small buffer sizes are used (64 characters). They are closer to real life applic
 performs really bad in decoding of larger buffer sizes, due to polynomial complexity of 
 numeric base conversions.
 
-CPU: Intel Core i7-7700 @ 3.60Ghz
-1,000,000 iterations on 64 byte buffer (encode) / 64 character string (decode) 
+1,000,000 iterations
+64 byte buffer for encoding
+80 character string for decoding
 
 Implementation              | Growth | Encode                   | Decode
 ----------------------------|--------|--------------------------|------------------
-.NET Framework Base64       | 1.33x  | 0.14                     | 0.19
-SimpleBase Base16           | 2x     | 0.14 (about the same)    | 0.13 (1.5x faster! YAY!)
-SimpleBase Base32 Crockford | 1.6x   | 0.27 (2x slower)         | 0.15 (1.2x faster! YAY!)
-SimpleBase Base58           | 1.38x  | 8.90 (65.4x slower)      | 5.52 (29x slower)
+.NET Framework Base64       | 1.33x  | 0.09                     | 0.20
+SimpleBase Base16           | 2x     | 0.13 (1.5x slower)       | 0.09 (2.3x faster! YAY!)
+SimpleBase Base32 Crockford | 1.6x   | 0.26 (3x slower)         | 0.18 (1.1x faster! YAY!)
+SimpleBase Base85 Z85       | 1.25x  | 0.18 (2x slower)         | 0.25 (1.2x slower)
+SimpleBase Base58           | 1.38x  | 6.07 (68.4x slower)      | 5.43 (27.5x slower)
 
 Notes
 -----
