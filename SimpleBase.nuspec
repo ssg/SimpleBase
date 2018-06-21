@@ -9,14 +9,25 @@
         <licenseUrl>http://www.apache.org/licenses/</licenseUrl>
         <projectUrl>https://github.com/ssg/SimpleBase</projectUrl>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
-        <description>Base16, Base32, Base58 encoding/decoding library</description>
+        <description>Base16, Base32, Base58, Base85 encoding/decoding library</description>
         <copyright>Copyright 2014-2018 Sedat Kapanoglu</copyright>
-        <tags>base16 hexadecimal base32 base58 bitcoin ripple flickr crockford extended hex rfc4648</tags>
+        <tags>base16 base32 base58 base85 ascii85 z85 hexadecimal bitcoin ripple flickr crockford extended hex rfc4648</tags>
+        <releaseNotes>
+          <![CDATA[
+          This release contains quite a few breaking changes:
+          
+          - Base85 support
+          - Upgraded supported platform to .NET Standard 2.0 (to use Math.DivRem)
+          - Changed types of exceptions raised in some encoding/decoding classes to make
+            them uniform.
+          - A code overhaul for easier maintenance
+          ]]>
+        </releaseNotes>
     </metadata>
     <files>
         <file src="src\bin\Release\net45\SimpleBase.dll" target="lib\net45\SimpleBase.dll" />
         <file src="src\bin\Release\net45\SimpleBase.pdb" target="lib\net45\SimpleBase.pdb" />
-        <file src="src\bin\Release\netstandard1.3\SimpleBase.dll" target="lib\netstandard1.3\SimpleBase.dll" />
-        <file src="src\bin\Release\netstandard1.3\SimpleBase.pdb" target="lib\netstandard1.3\SimpleBase.pdb" />
+        <file src="src\bin\Release\netstandard2.0\SimpleBase.dll" target="lib\netstandard2.0\SimpleBase.dll" />
+        <file src="src\bin\Release\netstandard2.0\SimpleBase.pdb" target="lib\netstandard2.0\SimpleBase.pdb" />
     </files>
 </package>
