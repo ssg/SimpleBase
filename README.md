@@ -3,7 +3,7 @@ SimpleBase
 [![NuGet Version](https://img.shields.io/nuget/v/SimpleBase.svg)](https://www.nuget.org/packages/SimpleBase/)
 [![Build Status](https://travis-ci.org/ssg/SimpleBase.svg?branch=master)](https://travis-ci.org/ssg/SimpleBase)
 
-This is my own take for exotic base encodings like Base32 and Base58. I started to write it in 2013 
+This is my own take for exotic base encodings like Base32, Base58 and Base85. I started to write it in 2013 
 as coding practice and kept it as a small pet project. I suggest anyone who wants to brush up 
 their coding skills to give those encoding problems a shot. They turned out to be more challenging 
 than I expected. To grasp the algorithms I had to get a pen and paper to see how the math worked.
@@ -13,6 +13,7 @@ Features
  - Base32: RFC 4648, Crockford and Extended Hex (BASE32-HEX) alphabets with Crockford 
 character substitution (or any other custom alphabets you might want to use)
  - Base58: Bitcoin, Ripple and Flickr alphabets (and any custom alphabet you might have)
+ - Base85: Both Ascii85 and Z85 alphabets are supported
  - Base16: An experimental hexadecimal encoder/decoder just to see how far I can take 
  the optimizations compared to .NET's  implementations. It's quite fast now. It can also be used as a replacement for `SoapHexBinary.Parse` method since it's missing from .NET Core.
  - Thread-safe
