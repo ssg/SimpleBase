@@ -88,7 +88,7 @@ Decode an encoded Ascii85 string:
 ```csharp
 using SimpleBase;
 
-string result = Base85.Ascii85.Decode(encodedString);
+byte[] result = Base85.Ascii85.Decode(encodedString);
 // you can also use Z85 as a flavor
 ```
 
