@@ -45,7 +45,7 @@ Decode a Base32-encoded string:
 ```csharp
 using SimpleBase;
 
-string myText;
+string myText = ...
 byte[] result = Base32.Crockford.Decode(myText);
 // you can also use "ExtendedHex" or "Rfc4648" as decoder flavors
 ```
@@ -55,7 +55,7 @@ byte[] result = Base32.Crockford.Decode(myText);
 Encode a byte array:
 
 ```csharp
-byte[] myBuffer;
+byte[] myBuffer = ...
 string result = Base58.Bitcoin.Encode(myBuffer);
 // you can also use "Ripple" or "Flickr" as encoder flavors
 ```
@@ -63,7 +63,7 @@ string result = Base58.Bitcoin.Encode(myBuffer);
 Decode a Base58-encoded string:
 
 ```csharp
-string myText;
+string myText = ...
 byte[] result = Base58.Bitcoin.Decode(myText);
 // you can also use "Ripple" or "Flickr" as decoder flavors
 ```
@@ -73,6 +73,7 @@ byte[] result = Base58.Bitcoin.Decode(myText);
 Encode a byte array to Ascii85 string:
 
 ```csharp
+byte[] myBuffer = ...
 string result = Base85.Ascii85.Encode(myBuffer);
 // you can also use Z85 as a flavor
 ```
@@ -80,6 +81,7 @@ string result = Base85.Ascii85.Encode(myBuffer);
 Decode an encoded Ascii85 string:
 
 ```csharp
+string encodedString = ...
 byte[] result = Base85.Ascii85.Decode(encodedString);
 // you can also use Z85 as a flavor
 ```
@@ -91,6 +93,7 @@ Both "zero" and "space" shortcuts are supported for Ascii85. Z85 is still vanill
 Encode a byte array to hex string:
 
 ```csharp
+byte[] myBuffer = ...
 string result = Base16.EncodeUpper(myBuffer); // encode to uppercase
 // or 
 string result = Base16.EncodeLower(myBuffer); // encode to lowercase
@@ -99,6 +102,7 @@ string result = Base16.EncodeLower(myBuffer); // encode to lowercase
 To decode a valid hex string:
 
 ```csharp
+string text = ...
 byte[] result = Base16.Decode(text); // decodes both upper and lowercase
 ```
 
