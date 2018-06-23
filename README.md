@@ -10,10 +10,10 @@ than I expected. To grasp the algorithms I had to get a pen and paper to see how
 
 Features
 --------
- - Base32: RFC 4648, Crockford and Extended Hex (BASE32-HEX) alphabets with Crockford 
-character substitution (or any other custom alphabets you might want to use)
- - Base58: Bitcoin, Ripple and Flickr alphabets (and any custom alphabet you might have)
- - Base85: Both Ascii85 and Z85 alphabets are supported
+ - Base32: RFC 4648, Crockford and Extended Hex (BASE32-HEX) flavors with Crockford 
+character substitution, or any other custom alphabet you might want to use.
+ - Base58: Bitcoin, Ripple, Flickr and custom flavors.
+ - Base85: Ascii85, Z85 and custom flavors.
  - Base16: An experimental hexadecimal encoder/decoder just to see how far I can take 
  the optimizations compared to .NET's  implementations. It's quite fast now. It can also be used as a replacement for `SoapHexBinary.Parse` method since it's missing from .NET Core.
  - Thread-safe
@@ -55,8 +55,6 @@ byte[] result = Base32.Crockford.Decode(myText);
 Encode a byte array:
 
 ```csharp
-using SimpleBase;
-
 byte[] myBuffer;
 string result = Base58.Bitcoin.Encode(myBuffer);
 // you can also use "Ripple" or "Flickr" as encoder flavors
@@ -65,8 +63,6 @@ string result = Base58.Bitcoin.Encode(myBuffer);
 Decode a Base58-encoded string:
 
 ```csharp
-using SimpleBase;
-
 string myText;
 byte[] result = Base58.Bitcoin.Decode(myText);
 // you can also use "Ripple" or "Flickr" as decoder flavors
@@ -77,8 +73,6 @@ byte[] result = Base58.Bitcoin.Decode(myText);
 Encode a byte array to Ascii85 string:
 
 ```csharp
-using SimpleBase;
-
 string result = Base85.Ascii85.Encode(myBuffer);
 // you can also use Z85 as a flavor
 ```
@@ -86,8 +80,6 @@ string result = Base85.Ascii85.Encode(myBuffer);
 Decode an encoded Ascii85 string:
 
 ```csharp
-using SimpleBase;
-
 byte[] result = Base85.Ascii85.Decode(encodedString);
 // you can also use Z85 as a flavor
 ```
@@ -99,8 +91,6 @@ Both "zero" and "space" shortcuts are supported for Ascii85. Z85 is still vanill
 Encode a byte array to hex string:
 
 ```csharp
-using SimpleBase;
-
 string result = Base16.EncodeUpper(myBuffer); // encode to uppercase
 // or 
 string result = Base16.EncodeLower(myBuffer); // encode to lowercase
@@ -109,8 +99,6 @@ string result = Base16.EncodeLower(myBuffer); // encode to lowercase
 To decode a valid hex string:
 
 ```csharp
-using SimpleBase;
-
 byte[] result = Base16.Decode(text); // decodes both upper and lowercase
 ```
 
