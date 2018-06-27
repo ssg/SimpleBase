@@ -8,7 +8,7 @@ namespace SimpleBaseTest
     [Parallelizable]
     internal class Base16Test
     {
-        private static TestCaseData[] testData = new[]
+        private static readonly TestCaseData[] testData = new[]
         {
             new TestCaseData(new byte[] { }, ""),
             new TestCaseData(new byte[] { 0xAB }, "AB"),
@@ -38,7 +38,7 @@ namespace SimpleBaseTest
         public void Decode(byte[] expectedOutput, string input)
         {
             var result = Base16.Decode(input);
-            CollectionAssert.AreEqual(expectedOutput, result);
+            CollectionAssert.AreEqual(expectedOutput, result.ToArray());
         }
 
         [Test]
@@ -46,7 +46,7 @@ namespace SimpleBaseTest
         public void Decode_LowerCase(byte[] expectedOutput, string input)
         {
             var result = Base16.Decode(input.ToLowerInvariant());
-            CollectionAssert.AreEqual(expectedOutput, result);
+            CollectionAssert.AreEqual(expectedOutput, result.ToArray());
         }
 
         [TestCase("AZ12")]

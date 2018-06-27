@@ -24,17 +24,14 @@ namespace SimpleBase
     /// </summary>
     public static class Base16
     {
-        private const string lowerAlphabet = "0123456789abcdef";
-        private const string upperAlphabet = "0123456789ABCDEF";
-
         /// <summary>
         /// Encode to Base16 representation using uppercase lettering
         /// </summary>
         /// <param name="bytes">Bytes to encode</param>
         /// <returns>Base16 string</returns>
-        public static string EncodeUpper(byte[] bytes)
+        public unsafe static string EncodeUpper(ReadOnlySpan<byte> bytes)
         {
-            return encode(bytes, upperAlphabet);
+            return encode(bytes, 'A');
         }
 
         /// <summary>
@@ -42,40 +39,59 @@ namespace SimpleBase
         /// </summary>
         /// <param name="bytes">Bytes to encode</param>
         /// <returns>Base16 string</returns>
-        public static string EncodeLower(byte[] bytes)
+        public unsafe static string EncodeLower(ReadOnlySpan<byte> bytes)
         {
-            return encode(bytes, lowerAlphabet);
+            return encode(bytes, 'a');
         }
 
-        private static unsafe string encode(byte[] bytes, string alphabet)
+        private static unsafe string encode(ReadOnlySpan<byte> bytes, char baseChar)
         {
-            Require.NotNull(bytes, nameof(bytes));
             int bytesLen = bytes.Length;
             if (bytesLen == 0)
             {
                 return String.Empty;
             }
-            var output = new String('\0', bytesLen * 2);
-            fixed (char *outputPtr = output)
-            fixed (byte *bytesPtr = bytes)
-            fixed (char *alphabetPtr = alphabet)
+            var output = new String('\0', bytesLen << 1);
+            fixed (char* outputPtr = output)
+            fixed (byte* bytesPtr = bytes)
             {
                 char* pOutput = outputPtr;
                 byte* pInput = bytesPtr;
-                byte* pEnd = pInput + bytesLen;
-                while (pInput != pEnd)
+
+                char a = baseChar;
+
+                byte hex(byte b) => (b < 10) ? (byte)('0' + b) : (byte)(a + b - 10);
+
+                int octets = bytesLen / 2;
+                for (int i = 0; i < octets; i++, pInput += 2, pOutput += 4)
                 {
-                    int b = *pInput++;
-                    char c1 = alphabetPtr[((uint)b) >> 4];
-                    char c2 = alphabetPtr[b & 0x0F];
-                    *pOutput++ = c1;
-                    *pOutput++ = c2;
+                    // reduce memory accesses by reading and writing 8 bytes at once
+                    ushort pair = *(ushort*)pInput;
+                    ulong pad = hex((byte)((pair >> 4) & 0x0F))
+                            | ((ulong)hex((byte)(pair & 0x0F)) << 16)
+                            | ((ulong)hex((byte)(pair >> 12)) << 32)
+                            | ((ulong)hex((byte)((pair >> 8) & 0x0F)) << 48);
+                    *((ulong*)pOutput) = pad;
+                }
+                if (bytesLen % 2 > 0)
+                {
+                    byte b = *pInput++;
+                    *pOutput++ = (char)hex((byte)(b >> 4));
+                    *pOutput++ = (char)hex((byte)(b & 0x0F));
                 }
             }
             return output;
         }
 
-        public static unsafe byte[] Decode(string text)
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static char getHexCharLower(int b) => (b < 10) ? (char)('0' + b) : (char)('a' + b);
+
+        /// <summary>
+        /// Decode Base16 text into bytes
+        /// </summary>
+        /// <param name="text">Base16 text</param>
+        /// <returns>Decoded bytes</returns>
+        public static unsafe Span<byte> Decode(string text)
         {
             Require.NotNull(text, nameof(text));
             int textLen = text.Length;
@@ -102,7 +118,7 @@ namespace SimpleBase
                     int b2 = getHexByte(c2);
                     *pOutput = (byte)(b1 << 4 | b2);
                     pOutput++;
-                }            
+                }
             }
             return output;
         }
@@ -128,7 +144,7 @@ namespace SimpleBase
             {
                 return n;
             }
-        Error:
+            Error:
             throw new ArgumentException($"Invalid hex character: {c}");
         }
     }
