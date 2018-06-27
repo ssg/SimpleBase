@@ -40,11 +40,10 @@ namespace SimpleBase
         /// </summary>
         /// <param name="bytes">Bytes to encode</param>
         /// <returns>Encoded string</returns>
-        public unsafe string Encode(byte[] bytes)
+        public unsafe string Encode(ReadOnlySpan<byte> bytes)
         {
             const int growthPercentage = 138;
 
-            Require.NotNull(bytes, "buffer");
             int bytesLen = bytes.Length;
             if (bytesLen == 0)
             {
@@ -115,11 +114,11 @@ namespace SimpleBase
         /// </summary>
         /// <param name="text">Base58 encoded text</param>
         /// <returns>Array of decoded bytes</returns>
-        public unsafe byte[] Decode(string text)
+        public unsafe Span<byte> Decode(string text)
         {
             const int reductionFactor = 733; // https://github.com/bitcoin/bitcoin/blob/master/src/base58.cpp
 
-            Require.NotNull(text, "text");
+            Require.NotNull(text, nameof(text));
             var textLen = text.Length;
             if (textLen == 0)
             {
