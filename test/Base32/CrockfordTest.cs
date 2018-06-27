@@ -49,11 +49,11 @@ namespace SimpleBaseTest.Base32Test
         [TestCaseSource(nameof(testData))]
         public void Decode_ReturnsExpectedValues(string expectedOutput, string input)
         {
-            byte[] bytes = Base32.Crockford.Decode(input);
-            string result = Encoding.ASCII.GetString(bytes);
+            var bytes = Base32.Crockford.Decode(input);
+            string result = Encoding.ASCII.GetString(bytes.ToArray());
             Assert.AreEqual(expectedOutput, result);
             bytes = Base32.Crockford.Decode(input.ToLowerInvariant());
-            result = Encoding.ASCII.GetString(bytes);
+            result = Encoding.ASCII.GetString(bytes.ToArray());
             Assert.AreEqual(expectedOutput, result);
         }
 
@@ -71,13 +71,13 @@ namespace SimpleBaseTest.Base32Test
         {
             var expectedResult = Base32.Crockford.Decode(actual);
             var result = Base32.Crockford.Decode(equivalent);
-            Assert.AreEqual(expectedResult, result);
+            Assert.AreEqual(expectedResult.ToArray(), result.ToArray());
         }
 
         [Test]
-        public void Encode_NullBytes_ThrowsArgumentNullException([Values(true, false)]bool padding)
+        public void Encode_NullBytes_ReturnsEmptyString()
         {
-            Assert.Throws<ArgumentNullException>(() => Base32.Crockford.Encode(null, padding));
+            Assert.AreEqual(String.Empty, Base32.Crockford.Encode(null, true));
         }
 
         [Test]

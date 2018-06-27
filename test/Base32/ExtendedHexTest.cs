@@ -23,7 +23,7 @@ namespace SimpleBaseTest.Base32Test
     [TestFixture]
     class ExtendedHexTest
     {
-        private static string[][] testData = new[]
+        private static readonly string[][] testData = new[]
         {
             new[] { "", "" },
             new[] { "f", "CO======" },
@@ -48,18 +48,18 @@ namespace SimpleBaseTest.Base32Test
         [TestCaseSource("testData")]
         public void Decode_ReturnsExpectedValues(string expectedOutput, string input)
         {
-            byte[] bytes = Base32.ExtendedHex.Decode(input);
-            string result = Encoding.ASCII.GetString(bytes);
+            var bytes = Base32.ExtendedHex.Decode(input);
+            string result = Encoding.ASCII.GetString(bytes.ToArray());
             Assert.AreEqual(expectedOutput, result);
             bytes = Base32.ExtendedHex.Decode(input.ToLowerInvariant());
-            result = Encoding.ASCII.GetString(bytes);
+            result = Encoding.ASCII.GetString(bytes.ToArray());
             Assert.AreEqual(expectedOutput, result);
         }
 
         [Test]
-        public void Encode_NullBytes_ThrowsArgumentNullException([Values(true, false)]bool padding)
+        public void Encode_NullBytes_ReturnsEmptyString()
         {
-            Assert.Throws<ArgumentNullException>(() => Base32.ExtendedHex.Encode(null, padding));
+            Assert.AreEqual(String.Empty, Base32.ExtendedHex.Encode(null, false));
         }
 
         [Test]

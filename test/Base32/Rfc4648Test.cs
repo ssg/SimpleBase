@@ -23,7 +23,7 @@ namespace SimpleBaseTest.Base32Test
     [TestFixture]
     class Rfc4648Test
     {
-        private static string[][] testData = new[]
+        private static readonly string[][] testData = new[]
         {
             new[] { "", "" },
             new[] {"f", "MY======" },
@@ -51,24 +51,24 @@ namespace SimpleBaseTest.Base32Test
         [TestCaseSource("testData")]
         public void Decode_ReturnsExpectedValues(string expectedOutput, string input)
         {
-            byte[] bytes = Base32.Rfc4648.Decode(input);
-            string result = Encoding.ASCII.GetString(bytes);
+            var bytes = Base32.Rfc4648.Decode(input);
+            string result = Encoding.ASCII.GetString(bytes.ToArray());
             Assert.AreEqual(expectedOutput, result);
             bytes = Base32.Rfc4648.Decode(input.ToLowerInvariant());
-            result = Encoding.ASCII.GetString(bytes);
+            result = Encoding.ASCII.GetString(bytes.ToArray());
             Assert.AreEqual(expectedOutput, result);
         }
 
         [Test]
-        public void Encode_NullBytes_ThrowsArgumentNullException([Values(true, false)]bool padding)
+        public void Encode_NullBytes_ReturnsEmptyString()
         {
-            Assert.Throws<ArgumentNullException>(() => Base32.Crockford.Encode(null, padding));
+            Assert.AreEqual(String.Empty, Base32.Rfc4648.Encode(null, true));
         }
 
         [Test]
         public void Decode_NullString_ThrowsArgumentNullException()
         {
-            Assert.Throws<ArgumentNullException>(() => Base32.Crockford.Decode(null));
+            Assert.Throws<ArgumentNullException>(() => Base32.Rfc4648.Decode(null));
         }
 
         [Test]

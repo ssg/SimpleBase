@@ -53,9 +53,8 @@ namespace SimpleBase
         /// <param name="bytes">Buffer to be encoded</param>
         /// <param name="padding">Append padding characters in the output</param>
         /// <returns>Encoded string</returns>
-        public unsafe string Encode(byte[] bytes, bool padding)
+        public unsafe string Encode(ReadOnlySpan<byte> bytes, bool padding)
         {
-            Require.NotNull(bytes, nameof(bytes));
             int bytesLen = bytes.Length;
             if (bytesLen == 0)
             {
@@ -65,27 +64,23 @@ namespace SimpleBase
             // we are ok with slightly larger buffer since the output string will always
             // have the exact length of the output produced.
             int outputLen = (((bytesLen - 1) / bitsPerChar) + 1) * bitsPerByte;
-            var outputBuffer = new char[outputLen];
+            string output = new String('\0', outputLen);
 
-            string table = alphabet.Value;
             fixed (byte* inputPtr = bytes)
-            fixed (char* outputPtr = outputBuffer)
+            fixed (char* outputPtr = output)
+            fixed (char* tablePtr = alphabet.Value)
             {
                 char* pOutput = outputPtr;
-                char* pOutputEnd = outputPtr + outputLen;
                 byte* pInput = inputPtr;
-
-                int bitsLeft = bitsPerByte;
-                int currentByte = *pInput;
                 byte* pEnd = pInput + bytesLen;
-                while (pInput != pEnd)
+
+                for (int bitsLeft = bitsPerByte, currentByte = *pInput, outputPad = 0;  pInput != pEnd; )
                 {
-                    int outputPad;
                     if (bitsLeft > bitsPerChar)
                     {
                         bitsLeft -= bitsPerChar;
                         outputPad = currentByte >> bitsLeft;
-                        *pOutput++ = table[outputPad];
+                        *pOutput++ = tablePtr[outputPad];
                         currentByte &= (1 << bitsLeft) - 1;
                     }
                     int nextBits = bitsPerChar - bitsLeft;
@@ -97,16 +92,21 @@ namespace SimpleBase
                         outputPad |= currentByte >> bitsLeft;
                         currentByte &= (1 << bitsLeft) - 1;
                     }
-                    *pOutput++ = alphabet.Value[outputPad];
+                    *pOutput++ = tablePtr[outputPad];
                 }
                 if (padding)
                 {
-                    while (pOutput != pOutputEnd)
+                    for (char* pOutputEnd = outputPtr + outputLen;  pOutput != pOutputEnd; pOutput++)
                     {
-                        *pOutput++ = paddingChar;
+                        *pOutput = paddingChar;
                     }
                 }
-                return new String(outputPtr, 0, (int)(pOutput - outputPtr));
+                int finalOutputLen = (int)(pOutput - outputPtr);
+                if (finalOutputLen == outputLen)
+                {
+                    return output; // avoid unnecessary copying
+                }
+                return new String(outputPtr, 0, finalOutputLen);
             }
         }
 
@@ -115,7 +115,7 @@ namespace SimpleBase
         /// </summary>
         /// <param name="text">Encoded Base32 string</param>
         /// <returns>Decoded byte array</returns>
-        public unsafe byte[] Decode(string text)
+        public unsafe Span<byte> Decode(string text)
         {
             Require.NotNull(text, nameof(text));
             text = text.TrimEnd(paddingChar);
