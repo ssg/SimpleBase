@@ -5,7 +5,7 @@ namespace benchmark
 {
     internal class Benchmark
     {
-        public const int Iterations = 1_000_000;
+        public const int Iterations = 5_000_000;
 
         // buffer size for average use case scenarios -- needs to be legit Base64 length w/o padding
         public const int EncodeSize = 64;
