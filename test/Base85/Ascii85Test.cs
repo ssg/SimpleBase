@@ -30,9 +30,9 @@ namespace SimpleBaseTest.Base85Test
         }
 
         [Test]
-        public void Encode_NullBuffer_ThrowsArgumentNullException()
+        public void Encode_NullBuffer_ReturnsEmptyString()
         {
-            Assert.Throws<ArgumentNullException>(() => Base85.Ascii85.Encode(null));
+            Assert.AreEqual(String.Empty, Base85.Ascii85.Encode(null));
         }
 
         [Test]
@@ -52,7 +52,7 @@ namespace SimpleBaseTest.Base85Test
         public void Decode_TestVectors_ShouldDecodeCorrectly(byte[] expectedOutput, string input)
         {
             var result = Base85.Ascii85.Decode(input);
-            CollectionAssert.AreEqual(expectedOutput, result);
+            CollectionAssert.AreEqual(expectedOutput, result.ToArray());
         }
     }
 }

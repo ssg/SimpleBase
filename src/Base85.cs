@@ -38,9 +38,13 @@ namespace SimpleBase
             this.alphabet = alphabet;
         }
 
-        public unsafe string Encode(byte[] bytes)
+        /// <summary>
+        /// Encode the given bytes into Base85
+        /// </summary>
+        /// <param name="bytes">Bytes to encode</param>
+        /// <returns>Encoded text</returns>
+        public unsafe string Encode(ReadOnlySpan<byte> bytes)
         {
-            Require.NotNull(bytes, nameof(bytes));
             int bytesLen = bytes.Length;
             if (bytesLen == 0)
             {
@@ -50,7 +54,7 @@ namespace SimpleBase
             bool hasShortcut = alphabet.HasShortcut;
 
             // adjust output length based on prefix and suffix settings
-            int maxOutputLen = bytesLen * stringBlockSize / byteBlockSize;
+            int maxOutputLen = (bytesLen * stringBlockSize / byteBlockSize) + 1;
 
             char[] output = new char[maxOutputLen];
             int fullLen = (bytesLen >> 2) << 2; // rounded
@@ -78,11 +82,11 @@ namespace SimpleBase
                 if (remainingBytes > 0)
                 {
                     long input = 0;
-                    for (int n = remainingBytes; n > 0; n--)
+                    for (int n = 0; n <  remainingBytes; n++)
                     {
-                        input |= (uint)*pInput++ << (n << 3);
+                        input |= (uint)*pInput++ << ((3-n) << 3);
                     }
-                    writeOutput(ref pOutput, table, input, stringBlockSize - (remainingBytes - 2), hasShortcut);
+                    writeOutput(ref pOutput, table, input, remainingBytes + 1, hasShortcut);
                 }
 
                 int outputLen = (int)(pOutput - outputPtr);
@@ -118,7 +122,7 @@ namespace SimpleBase
             pOutput += stringLength;
         }
 
-        public unsafe byte[] Decode(string text)
+        public unsafe Span<byte> Decode(string text)
         {
             Require.NotNull(text, nameof(text));
             int textLen = text.Length;
@@ -193,16 +197,7 @@ namespace SimpleBase
                     writeDecodedValue(ref pDecodeBuffer, value, blockIndex - 1);
                 }
                 int actualOutputLength = (int)(pDecodeBuffer - decodeBufferPtr);
-                byte[] result = new byte[actualOutputLength];
-                fixed (byte* resultPtr = result)
-                {
-                    // we are bound to allocate a new buffer since we don't know
-                    // the correct output size at the beginning. that incurs an overhead of
-                    // text.Length x 4 bytes during processing. this API isn't designed to decode
-                    // megabytes of data anyways.
-                    Buffer.MemoryCopy(decodeBufferPtr, resultPtr, actualOutputLength, actualOutputLength);
-                }
-                return result;
+                return new Span<byte>(decodeBufferPtr, actualOutputLength);
             }
         }
 
