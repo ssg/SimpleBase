@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
   <metadata>
     <id>SimpleBase</id>
-    <version>1.6.0</version>
+    <version>1.6.1</version>
     <title>SimpleBase</title>
     <authors>Sedat Kapanoglu</authors>
     <owners>Sedat Kapanoglu</owners>
@@ -23,8 +23,15 @@
           Improvements:
 
           - Increased Base16 and Base32 encoding performance
+          
+          Changes in 1.6.1:
+          
+          - Properly include NuGet dependency to System.Memory
           ]]>
     </releaseNotes>
+    <dependencies>
+      <dependency id="System.Memory" version="4.5.1" />
+    </dependencies>
   </metadata>
   <files>
     <file src="src\bin\Release\net45\SimpleBase.dll" target="lib\net45\SimpleBase.dll" />
