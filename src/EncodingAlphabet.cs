@@ -20,9 +20,9 @@ namespace SimpleBase
 {
     public abstract class EncodingAlphabet
     {
-        public int Length { get; }
+        public int Length { get; private set; }
 
-        public string Value { get; }
+        public string Value { get; private set; }
 
         /// <summary>
         /// Specifies the highest possible char value in an encoding alphabet
