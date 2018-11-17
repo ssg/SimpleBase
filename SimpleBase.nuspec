@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
   <metadata>
     <id>SimpleBase</id>
-    <version>1.6.1</version>
+    <version>1.7.0</version>
     <title>SimpleBase</title>
     <authors>Sedat Kapanoglu</authors>
     <owners>Sedat Kapanoglu</owners>
@@ -14,19 +14,14 @@
     <tags>base16 base32 base58 base85 ascii85 z85 hexadecimal bitcoin ripple flickr crockford extended hex rfc4648</tags>
     <releaseNotes>
       <![CDATA[
-          Breaking changes in this release:
-
-          - Use Span<T> instead of byte[], so callers can avoid some unnecessary memory copy operations
-          - Encoding functions don't throw exception on null input but return empty result instead
-            because of non-nullability of Span<T> types
+          New features:
+          
+          - Stream-based methods for Base16/Base32/Base85 (Base58 isn't suitable by nature)
+          - New ReadOnlySpan<char> overloads to Decode functions          
 
           Improvements:
 
-          - Increased Base16 and Base32 encoding performance
-          
-          Changes in 1.6.1:
-          
-          - Properly include NuGet dependency to System.Memory
+          - Slightly better decoding performance on Base16 and Base32
           ]]>
     </releaseNotes>
     <dependencies>

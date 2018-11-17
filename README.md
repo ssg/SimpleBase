@@ -106,23 +106,49 @@ string text = ...
 byte[] result = Base16.Decode(text); // decodes both upper and lowercase
 ```
 
+### Stream Mode
+
+Most encoding classes also support a stream mode that can work on streams, be it a network connection, a file
+or whatever you want. They are ideal for handling arbitrarily large data as they don't consume memory 
+other than a small buffer when encoding or decoding. Their syntaxes are mostly identical. 
+Text encoding decoding is done through a `TextReader`/`TextWriter` and the rest is read through a `Stream` 
+interface. Here is a simple code that encodes a file to another file using Base85 encoding:
+
+```csharp
+using (var input = File.Open("somefile.bin"))
+using (var output = File.Create("somefile.ascii85"))
+using (var writer = new TextWriter(output)) // you can specify encoding here
+{
+  Base85.Ascii85.Encode(input, writer);
+}
+```
+
+Decode works similarly. Here is a Base32 file decoder:
+
+```csharp
+using (var input = File.Open("somefile.b32"))
+using (var output = File.Create("somefile.bin"))
+using (var reader = new TextReader(input)) // specify encoding here
+{
+	Base32.Crockford.Decode(reader, output);
+}
+```
+
 Benchmark Results
 -----------------
 Small buffer sizes are used (64 characters). They are closer to real life applications. Base58 
 performs really bad in decoding of larger buffer sizes, due to polynomial complexity of 
 numeric base conversions.
 
-5,000,000 iterations
-64 byte buffer for encoding
-80 character string for decoding
+64 byte buffer for encoding · 5,000,000 iterations · 80 character string for decoding
 
 Implementation              | Growth | Encode                   | Decode
 ----------------------------|--------|--------------------------|------------------
-.NET Framework Base64       | 1.33x  | 0.47                     | 1.02
-SimpleBase Base16           | 2x     | 0.62 (1.3x slower)       | 0.45 (2.3x faster! YAY!)
-SimpleBase Base32 Crockford | 1.6x   | 1.29 (2.7x slower)       | 1.03 (about the same)
-SimpleBase Base85 Z85       | 1.25x  | 0.90 (1.9x slower)       | 1.14 (1.1x slower)
-SimpleBase Base58           | 1.38x  | 30.78 (65.5x slower)     | 27.24 (26.8x slower)
+.NET Framework Base64       | 1.33x  | 0.45                     | 1.23
+SimpleBase Base16           | 2x     | 0.61 (1.4x slower)       | 0.51 (2.4x faster! YAY!)
+SimpleBase Base32 Crockford | 1.6x   | 1.22 (2.7x slower)       | 1.05 (1.2x faster! YAY!)
+SimpleBase Base85 Z85       | 1.25x  | 0.93 (2.1x slower)       | 1.27 (about the same)
+SimpleBase Base58           | 1.38x  | 30.43 (67.9x slower)     | 28.06 (22.8x slower)
 
 Notes
 -----
