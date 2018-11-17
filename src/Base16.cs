@@ -17,7 +17,6 @@
 using System;
 using System.IO;
 using System.Runtime.CompilerServices;
-using System.Text;
 
 namespace SimpleBase
 {
@@ -88,14 +87,19 @@ namespace SimpleBase
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static char getHexCharLower(int b) => (b < 10) ? (char)('0' + b) : (char)('a' + b);
 
+        public static Span<byte> Decode(string text)
+        {
+            Require.NotNull(text, nameof(text));
+            return Decode(text.AsSpan());
+        }
+
         /// <summary>
         /// Decode Base16 text into bytes
         /// </summary>
         /// <param name="text">Base16 text</param>
         /// <returns>Decoded bytes</returns>
-        public static unsafe Span<byte> Decode(string text)
+        public static unsafe Span<byte> Decode(ReadOnlySpan<char> text)
         {
-            Require.NotNull(text, nameof(text));
             int textLen = text.Length;
             if (textLen == 0)
             {
@@ -151,6 +155,7 @@ namespace SimpleBase
         }
 
         #region Stream based methods
+
         /// <summary>
         /// Decode Base16 text through streams for generic use. Stream based variant tries to consume
         /// as little memory as possible, and relies of .NET's own underlying buffering mechanisms,
@@ -162,24 +167,21 @@ namespace SimpleBase
         {
             Require.NotNull(input, nameof(input));
             Require.NotNull(output, nameof(output));
+            const int bufferSize = 4096;
+            var buffer = new char[bufferSize];
             using (var writer = new BinaryWriter(output))
+            {
                 while (true)
                 {
-                    int i1 = input.Read();
-                    if (i1 < 0)
+                    int bytesRead = input.Read(buffer, 0, bufferSize);
+                    if (bytesRead < 1)
                     {
                         break;
                     }
-                    int i2 = input.Read();
-                    if (i2 < 0)
-                    {
-                        break;
-                    }
-                    int b1 = getHexByte((char)i1);
-                    int b2 = getHexByte((char)i2);
-                    byte result = (byte)((b1 << 4) | b2);
-                    writer.Write(result);
+                    var result = Decode(buffer.AsSpan(0, bytesRead));
+                    writer.Write(result.ToArray());
                 }
+            }
         }
 
         /// <summary>
@@ -209,14 +211,16 @@ namespace SimpleBase
             var buffer = new byte[bufferLength];
             while (true)
             {
-                int i = input.Read(buffer, 0, bufferLength);
-                if (i == 0)
+                int bytesRead = input.Read(buffer, 0, bufferLength);
+                if (bytesRead < 1)
                 {
                     break;
                 }
-                output.Write(internalEncode(new ReadOnlySpan<byte>(buffer, 0, i), baseChar));
+                var result = internalEncode(buffer.AsSpan(0, bytesRead), baseChar);
+                output.Write(result);
             }
         }
-        #endregion
+
+        #endregion Stream based methods
     }
 }
