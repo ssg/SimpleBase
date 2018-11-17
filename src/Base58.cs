@@ -112,13 +112,23 @@ namespace SimpleBase
         /// <summary>
         /// Decode a Base58 representation
         /// </summary>
+        /// <param name="text">Encoded text</param>
+        /// <returns>Decoded bytes</returns>
+        public Span<byte> Decode(string text)
+        {
+            Require.NotNull(text, nameof(text));
+            return Decode(text.AsSpan());
+        }
+
+        /// <summary>
+        /// Decode a Base58 representation
+        /// </summary>
         /// <param name="text">Base58 encoded text</param>
         /// <returns>Array of decoded bytes</returns>
-        public unsafe Span<byte> Decode(string text)
+        public unsafe Span<byte> Decode(ReadOnlySpan<char> text)
         {
             const int reductionFactor = 733; // https://github.com/bitcoin/bitcoin/blob/master/src/base58.cpp
 
-            Require.NotNull(text, nameof(text));
             var textLen = text.Length;
             if (textLen == 0)
             {

@@ -73,7 +73,7 @@ namespace SimpleBaseTest
         [Test]
         public void Decode_NullBuffer_ThrowsArgumentNullException()
         {
-            Assert.Throws<ArgumentNullException>(() => Base58.Bitcoin.Decode(null));
+            Assert.Throws<ArgumentNullException>(() => Base58.Bitcoin.Decode((string)null));
         }
 
         [Test]
