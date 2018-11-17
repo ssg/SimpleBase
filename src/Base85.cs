@@ -15,6 +15,7 @@
 */
 
 using System;
+using System.IO;
 using System.Runtime.CompilerServices;
 
 namespace SimpleBase
@@ -122,9 +123,50 @@ namespace SimpleBase
             pOutput += stringLength;
         }
 
-        public unsafe Span<byte> Decode(string text)
+        public void Encode(Stream input, TextWriter output)
+        {
+            Require.NotNull(input, nameof(input));
+            Require.NotNull(output, nameof(output));
+            const int bufferSize = 4096;
+            var buffer = new byte[bufferSize];
+            while (true)
+            {
+                int bytesRead = input.Read(buffer, 0, bufferSize);
+                if (bytesRead < 1)
+                {
+                    break;
+                }
+                var result = Encode(buffer.AsSpan(0, bytesRead));
+                output.Write(result);
+            }
+        }
+
+        public void Decode(TextReader input, Stream output)
+        {
+            Require.NotNull(input, nameof(input));
+            Require.NotNull(output, nameof(output));
+            const int bufferSize = 5120;
+            var buffer = new char[bufferSize];
+            while (true)
+            {
+                int charsRead = input.Read(buffer, 0, bufferSize);
+                if (charsRead < 1)
+                {
+                    break;
+                }
+                var result = Decode(buffer.AsSpan(0, charsRead));
+                output.Write(result.ToArray(), 0, result.Length);
+            }
+        }
+
+        public Span<byte> Decode(string text)
         {
             Require.NotNull(text, nameof(text));
+            return Decode(text.AsSpan());
+        }
+        
+        public unsafe Span<byte> Decode(ReadOnlySpan<char> text)
+        {            
             int textLen = text.Length;
             if (textLen == 0)
             {

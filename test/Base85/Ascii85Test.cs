@@ -1,6 +1,7 @@
 ﻿using NUnit.Framework;
 using SimpleBase;
 using System;
+using System.IO;
 
 namespace SimpleBaseTest.Base85Test
 {
@@ -32,6 +33,18 @@ namespace SimpleBaseTest.Base85Test
 
         [Test]
         [TestCaseSource(nameof(testVectors))]
+        public void Encode_TestVectorsOnStream_ShouldEncodeCorrectly(byte[] input, string expectedOutput)
+        {
+            using (var inputStream = new MemoryStream(input))
+            using (var writer = new StringWriter())
+            {
+                Base85.Ascii85.Encode(inputStream, writer);
+                Assert.AreEqual(expectedOutput, writer.ToString());
+            }
+        }
+
+        [Test]
+        [TestCaseSource(nameof(testVectors))]
         public void Encode_TestVectors_ShouldEncodeCorrectly(byte[] input, string expectedOutput)
         {
             var result = Base85.Ascii85.Encode(input);
@@ -59,7 +72,19 @@ namespace SimpleBaseTest.Base85Test
         [Test]
         public void Decode_NullText_ThrowsArgumentNullException()
         {
-            Assert.Throws<ArgumentNullException>(() => Base85.Ascii85.Decode(null));
+            Assert.Throws<ArgumentNullException>(() => Base85.Ascii85.Decode((string)null));
+        }
+
+        [Test]
+        [TestCaseSource(nameof(testVectors))]
+        public void Decode_TestVectorsWithStream_ShouldDecodeCorrectly(byte[] expectedOutput, string input)
+        {
+            using (var inputStream = new StringReader(input))
+            using (var writer = new MemoryStream())
+            {
+                Base85.Ascii85.Decode(inputStream, writer);
+                CollectionAssert.AreEqual(expectedOutput, writer.ToArray());
+            }
         }
 
         [Test]

@@ -36,7 +36,7 @@ namespace SimpleBaseTest.Base85Test
         [Test]
         public void Decode_NullText_ThrowsArgumentNullException()
         {
-            Assert.Throws<ArgumentNullException>(() => Base85.Z85.Decode(null));
+            Assert.Throws<ArgumentNullException>(() => Base85.Z85.Decode((string)null));
         }
 
         [Test]
