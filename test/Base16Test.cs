@@ -88,6 +88,8 @@ namespace SimpleBaseTest
 
         [TestCase("AZ12")]
         [TestCase("ZAAA")]
+        [TestCase("!AAA")]
+        [TestCase("=AAA")]
         public void Decode_InvalidChar_Throws(string input)
         {
             Assert.Throws<ArgumentException>(() => Base16.Decode(input));
