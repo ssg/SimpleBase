@@ -84,9 +84,6 @@ namespace SimpleBase
             return output;
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static char getHexCharLower(int b) => (b < 10) ? (char)('0' + b) : (char)('a' + b);
-
         public static Span<byte> Decode(string text)
         {
             Require.NotNull(text, nameof(text));

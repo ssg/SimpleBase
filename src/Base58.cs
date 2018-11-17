@@ -21,8 +21,6 @@ namespace SimpleBase
 {
     public sealed class Base58
     {
-        private static readonly BigInteger baseLength = 58;
-
         public static readonly Base58 Bitcoin = new Base58(Base58Alphabet.Bitcoin);
         public static readonly Base58 Ripple = new Base58(Base58Alphabet.Ripple);
         public static readonly Base58 Flickr = new Base58(Base58Alphabet.Flickr);
