@@ -68,7 +68,7 @@ namespace SimpleBaseTest.Base32Test
         [Test]
         public void Decode_NullString_ThrowsArgumentNullException()
         {
-            Assert.Throws<ArgumentNullException>(() => Base32.Rfc4648.Decode(null));
+            Assert.Throws<ArgumentNullException>(() => Base32.Rfc4648.Decode((string)null));
         }
 
         [Test]

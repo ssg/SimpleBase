@@ -17,6 +17,7 @@ using System;
 using System.Text;
 using SimpleBase;
 using NUnit.Framework;
+using System.IO;
 
 namespace SimpleBaseTest.Base32Test
 {
@@ -34,6 +35,42 @@ namespace SimpleBaseTest.Base32Test
             new[] { "foobar", "CPNMUOJ1E8======" },
             new[] { "1234567890123456789012345678901234567890", "64P36D1L6ORJGE9G64P36D1L6ORJGE9G64P36D1L6ORJGE9G64P36D1L6ORJGE9G" },
         };
+
+        [Test]
+        [TestCaseSource(nameof(testData))]
+        public void Encode_Stream_ReturnsExpectedValues(string input, string expectedOutput)
+        {
+            byte[] bytes = Encoding.ASCII.GetBytes(input);
+            using (var inputStream = new MemoryStream(bytes))
+            using (var writer = new StringWriter())
+            {
+                Base32.ExtendedHex.Encode(inputStream, writer, padding: true);
+                Assert.AreEqual(expectedOutput, writer.ToString());
+            }
+        }
+
+        [Test]
+        [TestCaseSource(nameof(testData))]
+        public void Decode_Stream_ReturnsExpectedValues(string expectedOutput, string input)
+        {
+            // upper case
+            using (var inputStream = new StringReader(input))
+            using (var outputStream = new MemoryStream())
+            {
+                Base32.ExtendedHex.Decode(inputStream, outputStream);
+                string result = Encoding.ASCII.GetString(outputStream.ToArray());
+                Assert.AreEqual(expectedOutput, result);
+            }
+
+            // lower case
+            using (var inputStream = new StringReader(input.ToLowerInvariant()))
+            using (var outputStream = new MemoryStream())
+            {
+                Base32.ExtendedHex.Decode(inputStream, outputStream);
+                string result = Encoding.ASCII.GetString(outputStream.ToArray());
+                Assert.AreEqual(expectedOutput, result);
+            }
+        }
 
         [Test]
         [TestCaseSource("testData")]
@@ -65,7 +102,7 @@ namespace SimpleBaseTest.Base32Test
         [Test]
         public void Decode_NullString_ThrowsArgumentNullException()
         {
-            Assert.Throws<ArgumentNullException>(() => Base32.ExtendedHex.Decode(null));
+            Assert.Throws<ArgumentNullException>(() => Base32.ExtendedHex.Decode((string)null));
         }
 
         [Test]

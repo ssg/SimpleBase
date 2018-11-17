@@ -15,6 +15,7 @@
 */
 
 using System;
+using System.IO;
 
 namespace SimpleBase
 {
@@ -113,13 +114,34 @@ namespace SimpleBase
         /// <summary>
         /// Decode a Base32 encoded string into a byte array.
         /// </summary>
-        /// <param name="text">Encoded Base32 string</param>
+        /// <param name="text">Encoded Base32 characters</param>
         /// <returns>Decoded byte array</returns>
-        public unsafe Span<byte> Decode(string text)
+        public Span<byte> Decode(string text)
         {
             Require.NotNull(text, nameof(text));
-            text = text.TrimEnd(paddingChar);
+            return Decode(text.AsSpan());
+        }
+
+        /// <summary>
+        /// Decode a Base32 encoded string into a byte array.
+        /// </summary>
+        /// <param name="text">Encoded Base32 string</param>
+        /// <returns>Decoded byte array</returns>
+        public unsafe Span<byte> Decode(ReadOnlySpan<char> text)
+        {
             int textLen = text.Length;
+
+            // ignore trailing padding chars and whitespace
+            while (textLen > 0)
+            {
+                char c = text[textLen - 1];
+                if (c != paddingChar && !Char.IsWhiteSpace(text[textLen - 1]))
+                {
+                    break;
+                }
+                textLen--;
+            }
+
             if (textLen == 0)
             {
                 return new byte[0];
@@ -159,6 +181,54 @@ namespace SimpleBase
                 }
             }
             return outputBuffer;
+        }
+
+        /// <summary>
+        /// Encode a binary stream to a Base32 text stream
+        /// </summary>
+        /// <param name="input">Input bytes</param>
+        /// <param name="output">The writer the output is written to</param>
+        /// <param name="padding">Whether to use padding at the end of the output</param>
+        public void Encode(Stream input, TextWriter output, bool padding)
+        {
+            Require.NotNull(input, nameof(input));
+            Require.NotNull(output, nameof(output));
+            const int bufferSize = 4096;
+            var buffer = new byte[bufferSize];
+            while (true)
+            {
+                int bytesRead = input.Read(buffer, 0, bufferSize);
+                if (bytesRead < 1)
+                {
+                    break;
+                }
+                bool usePadding = bytesRead < bufferSize ? padding : false;
+                var result = Encode(buffer.AsSpan(0, bytesRead), usePadding);
+                output.Write(result);
+            }
+        }
+
+        /// <summary>
+        /// Decode a text stream into a binary stream
+        /// </summary>
+        /// <param name="input">TextReader open on the stream</param>
+        /// <param name="output">Binary output stream</param>
+        public void Decode(TextReader input, Stream output)
+        {
+            Require.NotNull(input, nameof(input));
+            Require.NotNull(output, nameof(output));
+            const int bufferSize = 6400;
+            var buffer = new char[bufferSize];
+            while (true)
+            {
+                int bytesRead = input.Read(buffer, 0, bufferSize);
+                if (bytesRead < 1)
+                {
+                    break;
+                }
+                var result = Decode(buffer.AsSpan(0, bytesRead));
+                output.Write(result.ToArray(), 0, result.Length);
+            }
         }
     }
 }
