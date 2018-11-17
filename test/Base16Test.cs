@@ -1,6 +1,7 @@
 ﻿using NUnit.Framework;
 using SimpleBase;
 using System;
+using System.IO;
 
 namespace SimpleBaseTest
 {
@@ -16,6 +17,42 @@ namespace SimpleBaseTest
             new TestCaseData(new byte[] { 0x10, 0x11, 0x12, 0x13 }, "10111213"),
             new TestCaseData(new byte[] { 0xAB, 0xCD, 0xEF, 0xBA }, "ABCDEFBA"),
         };
+
+        [Test]
+        [TestCaseSource(nameof(testData))]
+        public void Decode_Stream(byte[] expectedOutput, string input)
+        {
+            using (var memoryStream = new MemoryStream())
+            using (var reader = new StringReader(input))
+            {
+                Base16.Decode(reader, memoryStream);
+                CollectionAssert.AreEqual(expectedOutput, memoryStream.ToArray());
+            }
+        }
+
+        [Test]
+        [TestCaseSource(nameof(testData))]
+        public void EncodeUpper_Stream(byte[] input, string expectedOutput)
+        {
+            using (var inputStream = new MemoryStream(input))
+            using (var writer = new StringWriter())
+            {
+                Base16.EncodeUpper(inputStream, writer);
+                Assert.AreEqual(expectedOutput, writer.ToString());
+            }
+        }
+
+        [Test]
+        [TestCaseSource(nameof(testData))]
+        public void EncodeLower_Stream(byte[] input, string expectedOutput)
+        {
+            using (var inputStream = new MemoryStream(input))
+            using (var writer = new StringWriter())
+            {
+                Base16.EncodeLower(inputStream, writer);
+                Assert.AreEqual(expectedOutput.ToLowerInvariant(), writer.ToString());
+            }
+        }
 
         [Test]
         [TestCaseSource(nameof(testData))]

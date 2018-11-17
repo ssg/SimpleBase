@@ -15,7 +15,9 @@
 */
 
 using System;
+using System.IO;
 using System.Runtime.CompilerServices;
+using System.Text;
 
 namespace SimpleBase
 {
@@ -31,7 +33,7 @@ namespace SimpleBase
         /// <returns>Base16 string</returns>
         public unsafe static string EncodeUpper(ReadOnlySpan<byte> bytes)
         {
-            return encode(bytes, 'A');
+            return internalEncode(bytes, 'A');
         }
 
         /// <summary>
@@ -41,10 +43,10 @@ namespace SimpleBase
         /// <returns>Base16 string</returns>
         public unsafe static string EncodeLower(ReadOnlySpan<byte> bytes)
         {
-            return encode(bytes, 'a');
+            return internalEncode(bytes, 'a');
         }
 
-        private static unsafe string encode(ReadOnlySpan<byte> bytes, char baseChar)
+        private static unsafe string internalEncode(ReadOnlySpan<byte> bytes, char baseChar)
         {
             int bytesLen = bytes.Length;
             if (bytesLen == 0)
@@ -144,8 +146,77 @@ namespace SimpleBase
             {
                 return n;
             }
-            Error:
+        Error:
             throw new ArgumentException($"Invalid hex character: {c}");
         }
+
+        #region Stream based methods
+        /// <summary>
+        /// Decode Base16 text through streams for generic use. Stream based variant tries to consume
+        /// as little memory as possible, and relies of .NET's own underlying buffering mechanisms,
+        /// contrary to their buffer-based versions.
+        /// </summary>
+        /// <param name="input">Stream that the encoded bytes would be read from</param>
+        /// <param name="output">Stream where decoded bytes will be written to</param>
+        public static void Decode(TextReader input, Stream output)
+        {
+            Require.NotNull(input, nameof(input));
+            Require.NotNull(output, nameof(output));
+            using (var writer = new BinaryWriter(output))
+                while (true)
+                {
+                    int i1 = input.Read();
+                    if (i1 < 0)
+                    {
+                        break;
+                    }
+                    int i2 = input.Read();
+                    if (i2 < 0)
+                    {
+                        break;
+                    }
+                    int b1 = getHexByte((char)i1);
+                    int b2 = getHexByte((char)i2);
+                    byte result = (byte)((b1 << 4) | b2);
+                    writer.Write(result);
+                }
+        }
+
+        /// <summary>
+        /// Encodes stream of bytes into a Base16 text
+        /// </summary>
+        /// <param name="input">Stream that provides bytes to be encoded</param>
+        /// <param name="output">Stream that the encoded text is written to</param>
+        public static void EncodeUpper(Stream input, TextWriter output)
+        {
+            internalEncode(input, output, 'A');
+        }
+
+        /// <summary>
+        /// Encodes stream of bytes into a Base16 text
+        /// </summary>
+        /// <param name="input">Stream that provides bytes to be encoded</param>
+        /// <param name="output">Stream that the encoded text is written to</param>
+        public static void EncodeLower(Stream input, TextWriter output)
+        {
+            internalEncode(input, output, 'a');
+        }
+
+        private static void internalEncode(Stream input, TextWriter output, char baseChar)
+        {
+            const int bufferLength = 4096;
+
+            var buffer = new byte[bufferLength];
+            while (true)
+            {
+                int i = input.Read(buffer, 0, bufferLength);
+                if (i == 0)
+                {
+                    break;
+                }
+                output.Write(internalEncode(new ReadOnlySpan<byte>(buffer, 0, i), baseChar));
+            }
+        }
+        #endregion
     }
 }
