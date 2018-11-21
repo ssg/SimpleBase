@@ -27,7 +27,7 @@ namespace SimpleBaseTest.Base85Test
                 actualInput += "  " + input[i];
             }
             actualInput += " ";
-            var result = Base85.Ascii85.Decode(input);
+            var result = Base85.Ascii85.Decode(actualInput);
             CollectionAssert.AreEqual(expectedOutput, result.ToArray());
         }
 
