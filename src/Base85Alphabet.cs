@@ -20,8 +20,8 @@ namespace SimpleBase
     {
         public const char NoShortcut = '\xFFFF';
 
-        public char AllZeroShortcut = NoShortcut;
-        public char AllSpaceShortcut = NoShortcut;
+        public char AllZeroShortcut { get; }  = NoShortcut;
+        public char AllSpaceShortcut { get; } = NoShortcut;
 
         public bool HasShortcut => AllSpaceShortcut != NoShortcut || AllZeroShortcut != NoShortcut;
 

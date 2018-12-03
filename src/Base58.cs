@@ -130,7 +130,7 @@ namespace SimpleBase
             var textLen = text.Length;
             if (textLen == 0)
             {
-                return new byte[0];
+                return Array.Empty<byte>();
             }
 
             fixed (char* inputPtr = text)

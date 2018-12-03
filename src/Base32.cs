@@ -144,7 +144,7 @@ namespace SimpleBase
 
             if (textLen == 0)
             {
-                return new byte[0];
+                return Array.Empty<byte>();
             }
             int bitsLeft = bitsPerByte;
             int outputLen = textLen * bitsPerChar / bitsPerByte;

@@ -13,6 +13,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 */
+
 using System;
 using NUnit.Framework;
 using SimpleBase;
@@ -87,7 +88,8 @@ namespace SimpleBaseTest
         public void Decode_Bitcoin_ReturnsExpectedResults(string expectedOutput, string input)
         {
             var buffer = Base58.Bitcoin.Decode(input);
-            string result = BitConverter.ToString(buffer.ToArray()).Replace("-", "");
+            string result = BitConverter.ToString(buffer.ToArray()).Replace("-", "",
+                StringComparison.Ordinal);
             Assert.AreEqual(expectedOutput, result);
         }
     }

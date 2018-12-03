@@ -100,7 +100,7 @@ namespace SimpleBase
             int textLen = text.Length;
             if (textLen == 0)
             {
-                return new byte[0];
+                return Array.Empty<byte>();
             }
             if ((textLen & 1) != 0) // remainder ("%") was unexpectedly slow here
             {

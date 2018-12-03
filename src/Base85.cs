@@ -170,7 +170,7 @@ namespace SimpleBase
             int textLen = text.Length;
             if (textLen == 0)
             {
-                return new byte[0];
+                return Array.Empty<byte>();
             }
 
             char allZeroChar = alphabet.AllZeroShortcut;
