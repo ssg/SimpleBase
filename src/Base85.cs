@@ -217,7 +217,7 @@ namespace SimpleBase
                     int x = table[c] - 1; // map character to byte value
                     if (x < 0)
                     {
-                        throw alphabet.InvalidCharacter(c);
+                        throw EncodingAlphabet.InvalidCharacter(c);
                     }
                     value = value * baseLength + x;
                     blockIndex += 1;

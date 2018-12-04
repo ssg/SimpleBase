@@ -161,7 +161,7 @@ namespace SimpleBase
                         int carry = table[c] - 1;
                         if (carry < 0)
                         {
-                            throw alphabet.InvalidCharacter(c);
+                            throw EncodingAlphabet.InvalidCharacter(c);
                         }
                         for (byte* pDigit = pOutputEnd; pDigit >= outputPtr; pDigit--)
                         {

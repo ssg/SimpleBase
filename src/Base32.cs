@@ -164,7 +164,7 @@ namespace SimpleBase
                     int b = table[c] - 1;
                     if (b < 0)
                     {
-                        throw alphabet.InvalidCharacter(c);
+                        throw EncodingAlphabet.InvalidCharacter(c);
                     }
                     if (bitsLeft > bitsPerChar)
                     {

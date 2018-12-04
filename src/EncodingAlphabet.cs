@@ -38,7 +38,7 @@ namespace SimpleBase
         /// byte[] has no discernible perf impact and saves memory
         internal readonly byte[] ReverseLookupTable = new byte[lookupLength]; 
 
-        public Exception InvalidCharacter(char c)
+        public static Exception InvalidCharacter(char c)
         {
             return new ArgumentException($"Invalid character: {c}");
         }
