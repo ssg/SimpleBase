@@ -70,12 +70,6 @@ namespace SimpleBaseTest.Base85Test
         }
 
         [Test]
-        public void Decode_NullText_ThrowsArgumentNullException()
-        {
-            Assert.Throws<ArgumentNullException>(() => Base85.Ascii85.Decode((string)null));
-        }
-
-        [Test]
         [TestCaseSource(nameof(testVectors))]
         public void Decode_TestVectorsWithStream_ShouldDecodeCorrectly(byte[] expectedOutput, string input)
         {

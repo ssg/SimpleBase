@@ -53,12 +53,6 @@ namespace SimpleBaseTest
         }
 
         [Test]
-        public void Ctor_NullAlphabet_Throws()
-        {
-            Assert.Throws<ArgumentNullException>(() => new Base58(null));
-        }
-
-        [Test]
         public void Encode_EmptyBuffer_ReturnsEmptyString()
         {
             Assert.AreEqual(String.Empty, Base58.Bitcoin.Encode(new byte[0]));
@@ -69,12 +63,6 @@ namespace SimpleBaseTest
         {
             var result = Base58.Bitcoin.Decode(String.Empty);
             Assert.AreEqual(0, result.Length);
-        }
-
-        [Test]
-        public void Decode_NullBuffer_ThrowsArgumentNullException()
-        {
-            Assert.Throws<ArgumentNullException>(() => Base58.Bitcoin.Decode((string)null));
         }
 
         [Test]

@@ -12,29 +12,17 @@
     <AssemblyOriginatorKeyFile>..\SimpleBase.snk</AssemblyOriginatorKeyFile>
     <DelaySign>false</DelaySign>
 
-    <PackageVersion>1.7.1</PackageVersion>
+    <PackageVersion>2.0.0</PackageVersion>
     <PackageProjectUrl>https://github.com/ssg/SimpleBase</PackageProjectUrl>
     <PackageLicense>Apache-2.0</PackageLicense>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <PackageTags>base16 base32 base58 base85 ascii85 z85 hexadecimal bitcoin ripple flickr crockford extended hex rfc4648</PackageTags>
     <PackageReleaseNotes><![CDATA[
-- Minor code analysis fixes
+- Adapted to nullable references, so removed null checks from the code
  ]]></PackageReleaseNotes>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|netstandard2.0|AnyCPU'">
     <LangVersion>latest</LangVersion>
     <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netstandard2.0|AnyCPU'">
-    <LangVersion>latest</LangVersion>
-  </PropertyGroup>
-
-  <ItemGroup>
-    <None Remove="SimpleBase.net45.v3.ncrunchproject" />
-    <None Remove="SimpleBase.netstandard1.3.v3.ncrunchproject" />
-  </ItemGroup>
 
   <ItemGroup>
     <None Include="..\SimpleBase.snk" Link="SimpleBase.snk" />

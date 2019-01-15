@@ -9,7 +9,11 @@
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>..\SimpleBase.snk</AssemblyOriginatorKeyFile>
     <DelaySign>false</DelaySign>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
+  <ItemGroup>
+    <None Remove="SimpleBaseTest.v3.ncrunchproject" />
+  </ItemGroup>
   <ItemGroup>
     <None Include="..\SimpleBase.snk" Link="SimpleBase.snk" />
   </ItemGroup>

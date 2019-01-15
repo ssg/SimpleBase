@@ -35,7 +35,6 @@ namespace SimpleBase
 
         public Base85(Base85Alphabet alphabet)
         {
-            Require.NotNull(alphabet, nameof(alphabet));
             this.alphabet = alphabet;
         }
 
@@ -125,8 +124,6 @@ namespace SimpleBase
 
         public void Encode(Stream input, TextWriter output)
         {
-            Require.NotNull(input, nameof(input));
-            Require.NotNull(output, nameof(output));
             const int bufferSize = 4096;
             var buffer = new byte[bufferSize];
             while (true)
@@ -143,8 +140,6 @@ namespace SimpleBase
 
         public void Decode(TextReader input, Stream output)
         {
-            Require.NotNull(input, nameof(input));
-            Require.NotNull(output, nameof(output));
             const int bufferSize = 5120;
             var buffer = new char[bufferSize];
             while (true)
@@ -161,7 +156,6 @@ namespace SimpleBase
 
         public Span<byte> Decode(string text)
         {
-            Require.NotNull(text, nameof(text));
             return Decode(text.AsSpan());
         }
         

@@ -116,11 +116,5 @@ namespace SimpleBaseTest.Base32Test
         {
             Assert.AreEqual(String.Empty, Base32.Crockford.Encode(null, true));
         }
-
-        [Test]
-        public void Decode_NullString_ThrowsArgumentNullException()
-        {
-            Assert.Throws<ArgumentNullException>(() => Base32.Crockford.Decode((string)null));
-        }
     }
 }

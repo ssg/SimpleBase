@@ -118,7 +118,6 @@ namespace SimpleBase
         /// <returns>Decoded byte array</returns>
         public Span<byte> Decode(string text)
         {
-            Require.NotNull(text, nameof(text));
             return Decode(text.AsSpan());
         }
 
@@ -191,8 +190,6 @@ namespace SimpleBase
         /// <param name="padding">Whether to use padding at the end of the output</param>
         public void Encode(Stream input, TextWriter output, bool padding)
         {
-            Require.NotNull(input, nameof(input));
-            Require.NotNull(output, nameof(output));
             const int bufferSize = 4096;
             var buffer = new byte[bufferSize];
             while (true)
@@ -215,8 +212,6 @@ namespace SimpleBase
         /// <param name="output">Binary output stream</param>
         public void Decode(TextReader input, Stream output)
         {
-            Require.NotNull(input, nameof(input));
-            Require.NotNull(output, nameof(output));
             const int bufferSize = 6400;
             var buffer = new char[bufferSize];
             while (true)

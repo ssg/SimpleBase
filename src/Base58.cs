@@ -29,7 +29,6 @@ namespace SimpleBase
 
         public Base58(Base58Alphabet alphabet)
         {
-            Require.NotNull(alphabet, nameof(alphabet));
             this.alphabet = alphabet;
         }
 
@@ -114,7 +113,6 @@ namespace SimpleBase
         /// <returns>Decoded bytes</returns>
         public Span<byte> Decode(string text)
         {
-            Require.NotNull(text, nameof(text));
             return Decode(text.AsSpan());
         }
 

@@ -45,7 +45,6 @@ namespace SimpleBase
 
         public EncodingAlphabet(int length, string alphabet)
         {
-            Require.NotNull(alphabet, nameof(alphabet));
             if (alphabet.Length != length)
             {
                 throw new ArgumentException($"Required alphabet length is {length} but provided alphabet is "

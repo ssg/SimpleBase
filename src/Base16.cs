@@ -86,7 +86,6 @@ namespace SimpleBase
 
         public static Span<byte> Decode(string text)
         {
-            Require.NotNull(text, nameof(text));
             return Decode(text.AsSpan());
         }
 
@@ -162,8 +161,6 @@ namespace SimpleBase
         /// <param name="output">Stream where decoded bytes will be written to</param>
         public static void Decode(TextReader input, Stream output)
         {
-            Require.NotNull(input, nameof(input));
-            Require.NotNull(output, nameof(output));
             const int bufferSize = 4096;
             var buffer = new char[bufferSize];
             using (var writer = new BinaryWriter(output))

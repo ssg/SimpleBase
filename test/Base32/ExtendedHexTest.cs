@@ -100,12 +100,6 @@ namespace SimpleBaseTest.Base32Test
         }
 
         [Test]
-        public void Decode_NullString_ThrowsArgumentNullException()
-        {
-            Assert.Throws<ArgumentNullException>(() => Base32.ExtendedHex.Decode((string)null));
-        }
-
-        [Test]
         [TestCase("!@#!#@!#@#!@")]
         [TestCase("||||")]
         public void Decode_InvalidInput_ThrowsArgumentException(string input)
