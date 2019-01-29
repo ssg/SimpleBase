@@ -1,45 +1,49 @@
-﻿/*
-     Copyright 2014-2016 Sedat Kapanoglu
-
-   Licensed under the Apache License, Version 2.0 (the "License");
-   you may not use this file except in compliance with the License.
-   You may obtain a copy of the License at
-
-       http://www.apache.org/licenses/LICENSE-2.0
-
-   Unless required by applicable law or agreed to in writing, software
-   distributed under the License is distributed on an "AS IS" BASIS,
-   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   See the License for the specific language governing permissions and
-   limitations under the License.
-*/
-
-using System;
+﻿// <copyright file="Base32Alphabet.cs" company="Sedat Kapanoglu">
+// Copyright (c) 2014-2019 Sedat Kapanoglu
+// Licensed under Apache-2.0 License (see LICENSE.txt file for details)
+// </copyright>
 
 namespace SimpleBase
 {
+    /// <summary>
+    /// Base32 alphabet flavors
+    /// </summary>
     public class Base32Alphabet : EncodingAlphabet
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Base32Alphabet"/> class.
+        /// </summary>
+        /// <param name="alphabet">Characters</param>
+        public Base32Alphabet(string alphabet)
+            : base(32, alphabet)
+        {
+            this.mapLowerCaseCounterparts(alphabet);
+        }
+
+        /// <summary>
+        /// Gets Crockford alphabet
+        /// </summary>
         public static Base32Alphabet Crockford { get; } = new CrockfordBase32Alphabet();
 
+        /// <summary>
+        /// Gets RFC4648 alphabet
+        /// </summary>
         public static Base32Alphabet Rfc4648 { get; }
             = new Base32Alphabet("ABCDEFGHIJKLMNOPQRSTUVWXYZ234567");
 
+        /// <summary>
+        /// Gets Extended Hex alphabet
+        /// </summary>
         public static Base32Alphabet ExtendedHex { get; }
             = new Base32Alphabet("0123456789ABCDEFGHIJKLMNOPQRSTUV");
-
-        public Base32Alphabet(string alphabet) : base(32, alphabet)
-        {
-            mapLowerCaseCounterparts(alphabet);
-        }
 
         private void mapLowerCaseCounterparts(string alphabet)
         {
             foreach (char c in alphabet)
             {
-                if (Char.IsUpper(c))
+                if (char.IsUpper(c))
                 {
-                    Map(Char.ToLowerInvariant(c), ReverseLookupTable[c] - 1);
+                    this.Map(char.ToLowerInvariant(c), this.ReverseLookupTable[c] - 1);
                 }
             }
         }

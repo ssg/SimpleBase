@@ -1,4 +1,9 @@
-﻿/*
+﻿// <copyright file="Base58.cs" company="Sedat Kapanoglu">
+// Copyright (c) 2014-2019 Sedat Kapanoglu
+// Licensed under Apache-2.0 License (see LICENSE.txt file for details)
+// </copyright>
+
+/*
      Copyright 2014-2016 Sedat Kapanoglu
 
    Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,24 +19,42 @@
    limitations under the License.
 */
 
-using System;
-using System.Numerics;
-
 namespace SimpleBase
 {
+    using System;
+
+    /// <summary>
+    /// Base58 Encoding/Decoding implementation
+    /// </summary>
     public sealed class Base58
     {
-        public static readonly Base58 Bitcoin = new Base58(Base58Alphabet.Bitcoin);
-        public static readonly Base58 Ripple = new Base58(Base58Alphabet.Ripple);
-        public static readonly Base58 Flickr = new Base58(Base58Alphabet.Flickr);
-
         private Base58Alphabet alphabet;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Base58"/> class
+        /// using a custom alphabet.
+        /// </summary>
+        /// <param name="alphabet">Alphabet to use</param>
         public Base58(Base58Alphabet alphabet)
         {
             Require.NotNull(alphabet, nameof(alphabet));
             this.alphabet = alphabet;
         }
+
+        /// <summary>
+        /// Gets Bitcoin flavor
+        /// </summary>
+        public static Base58 Bitcoin { get; } = new Base58(Base58Alphabet.Bitcoin);
+
+        /// <summary>
+        /// Gets Ripple flavor
+        /// </summary>
+        public static Base58 Ripple { get; } = new Base58(Base58Alphabet.Ripple);
+
+        /// <summary>
+        /// Gets Flickr flavor
+        /// </summary>
+        public static Base58 Flickr { get; } = new Base58(Base58Alphabet.Flickr);
 
         /// <summary>
         /// Encode to Base58 representation
@@ -45,10 +68,11 @@ namespace SimpleBase
             int bytesLen = bytes.Length;
             if (bytesLen == 0)
             {
-                return String.Empty;
+                return string.Empty;
             }
+
             fixed (byte* inputPtr = bytes)
-            fixed (char* alphabetPtr = alphabet.Value)
+            fixed (char* alphabetPtr = this.alphabet.Value)
             {
                 byte* pInput = inputPtr;
                 byte* pEnd = inputPtr + bytesLen;
@@ -56,15 +80,16 @@ namespace SimpleBase
                 {
                     pInput++;
                 }
+
                 int numZeroes = (int)(pInput - inputPtr);
 
                 char zeroChar = alphabetPtr[0];
                 if (pInput == pEnd)
                 {
-                    return new String(zeroChar, numZeroes);
+                    return new string(zeroChar, numZeroes);
                 }
 
-                int outputLen = bytesLen * growthPercentage / 100 + 1;
+                int outputLen = ((bytesLen * growthPercentage) / 100) + 1;
                 int length = 0;
                 byte[] output = new byte[outputLen];
                 fixed (byte* outputPtr = output)
@@ -74,13 +99,14 @@ namespace SimpleBase
                     {
                         int carry = *pInput;
                         int i = 0;
-                        for (byte* pDigit = pOutputEnd; (carry != 0 || i < length) 
+                        for (byte* pDigit = pOutputEnd; (carry != 0 || i < length)
                             && pDigit >= outputPtr; pDigit--, i++)
                         {
                             carry += 256 * (*pDigit);
                             *pDigit = (byte)(carry % 58);
                             carry /= 58;
                         }
+
                         length = i;
                         pInput++;
                     }
@@ -93,7 +119,7 @@ namespace SimpleBase
                     }
 
                     int resultLen = numZeroes + (int)(pOutputEnd - pOutput);
-                    string result = new String(zeroChar, resultLen);
+                    string result = new string(zeroChar, resultLen);
                     fixed (char* resultPtr = result)
                     {
                         char* pResult = resultPtr + numZeroes;
@@ -102,6 +128,7 @@ namespace SimpleBase
                             *pResult++ = alphabetPtr[*pOutput++];
                         }
                     }
+
                     return result;
                 }
             }
@@ -115,7 +142,7 @@ namespace SimpleBase
         public Span<byte> Decode(string text)
         {
             Require.NotNull(text, nameof(text));
-            return Decode(text.AsSpan());
+            return this.Decode(text.AsSpan());
         }
 
         /// <summary>
@@ -137,7 +164,7 @@ namespace SimpleBase
             {
                 char* pEnd = inputPtr + textLen;
                 char* pInput = inputPtr;
-                char zeroChar = alphabet.Value[0];
+                char zeroChar = this.alphabet.Value[0];
                 while (*pInput == zeroChar && pInput != pEnd)
                 {
                     pInput++;
@@ -149,8 +176,8 @@ namespace SimpleBase
                     return new byte[numZeroes]; // initialized to zero
                 }
 
-                int outputLen = textLen * reductionFactor / 1000 + 1;
-                byte[] table = alphabet.ReverseLookupTable;
+                int outputLen = ((textLen * reductionFactor) / 1000) + 1;
+                var table = this.alphabet.ReverseLookupTable;
                 byte[] output = new byte[outputLen];
                 fixed (byte* outputPtr = output)
                 {
@@ -163,6 +190,7 @@ namespace SimpleBase
                         {
                             throw EncodingAlphabet.InvalidCharacter(c);
                         }
+
                         for (byte* pDigit = pOutputEnd; pDigit >= outputPtr; pDigit--)
                         {
                             carry += 58 * (*pDigit);
@@ -182,7 +210,8 @@ namespace SimpleBase
                     {
                         return output;
                     }
-                    byte[] result = new byte[numZeroes + resultLen];                    
+
+                    byte[] result = new byte[numZeroes + resultLen];
                     Array.Copy(output, (int)(pOutput - outputPtr), result, numZeroes, resultLen);
                     return result;
                 }

@@ -1,4 +1,9 @@
-﻿/*
+﻿// <copyright file="Require.cs" company="Sedat Kapanoglu">
+// Copyright (c) 2014-2019 Sedat Kapanoglu
+// Licensed under Apache-2.0 License (see LICENSE.txt file for details)
+// </copyright>
+
+/*
      Copyright 2014-2016 Sedat Kapanoglu
 
    Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,17 +18,18 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 */
-using System;
-using System.Runtime.CompilerServices;
-
 namespace SimpleBase
 {
+    using System;
+    using System.Runtime.CompilerServices;
+
     internal static class Require
     {
 #if !DEBUG
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
-        internal static void NotNull<T>(T value, string argName) where T : class
+        internal static void NotNull<T>(T value, string argName)
+            where T : class
         {
             if (value == null)
             {

@@ -1,4 +1,9 @@
-﻿/*
+﻿// <copyright file="EncodingAlphabet.cs" company="Sedat Kapanoglu">
+// Copyright (c) 2014-2019 Sedat Kapanoglu
+// Licensed under Apache-2.0 License (see LICENSE.txt file for details)
+// </copyright>
+
+/*
      Copyright 2014-2016 Sedat Kapanoglu
 
    Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,16 +19,15 @@
    limitations under the License.
 */
 
-using System;
-
 namespace SimpleBase
 {
+    using System;
+
+    /// <summary>
+    /// Basis for all encoding alphabets
+    /// </summary>
     public abstract class EncodingAlphabet
     {
-        public int Length { get; private set; }
-
-        public string Value { get; private set; }
-
         /// <summary>
         /// Specifies the highest possible char value in an encoding alphabet
         /// Any char above with would raise an exception
@@ -36,13 +40,13 @@ namespace SimpleBase
         /// and would cause an exception.
         /// </summary>
         /// byte[] has no discernible perf impact and saves memory
-        internal readonly byte[] ReverseLookupTable = new byte[lookupLength]; 
+        private readonly byte[] reverseLookupTable = new byte[lookupLength];
 
-        public static Exception InvalidCharacter(char c)
-        {
-            return new ArgumentException($"Invalid character: {c}");
-        }
-
+        /// <summary>
+        /// Initializes a new instance of the <see cref="EncodingAlphabet"/> class.
+        /// </summary>
+        /// <param name="length">Length of the alphabet</param>
+        /// <param name="alphabet">Alphabet characters</param>
         public EncodingAlphabet(int length, string alphabet)
         {
             Require.NotNull(alphabet, nameof(alphabet));
@@ -51,27 +55,66 @@ namespace SimpleBase
                 throw new ArgumentException($"Required alphabet length is {length} but provided alphabet is "
                                           + $"{alphabet.Length} characters long");
             }
-            Length = length;
-            Value = alphabet;
+
+            this.Length = length;
+            this.Value = alphabet;
 
             for (short i = 0; i < length; i++)
             {
-                Map(alphabet[i], i);
+                this.Map(alphabet[i], i);
             }
         }
 
+        /// <summary>
+        /// Gets the length of the alphabet
+        /// </summary>
+        public int Length { get; private set; }
+
+        /// <summary>
+        /// Gets the characters of the alphabet
+        /// </summary>
+        public string Value { get; private set; }
+
+        internal ReadOnlySpan<byte> ReverseLookupTable => this.reverseLookupTable.AsSpan();
+
+        /// <summary>
+        /// Generates a standard invalid character exception for alphabets.
+        /// </summary>
+        /// <remarks>
+        /// The reason this is not a throwing method itself is
+        /// that the compiler has no way of knowing whether the execution
+        /// will end after the method call and can incorreclty assume
+        /// reachable code.
+        /// </remarks>
+        /// <param name="c">Character</param>
+        /// <returns>Exception to be thrown</returns>
+        public static Exception InvalidCharacter(char c)
+        {
+            return new ArgumentException($"Invalid character: {c}");
+        }
+
+        /// <summary>
+        /// Get the string representation of the alphabet
+        /// </summary>
+        /// <returns>The characters of the encoding alphabet</returns>
+        public override string ToString()
+        {
+            return this.Value;
+        }
+
+        /// <summary>
+        /// Map a character to a value
+        /// </summary>
+        /// <param name="c">Character</param>
+        /// <param name="value">Corresponding value</param>
         protected void Map(char c, int value)
         {
             if (c >= lookupLength)
             {
                 throw new InvalidOperationException($"Alphabet contains character above {lookupLength}");
             }
-            ReverseLookupTable[c] = (byte)(value + 1);
-        }
 
-        public override string ToString()
-        {
-            return Value;
+            this.reverseLookupTable[c] = (byte)(value + 1);
         }
     }
 }

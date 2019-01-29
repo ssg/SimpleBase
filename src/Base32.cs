@@ -1,24 +1,16 @@
-﻿/*
-     Copyright 2014 Sedat Kapanoglu
-
-   Licensed under the Apache License, Version 2.0 (the "License");
-   you may not use this file except in compliance with the License.
-   You may obtain a copy of the License at
-
-       http://www.apache.org/licenses/LICENSE-2.0
-
-   Unless required by applicable law or agreed to in writing, software
-   distributed under the License is distributed on an "AS IS" BASIS,
-   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   See the License for the specific language governing permissions and
-   limitations under the License.
-*/
-
-using System;
-using System.IO;
+﻿// <copyright file="Base32.cs" company="Sedat Kapanoglu">
+// Copyright (c) 2014-2019 Sedat Kapanoglu
+// Licensed under Apache-2.0 License (see LICENSE.txt file for details)
+// </copyright>
 
 namespace SimpleBase
 {
+    using System;
+    using System.IO;
+
+    /// <summary>
+    /// Base32 encoding/decoding functions
+    /// </summary>
     public sealed class Base32
     {
         /// <summary>
@@ -43,6 +35,11 @@ namespace SimpleBase
 
         private readonly Base32Alphabet alphabet;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Base32"/> class with a
+        /// custom alphabet.
+        /// </summary>
+        /// <param name="alphabet">Alphabet to use</param>
         public Base32(Base32Alphabet alphabet)
         {
             this.alphabet = alphabet;
@@ -59,23 +56,23 @@ namespace SimpleBase
             int bytesLen = bytes.Length;
             if (bytesLen == 0)
             {
-                return String.Empty;
+                return string.Empty;
             }
 
             // we are ok with slightly larger buffer since the output string will always
             // have the exact length of the output produced.
             int outputLen = (((bytesLen - 1) / bitsPerChar) + 1) * bitsPerByte;
-            string output = new String('\0', outputLen);
+            string output = new string('\0', outputLen);
 
             fixed (byte* inputPtr = bytes)
             fixed (char* outputPtr = output)
-            fixed (char* tablePtr = alphabet.Value)
+            fixed (char* tablePtr = this.alphabet.Value)
             {
                 char* pOutput = outputPtr;
                 byte* pInput = inputPtr;
                 byte* pEnd = pInput + bytesLen;
 
-                for (int bitsLeft = bitsPerByte, currentByte = *pInput, outputPad = 0;  pInput != pEnd; )
+                for (int bitsLeft = bitsPerByte, currentByte = *pInput, outputPad = 0;  pInput != pEnd;)
                 {
                     if (bitsLeft > bitsPerChar)
                     {
@@ -84,6 +81,7 @@ namespace SimpleBase
                         *pOutput++ = tablePtr[outputPad];
                         currentByte &= (1 << bitsLeft) - 1;
                     }
+
                     int nextBits = bitsPerChar - bitsLeft;
                     bitsLeft = bitsPerByte - nextBits;
                     outputPad = currentByte << nextBits;
@@ -93,8 +91,10 @@ namespace SimpleBase
                         outputPad |= currentByte >> bitsLeft;
                         currentByte &= (1 << bitsLeft) - 1;
                     }
+
                     *pOutput++ = tablePtr[outputPad];
                 }
+
                 if (padding)
                 {
                     for (char* pOutputEnd = outputPtr + outputLen;  pOutput != pOutputEnd; pOutput++)
@@ -102,12 +102,14 @@ namespace SimpleBase
                         *pOutput = paddingChar;
                     }
                 }
+
                 int finalOutputLen = (int)(pOutput - outputPtr);
                 if (finalOutputLen == outputLen)
                 {
                     return output; // avoid unnecessary copying
                 }
-                return new String(outputPtr, 0, finalOutputLen);
+
+                return new string(outputPtr, 0, finalOutputLen);
             }
         }
 
@@ -119,7 +121,7 @@ namespace SimpleBase
         public Span<byte> Decode(string text)
         {
             Require.NotNull(text, nameof(text));
-            return Decode(text.AsSpan());
+            return this.Decode(text.AsSpan());
         }
 
         /// <summary>
@@ -135,10 +137,11 @@ namespace SimpleBase
             while (textLen > 0)
             {
                 char c = text[textLen - 1];
-                if (c != paddingChar && !Char.IsWhiteSpace(text[textLen - 1]))
+                if (c != paddingChar && !char.IsWhiteSpace(text[textLen - 1]))
                 {
                     break;
                 }
+
                 textLen--;
             }
 
@@ -146,11 +149,12 @@ namespace SimpleBase
             {
                 return Array.Empty<byte>();
             }
+
             int bitsLeft = bitsPerByte;
             int outputLen = textLen * bitsPerChar / bitsPerByte;
             var outputBuffer = new byte[outputLen];
             int outputPad = 0;
-            byte[] table = alphabet.ReverseLookupTable;
+            var table = this.alphabet.ReverseLookupTable;
 
             fixed (byte* outputPtr = outputBuffer)
             fixed (char* inputPtr = text)
@@ -166,12 +170,14 @@ namespace SimpleBase
                     {
                         throw EncodingAlphabet.InvalidCharacter(c);
                     }
+
                     if (bitsLeft > bitsPerChar)
                     {
                         bitsLeft -= bitsPerChar;
                         outputPad |= b << bitsLeft;
                         continue;
                     }
+
                     int shiftBits = bitsPerChar - bitsLeft;
                     outputPad |= b >> shiftBits;
                     *pOutput++ = (byte)outputPad;
@@ -180,6 +186,7 @@ namespace SimpleBase
                     outputPad = b << bitsLeft;
                 }
             }
+
             return outputBuffer;
         }
 
@@ -202,8 +209,9 @@ namespace SimpleBase
                 {
                     break;
                 }
+
                 bool usePadding = bytesRead < bufferSize ? padding : false;
-                var result = Encode(buffer.AsSpan(0, bytesRead), usePadding);
+                var result = this.Encode(buffer.AsSpan(0, bytesRead), usePadding);
                 output.Write(result);
             }
         }
@@ -226,7 +234,8 @@ namespace SimpleBase
                 {
                     break;
                 }
-                var result = Decode(buffer.AsSpan(0, bytesRead));
+
+                var result = this.Decode(buffer.AsSpan(0, bytesRead));
                 output.Write(result.ToArray(), 0, result.Length);
             }
         }

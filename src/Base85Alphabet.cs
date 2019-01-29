@@ -1,4 +1,9 @@
-﻿/*
+﻿// <copyright file="Base85Alphabet.cs" company="Sedat Kapanoglu">
+// Copyright (c) 2014-2019 Sedat Kapanoglu
+// Licensed under Apache-2.0 License (see LICENSE.txt file for details)
+// </copyright>
+
+/*
      Copyright 2018 Sedat Kapanoglu
 
    Licensed under the Apache License, Version 2.0 (the "License");
