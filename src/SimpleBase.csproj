@@ -12,6 +12,7 @@
     <AssemblyOriginatorKeyFile>..\SimpleBase.snk</AssemblyOriginatorKeyFile>
     <DelaySign>false</DelaySign>
     <CodeAnalysisRuleSet>SSG.ruleset</CodeAnalysisRuleSet>
+    <DocumentationFile>SimpleBase.xml</DocumentationFile>
     <PackageVersion>1.8.0</PackageVersion>
     <PackageProjectUrl>https://github.com/ssg/SimpleBase</PackageProjectUrl>
     <PackageLicense>Apache-2.0</PackageLicense>
@@ -35,7 +36,6 @@
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|netstandard2.0|AnyCPU'">
     <LangVersion>latest</LangVersion>
     <PlatformTarget>AnyCPU</PlatformTarget>
-    <DocumentationFile>SimpleBase.xml</DocumentationFile>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netstandard2.0|AnyCPU'">
