@@ -18,6 +18,7 @@
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <PackageTags>base16 base32 base58 base85 ascii85 z85 hexadecimal bitcoin ripple flickr crockford extended hex rfc4648</PackageTags>
     <PackageReleaseNotes><![CDATA[
+# Breaking changes
 - Adapted to nullable references, so removed null checks from the code
  ]]></PackageReleaseNotes>
     <LangVersion>latest</LangVersion>
@@ -29,11 +30,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.6.2">
+    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.6.3">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="System.Memory" Version="4.5.1" />
+    <PackageReference Include="System.Memory" Version="4.5.2" />
     <PackageReference Include="System.Runtime.Numerics">
       <Version>4.3.0</Version>
     </PackageReference>
