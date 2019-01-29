@@ -10,3 +10,4 @@ packages/
 *.vspx
 .vs/
 *.userprefs
+SimpleBase.xml
