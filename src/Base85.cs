@@ -69,10 +69,11 @@ namespace SimpleBase
             int bytesLen = bytes.Length;
             if (bytesLen == 0)
             {
-                return String.Empty;
+                return string.Empty;
             }
 
-            bool hasShortcut = alphabet.HasShortcut;
+            bool usesZeroShortcut = this.alphabet.AllZeroShortcut.HasValue;
+            bool usesSpaceShortcut = this.alphabet.AllSpaceShortcut.HasValue;
 
             // adjust output length based on prefix and suffix settings
             int maxOutputLen = (bytesLen * stringBlockSize / byteBlockSize) + 1;
@@ -96,53 +97,32 @@ namespace SimpleBase
                         | ((uint)*pInput++ << 8)
                         | *pInput++;
 
-                    writeOutput(ref pOutput, table, input, stringBlockSize, hasShortcut);
+                    this.writeOutput(ref pOutput, table, input, stringBlockSize, usesZeroShortcut, usesSpaceShortcut);
                 }
-                // remaining part?
+
+                // check if a part is remaining
                 int remainingBytes = bytesLen - fullLen;
                 if (remainingBytes > 0)
                 {
                     long input = 0;
-                    for (int n = 0; n <  remainingBytes; n++)
+                    for (int n = 0; n < remainingBytes; n++)
                     {
-                        input |= (uint)*pInput++ << ((3-n) << 3);
+                        input |= (uint)*pInput++ << ((3 - n) << 3);
                     }
-                    writeOutput(ref pOutput, table, input, remainingBytes + 1, hasShortcut);
+
+                    this.writeOutput(ref pOutput, table, input, remainingBytes + 1, usesZeroShortcut, usesSpaceShortcut);
                 }
 
                 int outputLen = (int)(pOutput - outputPtr);
-                return new String(outputPtr, 0, outputLen);
+                return new string(outputPtr, 0, outputLen);
             }
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private unsafe void writeOutput(ref char* pOutput, string table, long input, int stringLength,
-            bool hasShortcut)
-        {
-            // handle "z" shortcut
-            if (hasShortcut)
-            {
-                if (input == 0)
-                {
-                    *pOutput++ = alphabet.AllZeroShortcut;
-                    return;
-                }
-                if (input == allSpace)
-                {
-                    *pOutput++ = alphabet.AllSpaceShortcut;
-                    return;
-                }
-            }
-
-            // map the 4-byte packet to to 5-byte octets
-            for (int i = stringBlockSize - 1; i >= 0; i--)
-            {
-                input = Math.DivRem(input, baseLength, out long result);
-                pOutput[i] = table[(int)result];
-            }
-            pOutput += stringLength;
-        }
-
+        /// <summary>
+        /// Encode a given stream into a text writer
+        /// </summary>
+        /// <param name="input">Input stream</param>
+        /// <param name="output">Output writer</param>
         public void Encode(Stream input, TextWriter output)
         {
             Require.NotNull(input, nameof(input));
@@ -180,35 +160,46 @@ namespace SimpleBase
                 {
                     break;
                 }
-                var result = Decode(buffer.AsSpan(0, charsRead));
+
+                var result = this.Decode(buffer.AsSpan(0, charsRead));
                 output.Write(result.ToArray(), 0, result.Length);
             }
         }
 
+        /// <summary>
+        /// Decode a given text into a span
+        /// </summary>
+        /// <param name="text">Input text</param>
+        /// <returns>Output span</returns>
         public Span<byte> Decode(string text)
         {
             Require.NotNull(text, nameof(text));
-            return Decode(text.AsSpan());
+            return this.Decode(text.AsSpan());
         }
-        
+
+        /// <summary>
+        /// Decode given characters into bytes
+        /// </summary>
+        /// <param name="text">Characters to decode</param>
+        /// <returns>Decoded bytes</returns>
         public unsafe Span<byte> Decode(ReadOnlySpan<char> text)
-        {            
+        {
             int textLen = text.Length;
             if (textLen == 0)
             {
                 return Array.Empty<byte>();
             }
 
-            char allZeroChar = alphabet.AllZeroShortcut;
-            char allSpaceChar = alphabet.AllSpaceShortcut;
-            bool checkZero = allZeroChar != Base85Alphabet.NoShortcut;
-            bool checkSpace = allSpaceChar != Base85Alphabet.NoShortcut;
+            char? allZeroChar = this.alphabet.AllZeroShortcut;
+            char? allSpaceChar = this.alphabet.AllSpaceShortcut;
+            bool checkZero = allZeroChar.HasValue;
+            bool checkSpace = allSpaceChar.HasValue;
             bool usingShortcuts = checkZero || checkSpace;
 
             // allocate a larger buffer if we're using shortcuts
             int decodeBufferLen = getDecodeBufferLength(textLen, usingShortcuts);
             byte[] decodeBuffer = new byte[decodeBufferLen];
-            byte[] table = alphabet.ReverseLookupTable;
+            var table = this.alphabet.ReverseLookupTable;
             fixed (char* inputPtr = text)
             fixed (byte* decodeBufferPtr = decodeBuffer)
             {
@@ -230,12 +221,13 @@ namespace SimpleBase
                     // handle shortcut characters
                     if (checkZero && c == allZeroChar)
                     {
-                        writeShortcut(ref pDecodeBuffer, blockIndex, allZeroChar, 0);
+                        writeShortcut(ref pDecodeBuffer, blockIndex, 0);
                         continue;
                     }
+
                     if (checkSpace && c == allSpaceChar)
                     {
-                        writeShortcut(ref pDecodeBuffer, blockIndex, allSpaceChar, allSpace);
+                        writeShortcut(ref pDecodeBuffer, blockIndex, allSpace);
                         continue;
                     }
 
@@ -279,17 +271,19 @@ namespace SimpleBase
             {
                 return textLen * byteBlockSize; // max possible size using shortcuts
             }
+
             return (((textLen - 1) / stringBlockSize) + 1) * byteBlockSize; // max possible size without shortcuts
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static unsafe void writeShortcut(ref byte* pOutput, int blockIndex, char c, long value)
+        private static unsafe void writeShortcut(ref byte* pOutput, int blockIndex, long value)
         {
             if (blockIndex != 0)
             {
                 throw new ArgumentException(
-                    $"Unexpected character {c} in the middle of a regular block");
+                    $"Unexpected shortcut character in the middle of a regular block");
             }
+
             writeDecodedValue(ref pOutput, value, byteBlockSize);
             blockIndex = 0; // restart block after the shortcut character
         }
