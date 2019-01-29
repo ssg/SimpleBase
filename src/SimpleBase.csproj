@@ -45,6 +45,7 @@
   <ItemGroup>
     <None Remove="SimpleBase.net45.v3.ncrunchproject" />
     <None Remove="SimpleBase.netstandard1.3.v3.ncrunchproject" />
+    <None Remove="SimpleBase.xml" />
     <None Remove="stylecop.json" />
   </ItemGroup>
 
