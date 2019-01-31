@@ -73,7 +73,7 @@ namespace SimpleBaseTest.Base32Test
         }
 
         [Test]
-        [TestCaseSource("testData")]
+        [TestCaseSource(nameof(testData))]
         public void Encode_ReturnsExpectedValues(string input, string expectedOutput)
         {
             byte[] bytes = Encoding.ASCII.GetBytes(input);
@@ -82,7 +82,7 @@ namespace SimpleBaseTest.Base32Test
         }
 
         [Test]
-        [TestCaseSource("testData")]
+        [TestCaseSource(nameof(testData))]
         public void Decode_ReturnsExpectedValues(string expectedOutput, string input)
         {
             var bytes = Base32.ExtendedHex.Decode(input);

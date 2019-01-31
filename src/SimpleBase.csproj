@@ -27,6 +27,7 @@
 # Improvements
 - Included XML documentation in the package
 - Update dependencies to newer packages
+- Add z-base-32 and Geohash variants to Base32
 
 # Fixes
 - A potential issue where a shortcut character for a custom Base85 encoding would not be processed.

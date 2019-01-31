@@ -37,6 +37,18 @@ namespace SimpleBase
         public static Base32Alphabet ExtendedHex { get; }
             = new Base32Alphabet("0123456789ABCDEFGHIJKLMNOPQRSTUV");
 
+        /// <summary>
+        /// Gets z-base-32 alphabet
+        /// </summary>
+        public static Base32Alphabet ZBase32 { get; }
+            = new Base32Alphabet("ybndrfg8ejkmcpqxot1uwisza345h769");
+
+        /// <summary>
+        /// Gets Geohash alphabet
+        /// </summary>
+        public static Base32Alphabet Geohash { get; }
+            = new Base32Alphabet("0123456789bcdefghjkmnpqrstuvwxyz");
+
         private void mapLowerCaseCounterparts(string alphabet)
         {
             foreach (char c in alphabet)

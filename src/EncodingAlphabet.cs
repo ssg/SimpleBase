@@ -24,7 +24,10 @@ namespace SimpleBase
     using System;
 
     /// <summary>
-    /// Basis for all encoding alphabets
+    /// A single encoding algorithm can support many different alphabets.
+    /// EncodingAlphabet consists of a basis for implementing different
+    /// alphabets for different encodings. It's suitable if you want to
+    /// implement your own encoding based on the existing base classes.
     /// </summary>
     public abstract class EncodingAlphabet
     {

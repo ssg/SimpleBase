@@ -19,15 +19,26 @@ namespace SimpleBase
         public static readonly Base32 Crockford = new Base32(Base32Alphabet.Crockford);
 
         /// <summary>
-        /// RFC 4648 variant of Base32 converter
+        /// RFC 4648 variant of Base32 coder
         /// </summary>
         public static readonly Base32 Rfc4648 = new Base32(Base32Alphabet.Rfc4648);
 
         /// <summary>
-        /// Extended Hex variant of Base32 converter
+        /// Extended Hex variant of Base32 coder
         /// </summary>
         /// <remarks>Also from RFC 4648</remarks>
         public static readonly Base32 ExtendedHex = new Base32(Base32Alphabet.ExtendedHex);
+
+        /// <summary>
+        /// z-base-32 variant of Base32 coder
+        /// </summary>
+        /// <remarks>This variant is used in Mnet, ZRTP and Tahoe-LAFS</remarks>
+        public static readonly Base32 ZBase32 = new Base32(Base32Alphabet.ZBase32);
+
+        /// <summary>
+        /// Geohash variant of Base32 coder
+        /// </summary>
+        public static readonly Base32 Geohash = new Base32(Base32Alphabet.Geohash);
 
         private const int bitsPerByte = 8;
         private const int bitsPerChar = 5;
