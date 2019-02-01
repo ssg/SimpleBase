@@ -1,4 +1,9 @@
-﻿/*
+﻿// <copyright file="Base85Alphabet.cs" company="Sedat Kapanoglu">
+// Copyright (c) 2014-2019 Sedat Kapanoglu
+// Licensed under Apache-2.0 License (see LICENSE.txt file for details)
+// </copyright>
+
+/*
      Copyright 2018 Sedat Kapanoglu
 
    Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,33 +21,57 @@
 
 namespace SimpleBase
 {
-    public sealed class Base85Alphabet: EncodingAlphabet
+    /// <summary>
+    /// Base85 Alphabet
+    /// </summary>
+    public sealed class Base85Alphabet : EncodingAlphabet
     {
-        public const char NoShortcut = '\xFFFF';
-
-        public char AllZeroShortcut { get; }  = NoShortcut;
-        public char AllSpaceShortcut { get; } = NoShortcut;
-
-        public bool HasShortcut => AllSpaceShortcut != NoShortcut || AllZeroShortcut != NoShortcut;
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Base85Alphabet"/> class
+        /// using custom settings.
+        /// </summary>
+        /// <param name="alphabet">Alphabet to use</param>
+        /// <param name="allZeroShortcut">Character to substitute for all zeros</param>
+        /// <param name="allSpaceShortcut">Character to substitute for all spaces</param>
+        public Base85Alphabet(
+            string alphabet,
+            char? allZeroShortcut = null,
+            char? allSpaceShortcut = null)
+            : base(85, alphabet)
+        {
+            this.AllZeroShortcut = allZeroShortcut;
+            this.AllSpaceShortcut = allSpaceShortcut;
+        }
 
         /// <summary>
-        /// ZeroMQ Z85 Alphabet
+        /// Gets ZeroMQ Z85 Alphabet
         /// </summary>
-        public static Base85Alphabet Z85 { get; } 
+        public static Base85Alphabet Z85 { get; }
             = new Base85Alphabet("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ.-:+=^!/*?&<>()[]{}@%$#");
 
         /// <summary>
-        /// Adobe Ascii85 Alphabet (each character is directly produced by raw value + 33)
+        /// Gets Adobe Ascii85 Alphabet (each character is directly produced by raw value + 33)
         /// </summary>
         public static Base85Alphabet Ascii85 { get; }
-            = new Base85Alphabet("!\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstu", 
-                allZeroShortcut: 'z', allSpaceShortcut: 'y');
+            = new Base85Alphabet(
+                "!\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstu",
+                allZeroShortcut: 'z',
+                allSpaceShortcut: 'y');
 
-        public Base85Alphabet(string alphabet, char allZeroShortcut = NoShortcut,
-            char allSpaceShortcut = NoShortcut): base(85, alphabet)
-        {
-            AllZeroShortcut = allZeroShortcut;
-            AllSpaceShortcut = allSpaceShortcut;
-        }
+        /// <summary>
+        /// Gets the character to be used for "all zeros"
+        /// </summary>
+        public char? AllZeroShortcut { get; }
+
+        /// <summary>
+        /// Gets the character to be used for "all spaces"
+        /// </summary>
+        public char? AllSpaceShortcut { get; }
+
+        /// <summary>
+        /// Gets a value indicating whether the alphabet uses one of shortcut characters for all spaces
+        /// or all zeros.
+        /// </summary>
+        public bool HasShortcut => AllSpaceShortcut.HasValue || AllZeroShortcut.HasValue;
     }
 }

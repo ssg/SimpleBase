@@ -10,7 +10,7 @@ than I expected. To grasp the algorithms I had to get a pen and paper to see how
 
 Features
 --------
- - Base32: RFC 4648, Crockford and Extended Hex (BASE32-HEX) flavors with Crockford 
+ - Base32: RFC 4648, Crockford, z-base-32, Geohash and Extended Hex (BASE32-HEX) flavors with Crockford 
 character substitution, or any other custom alphabet you might want to use.
  - Base58: Bitcoin, Ripple, Flickr and custom flavors.
  - Base85: Ascii85, Z85 and custom flavors.

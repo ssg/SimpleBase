@@ -1,0 +1,10 @@
+{
+  "$schema": "https://raw.githubusercontent.com/DotNetAnalyzers/StyleCopAnalyzers/master/StyleCop.Analyzers/StyleCop.Analyzers/Settings/stylecop.schema.json",
+  "settings": {
+    "documentationRules": {
+      "companyName": "Sedat Kapanoglu",
+      "copyrightText": "Copyright (c) 2014-2019 Sedat Kapanoglu\nLicensed under Apache-2.0 License (see LICENSE.txt file for details)",
+      "documentInternalElements": false
+    }
+  }
+}

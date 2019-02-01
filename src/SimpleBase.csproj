@@ -3,7 +3,7 @@
     <TargetFrameworks>netstandard2.0</TargetFrameworks>
     <RootNamespace>SimpleBase</RootNamespace>
     <AssemblyName>SimpleBase</AssemblyName>
-    <Copyright>Copyright 2014-2018 Sedat Kapanoglu</Copyright>
+    <Copyright>Copyright 2014-2019 Sedat Kapanoglu</Copyright>
     <Authors>Sedat Kapanoglu</Authors>
     <Description>Base16, Base32, Base58, Base85 encoding/decoding library</Description>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
@@ -13,6 +13,9 @@
     <DelaySign>false</DelaySign>
 
     <PackageVersion>2.0.0</PackageVersion>
+    <CodeAnalysisRuleSet>SSG.ruleset</CodeAnalysisRuleSet>
+    <DocumentationFile>SimpleBase.xml</DocumentationFile>
+    <PackageVersion>1.8.0</PackageVersion>
     <PackageProjectUrl>https://github.com/ssg/SimpleBase</PackageProjectUrl>
     <PackageLicense>Apache-2.0</PackageLicense>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
@@ -20,10 +23,38 @@
     <PackageReleaseNotes><![CDATA[
 # Breaking changes
 - Adapted to nullable references, so removed null checks from the code
+    <PackageReleaseNotes>
+  <![CDATA[
+# Breaking changes
+- Alphabet references in Base58 class are now static properties instead of static readonly fields
+- Base85 alphabets are now using proper Nullable<char>'s instead of custom characters
+
+# Improvements
+- Included XML documentation in the package
+- Update dependencies to newer packages
+- Add z-base-32 and Geohash variants to Base32
+
+# Fixes
+- A potential issue where a shortcut character for a custom Base85 encoding would not be processed.
  ]]></PackageReleaseNotes>
-    <LangVersion>latest</LangVersion>
+    <LangVersion>8.0</LangVersion>
     <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netstandard2.0|AnyCPU'">
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="SimpleBase.net45.v3.ncrunchproject" />
+    <None Remove="SimpleBase.netstandard1.3.v3.ncrunchproject" />
+    <None Remove="SimpleBase.xml" />
+    <None Remove="stylecop.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <AdditionalFiles Include="stylecop.json" />
+  </ItemGroup>
 
   <ItemGroup>
     <None Include="..\SimpleBase.snk" Link="SimpleBase.snk" />
@@ -31,6 +62,10 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.6.3">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="StyleCop.Analyzers" Version="1.0.2">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>

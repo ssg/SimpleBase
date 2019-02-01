@@ -15,27 +15,20 @@
 */
 using System;
 using System.Text;
-using SimpleBase;
 using NUnit.Framework;
+using SimpleBase;
 
-namespace SimpleBaseTest.Base32Test
+namespace SimpleBaseTest
 {
     [TestFixture]
-    class Rfc4648Test
+    class ZBase32Test
     {
         private static readonly string[][] testData = new[]
         {
             new[] { "", "" },
-            new[] {"f", "MY======" },
-            new[] {"fo", "MZXQ====" },
-            new[] {"foo", "MZXW6===" },
-            new[] {"foob", "MZXW6YQ=" },
-            new[] {"fooba", "MZXW6YTB" },
-            new[] {"foobar", "MZXW6YTBOI======" },
-            new[] {"foobar1", "MZXW6YTBOIYQ====" },
-            new[] {"foobar12", "MZXW6YTBOIYTE===" },
-            new[] {"foobar123", "MZXW6YTBOIYTEMY=" },
-            new[] {"1234567890123456789012345678901234567890", "GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ" },
+            new[] { "dCode z-base-32", "ctbs63dfrb7n4aubqp114c31" },
+            new[] { "Never did sun more beautifully steep",
+                "j31zc3m1rb1g13byqp4shedpp73gkednciozk7djc34sa5d3rb3ze3mfqy" },
         };
 
         [Test]
@@ -43,7 +36,7 @@ namespace SimpleBaseTest.Base32Test
         public void Encode_ReturnsExpectedValues(string input, string expectedOutput)
         {
             byte[] bytes = Encoding.ASCII.GetBytes(input);
-            string result = Base32.Rfc4648.Encode(bytes, padding: true);
+            string result = Base32.ZBase32.Encode(bytes, padding: false);
             Assert.AreEqual(expectedOutput, result);
         }
 
@@ -51,10 +44,10 @@ namespace SimpleBaseTest.Base32Test
         [TestCaseSource(nameof(testData))]
         public void Decode_ReturnsExpectedValues(string expectedOutput, string input)
         {
-            var bytes = Base32.Rfc4648.Decode(input);
+            var bytes = Base32.ZBase32.Decode(input);
             string result = Encoding.ASCII.GetString(bytes.ToArray());
             Assert.AreEqual(expectedOutput, result);
-            bytes = Base32.Rfc4648.Decode(input.ToLowerInvariant());
+            bytes = Base32.ZBase32.Decode(input.ToLowerInvariant());
             result = Encoding.ASCII.GetString(bytes.ToArray());
             Assert.AreEqual(expectedOutput, result);
         }
@@ -62,13 +55,19 @@ namespace SimpleBaseTest.Base32Test
         [Test]
         public void Encode_NullBytes_ReturnsEmptyString()
         {
-            Assert.AreEqual(String.Empty, Base32.Rfc4648.Encode(null, true));
+            Assert.AreEqual(String.Empty, Base32.ZBase32.Encode(null, padding: false));
+        }
+
+        [Test]
+        public void Decode_NullString_ThrowsArgumentNullException()
+        {
+            Assert.Throws<ArgumentNullException>(() => Base32.ZBase32.Decode((string)null));
         }
 
         [Test]
         public void Decode_InvalidInput_ThrowsArgumentException()
         {
-            Assert.Throws<ArgumentException>(() => Base32.Rfc4648.Decode("[];',m."));
+            Assert.Throws<ArgumentException>(() => Base32.ZBase32.Decode("[];',m."));
         }
     }
 }
