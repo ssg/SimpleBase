@@ -29,7 +29,9 @@ namespace benchmark
 
         };
 
+#pragma warning disable CA1801 // Review unused parameters
         static void Main(string[] args)
+#pragma warning restore CA1801 // Review unused parameters
         {
 #if DEBUG
             Console.WriteLine("***************************************");
@@ -53,8 +55,7 @@ namespace benchmark
             var baseline = benchmarks[0];
             foreach (var benchmark in benchmarks)
             {
-                Console.Write("{0,-28}| {1,-7}|", benchmark.Name, 
-                    String.Format("{0:0.##}x", benchmark.Growth));
+                Console.Write("{0,-28}| {1,-7}|", benchmark.Name, $"{benchmark.Growth:0.##}x");
                 beginTest();
                 benchmark.TestEncode();
                 endTest();

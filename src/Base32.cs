@@ -83,7 +83,7 @@ namespace SimpleBase
                 byte* pInput = inputPtr;
                 byte* pEnd = pInput + bytesLen;
 
-                for (int bitsLeft = bitsPerByte, currentByte = *pInput, outputPad = 0;  pInput != pEnd;)
+                for (int bitsLeft = bitsPerByte, currentByte = *pInput, outputPad;  pInput != pEnd;)
                 {
                     if (bitsLeft > bitsPerChar)
                     {

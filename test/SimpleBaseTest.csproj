@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
   <PropertyGroup>
-    <TargetFrameworks>netcoreapp2.0</TargetFrameworks>
+    <TargetFrameworks>netcoreapp2.1</TargetFrameworks>
     <RootNamespace>SimpleBaseTest</RootNamespace>
     <AssemblyName>SimpleBaseTest</AssemblyName>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
@@ -10,6 +10,10 @@
     <AssemblyOriginatorKeyFile>..\SimpleBase.snk</AssemblyOriginatorKeyFile>
     <DelaySign>false</DelaySign>
     <LangVersion>8.0</LangVersion>
+    <NullableReferenceTypes>true</NullableReferenceTypes>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|netcoreapp2.1|AnyCPU'">
+    <NoWarn>1701;1702;IDE0052</NoWarn>
   </PropertyGroup>
   <ItemGroup>
     <None Remove="SimpleBaseTest.v3.ncrunchproject" />

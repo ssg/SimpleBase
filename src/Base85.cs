@@ -3,22 +3,6 @@
 // Licensed under Apache-2.0 License (see LICENSE.txt file for details)
 // </copyright>
 
-/*
-     Copyright 2018 Sedat Kapanoglu
-
-   Licensed under the Apache License, Version 2.0 (the "License");
-   you may not use this file except in compliance with the License.
-   You may obtain a copy of the License at
-
-       http://www.apache.org/licenses/LICENSE-2.0
-
-   Unless required by applicable law or agreed to in writing, software
-   distributed under the License is distributed on an "AS IS" BASIS,
-   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   See the License for the specific language governing permissions and
-   limitations under the License.
-*/
-
 namespace SimpleBase
 {
     using System;
@@ -215,13 +199,13 @@ namespace SimpleBase
                     // handle shortcut characters
                     if (checkZero && c == allZeroChar)
                     {
-                        writeShortcut(ref pDecodeBuffer, blockIndex, 0);
+                        writeShortcut(ref pDecodeBuffer, ref blockIndex, 0);
                         continue;
                     }
 
                     if (checkSpace && c == allSpaceChar)
                     {
-                        writeShortcut(ref pDecodeBuffer, blockIndex, allSpace);
+                        writeShortcut(ref pDecodeBuffer, ref blockIndex, allSpace);
                         continue;
                     }
 
@@ -266,11 +250,12 @@ namespace SimpleBase
                 return textLen * byteBlockSize; // max possible size using shortcuts
             }
 
-            return (((textLen - 1) / stringBlockSize) + 1) * byteBlockSize; // max possible size without shortcuts
+            // max possible size without shortcuts
+            return (((textLen - 1) / stringBlockSize) + 1) * byteBlockSize;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static unsafe void writeShortcut(ref byte* pOutput, int blockIndex, long value)
+        private static unsafe void writeShortcut(ref byte* pOutput, ref int blockIndex, long value)
         {
             if (blockIndex != 0)
             {

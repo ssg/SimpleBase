@@ -38,6 +38,7 @@
 - A potential issue where a shortcut character for a custom Base85 encoding would not be processed.
  ]]></PackageReleaseNotes>
     <LangVersion>8.0</LangVersion>
+    <NullableReferenceTypes>true</NullableReferenceTypes>
     <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
 
