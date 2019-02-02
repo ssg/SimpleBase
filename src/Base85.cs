@@ -80,7 +80,7 @@ namespace SimpleBase
                         | ((uint)*pInput++ << 8)
                         | *pInput++;
 
-                    this.writeOutput(ref pOutput, table, input, stringBlockSize, usesZeroShortcut, usesSpaceShortcut);
+                    writeOutput(ref pOutput, table, input, stringBlockSize, usesZeroShortcut, usesSpaceShortcut);
                 }
 
                 // check if a part is remaining
@@ -295,13 +295,13 @@ namespace SimpleBase
             // handle shortcuts
             if (input == 0 && usesZeroShortcut)
             {
-                *pOutput++ = this.alphabet.AllZeroShortcut.Value;
+                *pOutput++ = this.alphabet.AllZeroShortcut ?? '!'; // guaranteed to be non-null
                 return;
             }
 
             if (input == allSpace && usesSpaceShortcut)
             {
-                *pOutput++ = this.alphabet.AllSpaceShortcut.Value;
+                *pOutput++ = this.alphabet.AllSpaceShortcut ?? '!'; // guaranteed to be non-null
                 return;
             }
 
