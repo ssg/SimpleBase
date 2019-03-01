@@ -7,13 +7,28 @@
             "type": "process",
             "args": [
                 "build",
-                "${workspaceFolder}/benchmark/Benchmark.csproj"
+                "${workspaceFolder}/benchmark/Benchmark.csproj",
+                "/p:GenerateFullPaths=true"
             ],
             "problemMatcher": "$msCompile",
             "group": {
                 "kind": "build",
                 "isDefault": true
             }
+        },
+        {
+            "label": "build release",
+            "command": "dotnet",
+            "type": "process",
+            "args": [
+                "build",
+                "${workspaceFolder}/benchmark/Benchmark.csproj",
+                "-c",
+                "Release",
+                "/p:GenerateFullPaths=true"
+            ],
+            "problemMatcher": "$msCompile",
+            "group": "build"
         }
     ]
 }
