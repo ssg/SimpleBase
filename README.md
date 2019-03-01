@@ -22,7 +22,7 @@ character substitution, or any other custom alphabet you might want to use.
 
 NuGet
 ------
-To install it from NuGet:
+To install it from [NuGet](https://www.nuget.org/packages/SimpleBase/):
 
   `Install-Package SimpleBase`
 
