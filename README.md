@@ -16,6 +16,7 @@ character substitution, or any other custom alphabet you might want to use.
  - Base85: Ascii85, Z85 and custom flavors.
  - Base16: An experimental hexadecimal encoder/decoder just to see how far I can take 
  the optimizations compared to .NET's  implementations. It's quite fast now. It can also be used as a replacement for `SoapHexBinary.Parse` method since it's missing from .NET Core.
+ - Lightweight: No third-party dependencies (depends only on [System.Memory](https://www.nuget.org/packages/System.Memory/) and [System.Runtime.Numerics](https://www.nuget.org/packages/System.Runtime.Numerics/) packages)
  - Thread-safe
  - Simple to use
 
@@ -140,7 +141,7 @@ Small buffer sizes are used (64 characters). They are closer to real life applic
 performs really bad in decoding of larger buffer sizes, due to polynomial complexity of 
 numeric base conversions.
 
-64 byte buffer for encoding · 5,000,000 iterations · 80 character string for decoding
+64 byte buffer for encoding Â· 5,000,000 iterations Â· 80 character string for decoding
 
 Implementation              | Growth | Encode                   | Decode
 ----------------------------|--------|--------------------------|------------------
