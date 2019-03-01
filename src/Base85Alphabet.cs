@@ -5,11 +5,16 @@
 
 namespace SimpleBase
 {
+    using System.Threading;
+
     /// <summary>
     /// Base85 Alphabet
     /// </summary>
     public sealed class Base85Alphabet : EncodingAlphabet
     {
+        private static Base85Alphabet z85;
+        private static Base85Alphabet ascii85;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="Base85Alphabet"/> class
         /// using custom settings.
@@ -30,17 +35,20 @@ namespace SimpleBase
         /// <summary>
         /// Gets ZeroMQ Z85 Alphabet
         /// </summary>
-        public static Base85Alphabet Z85 { get; }
-            = new Base85Alphabet("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ.-:+=^!/*?&<>()[]{}@%$#");
+        public static Base85Alphabet Z85 => LazyInitializer.EnsureInitialized(
+            ref z85,
+            () => new Base85Alphabet(
+                "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ.-:+=^!/*?&<>()[]{}@%$#"));
 
         /// <summary>
         /// Gets Adobe Ascii85 Alphabet (each character is directly produced by raw value + 33)
         /// </summary>
-        public static Base85Alphabet Ascii85 { get; }
-            = new Base85Alphabet(
+        public static Base85Alphabet Ascii85 => LazyInitializer.EnsureInitialized(
+            ref ascii85,
+            () => new Base85Alphabet(
                 "!\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstu",
                 allZeroShortcut: 'z',
-                allSpaceShortcut: 'y');
+                allSpaceShortcut: 'y'));
 
         /// <summary>
         /// Gets the character to be used for "all zeros"

@@ -8,6 +8,7 @@ namespace SimpleBase
     using System;
     using System.IO;
     using System.Runtime.CompilerServices;
+    using System.Threading;
 
     /// <summary>
     /// Base58 encoding/decoding class
@@ -17,8 +18,10 @@ namespace SimpleBase
         private const int baseLength = 85;
         private const int byteBlockSize = 4;
         private const int stringBlockSize = 5;
-
         private const long allSpace = 0x20202020;
+
+        private static Base85 z85;
+        private static Base85 ascii85;
 
         private readonly Base85Alphabet alphabet;
 
@@ -35,12 +38,16 @@ namespace SimpleBase
         /// <summary>
         /// Gets Z85 flavor of Base85
         /// </summary>
-        public static Base85 Z85 { get; } = new Base85(Base85Alphabet.Z85);
+        public static Base85 Z85 => LazyInitializer.EnsureInitialized(
+            ref z85,
+            () => new Base85(Base85Alphabet.Z85));
 
         /// <summary>
         /// Gets Ascii85 flavor of Base85
         /// </summary>
-        public static Base85 Ascii85 { get; } = new Base85(Base85Alphabet.Ascii85);
+        public static Base85 Ascii85 => LazyInitializer.EnsureInitialized(
+            ref ascii85,
+            () => new Base85(Base85Alphabet.Ascii85));
 
         /// <summary>
         /// Encode the given bytes into Base85

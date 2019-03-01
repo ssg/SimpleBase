@@ -5,11 +5,17 @@
 
 namespace SimpleBase
 {
+    using System.Threading;
+
     /// <summary>
     /// Base58 alphabet
     /// </summary>
     public sealed class Base58Alphabet : EncodingAlphabet
     {
+        private static Base58Alphabet bitcoin;
+        private static Base58Alphabet ripple;
+        private static Base58Alphabet flickr;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="Base58Alphabet"/> class
         /// using a custom alphabet.
@@ -23,19 +29,22 @@ namespace SimpleBase
         /// <summary>
         /// Gets Bitcoin alphabet
         /// </summary>
-        public static Base58Alphabet Bitcoin { get; }
-            = new Base58Alphabet("123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz");
+        public static Base58Alphabet Bitcoin => LazyInitializer.EnsureInitialized(
+            ref bitcoin,
+            () => new Base58Alphabet("123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz"));
 
         /// <summary>
         /// Gets Base58 alphabet
         /// </summary>
-        public static Base58Alphabet Ripple { get; }
-            = new Base58Alphabet("rpshnaf39wBUDNEGHJKLM4PQRST7VWXYZ2bcdeCg65jkm8oFqi1tuvAxyz");
+        public static Base58Alphabet Ripple => LazyInitializer.EnsureInitialized(
+            ref ripple,
+            () => new Base58Alphabet("rpshnaf39wBUDNEGHJKLM4PQRST7VWXYZ2bcdeCg65jkm8oFqi1tuvAxyz"));
 
         /// <summary>
         /// Gets Flickr alphabet
         /// </summary>
-        public static Base58Alphabet Flickr { get; }
-            = new Base58Alphabet("123456789abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ");
+        public static Base58Alphabet Flickr => LazyInitializer.EnsureInitialized(
+            ref flickr,
+            () => new Base58Alphabet("123456789abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ"));
     }
 }

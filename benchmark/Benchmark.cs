@@ -65,6 +65,8 @@ namespace benchmark
             byte[] buf = new byte[EncodeSize];
             buf[0] = 1;
             buf[EncodeSize - 1] = 1; // avoid all-zero optimizations of Base58
+
+            EncodeFunc(buf); // warmup
             var w = Stopwatch.StartNew();
             for (int n = 0; n < Iterations; n++)
             {
@@ -77,6 +79,8 @@ namespace benchmark
         public void TestDecode()
         {
             string str = new String('a', DecodeSize);
+
+            DecodeFunc(str); // warmup
             var w = Stopwatch.StartNew();
             for (int n = 0; n < Iterations; n++)
             {

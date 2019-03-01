@@ -22,14 +22,18 @@
     <PackageTags>base16 base32 base58 base85 ascii85 z85 hexadecimal bitcoin ripple flickr crockford extended hex rfc4648</PackageTags>
     <PackageReleaseNotes><![CDATA[
 # Breaking changes
-- Adapted to nullable references, so removed null checks from the code
+- Adapted to nullable references
 - References to Alphabet objects in Base58 class are now static properties instead of static readonly fields
 - Base85 alphabets are now using proper Nullable<char>'s instead of custom characters
+- Encoder references are now properties instead of static fields
 
 # Improvements
 - Included XML documentation in the package
-- Update dependencies to newer packages
-- Add z-base-32 and Geohash variants to Base32
+- Updated dependencies to newer packages
+- Added z-base-32 and Geohash variants to Base32
+- Removed redundant null checking code
+- Removed overhead of generating all possible lookup tables when only one is used
+- Add primitive test coverage for Ripple and Flickr variants of Base58 encoder
 
 # Fixes
 - A potential issue where a shortcut character for a custom Base85 encoding would not be processed.

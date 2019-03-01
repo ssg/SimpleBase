@@ -7,44 +7,24 @@ namespace SimpleBase
 {
     using System;
     using System.IO;
+    using System.Threading;
 
     /// <summary>
     /// Base32 encoding/decoding functions
     /// </summary>
     public sealed class Base32
     {
-        /// <summary>
-        /// Douglas Crockford's Base32 flavor with substitution characters.
-        /// </summary>
-        public static readonly Base32 Crockford = new Base32(Base32Alphabet.Crockford);
-
-        /// <summary>
-        /// RFC 4648 variant of Base32 coder
-        /// </summary>
-        public static readonly Base32 Rfc4648 = new Base32(Base32Alphabet.Rfc4648);
-
-        /// <summary>
-        /// Extended Hex variant of Base32 coder
-        /// </summary>
-        /// <remarks>Also from RFC 4648</remarks>
-        public static readonly Base32 ExtendedHex = new Base32(Base32Alphabet.ExtendedHex);
-
-        /// <summary>
-        /// z-base-32 variant of Base32 coder
-        /// </summary>
-        /// <remarks>This variant is used in Mnet, ZRTP and Tahoe-LAFS</remarks>
-        public static readonly Base32 ZBase32 = new Base32(Base32Alphabet.ZBase32);
-
-        /// <summary>
-        /// Geohash variant of Base32 coder
-        /// </summary>
-        public static readonly Base32 Geohash = new Base32(Base32Alphabet.Geohash);
-
         private const int bitsPerByte = 8;
         private const int bitsPerChar = 5;
         private const char paddingChar = '=';
 
-        private readonly Base32Alphabet alphabet;
+        private static Base32 crockford;
+        private static Base32 rfc4648;
+        private static Base32 extendedHex;
+        private static Base32 zBase32;
+        private static Base32 geohash;
+
+        private Base32Alphabet alphabet;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Base32"/> class with a
@@ -55,6 +35,43 @@ namespace SimpleBase
         {
             this.alphabet = alphabet;
         }
+
+        /// <summary>
+        /// Gets Douglas Crockford's Base32 flavor with substitution characters.
+        /// </summary>
+        public static Base32 Crockford => LazyInitializer.EnsureInitialized(
+            ref crockford,
+            () => new Base32(Base32Alphabet.Crockford));
+
+        /// <summary>
+        /// Gets RFC 4648 variant of Base32 coder
+        /// </summary>
+        public static Base32 Rfc4648 => LazyInitializer.EnsureInitialized(
+            ref rfc4648,
+            () => new Base32(Base32Alphabet.Rfc4648));
+
+        /// <summary>
+        /// Gets Extended Hex variant of Base32 coder
+        /// </summary>
+        /// <remarks>Also from RFC 4648</remarks>
+        public static Base32 ExtendedHex => LazyInitializer.EnsureInitialized(
+            ref extendedHex,
+            () => new Base32(Base32Alphabet.ExtendedHex));
+
+        /// <summary>
+        /// Gets z-base-32 variant of Base32 coder
+        /// </summary>
+        /// <remarks>This variant is used in Mnet, ZRTP and Tahoe-LAFS</remarks>
+        public static Base32 ZBase32 => LazyInitializer.EnsureInitialized(
+            ref zBase32,
+            () => new Base32(Base32Alphabet.ZBase32));
+
+        /// <summary>
+        /// Gets Geohash variant of Base32 coder
+        /// </summary>
+        public static Base32 Geohash => LazyInitializer.EnsureInitialized(
+            ref geohash,
+            () => new Base32(Base32Alphabet.Geohash));
 
         /// <summary>
         /// Encode a byte array into a Base32 string
@@ -83,7 +100,7 @@ namespace SimpleBase
                 byte* pInput = inputPtr;
                 byte* pEnd = pInput + bytesLen;
 
-                for (int bitsLeft = bitsPerByte, currentByte = *pInput, outputPad;  pInput != pEnd;)
+                for (int bitsLeft = bitsPerByte, currentByte = *pInput, outputPad; pInput != pEnd;)
                 {
                     if (bitsLeft > bitsPerChar)
                     {
@@ -108,7 +125,7 @@ namespace SimpleBase
 
                 if (padding)
                 {
-                    for (char* pOutputEnd = outputPtr + outputLen;  pOutput != pOutputEnd; pOutput++)
+                    for (char* pOutputEnd = outputPtr + outputLen; pOutput != pOutputEnd; pOutput++)
                     {
                         *pOutput = paddingChar;
                     }

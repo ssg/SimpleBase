@@ -3,25 +3,10 @@
 // Licensed under Apache-2.0 License (see LICENSE.txt file for details)
 // </copyright>
 
-/*
-     Copyright 2014-2016 Sedat Kapanoglu
-
-   Licensed under the Apache License, Version 2.0 (the "License");
-   you may not use this file except in compliance with the License.
-   You may obtain a copy of the License at
-
-       http://www.apache.org/licenses/LICENSE-2.0
-
-   Unless required by applicable law or agreed to in writing, software
-   distributed under the License is distributed on an "AS IS" BASIS,
-   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   See the License for the specific language governing permissions and
-   limitations under the License.
-*/
-
 namespace SimpleBase
 {
     using System;
+    using System.Diagnostics;
 
     /// <summary>
     /// A single encoding algorithm can support many different alphabets.
@@ -52,10 +37,11 @@ namespace SimpleBase
         /// <param name="alphabet">Alphabet characters</param>
         public EncodingAlphabet(int length, string alphabet)
         {
+            Debug.WriteLine($"Creating a new encoding alphabet with length = {length} and alphabet = {alphabet}");
             if (alphabet.Length != length)
             {
                 throw new ArgumentException($"Required alphabet length is {length} but provided alphabet is "
-                                          + $"{alphabet.Length} characters long");
+                    + $"{alphabet.Length} characters long");
             }
 
             this.Length = length;

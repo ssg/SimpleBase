@@ -6,12 +6,17 @@
 namespace SimpleBase
 {
     using System;
+    using System.Threading;
 
     /// <summary>
     /// Base58 Encoding/Decoding implementation
     /// </summary>
     public sealed class Base58
     {
+        private static Base58 bitcoin;
+        private static Base58 ripple;
+        private static Base58 flickr;
+
         private Base58Alphabet alphabet;
 
         /// <summary>
@@ -27,17 +32,23 @@ namespace SimpleBase
         /// <summary>
         /// Gets Bitcoin flavor
         /// </summary>
-        public static Base58 Bitcoin { get; } = new Base58(Base58Alphabet.Bitcoin);
+        public static Base58 Bitcoin => LazyInitializer.EnsureInitialized(
+            ref bitcoin,
+            () => new Base58(Base58Alphabet.Bitcoin));
 
         /// <summary>
         /// Gets Ripple flavor
         /// </summary>
-        public static Base58 Ripple { get; } = new Base58(Base58Alphabet.Ripple);
+        public static Base58 Ripple => LazyInitializer.EnsureInitialized(
+            ref ripple,
+            () => new Base58(Base58Alphabet.Ripple));
 
         /// <summary>
         /// Gets Flickr flavor
         /// </summary>
-        public static Base58 Flickr { get; } = new Base58(Base58Alphabet.Flickr);
+        public static Base58 Flickr => LazyInitializer.EnsureInitialized(
+            ref flickr,
+            () => new Base58(Base58Alphabet.Flickr));
 
         /// <summary>
         /// Encode to Base58 representation
