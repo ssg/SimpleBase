@@ -22,60 +22,60 @@ namespace SimpleBaseTest
 {
     [TestFixture]
     [Parallelizable]
-    class Base58Test
+    class FlickrTest
     {
-        private static readonly TestCaseData[] bitcoinTestData = new TestCaseData[]
+        private static readonly TestCaseData[] FlickrTestData = new TestCaseData[]
         {
-            new TestCaseData("0000010203", "11Ldp"),
-            new TestCaseData("009C1CA2CBA6422D3988C735BB82B5C880B0441856B9B0910F", "1FESiat4YpNeoYhW3Lp7sW1T6WydcW7vcE"),
-            new TestCaseData("000860C220EBBAF591D40F51994C4E2D9C9D88168C33E761F6", "1mJKRNca45GU2JQuHZqZjHFNktaqAs7gh"),
-            new TestCaseData("00313E1F905554E7AE2580CD36F86D0C8088382C9E1951C44D010203", "17f1hgANcLE5bQhAGRgnBaLTTs23rK4VGVKuFQ"),
+            new TestCaseData("0000010203", "11kCP"),
+            new TestCaseData("009C1CA2CBA6422D3988C735BB82B5C880B0441856B9B0910F", "1ferHzT4xPnDNxGv3kP7Sv1s6vYCBv7VBe"),
+            new TestCaseData("000860C220EBBAF591D40F51994C4E2D9C9D88168C33E761F6", "1LijqnBz45gt2ipUhyQyJhfnKTzQaS7FG"),
+            new TestCaseData("00313E1F905554E7AE2580CD36F86D0C8088382C9E1951C44D010203", "17E1GFanBke5ApGagqFMbzkssS23Rj4ugujUfp"),
             new TestCaseData("0000000000", "11111"),
-            new TestCaseData("1111111111", "2vgLdhi"),
-            new TestCaseData("FFEEDDCCBBAA", "3CSwN61PP"),
+            new TestCaseData("1111111111", "2VFkCGH"),
+            new TestCaseData("FFEEDDCCBBAA", "3crWn61oo"),
             new TestCaseData("00", "1"),
-            new TestCaseData("21", "a"),
+            new TestCaseData("21", "z"),
         };
 
         [Test]
         public void Encode_NullBuffer_ReturnsEmptyString()
         {
-            Assert.AreEqual(String.Empty, Base58.Bitcoin.Encode(null));
+            Assert.AreEqual(String.Empty, Base58.Flickr.Encode(null));
         }
 
         [Test]
-        [TestCaseSource("bitcoinTestData")]
-        public void Encode_Bitcoin_ReturnsExpectedResults(string input, string expectedOutput)
+        [TestCaseSource(nameof(FlickrTestData))]
+        public void Encode_Flickr_ReturnsExpectedResults(string input, string expectedOutput)
         {
             var buffer = Base16.Decode(input);
-            string result = Base58.Bitcoin.Encode(buffer);
+            string result = Base58.Flickr.Encode(buffer);
             Assert.AreEqual(expectedOutput, result);
         }
 
         [Test]
         public void Encode_EmptyBuffer_ReturnsEmptyString()
         {
-            Assert.AreEqual(String.Empty, Base58.Bitcoin.Encode(new byte[0]));
+            Assert.AreEqual(String.Empty, Base58.Flickr.Encode(new byte[0]));
         }
 
         [Test]
         public void Decode_EmptyString_ReturnsEmptyBuffer()
         {
-            var result = Base58.Bitcoin.Decode(String.Empty);
+            var result = Base58.Flickr.Decode(String.Empty);
             Assert.AreEqual(0, result.Length);
         }
 
         [Test]
         public void Decode_InvalidCharacter_Throws()
         {
-            Assert.Throws<ArgumentException>(() => Base58.Bitcoin.Decode("?"));
+            Assert.Throws<ArgumentException>(() => Base58.Flickr.Decode("?"));
         }
 
         [Test]
-        [TestCaseSource("bitcoinTestData")]
-        public void Decode_Bitcoin_ReturnsExpectedResults(string expectedOutput, string input)
+        [TestCaseSource(nameof(FlickrTestData))]
+        public void Decode_Flickr_ReturnsExpectedResults(string expectedOutput, string input)
         {
-            var buffer = Base58.Bitcoin.Decode(input);
+            var buffer = Base58.Flickr.Decode(input);
             string result = BitConverter.ToString(buffer.ToArray()).Replace("-", "",
                 StringComparison.Ordinal);
             Assert.AreEqual(expectedOutput, result);
