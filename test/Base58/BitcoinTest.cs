@@ -44,7 +44,7 @@ namespace SimpleBaseTest
         }
 
         [Test]
-        [TestCaseSource("bitcoinTestData")]
+        [TestCaseSource(nameof(bitcoinTestData))]
         public void Encode_Bitcoin_ReturnsExpectedResults(string input, string expectedOutput)
         {
             var buffer = Base16.Decode(input);
@@ -72,7 +72,7 @@ namespace SimpleBaseTest
         }
 
         [Test]
-        [TestCaseSource("bitcoinTestData")]
+        [TestCaseSource(nameof(bitcoinTestData))]
         public void Decode_Bitcoin_ReturnsExpectedResults(string expectedOutput, string input)
         {
             var buffer = Base58.Bitcoin.Decode(input);

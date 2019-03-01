@@ -24,7 +24,7 @@ namespace SimpleBaseTest
     [Parallelizable]
     class FlickrTest
     {
-        private static readonly TestCaseData[] FlickrTestData = new TestCaseData[]
+        private static readonly TestCaseData[] flickrTestData = new TestCaseData[]
         {
             new TestCaseData("0000010203", "11kCP"),
             new TestCaseData("009C1CA2CBA6422D3988C735BB82B5C880B0441856B9B0910F", "1ferHzT4xPnDNxGv3kP7Sv1s6vYCBv7VBe"),
@@ -44,7 +44,7 @@ namespace SimpleBaseTest
         }
 
         [Test]
-        [TestCaseSource(nameof(FlickrTestData))]
+        [TestCaseSource(nameof(flickrTestData))]
         public void Encode_Flickr_ReturnsExpectedResults(string input, string expectedOutput)
         {
             var buffer = Base16.Decode(input);
@@ -72,7 +72,7 @@ namespace SimpleBaseTest
         }
 
         [Test]
-        [TestCaseSource(nameof(FlickrTestData))]
+        [TestCaseSource(nameof(flickrTestData))]
         public void Decode_Flickr_ReturnsExpectedResults(string expectedOutput, string input)
         {
             var buffer = Base58.Flickr.Decode(input);

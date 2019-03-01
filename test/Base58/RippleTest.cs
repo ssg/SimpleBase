@@ -24,7 +24,7 @@ namespace SimpleBaseTest
     [Parallelizable]
     class RippleTest
     {
-        private static readonly TestCaseData[] RippleTestData = new TestCaseData[]
+        private static readonly TestCaseData[] rippleTestData = new TestCaseData[]
         {
             new TestCaseData("0000010203", "rrLdF"),
             new TestCaseData("009C1CA2CBA6422D3988C735BB82B5C880B0441856B9B0910F", "rENS52thYF4eoY6WsLFf1WrTaWydcWfvcN"),
@@ -44,7 +44,7 @@ namespace SimpleBaseTest
         }
 
         [Test]
-        [TestCaseSource(nameof(RippleTestData))]
+        [TestCaseSource(nameof(rippleTestData))]
         public void Encode_Ripple_ReturnsExpectedResults(string input, string expectedOutput)
         {
             var buffer = Base16.Decode(input);
@@ -72,7 +72,7 @@ namespace SimpleBaseTest
         }
 
         [Test]
-        [TestCaseSource(nameof(RippleTestData))]
+        [TestCaseSource(nameof(rippleTestData))]
         public void Decode_Ripple_ReturnsExpectedResults(string expectedOutput, string input)
         {
             var buffer = Base58.Ripple.Decode(input);
