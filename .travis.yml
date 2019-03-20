@@ -7,3 +7,6 @@ install:
   - dotnet restore
 script:
   - dotnet test test/SimpleBaseTest.csproj
+branches:
+  only:
+    - master
