@@ -37,6 +37,7 @@
 
 # Fixes
 - A potential issue where a shortcut character for a custom Base85 encoding would not be processed.
+- Base58 decoding buffer size is now correctly calculated for all cases
  ]]></PackageReleaseNotes>
     <LangVersion>8.0</LangVersion>
     <NullableContextOptions>enable</NullableContextOptions>

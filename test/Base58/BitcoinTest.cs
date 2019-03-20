@@ -35,6 +35,7 @@ namespace SimpleBaseTest
             new TestCaseData("FFEEDDCCBBAA", "3CSwN61PP"),
             new TestCaseData("00", "1"),
             new TestCaseData("21", "a"),
+            new TestCaseData("000102030405060708090A0B0C0D0E0F000102030405060708090A0B0C0D0E0F", "1thX6LZfHDZZKUs92febWaf4WJZnsKRiVwJusXxB7L"),
         };
 
         [Test]
