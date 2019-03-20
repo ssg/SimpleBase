@@ -176,7 +176,7 @@ namespace SimpleBase
                     return new byte[numZeroes]; // initialized to zero
                 }
 
-                int outputLen = ((textLen * reductionFactor) / 1000) + 1;
+                int outputLen = (int)Math.Round(((textLen * reductionFactor) / 1000.0) + 1);
                 var table = this.alphabet.ReverseLookupTable;
                 byte[] output = new byte[outputLen];
                 fixed (byte* outputPtr = output)
