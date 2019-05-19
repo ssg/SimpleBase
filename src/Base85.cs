@@ -10,7 +10,7 @@ namespace SimpleBase
     using System.Runtime.CompilerServices;
 
     /// <summary>
-    /// Base58 encoding/decoding class
+    /// Base58 encoding/decoding class.
     /// </summary>
     public sealed class Base85
     {
@@ -26,27 +26,27 @@ namespace SimpleBase
         /// Initializes a new instance of the <see cref="Base85"/> class
         /// using a custom alphabet.
         /// </summary>
-        /// <param name="alphabet">Alphabet to use</param>
+        /// <param name="alphabet">Alphabet to use.</param>
         public Base85(Base85Alphabet alphabet)
         {
             this.alphabet = alphabet;
         }
 
         /// <summary>
-        /// Gets Z85 flavor of Base85
+        /// Gets Z85 flavor of Base85.
         /// </summary>
         public static Base85 Z85 { get; } = new Base85(Base85Alphabet.Z85);
 
         /// <summary>
-        /// Gets Ascii85 flavor of Base85
+        /// Gets Ascii85 flavor of Base85.
         /// </summary>
         public static Base85 Ascii85 { get; } = new Base85(Base85Alphabet.Ascii85);
 
         /// <summary>
-        /// Encode the given bytes into Base85
+        /// Encode the given bytes into Base85.
         /// </summary>
-        /// <param name="bytes">Bytes to encode</param>
-        /// <returns>Encoded text</returns>
+        /// <param name="bytes">Bytes to encode.</param>
+        /// <returns>Encoded text.</returns>
         public unsafe string Encode(ReadOnlySpan<byte> bytes)
         {
             int bytesLen = bytes.Length;
@@ -102,10 +102,10 @@ namespace SimpleBase
         }
 
         /// <summary>
-        /// Encode a given stream into a text writer
+        /// Encode a given stream into a text writer.
         /// </summary>
-        /// <param name="input">Input stream</param>
-        /// <param name="output">Output writer</param>
+        /// <param name="input">Input stream.</param>
+        /// <param name="output">Output writer.</param>
         public void Encode(Stream input, TextWriter output)
         {
             const int bufferSize = 4096;
@@ -124,10 +124,10 @@ namespace SimpleBase
         }
 
         /// <summary>
-        /// Decode a text reader into a stream
+        /// Decode a text reader into a stream.
         /// </summary>
-        /// <param name="input">Input reader</param>
-        /// <param name="output">Output stream</param>
+        /// <param name="input">Input reader.</param>
+        /// <param name="output">Output stream.</param>
         public void Decode(TextReader input, Stream output)
         {
             const int bufferSize = 5120;
@@ -146,20 +146,20 @@ namespace SimpleBase
         }
 
         /// <summary>
-        /// Decode a given text into a span
+        /// Decode a given text into a span.
         /// </summary>
-        /// <param name="text">Input text</param>
-        /// <returns>Output span</returns>
+        /// <param name="text">Input text.</param>
+        /// <returns>Output span.</returns>
         public Span<byte> Decode(string text)
         {
             return Decode(text.AsSpan());
         }
 
         /// <summary>
-        /// Decode given characters into bytes
+        /// Decode given characters into bytes.
         /// </summary>
-        /// <param name="text">Characters to decode</param>
-        /// <returns>Decoded bytes</returns>
+        /// <param name="text">Characters to decode.</param>
+        /// <returns>Decoded bytes.</returns>
         public unsafe Span<byte> Decode(ReadOnlySpan<char> text)
         {
             int textLen = text.Length;

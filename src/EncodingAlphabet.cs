@@ -33,7 +33,7 @@ namespace SimpleBase
     {
         /// <summary>
         /// Specifies the highest possible char value in an encoding alphabet
-        /// Any char above with would raise an exception
+        /// Any char above with would raise an exception.
         /// </summary>
         private const int lookupLength = 127;
 
@@ -42,14 +42,14 @@ namespace SimpleBase
         /// The values are held as "value + 1" so a zero would denote "not set"
         /// and would cause an exception.
         /// </summary>
-        /// byte[] has no discernible perf impact and saves memory
+        /// <remarks>byte[] has no discernible perf impact and saves memory.</remarks>
         private readonly byte[] reverseLookupTable = new byte[lookupLength];
 
         /// <summary>
         /// Initializes a new instance of the <see cref="EncodingAlphabet"/> class.
         /// </summary>
-        /// <param name="length">Length of the alphabet</param>
-        /// <param name="alphabet">Alphabet characters</param>
+        /// <param name="length">Length of the alphabe.</param>
+        /// <param name="alphabet">Alphabet character.</param>
         public EncodingAlphabet(int length, string alphabet)
         {
             if (alphabet.Length != length)
@@ -68,12 +68,12 @@ namespace SimpleBase
         }
 
         /// <summary>
-        /// Gets the length of the alphabet
+        /// Gets the length of the alphabet.
         /// </summary>
         public int Length { get; private set; }
 
         /// <summary>
-        /// Gets the characters of the alphabet
+        /// Gets the characters of the alphabet.
         /// </summary>
         public string Value { get; private set; }
 
@@ -88,27 +88,27 @@ namespace SimpleBase
         /// will end after the method call and can incorreclty assume
         /// reachable code.
         /// </remarks>
-        /// <param name="c">Character</param>
-        /// <returns>Exception to be thrown</returns>
+        /// <param name="c">Characters.</param>
+        /// <returns>Exception to be thrown.</returns>
         public static Exception InvalidCharacter(char c)
         {
             return new ArgumentException($"Invalid character: {c}");
         }
 
         /// <summary>
-        /// Get the string representation of the alphabet
+        /// Get the string representation of the alphabet.
         /// </summary>
-        /// <returns>The characters of the encoding alphabet</returns>
+        /// <returns>The characters of the encoding alphabet.</returns>
         public override string ToString()
         {
             return this.Value;
         }
 
         /// <summary>
-        /// Map a character to a value
+        /// Map a character to a value.
         /// </summary>
-        /// <param name="c">Character</param>
-        /// <param name="value">Corresponding value</param>
+        /// <param name="c">Characters.</param>
+        /// <param name="value">Corresponding value.</param>
         protected void Map(char c, int value)
         {
             if (c >= lookupLength)

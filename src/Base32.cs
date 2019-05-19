@@ -9,7 +9,7 @@ namespace SimpleBase
     using System.IO;
 
     /// <summary>
-    /// Base32 encoding/decoding functions
+    /// Base32 encoding/decoding functions.
     /// </summary>
     public sealed class Base32
     {
@@ -19,24 +19,24 @@ namespace SimpleBase
         public static readonly Base32 Crockford = new Base32(Base32Alphabet.Crockford);
 
         /// <summary>
-        /// RFC 4648 variant of Base32 coder
+        /// RFC 4648 variant of Base32 coder.
         /// </summary>
         public static readonly Base32 Rfc4648 = new Base32(Base32Alphabet.Rfc4648);
 
         /// <summary>
-        /// Extended Hex variant of Base32 coder
+        /// Extended Hex variant of Base32 coder.
         /// </summary>
-        /// <remarks>Also from RFC 4648</remarks>
+        /// <remarks>Also from RFC 4648.</remarks>
         public static readonly Base32 ExtendedHex = new Base32(Base32Alphabet.ExtendedHex);
 
         /// <summary>
-        /// z-base-32 variant of Base32 coder
+        /// z-base-32 variant of Base32 coder.
         /// </summary>
-        /// <remarks>This variant is used in Mnet, ZRTP and Tahoe-LAFS</remarks>
+        /// <remarks>This variant is used in Mnet, ZRTP and Tahoe-LAFS.</remarks>
         public static readonly Base32 ZBase32 = new Base32(Base32Alphabet.ZBase32);
 
         /// <summary>
-        /// Geohash variant of Base32 coder
+        /// Geohash variant of Base32 coder.
         /// </summary>
         public static readonly Base32 Geohash = new Base32(Base32Alphabet.Geohash);
 
@@ -50,18 +50,18 @@ namespace SimpleBase
         /// Initializes a new instance of the <see cref="Base32"/> class with a
         /// custom alphabet.
         /// </summary>
-        /// <param name="alphabet">Alphabet to use</param>
+        /// <param name="alphabet">Alphabet to use.</param>
         public Base32(Base32Alphabet alphabet)
         {
             this.alphabet = alphabet;
         }
 
         /// <summary>
-        /// Encode a byte array into a Base32 string
+        /// Encode a byte array into a Base32 string.
         /// </summary>
-        /// <param name="bytes">Buffer to be encoded</param>
-        /// <param name="padding">Append padding characters in the output</param>
-        /// <returns>Encoded string</returns>
+        /// <param name="bytes">Buffer to be encoded.</param>
+        /// <param name="padding">Append padding characters in the output.</param>
+        /// <returns>Encoded string.</returns>
         public unsafe string Encode(ReadOnlySpan<byte> bytes, bool padding)
         {
             int bytesLen = bytes.Length;
@@ -127,8 +127,8 @@ namespace SimpleBase
         /// <summary>
         /// Decode a Base32 encoded string into a byte array.
         /// </summary>
-        /// <param name="text">Encoded Base32 characters</param>
-        /// <returns>Decoded byte array</returns>
+        /// <param name="text">Encoded Base32 characters.</param>
+        /// <returns>Decoded byte array.</returns>
         public Span<byte> Decode(string text)
         {
             return Decode(text.AsSpan());
@@ -137,8 +137,8 @@ namespace SimpleBase
         /// <summary>
         /// Decode a Base32 encoded string into a byte array.
         /// </summary>
-        /// <param name="text">Encoded Base32 string</param>
-        /// <returns>Decoded byte array</returns>
+        /// <param name="text">Encoded Base32 string.</param>
+        /// <returns>Decoded byte array.</returns>
         public unsafe Span<byte> Decode(ReadOnlySpan<char> text)
         {
             int textLen = text.Length;
@@ -201,11 +201,11 @@ namespace SimpleBase
         }
 
         /// <summary>
-        /// Encode a binary stream to a Base32 text stream
+        /// Encode a binary stream to a Base32 text stream.
         /// </summary>
-        /// <param name="input">Input bytes</param>
-        /// <param name="output">The writer the output is written to</param>
-        /// <param name="padding">Whether to use padding at the end of the output</param>
+        /// <param name="input">Input bytes.</param>
+        /// <param name="output">The writer the output is written to.</param>
+        /// <param name="padding">Whether to use padding at the end of the output.</param>
         public void Encode(Stream input, TextWriter output, bool padding)
         {
             const int bufferSize = 4096;
@@ -225,10 +225,10 @@ namespace SimpleBase
         }
 
         /// <summary>
-        /// Decode a text stream into a binary stream
+        /// Decode a text stream into a binary stream.
         /// </summary>
-        /// <param name="input">TextReader open on the stream</param>
-        /// <param name="output">Binary output stream</param>
+        /// <param name="input">TextReader open on the stream.</param>
+        /// <param name="output">Binary output stream.</param>
         public void Decode(TextReader input, Stream output)
         {
             const int bufferSize = 6400;

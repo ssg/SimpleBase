@@ -6,7 +6,7 @@
 namespace SimpleBase
 {
     /// <summary>
-    /// Base85 Alphabet
+    /// Base85 Alphabet.
     /// </summary>
     public sealed class Base85Alphabet : EncodingAlphabet
     {
@@ -14,9 +14,9 @@ namespace SimpleBase
         /// Initializes a new instance of the <see cref="Base85Alphabet"/> class
         /// using custom settings.
         /// </summary>
-        /// <param name="alphabet">Alphabet to use</param>
-        /// <param name="allZeroShortcut">Character to substitute for all zeros</param>
-        /// <param name="allSpaceShortcut">Character to substitute for all spaces</param>
+        /// <param name="alphabet">Alphabet to use.</param>
+        /// <param name="allZeroShortcut">Character to substitute for all zero.</param>
+        /// <param name="allSpaceShortcut">Character to substitute for all space.</param>
         public Base85Alphabet(
             string alphabet,
             char? allZeroShortcut = null,
@@ -28,14 +28,14 @@ namespace SimpleBase
         }
 
         /// <summary>
-        /// Gets ZeroMQ Z85 Alphabet
+        /// Gets ZeroMQ Z85 Alphabet.
         /// </summary>
         public static Base85Alphabet Z85 { get; }
             = new Base85Alphabet("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ.-:+=^!/*?&<>()[]{}@%$#");
 
         /// <summary>
         /// Gets Adobe Ascii85 Alphabet (each character is directly produced by raw value + 33),
-        /// also known as "btoa" encoding
+        /// also known as "btoa" encoding.
         /// </summary>
         public static Base85Alphabet Ascii85 { get; }
             = new Base85Alphabet(
@@ -44,12 +44,12 @@ namespace SimpleBase
                 allSpaceShortcut: 'y');
 
         /// <summary>
-        /// Gets the character to be used for "all zeros"
+        /// Gets the character to be used for "all zeros".
         /// </summary>
         public char? AllZeroShortcut { get; }
 
         /// <summary>
-        /// Gets the character to be used for "all spaces"
+        /// Gets the character to be used for "all spaces".
         /// </summary>
         public char? AllSpaceShortcut { get; }
 

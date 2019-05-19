@@ -10,45 +10,45 @@ namespace SimpleBase
     using System.Runtime.CompilerServices;
 
     /// <summary>
-    /// Hexadecimal encoding/decoding
+    /// Hexadecimal encoding/decoding.
     /// </summary>
     public static class Base16
     {
         /// <summary>
-        /// Encode to Base16 representation using uppercase lettering
+        /// Encode to Base16 representation using uppercase lettering.
         /// </summary>
-        /// <param name="bytes">Bytes to encode</param>
-        /// <returns>Base16 string</returns>
+        /// <param name="bytes">Bytes to encode.</param>
+        /// <returns>Base16 string.</returns>
         public static unsafe string EncodeUpper(ReadOnlySpan<byte> bytes)
         {
             return internalEncode(bytes, 'A');
         }
 
         /// <summary>
-        /// Encode to Base16 representation using lowercase lettering
+        /// Encode to Base16 representation using lowercase lettering.
         /// </summary>
-        /// <param name="bytes">Bytes to encode</param>
-        /// <returns>Base16 string</returns>
+        /// <param name="bytes">Bytes to encode.</param>
+        /// <returns>Base16 string.</returns>
         public static unsafe string EncodeLower(ReadOnlySpan<byte> bytes)
         {
             return internalEncode(bytes, 'a');
         }
 
         /// <summary>
-        /// Decode an encoded text into bytes
+        /// Decode an encoded text into bytes.
         /// </summary>
-        /// <param name="text">Input text</param>
-        /// <returns>Result bytes</returns>
+        /// <param name="text">Input text.</param>
+        /// <returns>Result bytes.</returns>
         public static Span<byte> Decode(string text)
         {
             return Decode(text.AsSpan());
         }
 
         /// <summary>
-        /// Decode Base16 text into bytes
+        /// Decode Base16 text into bytes.
         /// </summary>
-        /// <param name="text">Base16 text</param>
-        /// <returns>Decoded bytes</returns>
+        /// <param name="text">Base16 text.</param>
+        /// <returns>Decoded bytes.</returns>
         public static unsafe Span<byte> Decode(ReadOnlySpan<char> text)
         {
             int textLen = text.Length;
@@ -90,8 +90,8 @@ namespace SimpleBase
         /// as little memory as possible, and relies of .NET's own underlying buffering mechanisms,
         /// contrary to their buffer-based versions.
         /// </summary>
-        /// <param name="input">Stream that the encoded bytes would be read from</param>
-        /// <param name="output">Stream where decoded bytes will be written to</param>
+        /// <param name="input">Stream that the encoded bytes would be read from.</param>
+        /// <param name="output">Stream where decoded bytes will be written to.</param>
         public static void Decode(TextReader input, Stream output)
         {
             const int bufferSize = 4096;
@@ -113,20 +113,20 @@ namespace SimpleBase
         }
 
         /// <summary>
-        /// Encodes stream of bytes into a Base16 text
+        /// Encodes stream of bytes into a Base16 text.
         /// </summary>
-        /// <param name="input">Stream that provides bytes to be encoded</param>
-        /// <param name="output">Stream that the encoded text is written to</param>
+        /// <param name="input">Stream that provides bytes to be encoded.</param>
+        /// <param name="output">Stream that the encoded text is written to.</param>
         public static void EncodeUpper(Stream input, TextWriter output)
         {
             internalEncode(input, output, 'A');
         }
 
         /// <summary>
-        /// Encodes stream of bytes into a Base16 text
+        /// Encodes stream of bytes into a Base16 text.
         /// </summary>
-        /// <param name="input">Stream that provides bytes to be encoded</param>
-        /// <param name="output">Stream that the encoded text is written to</param>
+        /// <param name="input">Stream that provides bytes to be encoded.</param>
+        /// <param name="output">Stream that the encoded text is written to.</param>
         public static void EncodeLower(Stream input, TextWriter output)
         {
             internalEncode(input, output, 'a');
