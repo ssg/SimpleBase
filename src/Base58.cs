@@ -11,6 +11,10 @@ namespace SimpleBase
     /// <summary>
     /// Base58 Encoding/Decoding implementation.
     /// </summary>
+    /// <remarks>
+    /// Base58 doesn't contain Stream-based interface because it's not feasible to use
+    /// for large buffer sizes.
+    /// </remarks>
     public sealed class Base58
     {
         private static Base58 bitcoin;
@@ -97,8 +101,8 @@ namespace SimpleBase
                             && pDigit >= outputPtr; pDigit--, i++)
                         {
                             carry += 256 * (*pDigit);
-                            *pDigit = (byte)(carry % 58);
-                            carry /= 58;
+                            carry = Math.DivRem(carry, 58, out int remainder);
+                            *pDigit = (byte)remainder;
                         }
 
                         length = i;

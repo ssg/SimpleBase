@@ -5,7 +5,6 @@
 
 namespace SimpleBase
 {
-    using System;
     using System.Threading;
 
     /// <summary>

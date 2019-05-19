@@ -8,6 +8,7 @@ namespace SimpleBase
     using System;
     using System.IO;
     using System.Threading;
+    using System.Threading.Tasks;
 
     /// <summary>
     /// Base32 encoding/decoding functions.
@@ -225,20 +226,27 @@ namespace SimpleBase
         /// <param name="padding">Whether to use padding at the end of the output.</param>
         public void Encode(Stream input, TextWriter output, bool padding)
         {
-            const int bufferSize = 4096;
-            var buffer = new byte[bufferSize];
-            while (true)
+            StreamHelper.Encode(input, output, (buffer, lastBlock) =>
             {
-                int bytesRead = input.Read(buffer, 0, bufferSize);
-                if (bytesRead < 1)
-                {
-                    break;
-                }
+                bool usePadding = lastBlock ? padding : false;
+                return Encode(buffer.Span, usePadding);
+            });
+        }
 
-                bool usePadding = bytesRead < bufferSize ? padding : false;
-                var result = this.Encode(buffer.AsSpan(0, bytesRead), usePadding);
-                output.Write(result);
-            }
+        /// <summary>
+        /// Encode a binary stream to a Base32 text stream.
+        /// </summary>
+        /// <param name="input">Input bytes.</param>
+        /// <param name="output">The writer the output is written to.</param>
+        /// <param name="padding">Whether to use padding at the end of the output.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+        public async Task EncodeAsync(Stream input, TextWriter output, bool padding)
+        {
+            await StreamHelper.EncodeAsync(input, output, (buffer, lastBlock) =>
+            {
+                bool usePadding = lastBlock ? padding : false;
+                return Encode(buffer.Span, usePadding);
+            }).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -248,19 +256,19 @@ namespace SimpleBase
         /// <param name="output">Binary output stream.</param>
         public void Decode(TextReader input, Stream output)
         {
-            const int bufferSize = 6400;
-            var buffer = new char[bufferSize];
-            while (true)
-            {
-                int bytesRead = input.Read(buffer, 0, bufferSize);
-                if (bytesRead < 1)
-                {
-                    break;
-                }
+            StreamHelper.Decode(input, output, buffer => Decode(buffer.Span).ToArray());
+        }
 
-                var result = this.Decode(buffer.AsSpan(0, bytesRead));
-                output.Write(result.ToArray(), 0, result.Length);
-            }
+        /// <summary>
+        /// Decode a text stream into a binary stream.
+        /// </summary>
+        /// <param name="input">TextReader open on the stream.</param>
+        /// <param name="output">Binary output stream.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+        public async Task DecodeAsync(TextReader input, Stream output)
+        {
+            await StreamHelper.DecodeAsync(input, output, buffer => Decode(buffer.Span).ToArray())
+                .ConfigureAwait(false);
         }
     }
 }

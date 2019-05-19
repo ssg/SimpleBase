@@ -8,6 +8,7 @@ namespace SimpleBase
     using System;
     using System.IO;
     using System.Runtime.CompilerServices;
+    using System.Threading.Tasks;
 
     /// <summary>
     /// Hexadecimal encoding/decoding.
@@ -94,22 +95,21 @@ namespace SimpleBase
         /// <param name="output">Stream where decoded bytes will be written to.</param>
         public static void Decode(TextReader input, Stream output)
         {
-            const int bufferSize = 4096;
-            var buffer = new char[bufferSize];
-            using (var writer = new BinaryWriter(output))
-            {
-                while (true)
-                {
-                    int bytesRead = input.Read(buffer, 0, bufferSize);
-                    if (bytesRead < 1)
-                    {
-                        break;
-                    }
+            StreamHelper.Decode(input, output, buffer => Decode(buffer.Span).ToArray());
+        }
 
-                    var result = Decode(buffer.AsSpan(0, bytesRead));
-                    writer.Write(result.ToArray());
-                }
-            }
+        /// <summary>
+        /// Decode Base16 text through streams for generic use. Stream based variant tries to consume
+        /// as little memory as possible, and relies of .NET's own underlying buffering mechanisms,
+        /// contrary to their buffer-based versions.
+        /// </summary>
+        /// <param name="input">Stream that the encoded bytes would be read from.</param>
+        /// <param name="output">Stream where decoded bytes will be written to.</param>
+        /// <returns>Task that represents the async operation.</returns>
+        public static async Task DecodeAsync(TextReader input, Stream output)
+        {
+            await StreamHelper.DecodeAsync(input, output, buffer => Decode(buffer.Span).ToArray())
+                .ConfigureAwait(false);
         }
 
         /// <summary>
@@ -119,7 +119,19 @@ namespace SimpleBase
         /// <param name="output">Stream that the encoded text is written to.</param>
         public static void EncodeUpper(Stream input, TextWriter output)
         {
-            internalEncode(input, output, 'A');
+            StreamHelper.Encode(input, output, (buffer, lastBlock) => internalEncode(buffer.Span, 'A'));
+        }
+
+        /// <summary>
+        /// Encodes stream of bytes into a Base16 text.
+        /// </summary>
+        /// <param name="input">Stream that provides bytes to be encoded.</param>
+        /// <param name="output">Stream that the encoded text is written to.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+        public static async Task EncodeUpperAsync(Stream input, TextWriter output)
+        {
+            await StreamHelper.EncodeAsync(input, output, (buffer, lastBlock) =>
+                internalEncode(buffer.Span, 'A')).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -129,7 +141,19 @@ namespace SimpleBase
         /// <param name="output">Stream that the encoded text is written to.</param>
         public static void EncodeLower(Stream input, TextWriter output)
         {
-            internalEncode(input, output, 'a');
+            StreamHelper.Encode(input, output, (buffer, lastBlock) => internalEncode(buffer.Span, 'a'));
+        }
+
+        /// <summary>
+        /// Encodes stream of bytes into a Base16 text.
+        /// </summary>
+        /// <param name="input">Stream that provides bytes to be encoded.</param>
+        /// <param name="output">Stream that the encoded text is written to.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+        public static async Task EncodeLowerAsync(Stream input, TextWriter output)
+        {
+            await StreamHelper.EncodeAsync(input, output, (buffer, lastBlock) =>
+                internalEncode(buffer.Span, 'a')).ConfigureAwait(false);
         }
 
         private static unsafe string internalEncode(ReadOnlySpan<byte> bytes, char baseChar)
@@ -201,24 +225,6 @@ namespace SimpleBase
 
         Error:
             throw new ArgumentException($"Invalid hex character: {c}");
-        }
-
-        private static void internalEncode(Stream input, TextWriter output, char baseChar)
-        {
-            const int bufferLength = 4096;
-
-            var buffer = new byte[bufferLength];
-            while (true)
-            {
-                int bytesRead = input.Read(buffer, 0, bufferLength);
-                if (bytesRead < 1)
-                {
-                    break;
-                }
-
-                var result = internalEncode(buffer.AsSpan(0, bytesRead), baseChar);
-                output.Write(result);
-            }
         }
     }
 }

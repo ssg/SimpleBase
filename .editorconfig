@@ -1,7 +1,12 @@
 root = true
 
-[*.cs]
+[*]
 indent_size = 4
 indent_style = space
+
+[*.cs]
 trim_trailing_whitespace = true
 guidelines = 110
+
+[*.md]
+guidelines = 80

@@ -19,7 +19,8 @@
     <PackageLicense>Apache-2.0</PackageLicense>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <PackageTags>base16 base32 base58 base85 ascii85 z85 hexadecimal bitcoin ripple flickr crockford extended hex rfc4648 z-base-32 geohash</PackageTags>
-    <PackageReleaseNotes><![CDATA[
+    <PackageReleaseNotes>
+  <![CDATA[
 # Breaking changes
 - Adapted to nullable references
 - Encoder references are now properties instead of static fields
@@ -28,9 +29,11 @@
 - Included XML documentation in the package
 - Updated dependencies to newer packages
 - Added z-base-32 and Geohash variants to Base32
+- Slight performance increase in Base58 encoding
 - Removed redundant null checking code
-- Removed overhead of generating all possible lookup tables when only one is used
-- Add primitive test coverage for Ripple and Flickr variants of Base58 encoder
+- Reduced startup overhead
+- Slight performance increase in Base58 encoding
+- Add basic test coverage for Ripple and Flickr variants of Base58 encoder
 ]]></PackageReleaseNotes>
     <LangVersion>8.0</LangVersion>
     <NullableContextOptions>enable</NullableContextOptions>

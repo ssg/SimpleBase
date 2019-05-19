@@ -38,6 +38,26 @@ namespace SimpleBaseTest.Base32Test
         };
 
         [Test]
+        public void Encode_SampleInterface_Compiles()
+        {
+            // this source code exists in samples and just needs to be compiled and run without errors.
+            // do not edit/refactor the code below
+            byte[] myBuffer = new byte[0];
+            string result = Base32.Crockford.Encode(myBuffer, padding: true);
+            Assert.IsEmpty(result);
+        }
+
+        [Test]
+        public void Decode_SampleInterface_Compiles()
+        {
+            // this source code exists in samples and just needs to be compiled and run without errors.
+            // do not edit/refactor the code below
+            string myText = "CSQPYRK1E8"; // any buffer will do
+            Span<byte> result = Base32.Crockford.Decode(myText);
+            Assert.IsTrue(result.Length > 0);
+        }
+
+        [Test]
         [TestCaseSource(nameof(testData))]
         public void Encode_Stream_ReturnsExpectedValues(string input, string expectedOutput)
         {
