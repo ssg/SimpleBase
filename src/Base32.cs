@@ -30,7 +30,7 @@ namespace SimpleBase
         /// Initializes a new instance of the <see cref="Base32"/> class with a
         /// custom alphabet.
         /// </summary>
-        /// <param name="alphabet">Alphabet to use</param>
+        /// <param name="alphabet">Alphabet to use.</param>
         public Base32(Base32Alphabet alphabet)
         {
             this.alphabet = alphabet;
@@ -44,30 +44,30 @@ namespace SimpleBase
             () => new Base32(Base32Alphabet.Crockford));
 
         /// <summary>
-        /// Gets RFC 4648 variant of Base32 coder
+        /// Gets RFC 4648 variant of Base32 coder.
         /// </summary>
         public static Base32 Rfc4648 => LazyInitializer.EnsureInitialized(
             ref rfc4648,
             () => new Base32(Base32Alphabet.Rfc4648));
 
         /// <summary>
-        /// Gets Extended Hex variant of Base32 coder
+        /// Gets Extended Hex variant of Base32 coder.
         /// </summary>
-        /// <remarks>Also from RFC 4648</remarks>
+        /// <remarks>Also from RFC 4648.</remarks>
         public static Base32 ExtendedHex => LazyInitializer.EnsureInitialized(
             ref extendedHex,
             () => new Base32(Base32Alphabet.ExtendedHex));
 
         /// <summary>
-        /// Gets z-base-32 variant of Base32 coder
+        /// Gets z-base-32 variant of Base32 coder.
         /// </summary>
-        /// <remarks>This variant is used in Mnet, ZRTP and Tahoe-LAFS</remarks>
+        /// <remarks>This variant is used in Mnet, ZRTP and Tahoe-LAFS.</remarks>
         public static Base32 ZBase32 => LazyInitializer.EnsureInitialized(
             ref zBase32,
             () => new Base32(Base32Alphabet.ZBase32));
 
         /// <summary>
-        /// Gets Geohash variant of Base32 coder
+        /// Gets Geohash variant of Base32 coder.
         /// </summary>
         public static Base32 Geohash => LazyInitializer.EnsureInitialized(
             ref geohash,
