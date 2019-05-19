@@ -22,60 +22,60 @@ namespace SimpleBaseTest
 {
     [TestFixture]
     [Parallelizable]
-    class Base58Test
+    class RippleTest
     {
-        private static readonly TestCaseData[] bitcoinTestData = new TestCaseData[]
+        private static readonly TestCaseData[] rippleTestData = new TestCaseData[]
         {
-            new TestCaseData("0000010203", "11Ldp"),
-            new TestCaseData("009C1CA2CBA6422D3988C735BB82B5C880B0441856B9B0910F", "1FESiat4YpNeoYhW3Lp7sW1T6WydcW7vcE"),
-            new TestCaseData("000860C220EBBAF591D40F51994C4E2D9C9D88168C33E761F6", "1mJKRNca45GU2JQuHZqZjHFNktaqAs7gh"),
-            new TestCaseData("00313E1F905554E7AE2580CD36F86D0C8088382C9E1951C44D010203", "17f1hgANcLE5bQhAGRgnBaLTTs23rK4VGVKuFQ"),
-            new TestCaseData("0000000000", "11111"),
-            new TestCaseData("1111111111", "2vgLdhi"),
-            new TestCaseData("FFEEDDCCBBAA", "3CSwN61PP"),
-            new TestCaseData("00", "1"),
-            new TestCaseData("21", "a"),
+            new TestCaseData("0000010203", "rrLdF"),
+            new TestCaseData("009C1CA2CBA6422D3988C735BB82B5C880B0441856B9B0910F", "rENS52thYF4eoY6WsLFf1WrTaWydcWfvcN"),
+            new TestCaseData("000860C220EBBAF591D40F51994C4E2D9C9D88168C33E761F6", "rmJKR4c2hnG7pJQuHZqZjHE4kt2qw1fg6"),
+            new TestCaseData("00313E1F905554E7AE2580CD36F86D0C8088382C9E1951C44D010203", "rfCr6gw4cLNnbQ6wGRg8B2LTT1psiKhVGVKuEQ"),
+            new TestCaseData("0000000000", "rrrrr"),
+            new TestCaseData("1111111111", "pvgLd65"),
+            new TestCaseData("FFEEDDCCBBAA", "sUSA4arPP"),
+            new TestCaseData("00", "r"),
+            new TestCaseData("21", "2"),
         };
 
         [Test]
         public void Encode_NullBuffer_ReturnsEmptyString()
         {
-            Assert.AreEqual(String.Empty, Base58.Bitcoin.Encode(null));
+            Assert.AreEqual(String.Empty, Base58.Ripple.Encode(null));
         }
 
         [Test]
-        [TestCaseSource("bitcoinTestData")]
-        public void Encode_Bitcoin_ReturnsExpectedResults(string input, string expectedOutput)
+        [TestCaseSource(nameof(rippleTestData))]
+        public void Encode_Ripple_ReturnsExpectedResults(string input, string expectedOutput)
         {
             var buffer = Base16.Decode(input);
-            string result = Base58.Bitcoin.Encode(buffer);
+            string result = Base58.Ripple.Encode(buffer);
             Assert.AreEqual(expectedOutput, result);
         }
 
         [Test]
         public void Encode_EmptyBuffer_ReturnsEmptyString()
         {
-            Assert.AreEqual(String.Empty, Base58.Bitcoin.Encode(new byte[0]));
+            Assert.AreEqual(String.Empty, Base58.Ripple.Encode(new byte[0]));
         }
 
         [Test]
         public void Decode_EmptyString_ReturnsEmptyBuffer()
         {
-            var result = Base58.Bitcoin.Decode(String.Empty);
+            var result = Base58.Ripple.Decode(String.Empty);
             Assert.AreEqual(0, result.Length);
         }
 
         [Test]
         public void Decode_InvalidCharacter_Throws()
         {
-            Assert.Throws<ArgumentException>(() => Base58.Bitcoin.Decode("?"));
+            Assert.Throws<ArgumentException>(() => Base58.Ripple.Decode("?"));
         }
 
         [Test]
-        [TestCaseSource("bitcoinTestData")]
-        public void Decode_Bitcoin_ReturnsExpectedResults(string expectedOutput, string input)
+        [TestCaseSource(nameof(rippleTestData))]
+        public void Decode_Ripple_ReturnsExpectedResults(string expectedOutput, string input)
         {
-            var buffer = Base58.Bitcoin.Decode(input);
+            var buffer = Base58.Ripple.Decode(input);
             string result = BitConverter.ToString(buffer.ToArray()).Replace("-", "",
                 StringComparison.Ordinal);
             Assert.AreEqual(expectedOutput, result);
