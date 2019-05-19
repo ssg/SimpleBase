@@ -15,7 +15,6 @@
     <PackageVersion>2.0.0</PackageVersion>
     <CodeAnalysisRuleSet>SSG.ruleset</CodeAnalysisRuleSet>
     <DocumentationFile>SimpleBase.xml</DocumentationFile>
-    <PackageVersion>1.8.0</PackageVersion>
     <PackageProjectUrl>https://github.com/ssg/SimpleBase</PackageProjectUrl>
     <PackageLicense>Apache-2.0</PackageLicense>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
@@ -55,15 +54,15 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.6.3">
+    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.9.2">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="StyleCop.Analyzers" Version="1.0.2">
+    <PackageReference Include="StyleCop.Analyzers" Version="1.1.118">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="System.Memory" Version="4.5.2" />
+    <PackageReference Include="System.Memory" Version="4.5.3" />
     <PackageReference Include="System.Runtime.Numerics">
       <Version>4.3.0</Version>
     </PackageReference>
