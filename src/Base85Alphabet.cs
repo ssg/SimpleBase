@@ -34,7 +34,8 @@ namespace SimpleBase
             = new Base85Alphabet("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ.-:+=^!/*?&<>()[]{}@%$#");
 
         /// <summary>
-        /// Gets Adobe Ascii85 Alphabet (each character is directly produced by raw value + 33)
+        /// Gets Adobe Ascii85 Alphabet (each character is directly produced by raw value + 33),
+        /// also known as "btoa" encoding
         /// </summary>
         public static Base85Alphabet Ascii85 { get; }
             = new Base85Alphabet(
