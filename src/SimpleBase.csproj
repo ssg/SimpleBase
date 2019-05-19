@@ -18,7 +18,7 @@
     <PackageProjectUrl>https://github.com/ssg/SimpleBase</PackageProjectUrl>
     <PackageLicense>Apache-2.0</PackageLicense>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <PackageTags>base16 base32 base58 base85 ascii85 z85 hexadecimal bitcoin ripple flickr crockford extended hex rfc4648</PackageTags>
+    <PackageTags>base16 base32 base58 base85 ascii85 z85 hexadecimal bitcoin ripple flickr crockford extended hex rfc4648 z-base-32 geohash</PackageTags>
     <PackageReleaseNotes><![CDATA[
 # Breaking changes
 - Adapted to nullable references
