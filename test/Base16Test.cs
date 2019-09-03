@@ -23,72 +23,60 @@ namespace SimpleBaseTest
         [TestCaseSource(nameof(testData))]
         public void Decode_Stream(byte[] expectedOutput, string input)
         {
-            using (var memoryStream = new MemoryStream())
-            using (var reader = new StringReader(input))
-            {
-                Base16.Decode(reader, memoryStream);
-                CollectionAssert.AreEqual(expectedOutput, memoryStream.ToArray());
-            }
+            using var memoryStream = new MemoryStream();
+            using var reader = new StringReader(input);
+            Base16.Decode(reader, memoryStream);
+            CollectionAssert.AreEqual(expectedOutput, memoryStream.ToArray());
         }
 
         [Test]
         [TestCaseSource(nameof(testData))]
         public void EncodeUpper_Stream(byte[] input, string expectedOutput)
         {
-            using (var inputStream = new MemoryStream(input))
-            using (var writer = new StringWriter())
-            {
-                Base16.EncodeUpper(inputStream, writer);
-                Assert.AreEqual(expectedOutput, writer.ToString());
-            }
+            using var inputStream = new MemoryStream(input);
+            using var writer = new StringWriter();
+            Base16.EncodeUpper(inputStream, writer);
+            Assert.AreEqual(expectedOutput, writer.ToString());
         }
 
         [Test]
         [TestCaseSource(nameof(testData))]
         public void EncodeLower_Stream(byte[] input, string expectedOutput)
         {
-            using (var inputStream = new MemoryStream(input))
-            using (var writer = new StringWriter())
-            {
-                Base16.EncodeLower(inputStream, writer);
-                Assert.AreEqual(expectedOutput.ToLowerInvariant(), writer.ToString());
-            }
+            using var inputStream = new MemoryStream(input);
+            using var writer = new StringWriter();
+            Base16.EncodeLower(inputStream, writer);
+            Assert.AreEqual(expectedOutput.ToLowerInvariant(), writer.ToString());
         }
 
         [Test]
         [TestCaseSource(nameof(testData))]
         public async Task DecodeAsync_Stream(byte[] expectedOutput, string input)
         {
-            using (var memoryStream = new MemoryStream())
-            using (var reader = new StringReader(input))
-            {
-                await Base16.DecodeAsync(reader, memoryStream);
-                CollectionAssert.AreEqual(expectedOutput, memoryStream.ToArray());
-            }
+            using var memoryStream = new MemoryStream();
+            using var reader = new StringReader(input);
+            await Base16.DecodeAsync(reader, memoryStream);
+            CollectionAssert.AreEqual(expectedOutput, memoryStream.ToArray());
         }
 
         [Test]
         [TestCaseSource(nameof(testData))]
         public async Task EncodeUpperAsync_StreamAsync(byte[] input, string expectedOutput)
         {
-            using (var inputStream = new MemoryStream(input))
-            using (var writer = new StringWriter())
-            {
-                await Base16.EncodeUpperAsync(inputStream, writer);
-                Assert.AreEqual(expectedOutput, writer.ToString());
-            }
+            using var inputStream = new MemoryStream(input);
+            using var writer = new StringWriter();
+            await Base16.EncodeUpperAsync(inputStream, writer);
+            Assert.AreEqual(expectedOutput, writer.ToString());
         }
 
         [Test]
         [TestCaseSource(nameof(testData))]
         public async Task EncodeLowerAsync_StreamAsync(byte[] input, string expectedOutput)
         {
-            using (var inputStream = new MemoryStream(input))
-            using (var writer = new StringWriter())
-            {
-                await Base16.EncodeLowerAsync(inputStream, writer);
-                Assert.AreEqual(expectedOutput.ToLowerInvariant(), writer.ToString());
-            }
+            using var inputStream = new MemoryStream(input);
+            using var writer = new StringWriter();
+            await Base16.EncodeLowerAsync(inputStream, writer);
+            Assert.AreEqual(expectedOutput.ToLowerInvariant(), writer.ToString());
         }
 
         [Test]

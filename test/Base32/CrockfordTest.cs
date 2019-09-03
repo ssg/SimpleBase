@@ -62,12 +62,10 @@ namespace SimpleBaseTest.Base32Test
         public void Encode_Stream_ReturnsExpectedValues(string input, string expectedOutput)
         {
             byte[] bytes = Encoding.ASCII.GetBytes(input);
-            using (var inputStream = new MemoryStream(bytes))
-            using (var writer = new StringWriter())
-            {
-                Base32.Crockford.Encode(inputStream, writer, padding: false);
-                Assert.AreEqual(expectedOutput, writer.ToString());
-            }
+            using var inputStream = new MemoryStream(bytes);
+            using var writer = new StringWriter();
+            Base32.Crockford.Encode(inputStream, writer, padding: false);
+            Assert.AreEqual(expectedOutput, writer.ToString());
         }
 
         [Test]

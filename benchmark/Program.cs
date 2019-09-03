@@ -44,7 +44,7 @@ namespace benchmark
             Console.ReadLine();
         }
 
-        static void runTests()
+        private static void runTests()
         {
             Console.WriteLine($"{Benchmark.Iterations:#,#} iterations");
             Console.WriteLine($"{Benchmark.EncodeSize} byte buffer for encoding");
@@ -60,7 +60,7 @@ namespace benchmark
                 benchmark.TestEncode();
                 endTest();
                 Console.Write(" {0,-25}|", benchmark.GetEncodeText(baseline));
-                beginTest();                
+                beginTest();
                 benchmark.TestDecode();
                 endTest();
                 Console.WriteLine(" {0, -25}", benchmark.GetDecodeText(baseline));
