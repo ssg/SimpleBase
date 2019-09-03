@@ -5,7 +5,7 @@
    "version": "0.2.0",
    "configurations": [
         {
-            "name": ".NET Core Launch (console)",
+            "name": "Launch",
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
@@ -19,7 +19,7 @@
             "internalConsoleOptions": "openOnSessionStart"
         },
         {
-            "name": ".NET Core Launch (console) (RELEASE)",
+            "name": "Launch (RELEASE)",
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build release",
@@ -33,7 +33,7 @@
             "internalConsoleOptions": "openOnSessionStart"
         },
         {
-            "name": ".NET Core Attach",
+            "name": "Attach",
             "type": "coreclr",
             "request": "attach",
             "processId": "${command:pickProcess}"
