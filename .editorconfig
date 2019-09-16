@@ -8,5 +8,12 @@ indent_style = space
 trim_trailing_whitespace = true
 guidelines = 110
 
+dotnet_naming_rule.private_members_are_camelcase.symbols = private_members
+dotnet_naming_symbols.private_members.applicable_kinds = property,method,field
+dotnet_naming_symbols.private_members.applicable_accessibilities = private
+
+dotnet_naming_rule.private_members_are_camelcase.style = camelcase
+dotnet_naming_style.camelcase.capitalization = camel_case
+
 [*.md]
 guidelines = 80
