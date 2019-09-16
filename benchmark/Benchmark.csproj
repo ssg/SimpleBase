@@ -9,6 +9,7 @@
     <LangVersion>8.0</LangVersion>
     <NullableContextOptions>enable</NullableContextOptions>
     <PlatformTarget>AnyCPU</PlatformTarget>
+    <CodeAnalysisRuleSet>../SSG.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
     <None Include="..\SimpleBase.snk" Link="SimpleBase.snk" />

@@ -11,6 +11,7 @@
     <DelaySign>false</DelaySign>
     <LangVersion>8.0</LangVersion>
     <NullableContextOptions>enable</NullableContextOptions>
+    <CodeAnalysisRuleSet>../SSG.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|netcoreapp2.1|AnyCPU'">
     <NoWarn>1701;1702;IDE0052</NoWarn>
