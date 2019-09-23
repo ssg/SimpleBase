@@ -5,16 +5,16 @@
 
 namespace SimpleBase
 {
-    using System.Threading;
+    using System;
 
     /// <summary>
     /// Base58 alphabet.
     /// </summary>
     public sealed class Base58Alphabet : EncodingAlphabet
     {
-        private static Base58Alphabet bitcoin;
-        private static Base58Alphabet ripple;
-        private static Base58Alphabet flickr;
+        private static Lazy<Base58Alphabet> bitcoinAlphabet = new Lazy<Base58Alphabet>(() => new Base58Alphabet("123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz"));
+        private static Lazy<Base58Alphabet> rippleAlphabet = new Lazy<Base58Alphabet>(() => new Base58Alphabet("rpshnaf39wBUDNEGHJKLM4PQRST7VWXYZ2bcdeCg65jkm8oFqi1tuvAxyz"));
+        private static Lazy<Base58Alphabet> flickrAlphabet = new Lazy<Base58Alphabet>(() => new Base58Alphabet("123456789abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ"));
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Base58Alphabet"/> class
@@ -29,22 +29,16 @@ namespace SimpleBase
         /// <summary>
         /// Gets Bitcoin alphabet.
         /// </summary>
-        public static Base58Alphabet Bitcoin => LazyInitializer.EnsureInitialized(
-            ref bitcoin,
-            () => new Base58Alphabet("123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz"));
+        public static Base58Alphabet Bitcoin => bitcoinAlphabet.Value;
 
         /// <summary>
         /// Gets Base58 alphabet.
         /// </summary>
-        public static Base58Alphabet Ripple => LazyInitializer.EnsureInitialized(
-            ref ripple,
-            () => new Base58Alphabet("rpshnaf39wBUDNEGHJKLM4PQRST7VWXYZ2bcdeCg65jkm8oFqi1tuvAxyz"));
+        public static Base58Alphabet Ripple => rippleAlphabet.Value;
 
         /// <summary>
         /// Gets Flickr alphabet.
         /// </summary>
-        public static Base58Alphabet Flickr => LazyInitializer.EnsureInitialized(
-            ref flickr,
-            () => new Base58Alphabet("123456789abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ"));
+        public static Base58Alphabet Flickr => flickrAlphabet.Value;
     }
 }

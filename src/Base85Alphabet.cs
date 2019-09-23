@@ -5,6 +5,7 @@
 
 namespace SimpleBase
 {
+    using System;
     using System.Threading;
 
     /// <summary>
@@ -12,8 +13,13 @@ namespace SimpleBase
     /// </summary>
     public sealed class Base85Alphabet : EncodingAlphabet
     {
-        private static Base85Alphabet z85;
-        private static Base85Alphabet ascii85;
+        private static Lazy<Base85Alphabet> z85 = new Lazy<Base85Alphabet>(() => new Base85Alphabet(
+                "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ.-:+=^!/*?&<>()[]{}@%$#"));
+
+        private static Lazy<Base85Alphabet> ascii85 = new Lazy<Base85Alphabet>(() => new Base85Alphabet(
+                "!\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstu",
+                allZeroShortcut: 'z',
+                allSpaceShortcut: 'y'));
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Base85Alphabet"/> class
@@ -35,21 +41,13 @@ namespace SimpleBase
         /// <summary>
         /// Gets ZeroMQ Z85 Alphabet.
         /// </summary>
-        public static Base85Alphabet Z85 => LazyInitializer.EnsureInitialized(
-            ref z85,
-            () => new Base85Alphabet(
-                "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ.-:+=^!/*?&<>()[]{}@%$#"));
+        public static Base85Alphabet Z85 => z85.Value;
 
         /// <summary>
         /// Gets Adobe Ascii85 Alphabet (each character is directly produced by raw value + 33),
         /// also known as "btoa" encoding.
         /// </summary>
-        public static Base85Alphabet Ascii85 => LazyInitializer.EnsureInitialized(
-            ref ascii85,
-            () => new Base85Alphabet(
-                "!\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstu",
-                allZeroShortcut: 'z',
-                allSpaceShortcut: 'y'));
+        public static Base85Alphabet Ascii85 => ascii85.Value;
 
         /// <summary>
         /// Gets the character to be used for "all zeros".

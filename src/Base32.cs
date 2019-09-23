@@ -3,6 +3,8 @@
 // Licensed under Apache-2.0 License (see LICENSE.txt file for details)
 // </copyright>
 
+#nullable enable
+
 namespace SimpleBase
 {
     using System;
@@ -19,11 +21,11 @@ namespace SimpleBase
         private const int bitsPerChar = 5;
         private const char paddingChar = '=';
 
-        private static Base32 crockford;
-        private static Base32 rfc4648;
-        private static Base32 extendedHex;
-        private static Base32 zBase32;
-        private static Base32 geohash;
+        private static Lazy<Base32> crockford = new Lazy<Base32>(() => new Base32(Base32Alphabet.Crockford));
+        private static Lazy<Base32> rfc4648 = new Lazy<Base32>(() => new Base32(Base32Alphabet.Rfc4648));
+        private static Lazy<Base32> extendedHex = new Lazy<Base32>(() => new Base32(Base32Alphabet.ExtendedHex));
+        private static Lazy<Base32> zBase32 = new Lazy<Base32>(() => new Base32(Base32Alphabet.ZBase32));
+        private static Lazy<Base32> geohash = new Lazy<Base32>(() => new Base32(Base32Alphabet.Geohash));
 
         private Base32Alphabet alphabet;
 
@@ -40,39 +42,29 @@ namespace SimpleBase
         /// <summary>
         /// Gets Douglas Crockford's Base32 flavor with substitution characters.
         /// </summary>
-        public static Base32 Crockford => LazyInitializer.EnsureInitialized(
-            ref crockford,
-            () => new Base32(Base32Alphabet.Crockford));
+        public static Base32 Crockford => crockford.Value;
 
         /// <summary>
         /// Gets RFC 4648 variant of Base32 coder.
         /// </summary>
-        public static Base32 Rfc4648 => LazyInitializer.EnsureInitialized(
-            ref rfc4648,
-            () => new Base32(Base32Alphabet.Rfc4648));
+        public static Base32 Rfc4648 => rfc4648.Value;
 
         /// <summary>
         /// Gets Extended Hex variant of Base32 coder.
         /// </summary>
         /// <remarks>Also from RFC 4648.</remarks>
-        public static Base32 ExtendedHex => LazyInitializer.EnsureInitialized(
-            ref extendedHex,
-            () => new Base32(Base32Alphabet.ExtendedHex));
+        public static Base32 ExtendedHex => extendedHex.Value;
 
         /// <summary>
         /// Gets z-base-32 variant of Base32 coder.
         /// </summary>
         /// <remarks>This variant is used in Mnet, ZRTP and Tahoe-LAFS.</remarks>
-        public static Base32 ZBase32 => LazyInitializer.EnsureInitialized(
-            ref zBase32,
-            () => new Base32(Base32Alphabet.ZBase32));
+        public static Base32 ZBase32 => zBase32.Value;
 
         /// <summary>
         /// Gets Geohash variant of Base32 coder.
         /// </summary>
-        public static Base32 Geohash => LazyInitializer.EnsureInitialized(
-            ref geohash,
-            () => new Base32(Base32Alphabet.Geohash));
+        public static Base32 Geohash => geohash.Value;
 
         /// <summary>
         /// Encode a byte array into a Base32 string.

@@ -38,8 +38,8 @@
 - Removed redundant null checking code
 - Base589 Ripple and Flickr variants are now being tested
 ]]></PackageReleaseNotes>
-    <LangVersion>8.0</LangVersion>
-    <NullableContextOptions>enable</NullableContextOptions>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
     <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
 

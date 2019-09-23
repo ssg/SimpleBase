@@ -8,7 +8,6 @@ namespace SimpleBase
     using System;
     using System.IO;
     using System.Runtime.CompilerServices;
-    using System.Threading;
     using System.Threading.Tasks;
 
     /// <summary>
@@ -22,8 +21,8 @@ namespace SimpleBase
         private const long allSpace = 0x20202020;
         private const int decodeBufferSize = 5120; // don't remember what was special with this number
 
-        private static Base85 z85;
-        private static Base85 ascii85;
+        private static Lazy<Base85> z85 = new Lazy<Base85>(() => new Base85(Base85Alphabet.Z85));
+        private static Lazy<Base85> ascii85 = new Lazy<Base85>(() => new Base85(Base85Alphabet.Ascii85));
 
         private readonly Base85Alphabet alphabet;
 
@@ -40,14 +39,12 @@ namespace SimpleBase
         /// <summary>
         /// Gets Z85 flavor of Base85.
         /// </summary>
-        public static Base85 Z85 => LazyInitializer.EnsureInitialized(
-            ref z85, () => new Base85(Base85Alphabet.Z85));
+        public static Base85 Z85 => z85.Value;
 
         /// <summary>
         /// Gets Ascii85 flavor of Base85.
         /// </summary>
-        public static Base85 Ascii85 => LazyInitializer.EnsureInitialized(
-            ref ascii85, () => new Base85(Base85Alphabet.Ascii85));
+        public static Base85 Ascii85 => ascii85.Value;
 
         /// <summary>
         /// Encode the given bytes into Base85.

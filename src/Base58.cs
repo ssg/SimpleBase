@@ -17,9 +17,9 @@ namespace SimpleBase
     /// </remarks>
     public sealed class Base58
     {
-        private static Base58 bitcoin;
-        private static Base58 ripple;
-        private static Base58 flickr;
+        private static Lazy<Base58> bitcoin = new Lazy<Base58>(() => new Base58(Base58Alphabet.Bitcoin));
+        private static Lazy<Base58> ripple = new Lazy<Base58>(() => new Base58(Base58Alphabet.Ripple));
+        private static Lazy<Base58> flickr = new Lazy<Base58>(() => new Base58(Base58Alphabet.Flickr));
 
         private Base58Alphabet alphabet;
 
@@ -36,23 +36,17 @@ namespace SimpleBase
         /// <summary>
         /// Gets Bitcoin flavor.
         /// </summary>
-        public static Base58 Bitcoin => LazyInitializer.EnsureInitialized(
-            ref bitcoin,
-            () => new Base58(Base58Alphabet.Bitcoin));
+        public static Base58 Bitcoin => bitcoin.Value;
 
         /// <summary>
         /// Gets Ripple flavor.
         /// </summary>
-        public static Base58 Ripple => LazyInitializer.EnsureInitialized(
-            ref ripple,
-            () => new Base58(Base58Alphabet.Ripple));
+        public static Base58 Ripple => ripple.Value;
 
         /// <summary>
         /// Gets Flickr flavor.
         /// </summary>
-        public static Base58 Flickr => LazyInitializer.EnsureInitialized(
-            ref flickr,
-            () => new Base58(Base58Alphabet.Flickr));
+        public static Base58 Flickr => flickr.Value;
 
         /// <summary>
         /// Encode to Base58 representation.
