@@ -29,6 +29,7 @@
 - Async variants of Stream-based encoding/decoding methods
 - New Base32 variants: z-base-32 and Geohash
 - XML documentation is included in the package now
+- SimpleBase is now on GitHub Package Repository
 
 # Improvements
 - Base58 decoding is 100+% faster and encoding is slightly faster, too
