@@ -3,15 +3,15 @@
 // Licensed under Apache-2.0 License (see LICENSE.txt file for details)
 // </copyright>
 
+using System;
+using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
+
 #nullable enable
 
 namespace SimpleBase
 {
-    using System;
-    using System.IO;
-    using System.Threading;
-    using System.Threading.Tasks;
-
     /// <summary>
     /// Base32 encoding/decoding functions.
     /// </summary>

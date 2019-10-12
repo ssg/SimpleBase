@@ -3,11 +3,11 @@
 // Licensed under Apache-2.0 License (see LICENSE.txt file for details)
 // </copyright>
 
+using System;
+using System.Threading;
+
 namespace SimpleBase
 {
-    using System;
-    using System.Threading;
-
     /// <summary>
     /// Base85 Alphabet.
     /// </summary>

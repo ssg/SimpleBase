@@ -3,12 +3,12 @@
 // Licensed under Apache-2.0 License (see LICENSE.txt file for details)
 // </copyright>
 
+using System;
+using System.IO;
+using System.Threading.Tasks;
+
 namespace SimpleBase
 {
-    using System;
-    using System.IO;
-    using System.Threading.Tasks;
-
     /// <summary>
     /// Provides Stream functionality to any buffer-based encoding operation.
     /// </summary>

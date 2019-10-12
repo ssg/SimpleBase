@@ -3,10 +3,10 @@
 // Licensed under Apache-2.0 License (see LICENSE.txt file for details)
 // </copyright>
 
+using System;
+
 namespace SimpleBase
 {
-    using System;
-
     /// <summary>
     /// Base58 alphabet.
     /// </summary>
