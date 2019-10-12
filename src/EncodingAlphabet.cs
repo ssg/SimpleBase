@@ -3,11 +3,12 @@
 // Licensed under Apache-2.0 License (see LICENSE.txt file for details)
 // </copyright>
 
+using System;
+using System.Diagnostics;
+using System.Diagnostics.Contracts;
+
 namespace SimpleBase
 {
-    using System;
-    using System.Diagnostics;
-
     /// <summary>
     /// A single encoding algorithm can support many different alphabets.
     /// EncodingAlphabet consists of a basis for implementing different
@@ -37,6 +38,11 @@ namespace SimpleBase
         /// <param name="alphabet">Alphabet character.</param>
         public EncodingAlphabet(int length, string alphabet)
         {
+            if (alphabet is null)
+            {
+                throw new ArgumentNullException(nameof(alphabet));
+            }
+
             Debug.WriteLine($"Creating a new encoding alphabet with length = {length} and alphabet = {alphabet}");
             if (alphabet.Length != length)
             {

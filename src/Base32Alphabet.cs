@@ -3,10 +3,10 @@
 // Licensed under Apache-2.0 License (see LICENSE.txt file for details)
 // </copyright>
 
+using System;
+
 namespace SimpleBase
 {
-    using System;
-
     /// <summary>
     /// Base32 alphabet flavors.
     /// </summary>
@@ -34,6 +34,11 @@ namespace SimpleBase
         public Base32Alphabet(string alphabet)
             : base(32, alphabet)
         {
+            if (alphabet is null)
+            {
+                throw new ArgumentNullException(nameof(alphabet));
+            }
+
             this.mapLowerCaseCounterparts(alphabet);
         }
 
