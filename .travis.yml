@@ -2,7 +2,6 @@ language: csharp
 solution: SimpleBase.sln
 dotnet: 3.0
 mono: none
-dist: trusty
 install:
   - dotnet restore
 script:
