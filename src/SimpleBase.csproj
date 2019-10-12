@@ -24,10 +24,9 @@
 # Breaking changes
 - Adapted to nullable references
 - Encoder references are now properties instead of static fields
-- Async Encode/Decode methods
 
 # New stuff
-- Async API for Stream-based methods
+- Async variants of Stream-based encoding/decoding methods
 - New Base32 variants: z-base-32 and Geohash
 - XML documentation is included in the package now
 
