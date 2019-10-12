@@ -38,16 +38,34 @@ namespace SimpleBaseTest.Base32Test
         };
 
         [Test]
+        public void Encode_SampleInterface_Compiles()
+        {
+            // this source code exists in samples and just needs to be compiled and run without errors.
+            // do not edit/refactor the code below
+            byte[] myBuffer = new byte[0];
+            string result = Base32.Crockford.Encode(myBuffer, padding: true);
+            Assert.IsEmpty(result);
+        }
+
+        [Test]
+        public void Decode_SampleInterface_Compiles()
+        {
+            // this source code exists in samples and just needs to be compiled and run without errors.
+            // do not edit/refactor the code below
+            string myText = "CSQPYRK1E8"; // any buffer will do
+            Span<byte> result = Base32.Crockford.Decode(myText);
+            Assert.IsTrue(result.Length > 0);
+        }
+
+        [Test]
         [TestCaseSource(nameof(testData))]
         public void Encode_Stream_ReturnsExpectedValues(string input, string expectedOutput)
         {
             byte[] bytes = Encoding.ASCII.GetBytes(input);
-            using (var inputStream = new MemoryStream(bytes))
-            using (var writer = new StringWriter())
-            {
-                Base32.Crockford.Encode(inputStream, writer, padding: false);
-                Assert.AreEqual(expectedOutput, writer.ToString());
-            }
+            using var inputStream = new MemoryStream(bytes);
+            using var writer = new StringWriter();
+            Base32.Crockford.Encode(inputStream, writer, padding: false);
+            Assert.AreEqual(expectedOutput, writer.ToString());
         }
 
         [Test]
@@ -115,12 +133,6 @@ namespace SimpleBaseTest.Base32Test
         public void Encode_NullBytes_ReturnsEmptyString()
         {
             Assert.AreEqual(String.Empty, Base32.Crockford.Encode(null, true));
-        }
-
-        [Test]
-        public void Decode_NullString_ThrowsArgumentNullException()
-        {
-            Assert.Throws<ArgumentNullException>(() => Base32.Crockford.Decode((string)null));
         }
     }
 }

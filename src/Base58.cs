@@ -3,64 +3,56 @@
 // Licensed under Apache-2.0 License (see LICENSE.txt file for details)
 // </copyright>
 
-/*
-     Copyright 2014-2016 Sedat Kapanoglu
-
-   Licensed under the Apache License, Version 2.0 (the "License");
-   you may not use this file except in compliance with the License.
-   You may obtain a copy of the License at
-
-       http://www.apache.org/licenses/LICENSE-2.0
-
-   Unless required by applicable law or agreed to in writing, software
-   distributed under the License is distributed on an "AS IS" BASIS,
-   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   See the License for the specific language governing permissions and
-   limitations under the License.
-*/
+using System;
+using System.Threading;
 
 namespace SimpleBase
 {
-    using System;
-
     /// <summary>
-    /// Base58 Encoding/Decoding implementation
+    /// Base58 Encoding/Decoding implementation.
     /// </summary>
+    /// <remarks>
+    /// Base58 doesn't contain Stream-based interface because it's not feasible to use
+    /// for large buffer sizes.
+    /// </remarks>
     public sealed class Base58
     {
+        private static Lazy<Base58> bitcoin = new Lazy<Base58>(() => new Base58(Base58Alphabet.Bitcoin));
+        private static Lazy<Base58> ripple = new Lazy<Base58>(() => new Base58(Base58Alphabet.Ripple));
+        private static Lazy<Base58> flickr = new Lazy<Base58>(() => new Base58(Base58Alphabet.Flickr));
+
         private Base58Alphabet alphabet;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Base58"/> class
         /// using a custom alphabet.
         /// </summary>
-        /// <param name="alphabet">Alphabet to use</param>
+        /// <param name="alphabet">Alphabet to use.</param>
         public Base58(Base58Alphabet alphabet)
         {
-            Require.NotNull(alphabet, nameof(alphabet));
             this.alphabet = alphabet;
         }
 
         /// <summary>
-        /// Gets Bitcoin flavor
+        /// Gets Bitcoin flavor.
         /// </summary>
-        public static Base58 Bitcoin { get; } = new Base58(Base58Alphabet.Bitcoin);
+        public static Base58 Bitcoin => bitcoin.Value;
 
         /// <summary>
-        /// Gets Ripple flavor
+        /// Gets Ripple flavor.
         /// </summary>
-        public static Base58 Ripple { get; } = new Base58(Base58Alphabet.Ripple);
+        public static Base58 Ripple => ripple.Value;
 
         /// <summary>
-        /// Gets Flickr flavor
+        /// Gets Flickr flavor.
         /// </summary>
-        public static Base58 Flickr { get; } = new Base58(Base58Alphabet.Flickr);
+        public static Base58 Flickr => flickr.Value;
 
         /// <summary>
-        /// Encode to Base58 representation
+        /// Encode to Base58 representation.
         /// </summary>
-        /// <param name="bytes">Bytes to encode</param>
-        /// <returns>Encoded string</returns>
+        /// <param name="bytes">Bytes to encode.</param>
+        /// <returns>Encoded string.</returns>
         public unsafe string Encode(ReadOnlySpan<byte> bytes)
         {
             const int growthPercentage = 138;
@@ -103,8 +95,8 @@ namespace SimpleBase
                             && pDigit >= outputPtr; pDigit--, i++)
                         {
                             carry += 256 * (*pDigit);
-                            *pDigit = (byte)(carry % 58);
-                            carry /= 58;
+                            carry = Math.DivRem(carry, 58, out int remainder);
+                            *pDigit = (byte)remainder;
                         }
 
                         length = i;
@@ -135,21 +127,20 @@ namespace SimpleBase
         }
 
         /// <summary>
-        /// Decode a Base58 representation
+        /// Decode a Base58 representation.
         /// </summary>
-        /// <param name="text">Encoded text</param>
-        /// <returns>Decoded bytes</returns>
+        /// <param name="text">Encoded text.</param>
+        /// <returns>Decoded bytes.</returns>
         public Span<byte> Decode(string text)
         {
-            Require.NotNull(text, nameof(text));
-            return this.Decode(text.AsSpan());
+            return Decode(text.AsSpan());
         }
 
         /// <summary>
-        /// Decode a Base58 representation
+        /// Decode a Base58 representation.
         /// </summary>
-        /// <param name="text">Base58 encoded text</param>
-        /// <returns>Array of decoded bytes</returns>
+        /// <param name="text">Base58 encoded text.</param>
+        /// <returns>Array of decoded bytes.</returns>
         public unsafe Span<byte> Decode(ReadOnlySpan<char> text)
         {
             const int reductionFactor = 733; // https://github.com/bitcoin/bitcoin/blob/master/src/base58.cpp

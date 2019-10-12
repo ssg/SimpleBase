@@ -31,12 +31,13 @@ namespace benchmark
             bool faster = bench < baseline;
             double factor = faster ? baseline.TotalMilliseconds / bench.TotalMilliseconds
                 : bench.TotalMilliseconds / baseline.TotalMilliseconds;
-            string formatted = String.Format("{0:0.#}", factor);
-            if (formatted == "1")
+            string formattedFactor = $"{factor:0.#}";
+            if (formattedFactor == "1")
             {
                 return "about the same";
             }
-            return String.Format("{0}x {1}", formatted, faster ? "faster! YAY!" : "slower");
+            string mood = faster ? "faster! YAY!" : "slower";
+            return $"{formattedFactor}x {mood}";
         }
 
         public string GetEncodeText(Benchmark baseline)
@@ -49,9 +50,9 @@ namespace benchmark
             return getPrintable(DecodeTime, baseline.DecodeTime);
         }
 
-        private string getPrintable(TimeSpan time, TimeSpan baseline)
+        private static string getPrintable(TimeSpan time, TimeSpan baseline)
         {
-            string result = String.Format("{0:F2}", time.TotalMilliseconds / 1000.0);
+            string result = $"{time.TotalMilliseconds / 1000.0:F2}";
             if (time == baseline)
             {
                 return result;
@@ -64,6 +65,8 @@ namespace benchmark
             byte[] buf = new byte[EncodeSize];
             buf[0] = 1;
             buf[EncodeSize - 1] = 1; // avoid all-zero optimizations of Base58
+
+            EncodeFunc(buf); // warmup
             var w = Stopwatch.StartNew();
             for (int n = 0; n < Iterations; n++)
             {
@@ -76,6 +79,8 @@ namespace benchmark
         public void TestDecode()
         {
             string str = new String('a', DecodeSize);
+
+            DecodeFunc(str); // warmup
             var w = Stopwatch.StartNew();
             for (int n = 0; n < Iterations; n++)
             {

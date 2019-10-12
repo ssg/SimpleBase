@@ -41,12 +41,10 @@ namespace SimpleBaseTest.Base32Test
         public void Encode_Stream_ReturnsExpectedValues(string input, string expectedOutput)
         {
             byte[] bytes = Encoding.ASCII.GetBytes(input);
-            using (var inputStream = new MemoryStream(bytes))
-            using (var writer = new StringWriter())
-            {
-                Base32.ExtendedHex.Encode(inputStream, writer, padding: true);
-                Assert.AreEqual(expectedOutput, writer.ToString());
-            }
+            using var inputStream = new MemoryStream(bytes);
+            using var writer = new StringWriter();
+            Base32.ExtendedHex.Encode(inputStream, writer, padding: true);
+            Assert.AreEqual(expectedOutput, writer.ToString());
         }
 
         [Test]
@@ -97,12 +95,6 @@ namespace SimpleBaseTest.Base32Test
         public void Encode_NullBytes_ReturnsEmptyString()
         {
             Assert.AreEqual(String.Empty, Base32.ExtendedHex.Encode(null, false));
-        }
-
-        [Test]
-        public void Decode_NullString_ThrowsArgumentNullException()
-        {
-            Assert.Throws<ArgumentNullException>(() => Base32.ExtendedHex.Decode((string)null));
         }
 
         [Test]

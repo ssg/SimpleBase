@@ -3,53 +3,53 @@
 // Licensed under Apache-2.0 License (see LICENSE.txt file for details)
 // </copyright>
 
+using System;
+using System.IO;
+using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
+
 namespace SimpleBase
 {
-    using System;
-    using System.IO;
-    using System.Runtime.CompilerServices;
-
     /// <summary>
-    /// Hexadecimal encoding/decoding
+    /// Hexadecimal encoding/decoding.
     /// </summary>
     public static class Base16
     {
         /// <summary>
-        /// Encode to Base16 representation using uppercase lettering
+        /// Encode to Base16 representation using uppercase lettering.
         /// </summary>
-        /// <param name="bytes">Bytes to encode</param>
-        /// <returns>Base16 string</returns>
+        /// <param name="bytes">Bytes to encode.</param>
+        /// <returns>Base16 string.</returns>
         public static unsafe string EncodeUpper(ReadOnlySpan<byte> bytes)
         {
             return internalEncode(bytes, 'A');
         }
 
         /// <summary>
-        /// Encode to Base16 representation using lowercase lettering
+        /// Encode to Base16 representation using lowercase lettering.
         /// </summary>
-        /// <param name="bytes">Bytes to encode</param>
-        /// <returns>Base16 string</returns>
+        /// <param name="bytes">Bytes to encode.</param>
+        /// <returns>Base16 string.</returns>
         public static unsafe string EncodeLower(ReadOnlySpan<byte> bytes)
         {
             return internalEncode(bytes, 'a');
         }
 
         /// <summary>
-        /// Decode an encoded text into bytes
+        /// Decode an encoded text into bytes.
         /// </summary>
-        /// <param name="text">Input text</param>
-        /// <returns>Result bytes</returns>
+        /// <param name="text">Input text.</param>
+        /// <returns>Result bytes.</returns>
         public static Span<byte> Decode(string text)
         {
-            Require.NotNull(text, nameof(text));
             return Decode(text.AsSpan());
         }
 
         /// <summary>
-        /// Decode Base16 text into bytes
+        /// Decode Base16 text into bytes.
         /// </summary>
-        /// <param name="text">Base16 text</param>
-        /// <returns>Decoded bytes</returns>
+        /// <param name="text">Base16 text.</param>
+        /// <returns>Decoded bytes.</returns>
         public static unsafe Span<byte> Decode(ReadOnlySpan<char> text)
         {
             int textLen = text.Length;
@@ -91,48 +91,69 @@ namespace SimpleBase
         /// as little memory as possible, and relies of .NET's own underlying buffering mechanisms,
         /// contrary to their buffer-based versions.
         /// </summary>
-        /// <param name="input">Stream that the encoded bytes would be read from</param>
-        /// <param name="output">Stream where decoded bytes will be written to</param>
+        /// <param name="input">Stream that the encoded bytes would be read from.</param>
+        /// <param name="output">Stream where decoded bytes will be written to.</param>
         public static void Decode(TextReader input, Stream output)
         {
-            Require.NotNull(input, nameof(input));
-            Require.NotNull(output, nameof(output));
-            const int bufferSize = 4096;
-            var buffer = new char[bufferSize];
-            using (var writer = new BinaryWriter(output))
-            {
-                while (true)
-                {
-                    int bytesRead = input.Read(buffer, 0, bufferSize);
-                    if (bytesRead < 1)
-                    {
-                        break;
-                    }
-
-                    var result = Decode(buffer.AsSpan(0, bytesRead));
-                    writer.Write(result.ToArray());
-                }
-            }
+            StreamHelper.Decode(input, output, buffer => Decode(buffer.Span).ToArray());
         }
 
         /// <summary>
-        /// Encodes stream of bytes into a Base16 text
+        /// Decode Base16 text through streams for generic use. Stream based variant tries to consume
+        /// as little memory as possible, and relies of .NET's own underlying buffering mechanisms,
+        /// contrary to their buffer-based versions.
         /// </summary>
-        /// <param name="input">Stream that provides bytes to be encoded</param>
-        /// <param name="output">Stream that the encoded text is written to</param>
+        /// <param name="input">Stream that the encoded bytes would be read from.</param>
+        /// <param name="output">Stream where decoded bytes will be written to.</param>
+        /// <returns>Task that represents the async operation.</returns>
+        public static async Task DecodeAsync(TextReader input, Stream output)
+        {
+            await StreamHelper.DecodeAsync(input, output, buffer => Decode(buffer.Span).ToArray())
+                .ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Encodes stream of bytes into a Base16 text.
+        /// </summary>
+        /// <param name="input">Stream that provides bytes to be encoded.</param>
+        /// <param name="output">Stream that the encoded text is written to.</param>
         public static void EncodeUpper(Stream input, TextWriter output)
         {
-            internalEncode(input, output, 'A');
+            StreamHelper.Encode(input, output, (buffer, lastBlock) => internalEncode(buffer.Span, 'A'));
         }
 
         /// <summary>
-        /// Encodes stream of bytes into a Base16 text
+        /// Encodes stream of bytes into a Base16 text.
         /// </summary>
-        /// <param name="input">Stream that provides bytes to be encoded</param>
-        /// <param name="output">Stream that the encoded text is written to</param>
+        /// <param name="input">Stream that provides bytes to be encoded.</param>
+        /// <param name="output">Stream that the encoded text is written to.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+        public static async Task EncodeUpperAsync(Stream input, TextWriter output)
+        {
+            await StreamHelper.EncodeAsync(input, output, (buffer, lastBlock) =>
+                internalEncode(buffer.Span, 'A')).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Encodes stream of bytes into a Base16 text.
+        /// </summary>
+        /// <param name="input">Stream that provides bytes to be encoded.</param>
+        /// <param name="output">Stream that the encoded text is written to.</param>
         public static void EncodeLower(Stream input, TextWriter output)
         {
-            internalEncode(input, output, 'a');
+            StreamHelper.Encode(input, output, (buffer, lastBlock) => internalEncode(buffer.Span, 'a'));
+        }
+
+        /// <summary>
+        /// Encodes stream of bytes into a Base16 text.
+        /// </summary>
+        /// <param name="input">Stream that provides bytes to be encoded.</param>
+        /// <param name="output">Stream that the encoded text is written to.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+        public static async Task EncodeLowerAsync(Stream input, TextWriter output)
+        {
+            await StreamHelper.EncodeAsync(input, output, (buffer, lastBlock) =>
+                internalEncode(buffer.Span, 'a')).ConfigureAwait(false);
         }
 
         private static unsafe string internalEncode(ReadOnlySpan<byte> bytes, char baseChar)
@@ -204,24 +225,6 @@ namespace SimpleBase
 
         Error:
             throw new ArgumentException($"Invalid hex character: {c}");
-        }
-
-        private static void internalEncode(Stream input, TextWriter output, char baseChar)
-        {
-            const int bufferLength = 4096;
-
-            var buffer = new byte[bufferLength];
-            while (true)
-            {
-                int bytesRead = input.Read(buffer, 0, bufferLength);
-                if (bytesRead < 1)
-                {
-                    break;
-                }
-
-                var result = internalEncode(buffer.AsSpan(0, bytesRead), baseChar);
-                output.Write(result);
-            }
         }
     }
 }

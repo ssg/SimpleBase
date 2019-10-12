@@ -3,38 +3,26 @@
 // Licensed under Apache-2.0 License (see LICENSE.txt file for details)
 // </copyright>
 
-/*
-     Copyright 2018 Sedat Kapanoglu
-
-   Licensed under the Apache License, Version 2.0 (the "License");
-   you may not use this file except in compliance with the License.
-   You may obtain a copy of the License at
-
-       http://www.apache.org/licenses/LICENSE-2.0
-
-   Unless required by applicable law or agreed to in writing, software
-   distributed under the License is distributed on an "AS IS" BASIS,
-   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   See the License for the specific language governing permissions and
-   limitations under the License.
-*/
+using System;
+using System.IO;
+using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 
 namespace SimpleBase
 {
-    using System;
-    using System.IO;
-    using System.Runtime.CompilerServices;
-
     /// <summary>
-    /// Base58 encoding/decoding class
+    /// Base58 encoding/decoding class.
     /// </summary>
     public sealed class Base85
     {
         private const int baseLength = 85;
         private const int byteBlockSize = 4;
         private const int stringBlockSize = 5;
-
         private const long allSpace = 0x20202020;
+        private const int decodeBufferSize = 5120; // don't remember what was special with this number
+
+        private static Lazy<Base85> z85 = new Lazy<Base85>(() => new Base85(Base85Alphabet.Z85));
+        private static Lazy<Base85> ascii85 = new Lazy<Base85>(() => new Base85(Base85Alphabet.Ascii85));
 
         private readonly Base85Alphabet alphabet;
 
@@ -42,28 +30,27 @@ namespace SimpleBase
         /// Initializes a new instance of the <see cref="Base85"/> class
         /// using a custom alphabet.
         /// </summary>
-        /// <param name="alphabet">Alphabet to use</param>
+        /// <param name="alphabet">Alphabet to use.</param>
         public Base85(Base85Alphabet alphabet)
         {
-            Require.NotNull(alphabet, nameof(alphabet));
             this.alphabet = alphabet;
         }
 
         /// <summary>
-        /// Gets Z85 flavor of Base85
+        /// Gets Z85 flavor of Base85.
         /// </summary>
-        public static Base85 Z85 { get; } = new Base85(Base85Alphabet.Z85);
+        public static Base85 Z85 => z85.Value;
 
         /// <summary>
-        /// Gets Ascii85 flavor of Base85
+        /// Gets Ascii85 flavor of Base85.
         /// </summary>
-        public static Base85 Ascii85 { get; } = new Base85(Base85Alphabet.Ascii85);
+        public static Base85 Ascii85 => ascii85.Value;
 
         /// <summary>
-        /// Encode the given bytes into Base85
+        /// Encode the given bytes into Base85.
         /// </summary>
-        /// <param name="bytes">Bytes to encode</param>
-        /// <returns>Encoded text</returns>
+        /// <param name="bytes">Bytes to encode.</param>
+        /// <returns>Encoded text.</returns>
         public unsafe string Encode(ReadOnlySpan<byte> bytes)
         {
             int bytesLen = bytes.Length;
@@ -97,7 +84,13 @@ namespace SimpleBase
                         | ((uint)*pInput++ << 8)
                         | *pInput++;
 
-                    this.writeOutput(ref pOutput, table, input, stringBlockSize, usesZeroShortcut, usesSpaceShortcut);
+                    writeOutput(
+                        ref pOutput,
+                        table,
+                        input,
+                        stringBlockSize,
+                        usesZeroShortcut,
+                        usesSpaceShortcut);
                 }
 
                 // check if a part is remaining
@@ -110,7 +103,13 @@ namespace SimpleBase
                         input |= (uint)*pInput++ << ((3 - n) << 3);
                     }
 
-                    this.writeOutput(ref pOutput, table, input, remainingBytes + 1, usesZeroShortcut, usesSpaceShortcut);
+                    writeOutput(
+                        ref pOutput,
+                        table,
+                        input,
+                        remainingBytes + 1,
+                        usesZeroShortcut,
+                        usesSpaceShortcut);
                 }
 
                 int outputLen = (int)(pOutput - outputPtr);
@@ -119,69 +118,64 @@ namespace SimpleBase
         }
 
         /// <summary>
-        /// Encode a given stream into a text writer
+        /// Encode a given stream into a text writer.
         /// </summary>
-        /// <param name="input">Input stream</param>
-        /// <param name="output">Output writer</param>
+        /// <param name="input">Input stream.</param>
+        /// <param name="output">Output writer.</param>
         public void Encode(Stream input, TextWriter output)
         {
-            Require.NotNull(input, nameof(input));
-            Require.NotNull(output, nameof(output));
-            const int bufferSize = 4096;
-            var buffer = new byte[bufferSize];
-            while (true)
-            {
-                int bytesRead = input.Read(buffer, 0, bufferSize);
-                if (bytesRead < 1)
-                {
-                    break;
-                }
-
-                var result = this.Encode(buffer.AsSpan(0, bytesRead));
-                output.Write(result);
-            }
+            StreamHelper.Encode(input, output, (buffer, lastBlock) => Encode(buffer.Span));
         }
 
         /// <summary>
-        /// Decode a text reader into a stream
+        /// Encode a given stream into a text writer.
         /// </summary>
-        /// <param name="input">Input reader</param>
-        /// <param name="output">Output stream</param>
+        /// <param name="input">Input stream.</param>
+        /// <param name="output">Output writer.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+        public async Task EncodeAsync(Stream input, TextWriter output)
+        {
+            await StreamHelper.EncodeAsync(input, output, (buffer, lastBlock) => Encode(buffer.Span))
+                .ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Decode a text reader into a stream.
+        /// </summary>
+        /// <param name="input">Input reader.</param>
+        /// <param name="output">Output stream.</param>
         public void Decode(TextReader input, Stream output)
         {
-            Require.NotNull(input, nameof(input));
-            Require.NotNull(output, nameof(output));
-            const int bufferSize = 5120;
-            var buffer = new char[bufferSize];
-            while (true)
-            {
-                int charsRead = input.Read(buffer, 0, bufferSize);
-                if (charsRead < 1)
-                {
-                    break;
-                }
-
-                var result = this.Decode(buffer.AsSpan(0, charsRead));
-                output.Write(result.ToArray(), 0, result.Length);
-            }
+            StreamHelper.Decode(input, output, (text) => Decode(text.Span).ToArray(), decodeBufferSize);
         }
 
         /// <summary>
-        /// Decode a given text into a span
+        /// Decode a text reader into a stream.
         /// </summary>
-        /// <param name="text">Input text</param>
-        /// <returns>Output span</returns>
+        /// <param name="input">Input reader.</param>
+        /// <param name="output">Output stream.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+        public async Task DecodeAsync(TextReader input, Stream output)
+        {
+            await StreamHelper.DecodeAsync(input, output, (text) => Decode(text.Span).ToArray(), decodeBufferSize)
+                .ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Decode a given text into a span.
+        /// </summary>
+        /// <param name="text">Input text.</param>
+        /// <returns>Output span.</returns>
         public Span<byte> Decode(string text)
         {
-            Require.NotNull(text, nameof(text));
-            return this.Decode(text.AsSpan());
+            return Decode(text.AsSpan());
         }
 
         /// <summary>
-        /// Decode given characters into bytes
+        /// Decode given characters into bytes.
         /// </summary>
-        /// <param name="text">Characters to decode</param>
-        /// <returns>Decoded bytes</returns>
+        /// <param name="text">Characters to decode.</param>
+        /// <returns>Decoded bytes.</returns>
         public unsafe Span<byte> Decode(ReadOnlySpan<char> text)
         {
             int textLen = text.Length;
@@ -221,13 +215,13 @@ namespace SimpleBase
                     // handle shortcut characters
                     if (checkZero && c == allZeroChar)
                     {
-                        writeShortcut(ref pDecodeBuffer, blockIndex, 0);
+                        writeShortcut(ref pDecodeBuffer, ref blockIndex, 0);
                         continue;
                     }
 
                     if (checkSpace && c == allSpaceChar)
                     {
-                        writeShortcut(ref pDecodeBuffer, blockIndex, allSpace);
+                        writeShortcut(ref pDecodeBuffer, ref blockIndex, allSpace);
                         continue;
                     }
 
@@ -272,11 +266,12 @@ namespace SimpleBase
                 return textLen * byteBlockSize; // max possible size using shortcuts
             }
 
-            return (((textLen - 1) / stringBlockSize) + 1) * byteBlockSize; // max possible size without shortcuts
+            // max possible size without shortcuts
+            return (((textLen - 1) / stringBlockSize) + 1) * byteBlockSize;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static unsafe void writeShortcut(ref byte* pOutput, int blockIndex, long value)
+        private static unsafe void writeShortcut(ref byte* pOutput, ref int blockIndex, long value)
         {
             if (blockIndex != 0)
             {
@@ -316,13 +311,13 @@ namespace SimpleBase
             // handle shortcuts
             if (input == 0 && usesZeroShortcut)
             {
-                *pOutput++ = this.alphabet.AllZeroShortcut.Value;
+                *pOutput++ = this.alphabet.AllZeroShortcut ?? '!'; // guaranteed to be non-null
                 return;
             }
 
             if (input == allSpace && usesSpaceShortcut)
             {
-                *pOutput++ = this.alphabet.AllSpaceShortcut.Value;
+                *pOutput++ = this.alphabet.AllSpaceShortcut ?? '!'; // guaranteed to be non-null
                 return;
             }
 

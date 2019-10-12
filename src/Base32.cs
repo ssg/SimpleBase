@@ -3,65 +3,75 @@
 // Licensed under Apache-2.0 License (see LICENSE.txt file for details)
 // </copyright>
 
+using System;
+using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
+
+#nullable enable
+
 namespace SimpleBase
 {
-    using System;
-    using System.IO;
-
     /// <summary>
-    /// Base32 encoding/decoding functions
+    /// Base32 encoding/decoding functions.
     /// </summary>
     public sealed class Base32
     {
-        /// <summary>
-        /// Douglas Crockford's Base32 flavor with substitution characters.
-        /// </summary>
-        public static readonly Base32 Crockford = new Base32(Base32Alphabet.Crockford);
-
-        /// <summary>
-        /// RFC 4648 variant of Base32 coder
-        /// </summary>
-        public static readonly Base32 Rfc4648 = new Base32(Base32Alphabet.Rfc4648);
-
-        /// <summary>
-        /// Extended Hex variant of Base32 coder
-        /// </summary>
-        /// <remarks>Also from RFC 4648</remarks>
-        public static readonly Base32 ExtendedHex = new Base32(Base32Alphabet.ExtendedHex);
-
-        /// <summary>
-        /// z-base-32 variant of Base32 coder
-        /// </summary>
-        /// <remarks>This variant is used in Mnet, ZRTP and Tahoe-LAFS</remarks>
-        public static readonly Base32 ZBase32 = new Base32(Base32Alphabet.ZBase32);
-
-        /// <summary>
-        /// Geohash variant of Base32 coder
-        /// </summary>
-        public static readonly Base32 Geohash = new Base32(Base32Alphabet.Geohash);
-
         private const int bitsPerByte = 8;
         private const int bitsPerChar = 5;
         private const char paddingChar = '=';
 
-        private readonly Base32Alphabet alphabet;
+        private static Lazy<Base32> crockford = new Lazy<Base32>(() => new Base32(Base32Alphabet.Crockford));
+        private static Lazy<Base32> rfc4648 = new Lazy<Base32>(() => new Base32(Base32Alphabet.Rfc4648));
+        private static Lazy<Base32> extendedHex = new Lazy<Base32>(() => new Base32(Base32Alphabet.ExtendedHex));
+        private static Lazy<Base32> zBase32 = new Lazy<Base32>(() => new Base32(Base32Alphabet.ZBase32));
+        private static Lazy<Base32> geohash = new Lazy<Base32>(() => new Base32(Base32Alphabet.Geohash));
+
+        private Base32Alphabet alphabet;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Base32"/> class with a
         /// custom alphabet.
         /// </summary>
-        /// <param name="alphabet">Alphabet to use</param>
+        /// <param name="alphabet">Alphabet to use.</param>
         public Base32(Base32Alphabet alphabet)
         {
             this.alphabet = alphabet;
         }
 
         /// <summary>
-        /// Encode a byte array into a Base32 string
+        /// Gets Douglas Crockford's Base32 flavor with substitution characters.
         /// </summary>
-        /// <param name="bytes">Buffer to be encoded</param>
-        /// <param name="padding">Append padding characters in the output</param>
-        /// <returns>Encoded string</returns>
+        public static Base32 Crockford => crockford.Value;
+
+        /// <summary>
+        /// Gets RFC 4648 variant of Base32 coder.
+        /// </summary>
+        public static Base32 Rfc4648 => rfc4648.Value;
+
+        /// <summary>
+        /// Gets Extended Hex variant of Base32 coder.
+        /// </summary>
+        /// <remarks>Also from RFC 4648.</remarks>
+        public static Base32 ExtendedHex => extendedHex.Value;
+
+        /// <summary>
+        /// Gets z-base-32 variant of Base32 coder.
+        /// </summary>
+        /// <remarks>This variant is used in Mnet, ZRTP and Tahoe-LAFS.</remarks>
+        public static Base32 ZBase32 => zBase32.Value;
+
+        /// <summary>
+        /// Gets Geohash variant of Base32 coder.
+        /// </summary>
+        public static Base32 Geohash => geohash.Value;
+
+        /// <summary>
+        /// Encode a byte array into a Base32 string.
+        /// </summary>
+        /// <param name="bytes">Buffer to be encoded.</param>
+        /// <param name="padding">Append padding characters in the output.</param>
+        /// <returns>Encoded string.</returns>
         public unsafe string Encode(ReadOnlySpan<byte> bytes, bool padding)
         {
             int bytesLen = bytes.Length;
@@ -83,7 +93,7 @@ namespace SimpleBase
                 byte* pInput = inputPtr;
                 byte* pEnd = pInput + bytesLen;
 
-                for (int bitsLeft = bitsPerByte, currentByte = *pInput, outputPad = 0;  pInput != pEnd;)
+                for (int bitsLeft = bitsPerByte, currentByte = *pInput, outputPad; pInput != pEnd;)
                 {
                     if (bitsLeft > bitsPerChar)
                     {
@@ -108,7 +118,7 @@ namespace SimpleBase
 
                 if (padding)
                 {
-                    for (char* pOutputEnd = outputPtr + outputLen;  pOutput != pOutputEnd; pOutput++)
+                    for (char* pOutputEnd = outputPtr + outputLen; pOutput != pOutputEnd; pOutput++)
                     {
                         *pOutput = paddingChar;
                     }
@@ -127,19 +137,18 @@ namespace SimpleBase
         /// <summary>
         /// Decode a Base32 encoded string into a byte array.
         /// </summary>
-        /// <param name="text">Encoded Base32 characters</param>
-        /// <returns>Decoded byte array</returns>
+        /// <param name="text">Encoded Base32 characters.</param>
+        /// <returns>Decoded byte array.</returns>
         public Span<byte> Decode(string text)
         {
-            Require.NotNull(text, nameof(text));
-            return this.Decode(text.AsSpan());
+            return Decode(text.AsSpan());
         }
 
         /// <summary>
         /// Decode a Base32 encoded string into a byte array.
         /// </summary>
-        /// <param name="text">Encoded Base32 string</param>
-        /// <returns>Decoded byte array</returns>
+        /// <param name="text">Encoded Base32 string.</param>
+        /// <returns>Decoded byte array.</returns>
         public unsafe Span<byte> Decode(ReadOnlySpan<char> text)
         {
             int textLen = text.Length;
@@ -202,53 +211,56 @@ namespace SimpleBase
         }
 
         /// <summary>
-        /// Encode a binary stream to a Base32 text stream
+        /// Encode a binary stream to a Base32 text stream.
         /// </summary>
-        /// <param name="input">Input bytes</param>
-        /// <param name="output">The writer the output is written to</param>
-        /// <param name="padding">Whether to use padding at the end of the output</param>
+        /// <param name="input">Input bytes.</param>
+        /// <param name="output">The writer the output is written to.</param>
+        /// <param name="padding">Whether to use padding at the end of the output.</param>
         public void Encode(Stream input, TextWriter output, bool padding)
         {
-            Require.NotNull(input, nameof(input));
-            Require.NotNull(output, nameof(output));
-            const int bufferSize = 4096;
-            var buffer = new byte[bufferSize];
-            while (true)
+            StreamHelper.Encode(input, output, (buffer, lastBlock) =>
             {
-                int bytesRead = input.Read(buffer, 0, bufferSize);
-                if (bytesRead < 1)
-                {
-                    break;
-                }
-
-                bool usePadding = bytesRead < bufferSize ? padding : false;
-                var result = this.Encode(buffer.AsSpan(0, bytesRead), usePadding);
-                output.Write(result);
-            }
+                bool usePadding = lastBlock ? padding : false;
+                return Encode(buffer.Span, usePadding);
+            });
         }
 
         /// <summary>
-        /// Decode a text stream into a binary stream
+        /// Encode a binary stream to a Base32 text stream.
         /// </summary>
-        /// <param name="input">TextReader open on the stream</param>
-        /// <param name="output">Binary output stream</param>
+        /// <param name="input">Input bytes.</param>
+        /// <param name="output">The writer the output is written to.</param>
+        /// <param name="padding">Whether to use padding at the end of the output.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+        public async Task EncodeAsync(Stream input, TextWriter output, bool padding)
+        {
+            await StreamHelper.EncodeAsync(input, output, (buffer, lastBlock) =>
+            {
+                bool usePadding = lastBlock ? padding : false;
+                return Encode(buffer.Span, usePadding);
+            }).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Decode a text stream into a binary stream.
+        /// </summary>
+        /// <param name="input">TextReader open on the stream.</param>
+        /// <param name="output">Binary output stream.</param>
         public void Decode(TextReader input, Stream output)
         {
-            Require.NotNull(input, nameof(input));
-            Require.NotNull(output, nameof(output));
-            const int bufferSize = 6400;
-            var buffer = new char[bufferSize];
-            while (true)
-            {
-                int bytesRead = input.Read(buffer, 0, bufferSize);
-                if (bytesRead < 1)
-                {
-                    break;
-                }
+            StreamHelper.Decode(input, output, buffer => Decode(buffer.Span).ToArray());
+        }
 
-                var result = this.Decode(buffer.AsSpan(0, bytesRead));
-                output.Write(result.ToArray(), 0, result.Length);
-            }
+        /// <summary>
+        /// Decode a text stream into a binary stream.
+        /// </summary>
+        /// <param name="input">TextReader open on the stream.</param>
+        /// <param name="output">Binary output stream.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+        public async Task DecodeAsync(TextReader input, Stream output)
+        {
+            await StreamHelper.DecodeAsync(input, output, buffer => Decode(buffer.Span).ToArray())
+                .ConfigureAwait(false);
         }
     }
 }

@@ -22,7 +22,7 @@ namespace SimpleBaseTest
 {
     [TestFixture]
     [Parallelizable]
-    class Base58Test
+    class BitcoinTest
     {
         private static readonly TestCaseData[] bitcoinTestData = new TestCaseData[]
         {
@@ -45,18 +45,12 @@ namespace SimpleBaseTest
         }
 
         [Test]
-        [TestCaseSource("bitcoinTestData")]
+        [TestCaseSource(nameof(bitcoinTestData))]
         public void Encode_Bitcoin_ReturnsExpectedResults(string input, string expectedOutput)
         {
             var buffer = Base16.Decode(input);
             string result = Base58.Bitcoin.Encode(buffer);
             Assert.AreEqual(expectedOutput, result);
-        }
-
-        [Test]
-        public void Ctor_NullAlphabet_Throws()
-        {
-            Assert.Throws<ArgumentNullException>(() => new Base58(null));
         }
 
         [Test]
@@ -73,19 +67,13 @@ namespace SimpleBaseTest
         }
 
         [Test]
-        public void Decode_NullBuffer_ThrowsArgumentNullException()
-        {
-            Assert.Throws<ArgumentNullException>(() => Base58.Bitcoin.Decode((string)null));
-        }
-
-        [Test]
         public void Decode_InvalidCharacter_Throws()
         {
             Assert.Throws<ArgumentException>(() => Base58.Bitcoin.Decode("?"));
         }
 
         [Test]
-        [TestCaseSource("bitcoinTestData")]
+        [TestCaseSource(nameof(bitcoinTestData))]
         public void Decode_Bitcoin_ReturnsExpectedResults(string expectedOutput, string input)
         {
             var buffer = Base58.Bitcoin.Decode(input);
