@@ -36,7 +36,7 @@
 - Reduced startup overhead
 - Updated dependencies to newer packages
 - Removed redundant null checking code
-- Base589 Ripple and Flickr variants are now being tested
+- Base58's Ripple and Flickr variants are now being tested
 ]]></PackageReleaseNotes>
     <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
