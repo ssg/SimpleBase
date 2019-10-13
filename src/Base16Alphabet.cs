@@ -22,12 +22,27 @@ namespace SimpleBase
             () => new Base16Alphabet("cbdefghijklnrtuv"));
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Base16Alphabet"/> class.
+        /// Initializes a new instance of the <see cref="Base16Alphabet"/> class with
+        /// case insensitive semantics.
         /// </summary>
         /// <param name="alphabet">Encoding alphabet.</param>
         public Base16Alphabet(string alphabet)
+            : this(alphabet, caseSensitive: false)
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Base16Alphabet"/> class.
+        /// </summary>
+        /// <param name="alphabet">Encoding alphabet.</param>
+        /// <param name="caseSensitive">If the decoding should be performed case sensitive.</param>
+        public Base16Alphabet(string alphabet, bool caseSensitive)
             : base(16, alphabet)
         {
+            if (!caseSensitive)
+            {
+                mapCounterparts();
+            }
         }
 
         /// <summary>
@@ -46,10 +61,10 @@ namespace SimpleBase
         public static Base16Alphabet ModHex { get; } = modHexAlphabet.Value;
 
         /// <summary>
-        /// Gets a value indicating whether the decoding should be performed in a case insensitive fashion.
-        /// This is the default behavior.
+        /// Gets a value indicating whether the decoding should be performed in a case sensitive fashion.
+        /// The default is false.
         /// </summary>
-        public bool CaseInsensitive { get; } = true;
+        public bool CaseSensitive { get; } = false;
 
         /// <inheritdoc/>
         public override int GetAllocationByteCountForDecoding(ReadOnlySpan<char> encodedText)
@@ -61,6 +76,27 @@ namespace SimpleBase
         public override int GetAllocationCharCountForEncoding(ReadOnlySpan<byte> buffer)
         {
             return buffer.Length * 2;
+        }
+
+        private void mapCounterparts()
+        {
+            int alphaLen = Value.Length;
+            for (int i = 0; i < alphaLen; i++)
+            {
+                char c = Value[i];
+                if (char.IsLetter(c))
+                {
+                    if (char.IsUpper(c))
+                    {
+                        Map(char.ToLowerInvariant(c), i);
+                    }
+
+                    if (char.IsLower(c))
+                    {
+                        Map(char.ToUpperInvariant(c), i);
+                    }
+                }
+            }
         }
     }
 }

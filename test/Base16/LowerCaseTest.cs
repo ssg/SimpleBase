@@ -4,19 +4,20 @@ using System;
 using System.IO;
 using System.Threading.Tasks;
 
-namespace SimpleBaseTest
+namespace SimpleBaseTest.Base16Test
 {
     [TestFixture]
     [Parallelizable]
-    internal class Base16Test
+    internal class LowerCaseTest
     {
         private static readonly TestCaseData[] testData = new[]
         {
             new TestCaseData(new byte[] { }, ""),
-            new TestCaseData(new byte[] { 0xAB }, "AB"),
+            new TestCaseData(new byte[] { 0xAB }, "ab"),
             new TestCaseData(new byte[] { 0x00, 0x01, 0x02, 0x03 }, "00010203"),
             new TestCaseData(new byte[] { 0x10, 0x11, 0x12, 0x13 }, "10111213"),
-            new TestCaseData(new byte[] { 0xAB, 0xCD, 0xEF, 0xBA }, "ABCDEFBA"),
+            new TestCaseData(new byte[] { 0xAB, 0xCD, 0xEF, 0xBA }, "abcdefba"),
+            new TestCaseData(new byte[] { 0xAB, 0xCD, 0xEF, 0xBA, 0xAB, 0xCD, 0xEF, 0xBA }, "abcdefbaabcdefba"),
         };
 
         [Test]
@@ -25,28 +26,18 @@ namespace SimpleBaseTest
         {
             using var memoryStream = new MemoryStream();
             using var reader = new StringReader(input);
-            Base16.UpperCase.Decode(reader, memoryStream);
+            Base16.LowerCase.Decode(reader, memoryStream);
             CollectionAssert.AreEqual(expectedOutput, memoryStream.ToArray());
         }
 
         [Test]
         [TestCaseSource(nameof(testData))]
-        public void EncodeUpper_Stream(byte[] input, string expectedOutput)
-        {
-            using var inputStream = new MemoryStream(input);
-            using var writer = new StringWriter();
-            Base16.UpperCase.Encode(inputStream, writer);
-            Assert.AreEqual(expectedOutput, writer.ToString());
-        }
-
-        [Test]
-        [TestCaseSource(nameof(testData))]
-        public void EncodeLower_Stream(byte[] input, string expectedOutput)
+        public void Encode_Stream(byte[] input, string expectedOutput)
         {
             using var inputStream = new MemoryStream(input);
             using var writer = new StringWriter();
             Base16.LowerCase.Encode(inputStream, writer);
-            Assert.AreEqual(expectedOutput.ToLowerInvariant(), writer.ToString());
+            Assert.AreEqual(expectedOutput, writer.ToString());
         }
 
         [Test]
@@ -55,7 +46,7 @@ namespace SimpleBaseTest
         {
             using var memoryStream = new MemoryStream();
             using var reader = new StringReader(input);
-            await Base16.UpperCase.DecodeAsync(reader, memoryStream);
+            await Base16.LowerCase.DecodeAsync(reader, memoryStream);
             CollectionAssert.AreEqual(expectedOutput, memoryStream.ToArray());
         }
 
@@ -65,49 +56,31 @@ namespace SimpleBaseTest
         {
             using var inputStream = new MemoryStream(input);
             using var writer = new StringWriter();
-            await Base16.UpperCase.EncodeAsync(inputStream, writer);
+            await Base16.LowerCase.EncodeAsync(inputStream, writer);
             Assert.AreEqual(expectedOutput, writer.ToString());
         }
 
         [Test]
         [TestCaseSource(nameof(testData))]
-        public async Task EncodeAsync_LowerCase_StreamAsync(byte[] input, string expectedOutput)
-        {
-            using var inputStream = new MemoryStream(input);
-            using var writer = new StringWriter();
-            await Base16.LowerCase.EncodeAsync(inputStream, writer);
-            Assert.AreEqual(expectedOutput.ToLowerInvariant(), writer.ToString());
-        }
-
-        [Test]
-        [TestCaseSource(nameof(testData))]
-        public void EncodeUpper(byte[] input, string expectedOutput)
-        {
-            var result = Base16.UpperCase.Encode(input);
-            Assert.AreEqual(expectedOutput, result);
-        }
-
-        [Test]
-        [TestCaseSource(nameof(testData))]
-        public void EncodeLower(byte[] input, string expectedOutput)
+        public void Encode(byte[] input, string expectedOutput)
         {
             var result = Base16.LowerCase.Encode(input);
-            Assert.AreEqual(expectedOutput.ToLowerInvariant(), result);
+            Assert.AreEqual(expectedOutput, result);
         }
 
         [Test]
         [TestCaseSource(nameof(testData))]
         public void Decode(byte[] expectedOutput, string input)
         {
-            var result = Base16.UpperCase.Decode(input);
+            var result = Base16.LowerCase.Decode(input);
             CollectionAssert.AreEqual(expectedOutput, result.ToArray());
         }
 
         [Test]
         [TestCaseSource(nameof(testData))]
-        public void Decode_LowerCase(byte[] expectedOutput, string input)
+        public void Decode_OtherCase_StillPasses(byte[] expectedOutput, string input)
         {
-            var result = Base16.LowerCase.Decode(input.ToLowerInvariant());
+            var result = Base16.LowerCase.Decode(input.ToUpperInvariant());
             CollectionAssert.AreEqual(expectedOutput, result.ToArray());
         }
 
@@ -117,7 +90,7 @@ namespace SimpleBaseTest
         [TestCase("=AAA")]
         public void Decode_InvalidChar_Throws(string input)
         {
-            Assert.Throws<ArgumentException>(() => Base16.UpperCase.Decode(input));
+            Assert.Throws<ArgumentException>(() => Base16.LowerCase.Decode(input));
         }
 
         [TestCase("12345")]

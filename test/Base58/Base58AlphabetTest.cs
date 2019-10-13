@@ -17,7 +17,7 @@ using NUnit.Framework;
 using SimpleBase;
 using System;
 
-namespace SimpleBaseTest
+namespace SimpleBaseTest.Base58Test
 {
     [TestFixture]
     [Parallelizable]

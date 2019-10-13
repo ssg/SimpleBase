@@ -243,15 +243,19 @@ namespace SimpleBase
                 {
                     // read bigger chunks
                     ulong input = *(ulong*)pInput;
-                    for (int j = 0; j < 4; j++, input >>= 2)
+                    for (int j = 0; j < sizeof(ulong) / 2; j++, input >>= 16)
                     {
                         ushort pair = (ushort)input;
 
                         // use cpu pipeline to parallelize writes
-                        pOutput[0] = hex((byte)((pair >> 4) & 0x0F));
-                        pOutput[1] = hex((byte)(pair & 0x0F));
-                        pOutput[2] = hex((byte)(pair >> 12));
-                        pOutput[3] = hex((byte)((pair >> 8) & 0x0F));
+                        int b0 = (pair >> 4) & 0x0F;
+                        int b1 = pair & 0x0F;
+                        int b2 = pair >> 12;
+                        int b3 = (pair >> 8) & 0x0F;
+                        pOutput[0] = hex((byte)b0);
+                        pOutput[1] = hex((byte)b1);
+                        pOutput[2] = hex((byte)b2);
+                        pOutput[3] = hex((byte)b3);
                         pOutput += 4;
                     }
                 }
@@ -259,8 +263,8 @@ namespace SimpleBase
                 for (int remaining = bytesLen % sizeof(ulong); remaining > 0; remaining--)
                 {
                     byte b = *pInput++;
-                    pOutput[0] = (char)hex((byte)(b >> 4));
-                    pOutput[1] = (char)hex((byte)(b & 0x0F));
+                    pOutput[0] = hex((byte)(b >> 4));
+                    pOutput[1] = hex((byte)(b & 0x0F));
                     pOutput += 2;
                 }
             }
