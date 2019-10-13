@@ -19,7 +19,6 @@ namespace SimpleBase
     {
         private const int bitsPerByte = 8;
         private const int bitsPerChar = 5;
-        private const char paddingChar = '=';
 
         private static Lazy<Base32> crockford = new Lazy<Base32>(() => new Base32(Base32Alphabet.Crockford));
         private static Lazy<Base32> rfc4648 = new Lazy<Base32>(() => new Base32(Base32Alphabet.Rfc4648));
@@ -82,7 +81,7 @@ namespace SimpleBase
 
             // we are ok with slightly larger buffer since the output string will always
             // have the exact length of the output produced.
-            int outputLen = (((bytesLen - 1) / bitsPerChar) + 1) * bitsPerByte;
+            int outputLen = alphabet.GetAllocationCharCountForEncoding(bytes);
             string output = new string('\0', outputLen);
 
             fixed (byte* inputPtr = bytes)
@@ -118,6 +117,8 @@ namespace SimpleBase
 
                 if (padding)
                 {
+                    char paddingChar = alphabet.PaddingChar;
+
                     for (char* pOutputEnd = outputPtr + outputLen; pOutput != pOutputEnd; pOutput++)
                     {
                         *pOutput = paddingChar;
@@ -153,25 +154,14 @@ namespace SimpleBase
         {
             int textLen = text.Length;
 
-            // ignore trailing padding chars and whitespace
-            while (textLen > 0)
-            {
-                char c = text[textLen - 1];
-                if (c != paddingChar && !char.IsWhiteSpace(text[textLen - 1]))
-                {
-                    break;
-                }
-
-                textLen--;
-            }
-
-            if (textLen == 0)
+            int bitsLeft = bitsPerByte;
+            textLen -= alphabet.GetPaddingCharCount(text);
+            int outputLen = Base32Alphabet.GetAllocationByteCountForDecoding(textLen);
+            if (outputLen == 0)
             {
                 return Array.Empty<byte>();
             }
 
-            int bitsLeft = bitsPerByte;
-            int outputLen = textLen * bitsPerChar / bitsPerByte;
             var outputBuffer = new byte[outputLen];
             int outputPad = 0;
             var table = this.alphabet.ReverseLookupTable;

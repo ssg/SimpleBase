@@ -47,7 +47,7 @@ namespace SimpleBaseTest
         [TestCaseSource(nameof(rippleTestData))]
         public void Encode_Ripple_ReturnsExpectedResults(string input, string expectedOutput)
         {
-            var buffer = Base16.Decode(input);
+            var buffer = Base16.UpperCase.Decode(input);
             string result = Base58.Ripple.Encode(buffer);
             Assert.AreEqual(expectedOutput, result);
         }

@@ -88,6 +88,40 @@ namespace SimpleBase
         }
 
         /// <summary>
+        /// Gets safe number of bytes to be allocated to fit the decoded buffer.
+        /// </summary>
+        /// <param name="text">The text to be decoded.</param>
+        /// <returns>A buffer size that would fit the decoded version of the input buffer.</returns>
+        public abstract int GetAllocationByteCountForDecoding(ReadOnlySpan<char> text);
+
+        /// <summary>
+        /// Gets safe number of bytes to be allocated to fit the decoded buffer.
+        /// </summary>
+        /// <param name="text">The text to be decoded.</param>
+        /// <returns>A buffer size that would fit the decoded version of the input buffer.</returns>
+        public int GetAllocationByteCountForDecoding(string text)
+        {
+            return GetAllocationByteCountForDecoding(text.AsSpan());
+        }
+
+        /// <summary>
+        /// Gets safe number of characters to be allocated to fit the encoded text.
+        /// </summary>
+        /// <param name="bytes">Buffer to be encoded.</param>
+        /// <returns>Number of bytes equal or larger than the encoded text.</returns>
+        public abstract int GetAllocationCharCountForEncoding(ReadOnlySpan<byte> bytes);
+
+        /// <summary>
+        /// Gets safe number of characters to be allocated to fit the encoded text.
+        /// </summary>
+        /// <param name="bytes">Buffer to be encoded.</param>
+        /// <returns>Number of bytes equal or larger than the encoded text.</returns>
+        public int GetAllocationCharCountForEncoding(byte[] bytes)
+        {
+            return GetAllocationCharCountForEncoding(bytes.AsSpan());
+        }
+
+        /// <summary>
         /// Get the string representation of the alphabet.
         /// </summary>
         /// <returns>The characters of the encoding alphabet.</returns>

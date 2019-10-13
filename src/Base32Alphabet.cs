@@ -12,6 +12,9 @@ namespace SimpleBase
     /// </summary>
     public class Base32Alphabet : EncodingAlphabet
     {
+        private const int bitsPerChar = 5;
+        private const int bitsPerByte = 8;
+
         private static Lazy<CrockfordBase32Alphabet> crockfordAlphabet = new Lazy<CrockfordBase32Alphabet>(
             () => new CrockfordBase32Alphabet());
 
@@ -43,6 +46,17 @@ namespace SimpleBase
         }
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="Base32Alphabet"/> class.
+        /// </summary>
+        /// <param name="alphabet">Encoding alphabet to use.</param>
+        /// <param name="paddingChar">Padding character.</param>
+        public Base32Alphabet(string alphabet, char paddingChar)
+            : this(alphabet)
+        {
+            PaddingChar = paddingChar;
+        }
+
+        /// <summary>
         /// Gets Crockford alphabet.
         /// </summary>gpg
         public static Base32Alphabet Crockford => crockfordAlphabet.Value;
@@ -66,6 +80,41 @@ namespace SimpleBase
         /// Gets Geohash alphabet.
         /// </summary>
         public static Base32Alphabet Geohash => geohashAlphabet.Value;
+
+        /// <summary>
+        /// Gets the padding character used in encoding.
+        /// </summary>
+        public char PaddingChar { get; } = '=';
+
+        /// <inheritdoc/>
+        public override int GetAllocationByteCountForDecoding(ReadOnlySpan<char> text)
+        {
+            return GetAllocationByteCountForDecoding(text.Length - GetPaddingCharCount(text));
+        }
+
+        /// <inheritdoc/>
+        public override int GetAllocationCharCountForEncoding(ReadOnlySpan<byte> buffer)
+        {
+            return (((buffer.Length - 1) / bitsPerChar) + 1) * bitsPerByte;
+        }
+
+        internal static int GetAllocationByteCountForDecoding(int textLenWithoutPadding)
+        {
+            return textLenWithoutPadding * bitsPerChar / bitsPerByte;
+        }
+
+        internal int GetPaddingCharCount(ReadOnlySpan<char> text)
+        {
+            char paddingChar = PaddingChar;
+            int result = 0;
+            int textLen = text.Length;
+            while (textLen > 0 && text[--textLen] == paddingChar)
+            {
+                result++;
+            }
+
+            return result;
+        }
 
         private void mapLowerCaseCounterparts(string alphabet)
         {

@@ -12,17 +12,24 @@
     <AssemblyOriginatorKeyFile>..\SimpleBase.snk</AssemblyOriginatorKeyFile>
     <DelaySign>false</DelaySign>
 
-    <PackageVersion>2.0.1</PackageVersion>
+    <PackageVersion>3.0.0</PackageVersion>
     <CodeAnalysisRuleSet>../SSG.ruleset</CodeAnalysisRuleSet>
     <DocumentationFile>SimpleBase.xml</DocumentationFile>
     <PackageProjectUrl>https://github.com/ssg/SimpleBase</PackageProjectUrl>
-    <PackageLicense>Apache-2.0</PackageLicense>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <PackageTags>base16 base32 base58 base85 ascii85 z85 hexadecimal bitcoin ripple flickr crockford extended hex rfc4648 z-base-32 geohash</PackageTags>
     <PackageReleaseNotes>
-  <![CDATA[
-  # Improvements
-  - Improve Base16 Encode/Decode speed
+<![CDATA[
+# Breaking changes
+- Removed whitespace tolerance of Base32
+- Base16 encoding/decoding methods moved to Base16.UpperCase and Base16.LowerCase respectively.
+
+# New features
+- ModHex support for Base16.
+
+# Fixes 
+- Fix package license expression
 ]]></PackageReleaseNotes>
     <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>

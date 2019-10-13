@@ -4,7 +4,6 @@
 // </copyright>
 
 using System;
-using System.Threading;
 
 namespace SimpleBase
 {
@@ -55,8 +54,6 @@ namespace SimpleBase
         /// <returns>Encoded string.</returns>
         public unsafe string Encode(ReadOnlySpan<byte> bytes)
         {
-            const int growthPercentage = 138;
-
             int bytesLen = bytes.Length;
             if (bytesLen == 0)
             {
@@ -74,14 +71,15 @@ namespace SimpleBase
                 }
 
                 int numZeroes = (int)(pInput - inputPtr);
-
                 char zeroChar = alphabetPtr[0];
                 if (pInput == pEnd)
                 {
                     return new string(zeroChar, numZeroes);
                 }
 
-                int outputLen = ((bytesLen * growthPercentage) / 100) + 1;
+                // we can safely use char count for allocating a byte buffer for the numeric representation
+                // because each digit will map to a single character later in the encoding process.
+                int outputLen = Base58Alphabet.GetAllocationCharCountForEncoding(bytesLen, numZeroes);
                 int length = 0;
                 byte[] output = new byte[outputLen];
                 fixed (byte* outputPtr = output)
@@ -143,9 +141,7 @@ namespace SimpleBase
         /// <returns>Array of decoded bytes.</returns>
         public unsafe Span<byte> Decode(ReadOnlySpan<char> text)
         {
-            const int reductionFactor = 733; // https://github.com/bitcoin/bitcoin/blob/master/src/base58.cpp
-
-            var textLen = text.Length;
+            int textLen = text.Length;
             if (textLen == 0)
             {
                 return Array.Empty<byte>();
@@ -167,44 +163,40 @@ namespace SimpleBase
                     return new byte[numZeroes]; // initialized to zero
                 }
 
-                int outputLen = (int)Math.Round(((textLen * reductionFactor) / 1000.0) + 1);
+                int outputLen = alphabet.GetAllocationByteCountForDecoding(text);
                 var table = this.alphabet.ReverseLookupTable;
                 byte[] output = new byte[outputLen];
                 fixed (byte* outputPtr = output)
                 {
                     byte* pOutputEnd = outputPtr + outputLen - 1;
+                    byte* pMinOutput = pOutputEnd;
                     while (pInput != pEnd)
                     {
-                        char c = *pInput++;
+                        char c = *pInput;
                         int carry = table[c] - 1;
                         if (carry < 0)
                         {
                             throw EncodingAlphabet.InvalidCharacter(c);
                         }
 
-                        for (byte* pDigit = pOutputEnd; pDigit >= outputPtr; pDigit--)
+                        byte* pOutput = pOutputEnd;
+                        for (; pOutput >= outputPtr; pOutput--)
                         {
-                            carry += 58 * (*pDigit);
-                            *pDigit = (byte)carry;
+                            carry += 58 * (*pOutput);
+                            *pOutput = (byte)carry;
+                            if (pMinOutput > pOutput && carry != 0)
+                            {
+                                pMinOutput = pOutput;
+                            }
+
                             carry /= 256;
                         }
+
+                        pInput++;
                     }
 
-                    byte* pOutput = outputPtr;
-                    while (pOutput != pOutputEnd && *pOutput == 0)
-                    {
-                        pOutput++;
-                    }
-
-                    int resultLen = (int)(pOutputEnd - pOutput) + 1;
-                    if (resultLen == outputLen)
-                    {
-                        return output;
-                    }
-
-                    byte[] result = new byte[numZeroes + resultLen];
-                    Array.Copy(output, (int)(pOutput - outputPtr), result, numZeroes, resultLen);
-                    return result;
+                    pMinOutput -= numZeroes;
+                    return output.AsSpan((int)(pMinOutput - outputPtr));
                 }
             }
         }

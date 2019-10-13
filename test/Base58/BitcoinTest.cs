@@ -48,7 +48,7 @@ namespace SimpleBaseTest
         [TestCaseSource(nameof(bitcoinTestData))]
         public void Encode_Bitcoin_ReturnsExpectedResults(string input, string expectedOutput)
         {
-            var buffer = Base16.Decode(input);
+            var buffer = Base16.UpperCase.Decode(input);
             string result = Base58.Bitcoin.Encode(buffer);
             Assert.AreEqual(expectedOutput, result);
         }

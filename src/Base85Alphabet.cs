@@ -13,6 +13,9 @@ namespace SimpleBase
     /// </summary>
     public sealed class Base85Alphabet : EncodingAlphabet
     {
+        private const int byteBlockSize = 4;
+        private const int stringBlockSize = 5;
+
         private static Lazy<Base85Alphabet> z85 = new Lazy<Base85Alphabet>(() => new Base85Alphabet(
                 "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ.-:+=^!/*?&<>()[]{}@%$#"));
 
@@ -64,5 +67,26 @@ namespace SimpleBase
         /// or all zeros.
         /// </summary>
         public bool HasShortcut => AllSpaceShortcut.HasValue || AllZeroShortcut.HasValue;
+
+        /// <inheritdoc/>
+        public override int GetAllocationByteCountForDecoding(ReadOnlySpan<char> text)
+        {
+            bool usingShortcuts = AllZeroShortcut != null || AllSpaceShortcut != null;
+
+            int textLen = text.Length;
+            if (usingShortcuts)
+            {
+                return textLen * byteBlockSize; // max possible size using shortcuts
+            }
+
+            // max possible size without shortcuts
+            return (((textLen - 1) / stringBlockSize) + 1) * byteBlockSize;
+        }
+
+        /// <inheritdoc/>
+        public override int GetAllocationCharCountForEncoding(ReadOnlySpan<byte> bytes)
+        {
+            return (bytes.Length * stringBlockSize / byteBlockSize) + 1;
+        }
     }
 }

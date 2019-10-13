@@ -63,7 +63,7 @@ namespace SimpleBase
             bool usesSpaceShortcut = this.alphabet.AllSpaceShortcut.HasValue;
 
             // adjust output length based on prefix and suffix settings
-            int maxOutputLen = (bytesLen * stringBlockSize / byteBlockSize) + 1;
+            int maxOutputLen = alphabet.GetAllocationCharCountForEncoding(bytes);
 
             char[] output = new char[maxOutputLen];
             int fullLen = (bytesLen >> 2) << 2; // rounded
@@ -191,7 +191,7 @@ namespace SimpleBase
             bool usingShortcuts = checkZero || checkSpace;
 
             // allocate a larger buffer if we're using shortcuts
-            int decodeBufferLen = getDecodeBufferLength(textLen, usingShortcuts);
+            int decodeBufferLen = alphabet.GetAllocationByteCountForDecoding(text);
             byte[] decodeBuffer = new byte[decodeBufferLen];
             var table = this.alphabet.ReverseLookupTable;
             fixed (char* inputPtr = text)
@@ -257,17 +257,6 @@ namespace SimpleBase
                 int actualOutputLength = (int)(pDecodeBuffer - decodeBufferPtr);
                 return new Span<byte>(decodeBufferPtr, actualOutputLength);
             }
-        }
-
-        private static unsafe int getDecodeBufferLength(int textLen, bool usingShortcuts)
-        {
-            if (usingShortcuts)
-            {
-                return textLen * byteBlockSize; // max possible size using shortcuts
-            }
-
-            // max possible size without shortcuts
-            return (((textLen - 1) / stringBlockSize) + 1) * byteBlockSize;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
