@@ -12,8 +12,8 @@ namespace benchmark
                 (s) => Convert.FromBase64String(s)),
 
             new Benchmark("SimpleBase Base16", 2f,
-                (buf) => Base16.EncodeUpper(buf),
-                (s) => Base16.Decode(s)),
+                (buf) => Base16.UpperCase.Encode(buf),
+                (s) => Base16.UpperCase.Decode(s)),
 
             new Benchmark("SimpleBase Base32 Crockford", 1.6f,
                 (buf) => Base32.Crockford.Encode(buf, padding: true),
