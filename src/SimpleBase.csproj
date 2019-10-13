@@ -12,7 +12,7 @@
     <AssemblyOriginatorKeyFile>..\SimpleBase.snk</AssemblyOriginatorKeyFile>
     <DelaySign>false</DelaySign>
 
-    <PackageVersion>2.0.0</PackageVersion>
+    <PackageVersion>2.0.1</PackageVersion>
     <CodeAnalysisRuleSet>../SSG.ruleset</CodeAnalysisRuleSet>
     <DocumentationFile>SimpleBase.xml</DocumentationFile>
     <PackageProjectUrl>https://github.com/ssg/SimpleBase</PackageProjectUrl>
@@ -21,22 +21,8 @@
     <PackageTags>base16 base32 base58 base85 ascii85 z85 hexadecimal bitcoin ripple flickr crockford extended hex rfc4648 z-base-32 geohash</PackageTags>
     <PackageReleaseNotes>
   <![CDATA[
-# Breaking changes
-- Adapted to nullable references
-- Encoder references are now properties instead of static fields
-
-# New stuff
-- Async variants of Stream-based encoding/decoding methods
-- New Base32 variants: z-base-32 and Geohash
-- XML documentation is included in the package now
-- SimpleBase is now on GitHub Package Repository
-
-# Improvements
-- Base58 decoding is 100+% faster and encoding is slightly faster, too
-- Reduced startup overhead
-- Updated dependencies to newer packages
-- Removed redundant null checking code
-- Base58's Ripple and Flickr variants are now being tested
+  # Improvements
+  - Improve Base16 Encode/Decode speed
 ]]></PackageReleaseNotes>
     <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>

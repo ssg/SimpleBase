@@ -74,12 +74,10 @@ namespace SimpleBase
                 char* pEnd = pInput + textLen;
                 while (pInput != pEnd)
                 {
-                    char c1 = *pInput++;
-                    int b1 = getHexByte(c1);
-                    char c2 = *pInput++;
-                    int b2 = getHexByte(c2);
-                    *pOutput = (byte)(b1 << 4 | b2);
-                    pOutput++;
+                    int b1 = getHexByte(pInput[0]);
+                    int b2 = getHexByte(pInput[1]);
+                    *pOutput++ = (byte)(b1 << 4 | b2);
+                    pInput += 2;
                 }
             }
 
@@ -175,23 +173,30 @@ namespace SimpleBase
 
                 byte hex(byte b) => (b < 10) ? (byte)('0' + b) : (byte)(a + b - 10);
 
-                int octets = bytesLen / 2;
-                for (int i = 0; i < octets; i++, pInput += 2, pOutput += 4)
+                int octets = bytesLen / sizeof(ulong);
+                for (int i = 0; i < octets; i++, pInput += sizeof(ulong))
                 {
-                    // reduce memory accesses by reading and writing 8 bytes at once
-                    ushort pair = *(ushort*)pInput;
-                    ulong pad = hex((byte)((pair >> 4) & 0x0F))
-                            | ((ulong)hex((byte)(pair & 0x0F)) << 16)
-                            | ((ulong)hex((byte)(pair >> 12)) << 32)
-                            | ((ulong)hex((byte)((pair >> 8) & 0x0F)) << 48);
-                    *((ulong*)pOutput) = pad;
+                    // read bigger chunks
+                    ulong input = *(ulong*)pInput;
+                    for (int j = 0; j < 4; j++, input >>= 2)
+                    {
+                        ushort pair = (ushort)input;
+
+                        // use cpu pipeline to parallelize writes
+                        pOutput[0] = (char)hex((byte)((pair >> 4) & 0x0F));
+                        pOutput[1] = (char)hex((byte)(pair & 0x0F));
+                        pOutput[2] = (char)hex((byte)(pair >> 12));
+                        pOutput[3] = (char)hex((byte)((pair >> 8) & 0x0F));
+                        pOutput += 4;
+                    }
                 }
 
-                if (bytesLen % 2 > 0)
+                for (int remaining = bytesLen % sizeof(ulong); remaining > 0; remaining--)
                 {
                     byte b = *pInput++;
-                    *pOutput++ = (char)hex((byte)(b >> 4));
-                    *pOutput++ = (char)hex((byte)(b & 0x0F));
+                    pOutput[0] = (char)hex((byte)(b >> 4));
+                    pOutput[1] = (char)hex((byte)(b & 0x0F));
+                    pOutput += 2;
                 }
             }
 
