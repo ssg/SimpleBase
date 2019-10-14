@@ -12,7 +12,7 @@
     <AssemblyOriginatorKeyFile>..\SimpleBase.snk</AssemblyOriginatorKeyFile>
     <DelaySign>false</DelaySign>
 
-    <PackageVersion>2.1.0</PackageVersion>
+    <PackageVersion>3.0.0</PackageVersion>
     <CodeAnalysisRuleSet>../SSG.ruleset</CodeAnalysisRuleSet>
     <DocumentationFile>SimpleBase.xml</DocumentationFile>
     <PackageProjectUrl>https://github.com/ssg/SimpleBase</PackageProjectUrl>
@@ -22,16 +22,18 @@
     <PackageReleaseNotes>
 <![CDATA[
 # Breaking changes
-- Removed whitespace tolerance of Base32.
 - Base16 encoding/decoding methods moved to Base16.UpperCase and Base16.LowerCase respectively.
 - Remove Base16.Decode due to naming conflicts. Use Base16.UpperCase.Decode() instead which is case insensitive.
+- Removed whitespace tolerance of Base32.
 
 # New features
 - ModHex support for Base16.
+- New TryEncode/TryDecode interfaces for non-allocating encoding.
 
 # Improvements
 - More than 2x faster Base16 decoding
 - Faster Base16 encoding
+- Remove dependency to System.Runtime.Numerics
 
 # Fixes 
 - Fix package license expression.
