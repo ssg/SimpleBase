@@ -37,12 +37,9 @@ namespace SimpleBase
         public Base32Alphabet(string alphabet)
             : base(32, alphabet)
         {
-            if (alphabet is null)
-            {
-                throw new ArgumentNullException(nameof(alphabet));
-            }
-
-            this.mapLowerCaseCounterparts(alphabet);
+#pragma warning disable CA1062 // Validate arguments of public methods -- already validated in the base class
+            mapLowerCaseCounterparts(alphabet);
+#pragma warning restore CA1062 // Validate arguments of public methods -- already validated in the base class
         }
 
         /// <summary>
