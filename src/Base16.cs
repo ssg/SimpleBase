@@ -4,6 +4,7 @@
 // </copyright>
 
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 
@@ -12,7 +13,7 @@ namespace SimpleBase
     /// <summary>
     /// Base16 encoding/decoding.
     /// </summary>
-    public sealed class Base16 : IBaseEncoder, IBaseStreamEncoder
+    public sealed class Base16 : IBaseEncoder, IBaseStreamEncoder, INonAllocatingBaseEncoder
     {
         private static Lazy<Base16> upperCase = new Lazy<Base16>(() => new Base16(Base16Alphabet.UpperCase));
         private static Lazy<Base16> lowerCase = new Lazy<Base16>(() => new Base16(Base16Alphabet.LowerCase));
@@ -130,57 +131,6 @@ namespace SimpleBase
         }
 
         /// <summary>
-        /// Decode Base16 text into bytes.
-        /// </summary>
-        /// <param name="text">Base16 text.</param>
-        /// <returns>Decoded bytes.</returns>
-        public unsafe Span<byte> Decode(ReadOnlySpan<char> text)
-        {
-            int textLen = text.Length;
-            if (textLen == 0)
-            {
-                return Array.Empty<byte>();
-            }
-
-            // remainder operator ("%") was unexpectedly slow here
-            // that's why we're using "&" below
-            if ((textLen & 1) != 0)
-            {
-                throw new ArgumentException("Text cannot be odd length", nameof(text));
-            }
-
-            var table = Alphabet.ReverseLookupTable;
-
-            byte[] output = new byte[textLen >> 1];
-            fixed (byte* outputPtr = output)
-            fixed (char* textPtr = text)
-            {
-                byte* pOutput = outputPtr;
-                char* pInput = textPtr;
-                char* pEnd = pInput + textLen;
-                while (pInput != pEnd)
-                {
-                    int b1 = table[pInput[0]] - 1;
-                    if (b1 < 0)
-                    {
-                        throw new ArgumentException($"Invalid hex character: {pInput[0]}");
-                    }
-
-                    int b2 = table[pInput[1]] - 1;
-                    if (b2 < 0)
-                    {
-                        throw new ArgumentException($"Invalid hex character: {pInput[1]}");
-                    }
-
-                    *pOutput++ = (byte)(b1 << 4 | b2);
-                    pInput += 2;
-                }
-            }
-
-            return output;
-        }
-
-        /// <summary>
         /// Decode Base16 text through streams for generic use. Stream based variant tries to consume
         /// as little memory as possible, and relies of .NET's own underlying buffering mechanisms,
         /// contrary to their buffer-based versions.
@@ -215,6 +165,84 @@ namespace SimpleBase
         }
 
         /// <summary>
+        /// Decode Base16 text into bytes.
+        /// </summary>
+        /// <param name="text">Base16 text.</param>
+        /// <returns>Decoded bytes.</returns>
+        public unsafe Span<byte> Decode(ReadOnlySpan<char> text)
+        {
+            int textLen = text.Length;
+            if (textLen == 0)
+            {
+                return Array.Empty<byte>();
+            }
+
+            byte[] output = new byte[Alphabet.GetSafeByteCountForDecoding(text)];
+            if (!TryDecode(text, output, out _))
+            {
+                throw new ArgumentException("Invalid text", nameof(text));
+            }
+
+            return output;
+        }
+
+        /// <inheritdoc/>
+        public unsafe bool TryDecode(ReadOnlySpan<char> text, Span<byte> output, out int numBytesWritten)
+        {
+            int textLen = text.Length;
+            if (textLen == 0)
+            {
+                numBytesWritten = 0;
+                return true;
+            }
+
+            if ((textLen & 1) != 0)
+            {
+                numBytesWritten = 0;
+                Debug.WriteLine("Invalid input buffer length for Base16 decoding");
+                return false;
+            }
+
+            int outputLen = textLen / 2;
+            if (output.Length < outputLen)
+            {
+                numBytesWritten = 0;
+                Debug.WriteLine("Insufficient output buffer length for Base16 decoding");
+                return false;
+            }
+
+            var table = Alphabet.ReverseLookupTable;
+
+            fixed (byte* outputPtr = output)
+            fixed (char* textPtr = text)
+            {
+                byte* pOutput = outputPtr;
+                char* pInput = textPtr;
+                char* pEnd = pInput + textLen;
+                while (pInput != pEnd)
+                {
+                    int b1 = table[pInput[0]] - 1;
+                    if (b1 < 0)
+                    {
+                        throw new ArgumentException($"Invalid hex character: {pInput[0]}");
+                    }
+
+                    int b2 = table[pInput[1]] - 1;
+                    if (b2 < 0)
+                    {
+                        throw new ArgumentException($"Invalid hex character: {pInput[1]}");
+                    }
+
+                    *pOutput++ = (byte)(b1 << 4 | b2);
+                    pInput += 2;
+                }
+            }
+
+            numBytesWritten = outputLen;
+            return true;
+        }
+
+        /// <summary>
         /// Encode to Base16 representation.
         /// </summary>
         /// <param name="bytes">Bytes to encode.</param>
@@ -227,10 +255,49 @@ namespace SimpleBase
                 return string.Empty;
             }
 
+            var output = new string('\0', Alphabet.GetSafeCharCountForEncoding(bytes));
+            fixed (char* outputPtr = output)
+            {
+                internalEncode(bytes, bytesLen, Alphabet.Value, outputPtr);
+            }
+
+            return output;
+        }
+
+        /// <inheritdoc/>
+        public unsafe bool TryEncode(ReadOnlySpan<byte> bytes, Span<char> output, out int numCharsWritten)
+        {
+            int bytesLen = bytes.Length;
             string alphabet = Alphabet.Value;
 
-            var output = new string('\0', bytesLen << 1);
+            int outputLen = bytesLen * 2;
+            if (output.Length < outputLen)
+            {
+                numCharsWritten = 0;
+                return false;
+            }
+
+            if (outputLen == 0)
+            {
+                numCharsWritten = 0;
+                return true;
+            }
+
             fixed (char* outputPtr = output)
+            {
+                internalEncode(bytes, bytesLen, alphabet, outputPtr);
+            }
+
+            numCharsWritten = outputLen;
+            return true;
+        }
+
+        private static unsafe void internalEncode(
+            ReadOnlySpan<byte> bytes,
+            int bytesLen,
+            string alphabet,
+            char* outputPtr)
+        {
             fixed (byte* bytesPtr = bytes)
             {
                 char* pOutput = outputPtr;
@@ -262,8 +329,6 @@ namespace SimpleBase
                     pOutput += 2;
                 }
             }
-
-            return output;
         }
     }
 }
