@@ -165,16 +165,6 @@ namespace SimpleBase
         }
 
         /// <summary>
-        /// Decode a given text into a span.
-        /// </summary>
-        /// <param name="text">Input text.</param>
-        /// <returns>Output span.</returns>
-        public Span<byte> Decode(string text)
-        {
-            return Decode(text.AsSpan());
-        }
-
-        /// <summary>
         /// Decode given characters into bytes.
         /// </summary>
         /// <param name="text">Characters to decode.</param>

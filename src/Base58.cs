@@ -130,16 +130,6 @@ namespace SimpleBase
         /// <summary>
         /// Decode a Base58 representation.
         /// </summary>
-        /// <param name="text">Encoded text.</param>
-        /// <returns>Decoded bytes.</returns>
-        public Span<byte> Decode(string text)
-        {
-            return Decode(text.AsSpan());
-        }
-
-        /// <summary>
-        /// Decode a Base58 representation.
-        /// </summary>
         /// <param name="text">Base58 encoded text.</param>
         /// <returns>Array of decoded bytes.</returns>
         public unsafe Span<byte> Decode(ReadOnlySpan<char> text)

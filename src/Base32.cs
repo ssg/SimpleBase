@@ -148,16 +148,6 @@ namespace SimpleBase
         /// <summary>
         /// Decode a Base32 encoded string into a byte array.
         /// </summary>
-        /// <param name="text">Encoded Base32 characters.</param>
-        /// <returns>Decoded byte array.</returns>
-        public Span<byte> Decode(string text)
-        {
-            return Decode(text.AsSpan());
-        }
-
-        /// <summary>
-        /// Decode a Base32 encoded string into a byte array.
-        /// </summary>
         /// <param name="text">Encoded Base32 string.</param>
         /// <returns>Decoded byte array.</returns>
         public unsafe Span<byte> Decode(ReadOnlySpan<char> text)
