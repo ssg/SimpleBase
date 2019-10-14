@@ -115,6 +115,15 @@ namespace SimpleBaseTest.Base16Test
         }
 
         [Test]
+        public void TryDecode_UnevenInputBuffer_Fails()
+        {
+            var input = "123";
+            var output = new byte[1];
+            Assert.IsFalse(Base16.LowerCase.TryDecode(input, output, out int numBytesWritten));
+            Assert.AreEqual(0, numBytesWritten);
+        }
+
+        [Test]
         [TestCaseSource(nameof(testData))]
         public void Decode_OtherCase_StillPasses(byte[] expectedOutput, string input)
         {
@@ -129,6 +138,12 @@ namespace SimpleBaseTest.Base16Test
         public void Decode_InvalidChar_Throws(string input)
         {
             Assert.Throws<ArgumentException>(() => Base16.LowerCase.Decode(input));
+        }
+
+        [Test]
+        public void Decode_UnevenBufferSize_Throws()
+        {
+            Assert.Throws<ArgumentException>(() => Base16.LowerCase.Decode("123"));
         }
 
         [TestCase("12345")]

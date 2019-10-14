@@ -52,7 +52,7 @@ namespace SimpleBaseTest.Base16Test
 
         [Test]
         [TestCaseSource(nameof(testData))]
-        public async Task EncodeAsync_StreamAsync(byte[] input, string expectedOutput)
+        public async Task EncodeAsync_Stream(byte[] input, string expectedOutput)
         {
             using var inputStream = new MemoryStream(input);
             using var writer = new StringWriter();

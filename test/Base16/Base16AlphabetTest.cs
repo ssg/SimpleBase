@@ -1,8 +1,5 @@
 ﻿using NUnit.Framework;
 using SimpleBase;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace SimpleBaseTest.Base16Test
 {
@@ -24,10 +21,10 @@ namespace SimpleBaseTest.Base16Test
         }
 
         [Test]
-        public void GetSafeByteCountForDecoding_InvalidBufferSize_Throws()
+        public void GetSafeByteCountForDecoding_InvalidBufferSize_ReturnsZero()
         {
             var input = new char[11];
-            Assert.Throws<ArgumentException>(() => Base16.UpperCase.Alphabet.GetSafeByteCountForDecoding(input));
+            Assert.AreEqual(0, Base16.UpperCase.Alphabet.GetSafeByteCountForDecoding(input));
         }
     }
 }

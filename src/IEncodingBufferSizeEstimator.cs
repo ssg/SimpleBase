@@ -20,8 +20,7 @@ namespace SimpleBase
         /// output size.
         /// </summary>
         /// <param name="text">Text to be decoded.</param>
-        /// <returns>Number of estimated bytes.</returns>
-        /// <exception cref="ArgumentException">When a buffer with invalid length is passed.</exception>
+        /// <returns>Number of estimated bytes, or zero if the input length is invalid.</returns>
         int GetSafeByteCountForDecoding(ReadOnlySpan<char> text);
 
         /// <summary>
@@ -30,8 +29,7 @@ namespace SimpleBase
         /// actual output size.
         /// </summary>
         /// <param name="buffer">Bytes to be encoded.</param>
-        /// <returns>Number of estimated characters.</returns>
-        /// <exception cref="ArgumentException">When a buffer with invalid length is passed.</exception>
+        /// <returns>Number of estimated characters, or zero if the input length is invalid.</returns>
         int GetSafeCharCountForEncoding(ReadOnlySpan<byte> buffer);
     }
 }

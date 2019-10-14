@@ -72,7 +72,7 @@ namespace SimpleBase
             int textLen = text.Length;
             if ((textLen & 1) != 0)
             {
-                throw new ArgumentException("Invalid input buffer length for Base16 decoding", nameof(text));
+                return 0;
             }
 
             return textLen / 2;
