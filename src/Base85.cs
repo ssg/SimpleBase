@@ -24,8 +24,6 @@ namespace SimpleBase
         private static Lazy<Base85> z85 = new Lazy<Base85>(() => new Base85(Base85Alphabet.Z85));
         private static Lazy<Base85> ascii85 = new Lazy<Base85>(() => new Base85(Base85Alphabet.Ascii85));
 
-        private readonly Base85Alphabet alphabet;
-
         /// <summary>
         /// Initializes a new instance of the <see cref="Base85"/> class
         /// using a custom alphabet.
@@ -33,7 +31,7 @@ namespace SimpleBase
         /// <param name="alphabet">Alphabet to use.</param>
         public Base85(Base85Alphabet alphabet)
         {
-            this.alphabet = alphabet;
+            this.Alphabet = alphabet;
         }
 
         /// <summary>
@@ -45,6 +43,11 @@ namespace SimpleBase
         /// Gets Ascii85 flavor of Base85.
         /// </summary>
         public static Base85 Ascii85 => ascii85.Value;
+
+        /// <summary>
+        /// Gets the encoding alphabet.
+        /// </summary>
+        public Base85Alphabet Alphabet { get; }
 
         /// <summary>
         /// Encode the given bytes into Base85.
@@ -59,16 +62,16 @@ namespace SimpleBase
                 return string.Empty;
             }
 
-            bool usesZeroShortcut = this.alphabet.AllZeroShortcut.HasValue;
-            bool usesSpaceShortcut = this.alphabet.AllSpaceShortcut.HasValue;
+            bool usesZeroShortcut = this.Alphabet.AllZeroShortcut.HasValue;
+            bool usesSpaceShortcut = this.Alphabet.AllSpaceShortcut.HasValue;
 
             // adjust output length based on prefix and suffix settings
-            int maxOutputLen = alphabet.GetAllocationCharCountForEncoding(bytes);
+            int maxOutputLen = Alphabet.GetSafeCharCountForEncoding(bytes);
 
             char[] output = new char[maxOutputLen];
             int fullLen = (bytesLen >> 2) << 2; // rounded
 
-            string table = this.alphabet.Value;
+            string table = Alphabet.Value;
 
             fixed (byte* inputPtr = bytes)
             fixed (char* outputPtr = output)
@@ -184,16 +187,16 @@ namespace SimpleBase
                 return Array.Empty<byte>();
             }
 
-            char? allZeroChar = this.alphabet.AllZeroShortcut;
-            char? allSpaceChar = this.alphabet.AllSpaceShortcut;
+            char? allZeroChar = this.Alphabet.AllZeroShortcut;
+            char? allSpaceChar = this.Alphabet.AllSpaceShortcut;
             bool checkZero = allZeroChar.HasValue;
             bool checkSpace = allSpaceChar.HasValue;
             bool usingShortcuts = checkZero || checkSpace;
 
             // allocate a larger buffer if we're using shortcuts
-            int decodeBufferLen = alphabet.GetAllocationByteCountForDecoding(text);
+            int decodeBufferLen = Alphabet.GetSafeByteCountForDecoding(text);
             byte[] decodeBuffer = new byte[decodeBufferLen];
-            var table = this.alphabet.ReverseLookupTable;
+            var table = this.Alphabet.ReverseLookupTable;
             fixed (char* inputPtr = text)
             fixed (byte* decodeBufferPtr = decodeBuffer)
             {
@@ -300,13 +303,13 @@ namespace SimpleBase
             // handle shortcuts
             if (input == 0 && usesZeroShortcut)
             {
-                *pOutput++ = this.alphabet.AllZeroShortcut ?? '!'; // guaranteed to be non-null
+                *pOutput++ = this.Alphabet.AllZeroShortcut ?? '!'; // guaranteed to be non-null
                 return;
             }
 
             if (input == allSpace && usesSpaceShortcut)
             {
-                *pOutput++ = this.alphabet.AllSpaceShortcut ?? '!'; // guaranteed to be non-null
+                *pOutput++ = this.Alphabet.AllSpaceShortcut ?? '!'; // guaranteed to be non-null
                 return;
             }
 

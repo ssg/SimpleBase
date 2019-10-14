@@ -20,8 +20,6 @@ namespace SimpleBase
         private static Lazy<Base58> ripple = new Lazy<Base58>(() => new Base58(Base58Alphabet.Ripple));
         private static Lazy<Base58> flickr = new Lazy<Base58>(() => new Base58(Base58Alphabet.Flickr));
 
-        private Base58Alphabet alphabet;
-
         /// <summary>
         /// Initializes a new instance of the <see cref="Base58"/> class
         /// using a custom alphabet.
@@ -29,7 +27,7 @@ namespace SimpleBase
         /// <param name="alphabet">Alphabet to use.</param>
         public Base58(Base58Alphabet alphabet)
         {
-            this.alphabet = alphabet;
+            this.Alphabet = alphabet;
         }
 
         /// <summary>
@@ -48,6 +46,11 @@ namespace SimpleBase
         public static Base58 Flickr => flickr.Value;
 
         /// <summary>
+        /// Gets the encoding alphabet.
+        /// </summary>
+        public Base58Alphabet Alphabet { get; }
+
+        /// <summary>
         /// Encode to Base58 representation.
         /// </summary>
         /// <param name="bytes">Bytes to encode.</param>
@@ -61,7 +64,7 @@ namespace SimpleBase
             }
 
             fixed (byte* inputPtr = bytes)
-            fixed (char* alphabetPtr = this.alphabet.Value)
+            fixed (char* alphabetPtr = this.Alphabet.Value)
             {
                 byte* pInput = inputPtr;
                 byte* pEnd = inputPtr + bytesLen;
@@ -151,7 +154,7 @@ namespace SimpleBase
             {
                 char* pEnd = inputPtr + textLen;
                 char* pInput = inputPtr;
-                char zeroChar = this.alphabet.Value[0];
+                char zeroChar = this.Alphabet.Value[0];
                 while (*pInput == zeroChar && pInput != pEnd)
                 {
                     pInput++;
@@ -163,8 +166,8 @@ namespace SimpleBase
                     return new byte[numZeroes]; // initialized to zero
                 }
 
-                int outputLen = alphabet.GetAllocationByteCountForDecoding(text);
-                var table = this.alphabet.ReverseLookupTable;
+                int outputLen = Alphabet.GetSafeByteCountForDecoding(text);
+                var table = this.Alphabet.ReverseLookupTable;
                 byte[] output = new byte[outputLen];
                 fixed (byte* outputPtr = output)
                 {

@@ -5,7 +5,6 @@
 
 using System;
 using System.IO;
-using System.Threading;
 using System.Threading.Tasks;
 
 #nullable enable
@@ -26,8 +25,6 @@ namespace SimpleBase
         private static Lazy<Base32> zBase32 = new Lazy<Base32>(() => new Base32(Base32Alphabet.ZBase32));
         private static Lazy<Base32> geohash = new Lazy<Base32>(() => new Base32(Base32Alphabet.Geohash));
 
-        private Base32Alphabet alphabet;
-
         /// <summary>
         /// Initializes a new instance of the <see cref="Base32"/> class with a
         /// custom alphabet.
@@ -35,7 +32,7 @@ namespace SimpleBase
         /// <param name="alphabet">Alphabet to use.</param>
         public Base32(Base32Alphabet alphabet)
         {
-            this.alphabet = alphabet;
+            Alphabet = alphabet;
         }
 
         /// <summary>
@@ -66,6 +63,11 @@ namespace SimpleBase
         public static Base32 Geohash => geohash.Value;
 
         /// <summary>
+        /// Gets the encoding alphabet.
+        /// </summary>
+        public Base32Alphabet Alphabet { get; }
+
+        /// <summary>
         /// Encode a byte array into a Base32 string without padding.
         /// </summary>
         /// <param name="bytes">Buffer to be encoded.</param>
@@ -91,12 +93,12 @@ namespace SimpleBase
 
             // we are ok with slightly larger buffer since the output string will always
             // have the exact length of the output produced.
-            int outputLen = alphabet.GetAllocationCharCountForEncoding(bytes);
+            int outputLen = Alphabet.GetSafeCharCountForEncoding(bytes);
             string output = new string('\0', outputLen);
 
             fixed (byte* inputPtr = bytes)
             fixed (char* outputPtr = output)
-            fixed (char* tablePtr = this.alphabet.Value)
+            fixed (char* tablePtr = this.Alphabet.Value)
             {
                 char* pOutput = outputPtr;
                 byte* pInput = inputPtr;
@@ -127,7 +129,7 @@ namespace SimpleBase
 
                 if (padding)
                 {
-                    char paddingChar = alphabet.PaddingChar;
+                    char paddingChar = Alphabet.PaddingChar;
 
                     for (char* pOutputEnd = outputPtr + outputLen; pOutput != pOutputEnd; pOutput++)
                     {
@@ -165,7 +167,7 @@ namespace SimpleBase
             int textLen = text.Length;
 
             int bitsLeft = bitsPerByte;
-            textLen -= alphabet.GetPaddingCharCount(text);
+            textLen -= Alphabet.GetPaddingCharCount(text);
             int outputLen = Base32Alphabet.GetAllocationByteCountForDecoding(textLen);
             if (outputLen == 0)
             {
@@ -174,7 +176,7 @@ namespace SimpleBase
 
             var outputBuffer = new byte[outputLen];
             int outputPad = 0;
-            var table = this.alphabet.ReverseLookupTable;
+            var table = this.Alphabet.ReverseLookupTable;
 
             fixed (byte* outputPtr = outputBuffer)
             fixed (char* inputPtr = text)
