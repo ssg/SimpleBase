@@ -28,5 +28,12 @@ namespace SimpleBaseTest.Base58Test
         {
             Assert.Throws<ArgumentException>(() => new Base58Alphabet("123"));
         }
+
+        [Test]
+        public void GetSafeCharCountForEncoding_Works()
+        {
+            var input = new byte[] { 0, 0, 0, 0, 1, 2, 3, 4 };
+            Assert.AreEqual(16, Base58.Bitcoin.Alphabet.GetSafeCharCountForEncoding(input));
+        }
     }
 }
