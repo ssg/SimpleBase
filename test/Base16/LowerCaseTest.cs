@@ -70,10 +70,48 @@ namespace SimpleBaseTest.Base16Test
 
         [Test]
         [TestCaseSource(nameof(testData))]
+        public void TryEncode_RegularInput_Succeeds(byte[] input, string expectedOutput)
+        {
+            var output = new char[input.Length * 2];
+            Assert.IsTrue(Base16.LowerCase.TryEncode(input, output, out int numCharsWritten));
+            Assert.AreEqual(output.Length, numCharsWritten);
+            Assert.AreEqual(expectedOutput, new string(output));
+        }
+
+        [Test]
+        public void TryEncode_SmallerOutput_Fails()
+        {
+            var input = new byte[4];
+            var output = new char[0];
+            Assert.IsFalse(Base16.LowerCase.TryEncode(input, output, out int numCharsWritten));
+            Assert.AreEqual(0, numCharsWritten);
+        }
+
+        [Test]
+        [TestCaseSource(nameof(testData))]
         public void Decode(byte[] expectedOutput, string input)
         {
             var result = Base16.LowerCase.Decode(input);
             CollectionAssert.AreEqual(expectedOutput, result.ToArray());
+        }
+
+        [Test]
+        [TestCaseSource(nameof(testData))]
+        public void TryDecode_RegularInput_Succeeds(byte[] expectedOutput, string input)
+        {
+            var output = new byte[expectedOutput.Length];
+            Assert.IsTrue(Base16.LowerCase.TryDecode(input, output, out int numBytesWritten));
+            Assert.AreEqual(output.Length, numBytesWritten);
+            CollectionAssert.AreEqual(expectedOutput, output);
+        }
+
+        [Test]
+        public void TryDecode_SmallOutputBuffer_Fails()
+        {
+            var input = "1234";
+            var output = new byte[1];
+            Assert.IsFalse(Base16.LowerCase.TryDecode(input, output, out int numBytesWritten));
+            Assert.AreEqual(0, numBytesWritten);
         }
 
         [Test]
