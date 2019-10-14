@@ -236,8 +236,6 @@ namespace SimpleBase
                 char* pOutput = outputPtr;
                 byte* pInput = bytesPtr;
 
-                char hex(byte b) => alphabet[b];
-
                 int octets = bytesLen / sizeof(ulong);
                 for (int i = 0; i < octets; i++, pInput += sizeof(ulong))
                 {
@@ -248,14 +246,10 @@ namespace SimpleBase
                         ushort pair = (ushort)input;
 
                         // use cpu pipeline to parallelize writes
-                        int b0 = (pair >> 4) & 0x0F;
-                        int b1 = pair & 0x0F;
-                        int b2 = pair >> 12;
-                        int b3 = (pair >> 8) & 0x0F;
-                        pOutput[0] = hex((byte)b0);
-                        pOutput[1] = hex((byte)b1);
-                        pOutput[2] = hex((byte)b2);
-                        pOutput[3] = hex((byte)b3);
+                        pOutput[0] = alphabet[(pair >> 4) & 0x0F];
+                        pOutput[1] = alphabet[pair & 0x0F];
+                        pOutput[2] = alphabet[pair >> 12];
+                        pOutput[3] = alphabet[(pair >> 8) & 0x0F];
                         pOutput += 4;
                     }
                 }
@@ -263,8 +257,8 @@ namespace SimpleBase
                 for (int remaining = bytesLen % sizeof(ulong); remaining > 0; remaining--)
                 {
                     byte b = *pInput++;
-                    pOutput[0] = hex((byte)(b >> 4));
-                    pOutput[1] = hex((byte)(b & 0x0F));
+                    pOutput[0] = alphabet[b >> 4];
+                    pOutput[1] = alphabet[b & 0x0F];
                     pOutput += 2;
                 }
             }
