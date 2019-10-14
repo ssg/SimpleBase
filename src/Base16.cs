@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace SimpleBase
 {
     /// <summary>
-    /// Hexadecimal encoding/decoding.
+    /// Base16 encoding/decoding.
     /// </summary>
     public sealed class Base16
     {

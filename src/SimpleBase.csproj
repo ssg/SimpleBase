@@ -28,6 +28,10 @@
 # New features
 - ModHex support for Base16.
 
+# Improvements
+- More than 2x faster Base16 decoding
+- Faster Base16 encoding
+
 # Fixes 
 - Fix package license expression.
 - Fix regression in Base16 optimizations.
