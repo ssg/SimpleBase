@@ -17,16 +17,15 @@ Features
    custom flavors.
  - Base58: Bitcoin, Ripple, Flickr and custom flavors.
  - Base85: Ascii85, Z85 and custom flavors.
- - Base16: An experimental hexadecimal encoder/decoder just to see how far I 
+ - Base16: UpperCase, LowerCase and ModHex flavors. An experimental hexadecimal 
+   encoder/decoder just to see how far I 
    can take the optimizations compared to .NET's  implementations. It's quite 
    fast now. It can also be used as a replacement for `SoapHexBinary.Parse` 
    method since it's missing from .NET Core.
  - One-shot memory buffer based APIs for simple use cases.
  - Stream-based async APIs for more advanced scenarios.
  - Lightweight: No third-party dependencies (depends only on 
-   [System.Memory](https://www.nuget.org/packages/System.Memory/) and 
-   [System.Runtime.Numerics](https://www.nuget.org/packages/System.Runtime.Numerics/) 
-   packages)
+   [System.Memory](https://www.nuget.org/packages/System.Memory/) package)
  - Thread-safe.
  - Simple to use.
 

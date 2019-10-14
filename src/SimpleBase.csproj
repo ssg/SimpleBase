@@ -24,6 +24,7 @@
 # Breaking changes
 - Removed whitespace tolerance of Base32.
 - Base16 encoding/decoding methods moved to Base16.UpperCase and Base16.LowerCase respectively.
+- Remove Base16.Decode due to naming conflicts. Use Base16.UpperCase.Decode() instead which is case insensitive.
 
 # New features
 - ModHex support for Base16.
@@ -66,8 +67,5 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
     <PackageReference Include="System.Memory" Version="4.5.3" />
-    <PackageReference Include="System.Runtime.Numerics">
-      <Version>4.3.0</Version>
-    </PackageReference>
   </ItemGroup>
 </Project>
