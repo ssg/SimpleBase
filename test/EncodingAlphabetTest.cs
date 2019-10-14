@@ -1,8 +1,6 @@
 ﻿using NUnit.Framework;
 using SimpleBase;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace SimpleBaseTest
 {

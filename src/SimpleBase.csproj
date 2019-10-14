@@ -23,7 +23,8 @@
 <![CDATA[
 # Breaking changes
 - Base16 encoding/decoding methods moved to Base16.UpperCase and Base16.LowerCase respectively.
-- Remove Base16.Decode due to naming conflicts. Use Base16.UpperCase.Decode() instead which is case insensitive.
+- Removed Base16.Decode due to naming conflicts. Use Base16.UpperCase.Decode() instead which is case insensitive.
+- Removed string/byte[] overloads for Encode/Decode APIs as they are redundant with .NET Core 3.0
 - Removed whitespace tolerance of Base32.
 
 # New features
@@ -34,6 +35,7 @@
 - More than 2x faster Base16 decoding
 - Faster Base16 encoding
 - Remove dependency to System.Runtime.Numerics
+- Add tests for missing coverage
 
 # Fixes 
 - Fix package license expression.
