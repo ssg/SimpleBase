@@ -5,7 +5,6 @@
 
 using System;
 using System.IO;
-using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
 namespace SimpleBase
@@ -150,16 +149,7 @@ namespace SimpleBase
                 throw new ArgumentException("Text cannot be odd length", nameof(text));
             }
 
-            int getHexByte(int c)
-            {
-                int value = Alphabet.ReverseLookupTable[c] - 1;
-                if (value < 0)
-                {
-                    throw new ArgumentException($"Invalid hex character: {c}");
-                }
-
-                return value;
-            }
+            var table = Alphabet.ReverseLookupTable;
 
             byte[] output = new byte[textLen >> 1];
             fixed (byte* outputPtr = output)
@@ -170,8 +160,18 @@ namespace SimpleBase
                 char* pEnd = pInput + textLen;
                 while (pInput != pEnd)
                 {
-                    int b1 = getHexByte(pInput[0]);
-                    int b2 = getHexByte(pInput[1]);
+                    int b1 = table[pInput[0]] - 1;
+                    if (b1 < 0)
+                    {
+                        throw new ArgumentException($"Invalid hex character: {pInput[0]}");
+                    }
+
+                    int b2 = table[pInput[1]] - 1;
+                    if (b2 < 0)
+                    {
+                        throw new ArgumentException($"Invalid hex character: {pInput[1]}");
+                    }
+
                     *pOutput++ = (byte)(b1 << 4 | b2);
                     pInput += 2;
                 }
