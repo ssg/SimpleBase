@@ -7,8 +7,6 @@ using System;
 using System.IO;
 using System.Threading.Tasks;
 
-#nullable enable
-
 namespace SimpleBase
 {
     /// <summary>

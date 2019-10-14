@@ -17,6 +17,7 @@
 using System;
 using System.IO;
 using System.Text;
+using System.Threading.Tasks;
 using NUnit.Framework;
 using SimpleBase;
 
@@ -70,6 +71,28 @@ namespace SimpleBaseTest.Base32Test
 
         [Test]
         [TestCaseSource(nameof(testData))]
+        public void Encode_SimpleStream_ReturnsExpectedValues(string input, string expectedOutput)
+        {
+            byte[] bytes = Encoding.ASCII.GetBytes(input);
+            using var inputStream = new MemoryStream(bytes);
+            using var writer = new StringWriter();
+            Base32.Crockford.Encode(inputStream, writer);
+            Assert.AreEqual(expectedOutput, writer.ToString());
+        }
+
+        [Test]
+        [TestCaseSource(nameof(testData))]
+        public async Task EncodeAsync_SimpleStream_ReturnsExpectedValues(string input, string expectedOutput)
+        {
+            byte[] bytes = Encoding.ASCII.GetBytes(input);
+            using var inputStream = new MemoryStream(bytes);
+            using var writer = new StringWriter();
+            await Base32.Crockford.EncodeAsync(inputStream, writer);
+            Assert.AreEqual(expectedOutput, writer.ToString());
+        }
+
+        [Test]
+        [TestCaseSource(nameof(testData))]
         public void Decode_Stream_ReturnsExpectedValues(string expectedOutput, string input)
         {
             // upper case
@@ -93,10 +116,42 @@ namespace SimpleBaseTest.Base32Test
 
         [Test]
         [TestCaseSource(nameof(testData))]
+        public async Task DecodeAsync_Stream_ReturnsExpectedValues(string expectedOutput, string input)
+        {
+            // upper case
+            using (var inputStream = new StringReader(input))
+            using (var outputStream = new MemoryStream())
+            {
+                await Base32.Crockford.DecodeAsync(inputStream, outputStream);
+                string result = Encoding.ASCII.GetString(outputStream.ToArray());
+                Assert.AreEqual(expectedOutput, result);
+            }
+
+            // lower case
+            using (var inputStream = new StringReader(input.ToLowerInvariant()))
+            using (var outputStream = new MemoryStream())
+            {
+                await Base32.Crockford.DecodeAsync(inputStream, outputStream);
+                string result = Encoding.ASCII.GetString(outputStream.ToArray());
+                Assert.AreEqual(expectedOutput, result);
+            }
+        }
+
+        [Test]
+        [TestCaseSource(nameof(testData))]
         public void Encode_ReturnsExpectedValues(string input, string expectedOutput)
         {
             byte[] bytes = Encoding.ASCII.GetBytes(input);
             string result = Base32.Crockford.Encode(bytes, padding: false);
+            Assert.AreEqual(expectedOutput, result);
+        }
+
+        [Test]
+        [TestCaseSource(nameof(testData))]
+        public void Encode_Simple_ReturnsExpectedValues(string input, string expectedOutput)
+        {
+            byte[] bytes = Encoding.ASCII.GetBytes(input);
+            string result = Base32.Crockford.Encode(bytes);
             Assert.AreEqual(expectedOutput, result);
         }
 
