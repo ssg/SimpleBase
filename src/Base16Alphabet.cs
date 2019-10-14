@@ -67,13 +67,19 @@ namespace SimpleBase
         public bool CaseSensitive { get; } = false;
 
         /// <inheritdoc/>
-        public override int GetAllocationByteCountForDecoding(ReadOnlySpan<char> encodedText)
+        public override int GetSafeByteCountForDecoding(ReadOnlySpan<char> text)
         {
-            return encodedText.Length / 2;
+            int textLen = text.Length;
+            if ((textLen & 1) != 0)
+            {
+                throw new ArgumentException("Invalid input buffer length for Base16 decoding", nameof(text));
+            }
+
+            return textLen / 2;
         }
 
         /// <inheritdoc/>
-        public override int GetAllocationCharCountForEncoding(ReadOnlySpan<byte> buffer)
+        public override int GetSafeCharCountForEncoding(ReadOnlySpan<byte> buffer)
         {
             return buffer.Length * 2;
         }

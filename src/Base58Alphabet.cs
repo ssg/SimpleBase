@@ -42,7 +42,7 @@ namespace SimpleBase
         public static Base58Alphabet Flickr => flickrAlphabet.Value;
 
         /// <inheritdoc/>
-        public override int GetAllocationByteCountForDecoding(ReadOnlySpan<char> text)
+        public override int GetSafeByteCountForDecoding(ReadOnlySpan<char> text)
         {
             const int reductionFactor = 733; // https://github.com/bitcoin/bitcoin/blob/master/src/base58.cpp
 
@@ -50,7 +50,7 @@ namespace SimpleBase
         }
 
         /// <inheritdoc/>
-        public override int GetAllocationCharCountForEncoding(ReadOnlySpan<byte> bytes)
+        public override int GetSafeCharCountForEncoding(ReadOnlySpan<byte> bytes)
         {
             int bytesLen = bytes.Length;
             int numZeroes = 0;

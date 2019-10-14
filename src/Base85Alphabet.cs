@@ -69,7 +69,7 @@ namespace SimpleBase
         public bool HasShortcut => AllSpaceShortcut.HasValue || AllZeroShortcut.HasValue;
 
         /// <inheritdoc/>
-        public override int GetAllocationByteCountForDecoding(ReadOnlySpan<char> text)
+        public override int GetSafeByteCountForDecoding(ReadOnlySpan<char> text)
         {
             bool usingShortcuts = AllZeroShortcut != null || AllSpaceShortcut != null;
 
@@ -84,7 +84,7 @@ namespace SimpleBase
         }
 
         /// <inheritdoc/>
-        public override int GetAllocationCharCountForEncoding(ReadOnlySpan<byte> bytes)
+        public override int GetSafeCharCountForEncoding(ReadOnlySpan<byte> bytes)
         {
             return (bytes.Length * stringBlockSize / byteBlockSize) + 1;
         }

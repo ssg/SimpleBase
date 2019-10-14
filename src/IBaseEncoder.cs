@@ -4,9 +4,6 @@
 // </copyright>
 
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
 
 namespace SimpleBase
 {
@@ -23,7 +20,7 @@ namespace SimpleBase
         string Encode(ReadOnlySpan<byte> bytes);
 
         /// <summary>
-        /// Decode Base16 text into bytes.
+        /// Decode base-encoded text into bytes.
         /// </summary>
         /// <param name="text">Base16 text.</param>
         /// <returns>Decoded bytes.</returns>

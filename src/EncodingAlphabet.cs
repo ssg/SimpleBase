@@ -15,7 +15,7 @@ namespace SimpleBase
     /// alphabets for different encodings. It's suitable if you want to
     /// implement your own encoding based on the existing base classes.
     /// </summary>
-    public abstract class EncodingAlphabet
+    public abstract class EncodingAlphabet : IEncodingBufferSizeEstimator, IEncodingAlphabet
     {
         /// <summary>
         /// Specifies the highest possible char value in an encoding alphabet
@@ -92,16 +92,16 @@ namespace SimpleBase
         /// </summary>
         /// <param name="text">The text to be decoded.</param>
         /// <returns>A buffer size that would fit the decoded version of the input buffer.</returns>
-        public abstract int GetAllocationByteCountForDecoding(ReadOnlySpan<char> text);
+        public abstract int GetSafeByteCountForDecoding(ReadOnlySpan<char> text);
 
         /// <summary>
         /// Gets safe number of bytes to be allocated to fit the decoded buffer.
         /// </summary>
         /// <param name="text">The text to be decoded.</param>
         /// <returns>A buffer size that would fit the decoded version of the input buffer.</returns>
-        public int GetAllocationByteCountForDecoding(string text)
+        public int GetSafeByteCountForDecoding(string text)
         {
-            return GetAllocationByteCountForDecoding(text.AsSpan());
+            return GetSafeByteCountForDecoding(text.AsSpan());
         }
 
         /// <summary>
@@ -109,16 +109,16 @@ namespace SimpleBase
         /// </summary>
         /// <param name="bytes">Buffer to be encoded.</param>
         /// <returns>Number of bytes equal or larger than the encoded text.</returns>
-        public abstract int GetAllocationCharCountForEncoding(ReadOnlySpan<byte> bytes);
+        public abstract int GetSafeCharCountForEncoding(ReadOnlySpan<byte> bytes);
 
         /// <summary>
         /// Gets safe number of characters to be allocated to fit the encoded text.
         /// </summary>
         /// <param name="bytes">Buffer to be encoded.</param>
         /// <returns>Number of bytes equal or larger than the encoded text.</returns>
-        public int GetAllocationCharCountForEncoding(byte[] bytes)
+        public int GetSafeCharCountForEncoding(byte[] bytes)
         {
-            return GetAllocationCharCountForEncoding(bytes.AsSpan());
+            return GetSafeCharCountForEncoding(bytes.AsSpan());
         }
 
         /// <summary>

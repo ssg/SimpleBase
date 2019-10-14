@@ -87,13 +87,13 @@ namespace SimpleBase
         public char PaddingChar { get; } = '=';
 
         /// <inheritdoc/>
-        public override int GetAllocationByteCountForDecoding(ReadOnlySpan<char> text)
+        public override int GetSafeByteCountForDecoding(ReadOnlySpan<char> text)
         {
             return GetAllocationByteCountForDecoding(text.Length - GetPaddingCharCount(text));
         }
 
         /// <inheritdoc/>
-        public override int GetAllocationCharCountForEncoding(ReadOnlySpan<byte> buffer)
+        public override int GetSafeCharCountForEncoding(ReadOnlySpan<byte> buffer)
         {
             return (((buffer.Length - 1) / bitsPerChar) + 1) * bitsPerByte;
         }
