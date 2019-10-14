@@ -2,6 +2,7 @@
 using SimpleBase;
 using System;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace SimpleBaseTest.Base85Test
 {
@@ -16,6 +17,20 @@ namespace SimpleBaseTest.Base85Test
             new object[] { new byte[] { 0, 0, 0, 0 }, "z" },
             new object[] { new byte[] { 0x20, 0x20, 0x20, 0x20 }, "y" },
         };
+
+        [Test]
+        public void Decode_InvalidShortcut_ThrowsArgumentException()
+        {
+            const string input = "9zjqo";
+            Assert.Throws<ArgumentException>(() => Base85.Ascii85.Decode(input));
+        }
+
+        [Test]
+        public void Decode_InvalidCharacter_ThrowsArgumentException()
+        {
+            const string input = "~!@#()(";
+            Assert.Throws<ArgumentException>(() => Base85.Ascii85.Decode(input));
+        }
 
         [Test]
         [TestCaseSource(nameof(testVectors))]
@@ -38,6 +53,16 @@ namespace SimpleBaseTest.Base85Test
             using var inputStream = new MemoryStream(input);
             using var writer = new StringWriter();
             Base85.Ascii85.Encode(inputStream, writer);
+            Assert.AreEqual(expectedOutput, writer.ToString());
+        }
+
+        [Test]
+        [TestCaseSource(nameof(testVectors))]
+        public async Task EncodeAsync_TestVectorsOnStream_ShouldEncodeCorrectly(byte[] input, string expectedOutput)
+        {
+            using var inputStream = new MemoryStream(input);
+            using var writer = new StringWriter();
+            await Base85.Ascii85.EncodeAsync(inputStream, writer);
             Assert.AreEqual(expectedOutput, writer.ToString());
         }
 
@@ -74,6 +99,16 @@ namespace SimpleBaseTest.Base85Test
             using var inputStream = new StringReader(input);
             using var writer = new MemoryStream();
             Base85.Ascii85.Decode(inputStream, writer);
+            CollectionAssert.AreEqual(expectedOutput, writer.ToArray());
+        }
+
+        [Test]
+        [TestCaseSource(nameof(testVectors))]
+        public async Task DecodeAsync_TestVectorsWithStream_ShouldDecodeCorrectly(byte[] expectedOutput, string input)
+        {
+            using var inputStream = new StringReader(input);
+            using var writer = new MemoryStream();
+            await Base85.Ascii85.DecodeAsync(inputStream, writer);
             CollectionAssert.AreEqual(expectedOutput, writer.ToArray());
         }
 
