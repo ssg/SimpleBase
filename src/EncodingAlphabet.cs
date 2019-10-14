@@ -117,11 +117,7 @@ namespace SimpleBase
         /// <param name="value">Corresponding value.</param>
         protected void Map(char c, int value)
         {
-            if (c >= maxLength)
-            {
-                throw new InvalidOperationException($"Alphabet contains character above {maxLength}");
-            }
-
+            Debug.Assert(c < maxLength, $"Alphabet contains character above {maxLength}");
             this.reverseLookupTable[c] = (byte)(value + 1);
         }
     }
