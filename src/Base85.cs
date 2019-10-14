@@ -13,7 +13,7 @@ namespace SimpleBase
     /// <summary>
     /// Base58 encoding/decoding class.
     /// </summary>
-    public sealed class Base85
+    public sealed class Base85 : IBaseEncoder, IBaseStreamEncoder
     {
         private const int baseLength = 85;
         private const int byteBlockSize = 4;

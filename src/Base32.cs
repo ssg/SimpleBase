@@ -15,7 +15,7 @@ namespace SimpleBase
     /// <summary>
     /// Base32 encoding/decoding functions.
     /// </summary>
-    public sealed class Base32
+    public sealed class Base32 : IBaseEncoder, IBaseStreamEncoder
     {
         private const int bitsPerByte = 8;
         private const int bitsPerChar = 5;
@@ -64,6 +64,16 @@ namespace SimpleBase
         /// Gets Geohash variant of Base32 coder.
         /// </summary>
         public static Base32 Geohash => geohash.Value;
+
+        /// <summary>
+        /// Encode a byte array into a Base32 string without padding.
+        /// </summary>
+        /// <param name="bytes">Buffer to be encoded.</param>
+        /// <returns>Encoded string.</returns>
+        public string Encode(ReadOnlySpan<byte> bytes)
+        {
+            return Encode(bytes, padding: false);
+        }
 
         /// <summary>
         /// Encode a byte array into a Base32 string.
@@ -201,6 +211,16 @@ namespace SimpleBase
         }
 
         /// <summary>
+        /// Encode a binary stream to a Base32 text stream without padding.
+        /// </summary>
+        /// <param name="input">Input bytes.</param>
+        /// <param name="output">The writer the output is written to.</param>
+        public void Encode(Stream input, TextWriter output)
+        {
+            Encode(input, output, padding: false);
+        }
+
+        /// <summary>
         /// Encode a binary stream to a Base32 text stream.
         /// </summary>
         /// <param name="input">Input bytes.</param>
@@ -213,6 +233,17 @@ namespace SimpleBase
                 bool usePadding = lastBlock ? padding : false;
                 return Encode(buffer.Span, usePadding);
             });
+        }
+
+        /// <summary>
+        /// Encode a binary stream to a Base32 text stream without padding.
+        /// </summary>
+        /// <param name="input">Input bytes.</param>
+        /// <param name="output">The writer the output is written to.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+        public Task EncodeAsync(Stream input, TextWriter output)
+        {
+            return EncodeAsync(input, output, padding: false);
         }
 
         /// <summary>
