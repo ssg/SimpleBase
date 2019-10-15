@@ -12,7 +12,7 @@ namespace SimpleBase
     /// <summary>
     /// Base32 encoding/decoding functions.
     /// </summary>
-    public sealed class Base32 : IBaseEncoder, IBaseStreamEncoder
+    public sealed class Base32 : IBaseEncoder, IBaseStreamEncoder, INonAllocatingBaseEncoder
     {
         private const int bitsPerByte = 8;
         private const int bitsPerChar = 5;
@@ -93,55 +93,21 @@ namespace SimpleBase
             // have the exact length of the output produced.
             int outputLen = Alphabet.GetSafeCharCountForEncoding(bytes);
             string output = new string('\0', outputLen);
-
             fixed (byte* inputPtr = bytes)
             fixed (char* outputPtr = output)
-            fixed (char* tablePtr = this.Alphabet.Value)
             {
-                char* pOutput = outputPtr;
-                byte* pInput = inputPtr;
-                byte* pEnd = pInput + bytesLen;
-
-                for (int bitsLeft = bitsPerByte, currentByte = *pInput, outputPad; pInput != pEnd;)
+                if (!internalEncode(
+                    inputPtr,
+                    bytesLen,
+                    outputPtr,
+                    outputLen,
+                    padding,
+                    out int numCharsWritten))
                 {
-                    if (bitsLeft > bitsPerChar)
-                    {
-                        bitsLeft -= bitsPerChar;
-                        outputPad = currentByte >> bitsLeft;
-                        *pOutput++ = tablePtr[outputPad];
-                        currentByte &= (1 << bitsLeft) - 1;
-                    }
-
-                    int nextBits = bitsPerChar - bitsLeft;
-                    bitsLeft = bitsPerByte - nextBits;
-                    outputPad = currentByte << nextBits;
-                    if (++pInput != pEnd)
-                    {
-                        currentByte = *pInput;
-                        outputPad |= currentByte >> bitsLeft;
-                        currentByte &= (1 << bitsLeft) - 1;
-                    }
-
-                    *pOutput++ = tablePtr[outputPad];
+                    throw new ArgumentException("Invalid input", nameof(bytes));
                 }
 
-                if (padding)
-                {
-                    char paddingChar = Alphabet.PaddingChar;
-
-                    for (char* pOutputEnd = outputPtr + outputLen; pOutput != pOutputEnd; pOutput++)
-                    {
-                        *pOutput = paddingChar;
-                    }
-                }
-
-                int finalOutputLen = (int)(pOutput - outputPtr);
-                if (finalOutputLen == outputLen)
-                {
-                    return output; // avoid unnecessary copying
-                }
-
-                return new string(outputPtr, 0, finalOutputLen);
+                return output[..numCharsWritten];
             }
         }
 
@@ -152,10 +118,7 @@ namespace SimpleBase
         /// <returns>Decoded byte array.</returns>
         public unsafe Span<byte> Decode(ReadOnlySpan<char> text)
         {
-            int textLen = text.Length;
-
-            int bitsLeft = bitsPerByte;
-            textLen -= Alphabet.GetPaddingCharCount(text);
+            int textLen = text.Length - Alphabet.GetPaddingCharCount(text);
             int outputLen = Base32Alphabet.GetAllocationByteCountForDecoding(textLen);
             if (outputLen == 0)
             {
@@ -163,37 +126,13 @@ namespace SimpleBase
             }
 
             var outputBuffer = new byte[outputLen];
-            int outputPad = 0;
-            var table = this.Alphabet.ReverseLookupTable;
 
             fixed (byte* outputPtr = outputBuffer)
             fixed (char* inputPtr = text)
             {
-                byte* pOutput = outputPtr;
-                char* pInput = inputPtr;
-                char* pEnd = inputPtr + textLen;
-                while (pInput != pEnd)
+                if (!internalDecode(inputPtr, textLen, outputPtr, outputLen, out _))
                 {
-                    char c = *pInput++;
-                    int b = table[c] - 1;
-                    if (b < 0)
-                    {
-                        throw EncodingAlphabet.InvalidCharacter(c);
-                    }
-
-                    if (bitsLeft > bitsPerChar)
-                    {
-                        bitsLeft -= bitsPerChar;
-                        outputPad |= b << bitsLeft;
-                        continue;
-                    }
-
-                    int shiftBits = bitsPerChar - bitsLeft;
-                    outputPad |= b >> shiftBits;
-                    *pOutput++ = (byte)outputPad;
-                    b &= (1 << shiftBits) - 1;
-                    bitsLeft = bitsPerByte - shiftBits;
-                    outputPad = b << bitsLeft;
+                    throw new ArgumentException("Invalid input or output", nameof(text));
                 }
             }
 
@@ -272,6 +211,176 @@ namespace SimpleBase
         {
             await StreamHelper.DecodeAsync(input, output, buffer => Decode(buffer.Span).ToArray())
                 .ConfigureAwait(false);
+        }
+
+        /// <inheritdoc/>
+        public bool TryEncode(ReadOnlySpan<byte> bytes, Span<char> output, out int numCharsWritten)
+        {
+            return TryEncode(bytes, output, padding: false, out numCharsWritten);
+        }
+
+        /// <summary>
+        /// Encode to the given preallocated buffer.
+        /// </summary>
+        /// <param name="bytes">Input bytes.</param>
+        /// <param name="output">Output buffer.</param>
+        /// <param name="padding">Whether to use padding characters at the end.</param>
+        /// <param name="numCharsWritten">Number of characters written to the output.</param>
+        /// <returns>True if encoding is successful, false if the output is invalid.</returns>
+        public unsafe bool TryEncode(
+            ReadOnlySpan<byte> bytes,
+            Span<char> output,
+            bool padding,
+            out int numCharsWritten)
+        {
+            int bytesLen = bytes.Length;
+            if (bytesLen == 0)
+            {
+                numCharsWritten = 0;
+                return true;
+            }
+
+            int outputLen = output.Length;
+
+            fixed (byte* inputPtr = bytes)
+            fixed (char* outputPtr = output)
+            {
+                return internalEncode(inputPtr, bytesLen, outputPtr, outputLen, padding, out numCharsWritten);
+            }
+        }
+
+        /// <inheritdoc/>
+        public unsafe bool TryDecode(ReadOnlySpan<char> input, Span<byte> output, out int numBytesWritten)
+        {
+            int inputLen = input.Length;
+            if (inputLen == 0)
+            {
+                numBytesWritten = 0;
+                return true;
+            }
+
+            int outputLen = output.Length;
+            if (outputLen == 0)
+            {
+                numBytesWritten = 0;
+                return false;
+            }
+
+            fixed (char* inputPtr = input)
+            fixed (byte* outputPtr = output)
+            {
+                return internalDecode(inputPtr, inputLen, outputPtr, outputLen, out numBytesWritten);
+            }
+        }
+
+        private unsafe bool internalEncode(
+           byte* inputPtr,
+           int bytesLen,
+           char* outputPtr,
+           int outputLen,
+           bool padding,
+           out int numCharsWritten)
+        {
+            string table = Alphabet.Value;
+            char* pOutput = outputPtr;
+            char* pOutputEnd = outputPtr + outputLen;
+            byte* pInput = inputPtr;
+            byte* pInputEnd = pInput + bytesLen;
+
+            for (int bitsLeft = bitsPerByte, currentByte = *pInput, outputPad; pInput != pInputEnd;)
+            {
+                if (bitsLeft > bitsPerChar)
+                {
+                    bitsLeft -= bitsPerChar;
+                    outputPad = currentByte >> bitsLeft;
+                    *pOutput++ = table[outputPad];
+                    if (pOutput > pOutputEnd)
+                    {
+                        goto Overflow;
+                    }
+
+                    currentByte &= (1 << bitsLeft) - 1;
+                }
+
+                int nextBits = bitsPerChar - bitsLeft;
+                bitsLeft = bitsPerByte - nextBits;
+                outputPad = currentByte << nextBits;
+                if (++pInput != pInputEnd)
+                {
+                    currentByte = *pInput;
+                    outputPad |= currentByte >> bitsLeft;
+                    currentByte &= (1 << bitsLeft) - 1;
+                }
+
+                *pOutput++ = table[outputPad];
+                if (pOutput > pOutputEnd)
+                {
+                    goto Overflow;
+                }
+            }
+
+            if (padding)
+            {
+                char paddingChar = Alphabet.PaddingChar;
+                while (pOutput != pOutputEnd)
+                {
+                    *pOutput++ = paddingChar;
+                    if (pOutput > pOutputEnd)
+                    {
+                        goto Overflow;
+                    }
+                }
+            }
+
+            numCharsWritten = (int)(pOutput - outputPtr);
+            return true;
+        Overflow:
+            numCharsWritten = (int)(pOutput - outputPtr);
+            return false;
+        }
+
+        private unsafe bool internalDecode(
+            char* inputPtr,
+            int textLen,
+            byte* outputPtr,
+            int outputLen,
+            out int numBytesWritten)
+        {
+            var table = Alphabet.ReverseLookupTable;
+            int outputPad = 0;
+            int bitsLeft = bitsPerByte;
+
+            byte* pOutput = outputPtr;
+            byte* pOutputEnd = outputPtr + outputLen;
+            char* pInput = inputPtr;
+            char* pEnd = inputPtr + textLen;
+            while (pInput != pEnd)
+            {
+                char c = *pInput++;
+                int b = table[c] - 1;
+                if (b < 0)
+                {
+                    numBytesWritten = (int)(pOutput - outputPtr);
+                    return false;
+                }
+
+                if (bitsLeft > bitsPerChar)
+                {
+                    bitsLeft -= bitsPerChar;
+                    outputPad |= b << bitsLeft;
+                    continue;
+                }
+
+                int shiftBits = bitsPerChar - bitsLeft;
+                outputPad |= b >> shiftBits;
+                *pOutput++ = (byte)outputPad;
+                b &= (1 << shiftBits) - 1;
+                bitsLeft = bitsPerByte - shiftBits;
+                outputPad = b << bitsLeft;
+            }
+
+            numBytesWritten = (int)(pOutput - outputPtr);
+            return true;
         }
     }
 }
