@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0</TargetFrameworks>
+    <TargetFrameworks>netstandard2.1</TargetFrameworks>
     <RootNamespace>SimpleBase</RootNamespace>
     <AssemblyName>SimpleBase</AssemblyName>
     <Copyright>Copyright 2014-2019 Sedat Kapanoglu</Copyright>
