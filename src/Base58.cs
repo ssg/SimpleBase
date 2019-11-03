@@ -188,8 +188,8 @@ namespace SimpleBase
                         pInput++;
                     }
 
-                    pMinOutput -= numZeroes;
-                    return output.AsSpan((int)(pMinOutput - outputPtr));
+                    int startIndex = (int)(pMinOutput - numZeroes - outputPtr);
+                    return output[startIndex..];
                 }
             }
         }
