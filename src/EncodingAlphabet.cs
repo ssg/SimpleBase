@@ -5,7 +5,6 @@
 
 using System;
 using System.Diagnostics;
-using System.Diagnostics.Contracts;
 
 namespace SimpleBase
 {
@@ -43,7 +42,6 @@ namespace SimpleBase
                 throw new ArgumentNullException(nameof(alphabet));
             }
 
-            Debug.WriteLine($"Creating a new encoding alphabet with length = {length} and alphabet = {alphabet}");
             if (alphabet.Length != length)
             {
                 throw new ArgumentException($"Required alphabet length is {length} but provided alphabet is "

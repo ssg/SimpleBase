@@ -18,7 +18,8 @@ namespace SimpleBase
         /// <param name="input">Bytes to encode.</param>
         /// <param name="output">Output buffer.</param>
         /// <param name="numCharsWritten">Actual number of characters written to the output.</param>
-        /// <returns>Whether encoding was successful or not.</returns>
+        /// <returns>Whether encoding was successful or not. If false, <paramref name="numCharsWritten"/>
+        /// will be zero and the content of <paramref name="output"/> will be undefined.</returns>
         bool TryEncode(ReadOnlySpan<byte> input, Span<char> output, out int numCharsWritten);
 
         /// <summary>
@@ -27,7 +28,8 @@ namespace SimpleBase
         /// <param name="input">Encoded text.</param>
         /// <param name="output">Output buffer.</param>
         /// <param name="numBytesWritten">Actual number of bytes written to the output.</param>
-        /// <returns>Whether decoding was successful.</returns>
+        /// <returns>Whether decoding was successful. If false, the value of <paramref name="numBytesWritten"/>
+        /// will be zero and the content of <paramref name="output"/> will be undefined.</returns>
         bool TryDecode(ReadOnlySpan<char> input, Span<byte> output, out int numBytesWritten);
     }
 }

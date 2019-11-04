@@ -4,6 +4,7 @@
 // </copyright>
 
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
@@ -13,7 +14,7 @@ namespace SimpleBase
     /// <summary>
     /// Base58 encoding/decoding class.
     /// </summary>
-    public sealed class Base85 : IBaseEncoder, IBaseStreamEncoder
+    public sealed class Base85 : IBaseEncoder, IBaseStreamEncoder, INonAllocatingBaseEncoder
     {
         private const int baseLength = 85;
         private const int byteBlockSize = 4;
@@ -56,67 +57,110 @@ namespace SimpleBase
         /// <returns>Encoded text.</returns>
         public unsafe string Encode(ReadOnlySpan<byte> bytes)
         {
-            int bytesLen = bytes.Length;
-            if (bytesLen == 0)
+            int inputLen = bytes.Length;
+            if (inputLen == 0)
             {
                 return string.Empty;
             }
 
-            bool usesZeroShortcut = this.Alphabet.AllZeroShortcut.HasValue;
-            bool usesSpaceShortcut = this.Alphabet.AllSpaceShortcut.HasValue;
+            int outputLen = Alphabet.GetSafeCharCountForEncoding(bytes);
 
-            // adjust output length based on prefix and suffix settings
-            int maxOutputLen = Alphabet.GetSafeCharCountForEncoding(bytes);
-
-            char[] output = new char[maxOutputLen];
-            int fullLen = (bytesLen >> 2) << 2; // rounded
-
-            string table = Alphabet.Value;
+            // using char[] as output buffer:
+            // 0.93µs vs 1.41µs (2.1x slower)
+            string output = new string('\0', outputLen);
 
             fixed (byte* inputPtr = bytes)
             fixed (char* outputPtr = output)
             {
-                char* pOutput = outputPtr;
-                byte* pInput = inputPtr;
-                byte* pInputEnd = pInput + fullLen;
-                while (pInput != pInputEnd)
+                if (!internalEncode(inputPtr, inputLen, outputPtr, outputLen, out int numCharsWritten))
                 {
-                    // build a 32-bit representation of input
-                    long input = ((uint)*pInput++ << 24)
-                        | ((uint)*pInput++ << 16)
-                        | ((uint)*pInput++ << 8)
-                        | *pInput++;
-
-                    writeOutput(
-                        ref pOutput,
-                        table,
-                        input,
-                        stringBlockSize,
-                        usesZeroShortcut,
-                        usesSpaceShortcut);
+                    throw new InvalidOperationException("Insufficient output buffer size while encoding Base85");
                 }
 
-                // check if a part is remaining
-                int remainingBytes = bytesLen - fullLen;
-                if (remainingBytes > 0)
-                {
-                    long input = 0;
-                    for (int n = 0; n < remainingBytes; n++)
-                    {
-                        input |= (uint)*pInput++ << ((3 - n) << 3);
-                    }
+                return output[..numCharsWritten];
+            }
+        }
 
-                    writeOutput(
-                        ref pOutput,
-                        table,
-                        input,
-                        remainingBytes + 1,
-                        usesZeroShortcut,
-                        usesSpaceShortcut);
+        private unsafe bool internalEncode(
+            byte* inputPtr,
+            int inputLen,
+            char* outputPtr,
+            int outputLen,
+            out int numCharsWritten)
+        {
+            bool usesZeroShortcut = Alphabet.AllZeroShortcut is object;
+            bool usesSpaceShortcut = Alphabet.AllSpaceShortcut is object;
+            string table = Alphabet.Value;
+            int fullLen = (inputLen >> 2) << 2; // size of whole 4-byte blocks
+
+            char* pOutput = outputPtr;
+            char* pOutputEnd = pOutput + outputLen;
+            byte* pInput = inputPtr;
+            byte* pInputEnd = pInput + fullLen;
+            while (pInput != pInputEnd)
+            {
+                // build a 32-bit representation of input
+                long input = ((uint)*pInput++ << 24)
+                    | ((uint)*pInput++ << 16)
+                    | ((uint)*pInput++ << 8)
+                    | *pInput++;
+
+                if (!writeEncodedValue(
+                    input,
+                    ref pOutput,
+                    pOutputEnd,
+                    table,
+                    stringBlockSize,
+                    usesZeroShortcut,
+                    usesSpaceShortcut))
+                {
+                    numCharsWritten = 0;
+                    return false;
+                }
+            }
+
+            // check if a part is remaining
+            int remainingBytes = inputLen - fullLen;
+            if (remainingBytes > 0)
+            {
+                long input = 0;
+                for (int n = 0; n < remainingBytes; n++)
+                {
+                    input |= (uint)*pInput++ << ((3 - n) << 3);
                 }
 
-                int outputLen = (int)(pOutput - outputPtr);
-                return new string(outputPtr, 0, outputLen);
+                if (!writeEncodedValue(
+                    input,
+                    ref pOutput,
+                    pOutputEnd,
+                    table,
+                    remainingBytes + 1,
+                    usesZeroShortcut,
+                    usesSpaceShortcut))
+                {
+                    numCharsWritten = 0;
+                    return false;
+                }
+            }
+
+            numCharsWritten = (int)(pOutput - outputPtr);
+            return true;
+        }
+
+        /// <inheritdoc/>
+        public unsafe bool TryEncode(ReadOnlySpan<byte> input, Span<char> output, out int numCharsWritten)
+        {
+            int inputLen = input.Length;
+            if (inputLen == 0)
+            {
+                numCharsWritten = 0;
+                return true;
+            }
+
+            fixed (byte* inputPtr = input)
+            fixed (char* outputPtr = output)
+            {
+                return internalEncode(inputPtr, inputLen, outputPtr, output.Length, out numCharsWritten);
             }
         }
 
@@ -177,83 +221,35 @@ namespace SimpleBase
                 return Array.Empty<byte>();
             }
 
-            char? allZeroChar = this.Alphabet.AllZeroShortcut;
-            char? allSpaceChar = this.Alphabet.AllSpaceShortcut;
-            bool checkZero = allZeroChar.HasValue;
-            bool checkSpace = allSpaceChar.HasValue;
-            bool usingShortcuts = checkZero || checkSpace;
+            bool usingShortcuts = Alphabet.HasShortcut;
 
             // allocate a larger buffer if we're using shortcuts
-            int decodeBufferLen = Alphabet.GetSafeByteCountForDecoding(text);
+            int decodeBufferLen = Alphabet.GetSafeByteCountForDecoding(textLen, usingShortcuts);
             byte[] decodeBuffer = new byte[decodeBufferLen];
-            var table = this.Alphabet.ReverseLookupTable;
             fixed (char* inputPtr = text)
             fixed (byte* decodeBufferPtr = decodeBuffer)
             {
-                byte* pDecodeBuffer = decodeBufferPtr;
-                char* pInput = inputPtr;
-                char* pInputEnd = pInput + textLen;
+                internalDecode(inputPtr, textLen, decodeBufferPtr, decodeBufferLen, out int numBytesWritten);
+                return decodeBuffer[..numBytesWritten];
+            }
+        }
 
-                int blockIndex = 0;
-                long value = 0;
-                while (pInput != pInputEnd)
-                {
-                    char c = *pInput++;
-
-                    if (isWhiteSpace(c))
-                    {
-                        continue;
-                    }
-
-                    // handle shortcut characters
-                    if (checkZero && c == allZeroChar)
-                    {
-                        writeShortcut(ref pDecodeBuffer, ref blockIndex, 0);
-                        continue;
-                    }
-
-                    if (checkSpace && c == allSpaceChar)
-                    {
-                        writeShortcut(ref pDecodeBuffer, ref blockIndex, allSpace);
-                        continue;
-                    }
-
-                    // handle regular blocks
-                    int x = table[c] - 1; // map character to byte value
-                    if (x < 0)
-                    {
-                        throw EncodingAlphabet.InvalidCharacter(c);
-                    }
-
-                    value = (value * baseLength) + x;
-                    blockIndex += 1;
-                    if (blockIndex == stringBlockSize)
-                    {
-                        writeDecodedValue(ref pDecodeBuffer, value, byteBlockSize);
-                        blockIndex = 0;
-                        value = 0;
-                    }
-                }
-
-                if (blockIndex > 0)
-                {
-                    // handle padding by treating the rest of the characters
-                    // as "u"s. so both big endianness and bit weirdness work out okay.
-                    for (int i = 0; i < stringBlockSize - blockIndex; i++)
-                    {
-                        value = (value * baseLength) + (baseLength - 1);
-                    }
-
-                    writeDecodedValue(ref pDecodeBuffer, value, blockIndex - 1);
-                }
-
-                int actualOutputLength = (int)(pDecodeBuffer - decodeBufferPtr);
-                return new Span<byte>(decodeBufferPtr, actualOutputLength);
+        /// <inheritdoc/>
+        public unsafe bool TryDecode(ReadOnlySpan<char> input, Span<byte> output, out int numBytesWritten)
+        {
+            fixed (char* inputPtr = input)
+            fixed (byte* outputPtr = output)
+            {
+                return internalDecode(inputPtr, input.Length, outputPtr, output.Length, out numBytesWritten);
             }
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static unsafe void writeShortcut(ref byte* pOutput, ref int blockIndex, long value)
+        private static unsafe bool writeShortcut(
+            ref byte* pOutput,
+            byte* pOutputEnd,
+            ref int blockIndex,
+            long value)
         {
             if (blockIndex != 0)
             {
@@ -261,18 +257,30 @@ namespace SimpleBase
                     $"Unexpected shortcut character in the middle of a regular block");
             }
 
-            writeDecodedValue(ref pOutput, value, byteBlockSize);
             blockIndex = 0; // restart block after the shortcut character
+            return writeDecodedValue(ref pOutput, pOutputEnd, value, byteBlockSize);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static unsafe void writeDecodedValue(ref byte* pOutput, long value, int numBytesToWrite)
+        private static unsafe bool writeDecodedValue(
+            ref byte* pOutput,
+            byte* pOutputEnd,
+            long value,
+            int numBytesToWrite)
         {
+            if (pOutput + numBytesToWrite > pOutputEnd)
+            {
+                Debug.WriteLine("Buffer overrun while decoding Base85");
+                return false;
+            }
+
             for (int i = byteBlockSize - 1; i >= 0 && numBytesToWrite > 0; i--, numBytesToWrite--)
             {
                 byte b = (byte)((value >> (i << 3)) & 0xFF);
                 *pOutput++ = b;
             }
+
+            return true;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -282,10 +290,11 @@ namespace SimpleBase
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private unsafe void writeOutput(
-            ref char* pOutput,
-            string table,
+        private unsafe bool writeEncodedValue(
             long input,
+            ref char* pOutput,
+            char* pOutputEnd,
+            string table,
             int stringLength,
             bool usesZeroShortcut,
             bool usesSpaceShortcut)
@@ -293,24 +302,135 @@ namespace SimpleBase
             // handle shortcuts
             if (input == 0 && usesZeroShortcut)
             {
+                if (pOutput >= pOutputEnd)
+                {
+                    return false;
+                }
+
                 *pOutput++ = this.Alphabet.AllZeroShortcut ?? '!'; // guaranteed to be non-null
-                return;
+                return true;
             }
 
             if (input == allSpace && usesSpaceShortcut)
             {
+                if (pOutput >= pOutputEnd)
+                {
+                    return false;
+                }
+
                 *pOutput++ = this.Alphabet.AllSpaceShortcut ?? '!'; // guaranteed to be non-null
-                return;
+                return true;
+            }
+
+            if (pOutput >= pOutputEnd - stringLength)
+            {
+                return false;
             }
 
             // map the 4-byte packet to to 5-byte octets
             for (int i = stringBlockSize - 1; i >= 0; i--)
             {
                 input = Math.DivRem(input, baseLength, out long result);
-                pOutput[i] = table[(int)result];
+                if (i < stringLength)
+                {
+                    pOutput[i] = table[(int)result];
+                }
             }
 
             pOutput += stringLength;
+            return true;
+        }
+
+        private unsafe bool internalDecode(
+           char* inputPtr,
+           int inputLen,
+           byte* outputPtr,
+           int outputLen,
+           out int numBytesWritten)
+        {
+            char? allZeroChar = Alphabet.AllZeroShortcut;
+            char? allSpaceChar = Alphabet.AllSpaceShortcut;
+            bool checkZero = allZeroChar is object;
+            bool checkSpace = allSpaceChar is object;
+
+            var table = this.Alphabet.ReverseLookupTable;
+            byte* pOutput = outputPtr;
+            char* pInput = inputPtr;
+            char* pInputEnd = pInput + inputLen;
+            byte* pOutputEnd = pOutput + outputLen;
+
+            int blockIndex = 0;
+            long value = 0;
+            while (pInput != pInputEnd)
+            {
+                char c = *pInput++;
+                if (isWhiteSpace(c))
+                {
+                    continue;
+                }
+
+                // handle shortcut characters
+                if (checkZero && c == allZeroChar)
+                {
+                    if (!writeShortcut(ref pOutput, pOutputEnd, ref blockIndex, 0))
+                    {
+                        goto Error;
+                    }
+
+                    continue;
+                }
+
+                if (checkSpace && c == allSpaceChar)
+                {
+                    if (!writeShortcut(ref pOutput, pOutputEnd, ref blockIndex, allSpace))
+                    {
+                        goto Error;
+                    }
+
+                    continue;
+                }
+
+                // handle regular blocks
+                int x = table[c] - 1; // map character to byte value
+                if (x < 0)
+                {
+                    throw EncodingAlphabet.InvalidCharacter(c);
+                }
+
+                value = (value * baseLength) + x;
+                blockIndex += 1;
+                if (blockIndex == stringBlockSize)
+                {
+                    if (!writeDecodedValue(ref pOutput, pOutputEnd, value, byteBlockSize))
+                    {
+                        goto Error;
+                    }
+
+                    blockIndex = 0;
+                    value = 0;
+                }
+            }
+
+            if (blockIndex > 0)
+            {
+                // handle padding by treating the rest of the characters
+                // as "u"s. so both big endianness and bit weirdness work out okay.
+                for (int i = 0; i < stringBlockSize - blockIndex; i++)
+                {
+                    value = (value * baseLength) + (baseLength - 1);
+                }
+
+                if (!writeDecodedValue(ref pOutput, pOutputEnd, value, blockIndex - 1))
+                {
+                    goto Error;
+                }
+            }
+
+            numBytesWritten = (int)(pOutput - outputPtr);
+            return true;
+        Error:
+            numBytesWritten = 0;
+            return false;
         }
     }
 }
