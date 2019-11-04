@@ -52,7 +52,7 @@ namespace benchmark
 
         private static string getPrintable(TimeSpan time, TimeSpan baseline)
         {
-            string result = $"{time.TotalMilliseconds / 1000.0:F2}";
+            string result = $"{time.TotalMilliseconds / 1000.0:F2}μs";
             if (time == baseline)
             {
                 return result;
