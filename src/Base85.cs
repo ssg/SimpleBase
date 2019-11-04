@@ -64,9 +64,6 @@ namespace SimpleBase
             }
 
             int outputLen = Alphabet.GetSafeCharCountForEncoding(bytes);
-
-            // using char[] as output buffer:
-            // 0.93µs vs 1.41µs (2.1x slower)
             string output = new string('\0', outputLen);
 
             fixed (byte* inputPtr = bytes)
@@ -79,72 +76,6 @@ namespace SimpleBase
 
                 return output[..numCharsWritten];
             }
-        }
-
-        private unsafe bool internalEncode(
-            byte* inputPtr,
-            int inputLen,
-            char* outputPtr,
-            int outputLen,
-            out int numCharsWritten)
-        {
-            bool usesZeroShortcut = Alphabet.AllZeroShortcut is object;
-            bool usesSpaceShortcut = Alphabet.AllSpaceShortcut is object;
-            string table = Alphabet.Value;
-            int fullLen = (inputLen >> 2) << 2; // size of whole 4-byte blocks
-
-            char* pOutput = outputPtr;
-            char* pOutputEnd = pOutput + outputLen;
-            byte* pInput = inputPtr;
-            byte* pInputEnd = pInput + fullLen;
-            while (pInput != pInputEnd)
-            {
-                // build a 32-bit representation of input
-                long input = ((uint)*pInput++ << 24)
-                    | ((uint)*pInput++ << 16)
-                    | ((uint)*pInput++ << 8)
-                    | *pInput++;
-
-                if (!writeEncodedValue(
-                    input,
-                    ref pOutput,
-                    pOutputEnd,
-                    table,
-                    stringBlockSize,
-                    usesZeroShortcut,
-                    usesSpaceShortcut))
-                {
-                    numCharsWritten = 0;
-                    return false;
-                }
-            }
-
-            // check if a part is remaining
-            int remainingBytes = inputLen - fullLen;
-            if (remainingBytes > 0)
-            {
-                long input = 0;
-                for (int n = 0; n < remainingBytes; n++)
-                {
-                    input |= (uint)*pInput++ << ((3 - n) << 3);
-                }
-
-                if (!writeEncodedValue(
-                    input,
-                    ref pOutput,
-                    pOutputEnd,
-                    table,
-                    remainingBytes + 1,
-                    usesZeroShortcut,
-                    usesSpaceShortcut))
-                {
-                    numCharsWritten = 0;
-                    return false;
-                }
-            }
-
-            numCharsWritten = (int)(pOutput - outputPtr);
-            return true;
         }
 
         /// <inheritdoc/>
@@ -242,6 +173,72 @@ namespace SimpleBase
             {
                 return internalDecode(inputPtr, input.Length, outputPtr, output.Length, out numBytesWritten);
             }
+        }
+
+        private unsafe bool internalEncode(
+            byte* inputPtr,
+            int inputLen,
+            char* outputPtr,
+            int outputLen,
+            out int numCharsWritten)
+        {
+            bool usesZeroShortcut = Alphabet.AllZeroShortcut is object;
+            bool usesSpaceShortcut = Alphabet.AllSpaceShortcut is object;
+            string table = Alphabet.Value;
+            int fullLen = (inputLen >> 2) << 2; // size of whole 4-byte blocks
+
+            char* pOutput = outputPtr;
+            char* pOutputEnd = pOutput + outputLen;
+            byte* pInput = inputPtr;
+            byte* pInputEnd = pInput + fullLen;
+            while (pInput != pInputEnd)
+            {
+                // build a 32-bit representation of input
+                long input = ((uint)*pInput++ << 24)
+                    | ((uint)*pInput++ << 16)
+                    | ((uint)*pInput++ << 8)
+                    | *pInput++;
+
+                if (!writeEncodedValue(
+                    input,
+                    ref pOutput,
+                    pOutputEnd,
+                    table,
+                    stringBlockSize,
+                    usesZeroShortcut,
+                    usesSpaceShortcut))
+                {
+                    numCharsWritten = 0;
+                    return false;
+                }
+            }
+
+            // check if a part is remaining
+            int remainingBytes = inputLen - fullLen;
+            if (remainingBytes > 0)
+            {
+                long input = 0;
+                for (int n = 0; n < remainingBytes; n++)
+                {
+                    input |= (uint)*pInput++ << ((3 - n) << 3);
+                }
+
+                if (!writeEncodedValue(
+                    input,
+                    ref pOutput,
+                    pOutputEnd,
+                    table,
+                    remainingBytes + 1,
+                    usesZeroShortcut,
+                    usesSpaceShortcut))
+                {
+                    numCharsWritten = 0;
+                    return false;
+                }
+            }
+
+            numCharsWritten = (int)(pOutput - outputPtr);
+            return true;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
