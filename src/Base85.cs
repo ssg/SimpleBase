@@ -50,6 +50,19 @@ namespace SimpleBase
         /// </summary>
         public Base85Alphabet Alphabet { get; }
 
+        /// <inheritdoc/>
+        public int GetSafeByteCountForDecoding(ReadOnlySpan<char> text)
+        {
+            bool usingShortcuts = Alphabet.AllZeroShortcut is object || Alphabet.AllSpaceShortcut is object;
+            return getSafeByteCountForDecoding(text.Length, usingShortcuts);
+        }
+
+        /// <inheritdoc/>
+        public int GetSafeCharCountForEncoding(ReadOnlySpan<byte> bytes)
+        {
+            return getSafeCharCountForEncoding(bytes.Length);
+        }
+
         /// <summary>
         /// Encode the given bytes into Base85.
         /// </summary>
@@ -63,7 +76,7 @@ namespace SimpleBase
                 return string.Empty;
             }
 
-            int outputLen = Alphabet.GetSafeCharCountForEncoding(bytes);
+            int outputLen = GetSafeCharCountForEncoding(bytes);
             string output = new string('\0', outputLen);
 
             fixed (byte* inputPtr = bytes)
@@ -155,7 +168,7 @@ namespace SimpleBase
             bool usingShortcuts = Alphabet.HasShortcut;
 
             // allocate a larger buffer if we're using shortcuts
-            int decodeBufferLen = Alphabet.GetSafeByteCountForDecoding(textLen, usingShortcuts);
+            int decodeBufferLen = getSafeByteCountForDecoding(textLen, usingShortcuts);
             byte[] decodeBuffer = new byte[decodeBufferLen];
             fixed (char* inputPtr = text)
             fixed (byte* decodeBufferPtr = decodeBuffer)
@@ -239,51 +252,6 @@ namespace SimpleBase
 
             numCharsWritten = (int)(pOutput - outputPtr);
             return true;
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static unsafe bool writeShortcut(
-            ref byte* pOutput,
-            byte* pOutputEnd,
-            ref int blockIndex,
-            long value)
-        {
-            if (blockIndex != 0)
-            {
-                throw new ArgumentException(
-                    $"Unexpected shortcut character in the middle of a regular block");
-            }
-
-            blockIndex = 0; // restart block after the shortcut character
-            return writeDecodedValue(ref pOutput, pOutputEnd, value, byteBlockSize);
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static unsafe bool writeDecodedValue(
-            ref byte* pOutput,
-            byte* pOutputEnd,
-            long value,
-            int numBytesToWrite)
-        {
-            if (pOutput + numBytesToWrite > pOutputEnd)
-            {
-                Debug.WriteLine("Buffer overrun while decoding Base85");
-                return false;
-            }
-
-            for (int i = byteBlockSize - 1; i >= 0 && numBytesToWrite > 0; i--, numBytesToWrite--)
-            {
-                byte b = (byte)((value >> (i << 3)) & 0xFF);
-                *pOutput++ = b;
-            }
-
-            return true;
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static bool isWhiteSpace(char c)
-        {
-            return c == ' ' || c == 0x85 || c == 0xA0 || (c >= 0x09 && c <= 0x0D);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -425,9 +393,80 @@ namespace SimpleBase
 
             numBytesWritten = (int)(pOutput - outputPtr);
             return true;
-        Error:
+            Error:
             numBytesWritten = 0;
             return false;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static unsafe bool writeDecodedValue(
+            ref byte* pOutput,
+            byte* pOutputEnd,
+            long value,
+            int numBytesToWrite)
+        {
+            if (pOutput + numBytesToWrite > pOutputEnd)
+            {
+                Debug.WriteLine("Buffer overrun while decoding Base85");
+                return false;
+            }
+
+            for (int i = byteBlockSize - 1; i >= 0 && numBytesToWrite > 0; i--, numBytesToWrite--)
+            {
+                byte b = (byte)((value >> (i << 3)) & 0xFF);
+                *pOutput++ = b;
+            }
+
+            return true;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static bool isWhiteSpace(char c)
+        {
+            return c == ' ' || c == 0x85 || c == 0xA0 || (c >= 0x09 && c <= 0x0D);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static unsafe bool writeShortcut(
+            ref byte* pOutput,
+            byte* pOutputEnd,
+            ref int blockIndex,
+            long value)
+        {
+            if (blockIndex != 0)
+            {
+                throw new ArgumentException(
+                    $"Unexpected shortcut character in the middle of a regular block");
+            }
+
+            blockIndex = 0; // restart block after the shortcut character
+            return writeDecodedValue(ref pOutput, pOutputEnd, value, byteBlockSize);
+        }
+
+        private int getSafeCharCountForEncoding(int bytesLength)
+        {
+            if (bytesLength < 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(bytesLength));
+            }
+
+            if (bytesLength == 0)
+            {
+                return 0;
+            }
+
+            return (bytesLength + byteBlockSize - 1) * stringBlockSize / byteBlockSize;
+        }
+
+        private int getSafeByteCountForDecoding(int textLength, bool usingShortcuts)
+        {
+            if (usingShortcuts)
+            {
+                return textLength * byteBlockSize; // max possible size using shortcuts
+            }
+
+            // max possible size without shortcuts
+            return (((textLength - 1) / stringBlockSize) + 1) * byteBlockSize;
         }
     }
 }

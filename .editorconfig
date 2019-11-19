@@ -21,5 +21,8 @@ dotnet_diagnostic.CA1303.severity = none
 # SA1200: Using directives should be placed correctly
 dotnet_diagnostic.SA1200.severity = none
 
+# SA1204: Static elements should appear before instance elements
+dotnet_diagnostic.SA1204.severity = none
+
 [*.md]
 guidelines = 80

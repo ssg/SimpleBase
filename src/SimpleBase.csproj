@@ -22,11 +22,11 @@
     <PackageReleaseNotes>
 <![CDATA[
 # Breaking changes
-- This version only supports .NET Standard 2.1 and up.
+- This version only supports .NET Standard 2.1 (.NET Core 3.0) and up.
 - Base16 encoding/decoding methods have been moved to Base16.UpperCase and Base16.LowerCase respectively.
-- Removed Base16.Decode due to naming conflicts. Use Base16.UpperCase.Decode() instead, which is case insensitive.
+- Renamed Base16.Decode helper to Base16.DecodeAny due to naming conflicts.
 - Removed string/byte[] overloads for Encode/Decode APIs as they are redundant with .NET Core 3.0
-- Removed whitespace tolerance of Base32.
+- Base32 is no longer whitespace tolerant.
 
 # New features
 - Yubico's ModHex support for Base16.

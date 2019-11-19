@@ -33,7 +33,7 @@ namespace SimpleBaseTest.Base58Test
         public void GetSafeCharCountForEncoding_Works()
         {
             var input = new byte[] { 0, 0, 0, 0, 1, 2, 3, 4 };
-            Assert.AreEqual(16, Base58.Bitcoin.Alphabet.GetSafeCharCountForEncoding(input));
+            Assert.AreEqual(10, Base58.Bitcoin.GetSafeCharCountForEncoding(input));
         }
     }
 }

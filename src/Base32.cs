@@ -65,6 +65,18 @@ namespace SimpleBase
         /// </summary>
         public Base32Alphabet Alphabet { get; }
 
+        /// <inheritdoc/>
+        public int GetSafeByteCountForDecoding(ReadOnlySpan<char> text)
+        {
+            return getAllocationByteCountForDecoding(text.Length - getPaddingCharCount(text));
+        }
+
+        /// <inheritdoc/>
+        public int GetSafeCharCountForEncoding(ReadOnlySpan<byte> buffer)
+        {
+            return (((buffer.Length - 1) / bitsPerChar) + 1) * bitsPerByte;
+        }
+
         /// <summary>
         /// Encode a byte array into a Base32 string without padding.
         /// </summary>
@@ -91,7 +103,7 @@ namespace SimpleBase
 
             // we are ok with slightly larger buffer since the output string will always
             // have the exact length of the output produced.
-            int outputLen = Alphabet.GetSafeCharCountForEncoding(bytes);
+            int outputLen = GetSafeCharCountForEncoding(bytes);
             string output = new string('\0', outputLen);
             fixed (byte* inputPtr = bytes)
             fixed (char* outputPtr = output)
@@ -118,8 +130,8 @@ namespace SimpleBase
         /// <returns>Decoded byte array.</returns>
         public unsafe Span<byte> Decode(ReadOnlySpan<char> text)
         {
-            int textLen = text.Length - Alphabet.GetPaddingCharCount(text);
-            int outputLen = Base32Alphabet.GetAllocationByteCountForDecoding(textLen);
+            int textLen = text.Length - getPaddingCharCount(text);
+            int outputLen = getAllocationByteCountForDecoding(textLen);
             if (outputLen == 0)
             {
                 return Array.Empty<byte>();
@@ -337,6 +349,24 @@ namespace SimpleBase
         Overflow:
             numCharsWritten = (int)(pOutput - outputPtr);
             return false;
+        }
+
+        private static int getAllocationByteCountForDecoding(int textLenWithoutPadding)
+        {
+            return textLenWithoutPadding * bitsPerChar / bitsPerByte;
+        }
+
+        private int getPaddingCharCount(ReadOnlySpan<char> text)
+        {
+            char paddingChar = Alphabet.PaddingChar;
+            int result = 0;
+            int textLen = text.Length;
+            while (textLen > 0 && text[--textLen] == paddingChar)
+            {
+                result++;
+            }
+
+            return result;
         }
 
         private unsafe bool internalDecode(

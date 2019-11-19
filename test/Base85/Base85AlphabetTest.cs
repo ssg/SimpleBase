@@ -10,7 +10,7 @@ namespace SimpleBaseTest.Base85Test
         public void GetSafeCharCountForEncoding_Buffer_Works()
         {
             var input = new byte[] { 0, 1, 2, 3 };
-            Assert.AreEqual(8, Base85.Ascii85.Alphabet.GetSafeCharCountForEncoding(input));
+            Assert.AreEqual(8, Base85.Ascii85.GetSafeCharCountForEncoding(input));
         }
 
         [Test]
@@ -23,7 +23,8 @@ namespace SimpleBaseTest.Base85Test
         [TestCase(8, 13)]
         public void GetSafeCharCountForEncoding_Length_Works(int inputLen, int expectedSize)
         {
-            Assert.AreEqual(expectedSize, Base85.Ascii85.Alphabet.GetSafeCharCountForEncoding(inputLen));
+            var buffer = new byte[inputLen];
+            Assert.AreEqual(expectedSize, Base85.Ascii85.GetSafeCharCountForEncoding(buffer));
         }
 
         [Test]

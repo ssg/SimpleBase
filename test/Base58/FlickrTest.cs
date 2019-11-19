@@ -53,6 +53,16 @@ namespace SimpleBaseTest.Base58Test
         }
 
         [Test]
+        [TestCaseSource(nameof(flickrTestData))]
+        public void TryEncode_Flickr_ReturnsExpectedResults(string input, string expectedOutput)
+        {
+            var inputBuffer = Base16.UpperCase.Decode(input);
+            var outputBuffer = new char[Base58.Flickr.GetSafeCharCountForEncoding(inputBuffer)];
+            Assert.IsTrue(Base58.Flickr.TryEncode(inputBuffer, outputBuffer, out int numWritten));
+            Assert.AreEqual(expectedOutput, outputBuffer[..numWritten]);
+        }
+
+        [Test]
         public void Encode_EmptyBuffer_ReturnsEmptyString()
         {
             Assert.AreEqual(String.Empty, Base58.Flickr.Encode(new byte[0]));

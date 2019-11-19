@@ -11,11 +11,8 @@ namespace SimpleBase
     /// <summary>
     /// Base85 Alphabet.
     /// </summary>
-    public sealed class Base85Alphabet : EncodingAlphabet, IEncodingBufferSizeEstimator
+    public sealed class Base85Alphabet : EncodingAlphabet
     {
-        private const int byteBlockSize = 4;
-        private const int stringBlockSize = 5;
-
         private static Lazy<Base85Alphabet> z85 = new Lazy<Base85Alphabet>(() => new Base85Alphabet(
                 "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ.-:+=^!/*?&<>()[]{}@%$#"));
 
@@ -67,44 +64,5 @@ namespace SimpleBase
         /// or all zeros.
         /// </summary>
         public bool HasShortcut => AllSpaceShortcut.HasValue || AllZeroShortcut.HasValue;
-
-        /// <inheritdoc/>
-        public override int GetSafeByteCountForDecoding(ReadOnlySpan<char> text)
-        {
-            bool usingShortcuts = AllZeroShortcut is object || AllSpaceShortcut is object;
-            return GetSafeByteCountForDecoding(text.Length, usingShortcuts);
-        }
-
-        /// <inheritdoc/>
-        public override int GetSafeCharCountForEncoding(ReadOnlySpan<byte> bytes)
-        {
-            return GetSafeCharCountForEncoding(bytes.Length);
-        }
-
-        internal int GetSafeCharCountForEncoding(int bytesLength)
-        {
-            if (bytesLength < 0)
-            {
-                throw new ArgumentOutOfRangeException(nameof(bytesLength));
-            }
-
-            if (bytesLength == 0)
-            {
-                return 0;
-            }
-
-            return (bytesLength + byteBlockSize - 1) * stringBlockSize / byteBlockSize;
-        }
-
-        internal int GetSafeByteCountForDecoding(int textLength, bool usingShortcuts)
-        {
-            if (usingShortcuts)
-            {
-                return textLength * byteBlockSize; // max possible size using shortcuts
-            }
-
-            // max possible size without shortcuts
-            return (((textLength - 1) / stringBlockSize) + 1) * byteBlockSize;
-        }
     }
 }

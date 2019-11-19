@@ -48,6 +48,24 @@ namespace SimpleBase
         /// </summary>
         public Base16Alphabet Alphabet { get; }
 
+        /// <inheritdoc/>
+        public int GetSafeByteCountForDecoding(ReadOnlySpan<char> text)
+        {
+            int textLen = text.Length;
+            if ((textLen & 1) != 0)
+            {
+                return 0;
+            }
+
+            return textLen / 2;
+        }
+
+        /// <inheritdoc/>
+        public int GetSafeCharCountForEncoding(ReadOnlySpan<byte> buffer)
+        {
+            return buffer.Length * 2;
+        }
+
         /// <summary>
         /// Encode to Base16 representation using uppercase lettering.
         /// </summary>
@@ -117,6 +135,16 @@ namespace SimpleBase
         }
 
         /// <summary>
+        /// Decode Upper/Lowercase Base16 text into bytes.
+        /// </summary>
+        /// <param name="text">Hex string.</param>
+        /// <returns>Decoded bytes.</returns>
+        public static Span<byte> DecodeAny(ReadOnlySpan<char> text)
+        {
+            return UpperCase.Decode(text);
+        }
+
+        /// <summary>
         /// Decode Base16 text through streams for generic use. Stream based variant tries to consume
         /// as little memory as possible, and relies of .NET's own underlying buffering mechanisms,
         /// contrary to their buffer-based versions.
@@ -177,7 +205,7 @@ namespace SimpleBase
                 return Array.Empty<byte>();
             }
 
-            byte[] output = new byte[Alphabet.GetSafeByteCountForDecoding(text)];
+            byte[] output = new byte[GetSafeByteCountForDecoding(text)];
             if (!TryDecode(text, output, out _))
             {
                 throw new ArgumentException("Invalid text", nameof(text));
@@ -255,7 +283,7 @@ namespace SimpleBase
                 return string.Empty;
             }
 
-            var output = new string('\0', Alphabet.GetSafeCharCountForEncoding(bytes));
+            var output = new string('\0', GetSafeCharCountForEncoding(bytes));
             fixed (char* outputPtr = output)
             {
                 internalEncode(bytes, bytesLen, Alphabet.Value, outputPtr);

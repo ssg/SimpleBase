@@ -31,5 +31,23 @@ namespace SimpleBase
         /// <returns>Whether decoding was successful. If false, the value of <paramref name="numBytesWritten"/>
         /// will be zero and the content of <paramref name="output"/> will be undefined.</returns>
         bool TryDecode(ReadOnlySpan<char> input, Span<byte> output, out int numBytesWritten);
+
+        /// <summary>
+        /// Gets a safe estimation about how many bytes decoding will take without performing
+        /// the actual decoding operation. The estimation can be slightly larger than the actual
+        /// output size.
+        /// </summary>
+        /// <param name="text">Text to be decoded.</param>
+        /// <returns>Number of estimated bytes, or zero if the input length is invalid.</returns>
+        int GetSafeByteCountForDecoding(ReadOnlySpan<char> text);
+
+        /// <summary>
+        /// Gets a safe estimation about how many characters encoding a buffer will take without
+        /// performing the actual encoding operation. The estimation can be slightly larger than the
+        /// actual output size.
+        /// </summary>
+        /// <param name="buffer">Bytes to be encoded.</param>
+        /// <returns>Number of estimated characters, or zero if the input length is invalid.</returns>
+        int GetSafeCharCountForEncoding(ReadOnlySpan<byte> buffer);
     }
 }

@@ -14,7 +14,7 @@ namespace SimpleBase
     /// alphabets for different encodings. It's suitable if you want to
     /// implement your own encoding based on the existing base classes.
     /// </summary>
-    public abstract class EncodingAlphabet : IEncodingBufferSizeEstimator, IEncodingAlphabet
+    public abstract class EncodingAlphabet : IEncodingAlphabet
     {
         /// <summary>
         /// Specifies the highest possible char value in an encoding alphabet
@@ -84,20 +84,6 @@ namespace SimpleBase
         {
             return new ArgumentException($"Invalid character: {c}");
         }
-
-        /// <summary>
-        /// Gets safe number of bytes to be allocated to fit the decoded buffer.
-        /// </summary>
-        /// <param name="text">The text to be decoded.</param>
-        /// <returns>A buffer size that would fit the decoded version of the input buffer.</returns>
-        public abstract int GetSafeByteCountForDecoding(ReadOnlySpan<char> text);
-
-        /// <summary>
-        /// Gets safe number of characters to be allocated to fit the encoded text.
-        /// </summary>
-        /// <param name="bytes">Buffer to be encoded.</param>
-        /// <returns>Number of bytes equal or larger than the encoded text.</returns>
-        public abstract int GetSafeCharCountForEncoding(ReadOnlySpan<byte> bytes);
 
         /// <summary>
         /// Get the string representation of the alphabet.

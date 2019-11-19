@@ -12,9 +12,6 @@ namespace SimpleBase
     /// </summary>
     public class Base32Alphabet : EncodingAlphabet
     {
-        private const int bitsPerChar = 5;
-        private const int bitsPerByte = 8;
-
         private static Lazy<CrockfordBase32Alphabet> crockfordAlphabet = new Lazy<CrockfordBase32Alphabet>(
             () => new CrockfordBase32Alphabet());
 
@@ -82,36 +79,6 @@ namespace SimpleBase
         /// Gets the padding character used in encoding.
         /// </summary>
         public char PaddingChar { get; } = '=';
-
-        /// <inheritdoc/>
-        public override int GetSafeByteCountForDecoding(ReadOnlySpan<char> text)
-        {
-            return GetAllocationByteCountForDecoding(text.Length - GetPaddingCharCount(text));
-        }
-
-        /// <inheritdoc/>
-        public override int GetSafeCharCountForEncoding(ReadOnlySpan<byte> buffer)
-        {
-            return (((buffer.Length - 1) / bitsPerChar) + 1) * bitsPerByte;
-        }
-
-        internal static int GetAllocationByteCountForDecoding(int textLenWithoutPadding)
-        {
-            return textLenWithoutPadding * bitsPerChar / bitsPerByte;
-        }
-
-        internal int GetPaddingCharCount(ReadOnlySpan<char> text)
-        {
-            char paddingChar = PaddingChar;
-            int result = 0;
-            int textLen = text.Length;
-            while (textLen > 0 && text[--textLen] == paddingChar)
-            {
-                result++;
-            }
-
-            return result;
-        }
 
         private void mapLowerCaseCounterparts(string alphabet)
         {

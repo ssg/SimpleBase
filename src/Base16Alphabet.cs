@@ -66,24 +66,6 @@ namespace SimpleBase
         /// </summary>
         public bool CaseSensitive { get; } = false;
 
-        /// <inheritdoc/>
-        public override int GetSafeByteCountForDecoding(ReadOnlySpan<char> text)
-        {
-            int textLen = text.Length;
-            if ((textLen & 1) != 0)
-            {
-                return 0;
-            }
-
-            return textLen / 2;
-        }
-
-        /// <inheritdoc/>
-        public override int GetSafeCharCountForEncoding(ReadOnlySpan<byte> buffer)
-        {
-            return buffer.Length * 2;
-        }
-
         private void mapCounterparts()
         {
             int alphaLen = Value.Length;

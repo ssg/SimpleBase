@@ -79,7 +79,7 @@ namespace SimpleBaseTest.Base85Test
         [TestCaseSource(nameof(testVectors))]
         public void TryEncode_TestVectors_ShouldEncodeCorrectly(byte[] input, string expectedOutput)
         {
-            var output = new char[Base85.Ascii85.Alphabet.GetSafeCharCountForEncoding(input)];
+            var output = new char[Base85.Ascii85.GetSafeCharCountForEncoding(input)];
             Assert.IsTrue(Base85.Ascii85.TryEncode(input, output, out int numCharsWritten));
             Assert.AreEqual(expectedOutput, new string(output[..numCharsWritten]));
         }

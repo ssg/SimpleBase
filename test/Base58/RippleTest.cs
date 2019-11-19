@@ -53,6 +53,16 @@ namespace SimpleBaseTest.Base58Test
         }
 
         [Test]
+        [TestCaseSource(nameof(rippleTestData))]
+        public void TryEncode_Ripple_ReturnsExpectedResults(string input, string expectedOutput)
+        {
+            var inputBuffer = Base16.UpperCase.Decode(input);
+            var outputBuffer = new char[Base58.Ripple.GetSafeCharCountForEncoding(inputBuffer)];
+            Assert.IsTrue(Base58.Ripple.TryEncode(inputBuffer, outputBuffer, out int numWritten));
+            Assert.AreEqual(expectedOutput, outputBuffer[..numWritten]);
+        }
+
+        [Test]
         public void Encode_EmptyBuffer_ReturnsEmptyString()
         {
             Assert.AreEqual(String.Empty, Base58.Ripple.Encode(new byte[0]));

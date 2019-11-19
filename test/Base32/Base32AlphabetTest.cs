@@ -26,8 +26,8 @@ namespace SimpleBaseTest.Base32Test
         [Test]
         public void GetSafeByteCountForDecoding_Works()
         {
-            Assert.AreEqual(3, Base32.Crockford.Alphabet.GetSafeByteCountForDecoding("12345"));
-            Assert.AreEqual(0, Base32.Crockford.Alphabet.GetSafeByteCountForDecoding(""));
+            Assert.AreEqual(3, Base32.Crockford.GetSafeByteCountForDecoding("12345"));
+            Assert.AreEqual(0, Base32.Crockford.GetSafeByteCountForDecoding(""));
         }
     }
 }

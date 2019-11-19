@@ -26,6 +26,7 @@ namespace SimpleBaseTest.Base58Test
     {
         private static readonly TestCaseData[] bitcoinTestData = new TestCaseData[]
         {
+            new TestCaseData("0001", "12"),
             new TestCaseData("0000010203", "11Ldp"),
             new TestCaseData("009C1CA2CBA6422D3988C735BB82B5C880B0441856B9B0910F", "1FESiat4YpNeoYhW3Lp7sW1T6WydcW7vcE"),
             new TestCaseData("000860C220EBBAF591D40F51994C4E2D9C9D88168C33E761F6", "1mJKRNca45GU2JQuHZqZjHFNktaqAs7gh"),
@@ -51,6 +52,16 @@ namespace SimpleBaseTest.Base58Test
             var buffer = Base16.UpperCase.Decode(input);
             string result = Base58.Bitcoin.Encode(buffer);
             Assert.AreEqual(expectedOutput, result);
+        }
+
+        [Test]
+        [TestCaseSource(nameof(bitcoinTestData))]
+        public void TryEncode_Bitcoin_ReturnsExpectedResults(string input, string expectedOutput)
+        {
+            var inputBuffer = Base16.UpperCase.Decode(input);
+            var outputBuffer = new char[Base58.Bitcoin.GetSafeCharCountForEncoding(inputBuffer)];
+            Assert.IsTrue(Base58.Bitcoin.TryEncode(inputBuffer, outputBuffer, out int numWritten));
+            Assert.AreEqual(expectedOutput, outputBuffer[..numWritten]);
         }
 
         [Test]
