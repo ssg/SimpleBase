@@ -75,7 +75,7 @@ namespace SimpleBase
         /// <remarks>
         /// The reason this is not a throwing method itself is
         /// that the compiler has no way of knowing whether the execution
-        /// will end after the method call and can incorreclty assume
+        /// will end after the method call and can incorrectly assume
         /// reachable code.
         /// </remarks>
         /// <param name="c">Characters.</param>
