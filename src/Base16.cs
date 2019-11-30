@@ -25,7 +25,7 @@ namespace SimpleBase
         /// <param name="alphabet">Alphabet to use.</param>
         public Base16(Base16Alphabet alphabet)
         {
-            this.Alphabet = alphabet;
+            Alphabet = alphabet;
         }
 
         /// <summary>
@@ -47,6 +47,18 @@ namespace SimpleBase
         /// Gets the alphabet used by the encoder.
         /// </summary>
         public Base16Alphabet Alphabet { get; }
+
+        /// <inheritdoc/>
+        public override int GetHashCode()
+        {
+            return Alphabet.GetHashCode();
+        }
+
+        /// <inheritdoc/>
+        public override string ToString()
+        {
+            return $"{nameof(Base16)}_{Alphabet.ToString()}";
+        }
 
         /// <inheritdoc/>
         public int GetSafeByteCountForDecoding(ReadOnlySpan<char> text)

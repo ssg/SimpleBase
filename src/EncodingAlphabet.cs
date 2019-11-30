@@ -94,6 +94,12 @@ namespace SimpleBase
             return this.Value;
         }
 
+        /// <inheritdoc/>
+        public override int GetHashCode()
+        {
+            return Value.GetHashCode(StringComparison.Ordinal);
+        }
+
         /// <summary>
         /// Map a character to a value.
         /// </summary>

@@ -162,6 +162,7 @@ namespace SimpleBaseTest.Base32Test
             byte[] bytes = Encoding.ASCII.GetBytes(input);
             var output = new char[Base32.Crockford.GetSafeCharCountForEncoding(bytes)];
             bool success = Base32.Crockford.TryEncode(bytes, output, out int numCharsWritten);
+            Assert.IsTrue(success);
             Assert.AreEqual(expectedOutput, output[..numCharsWritten]);
         }
 
