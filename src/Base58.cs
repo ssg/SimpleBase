@@ -87,6 +87,7 @@ namespace SimpleBase
             // 29.70µs (64.9x slower)   | 31.63µs (40.8x slower)
             // 30.93µs (first tryencode impl)
             // 29.36µs (single pass translation/copy + shift over multiply)
+            // 31.04µs (70x slower)     | 24.71µs (34.3x slower)
             fixed (byte* inputPtr = bytes)
             fixed (char* outputPtr = output)
             {
@@ -119,42 +120,18 @@ namespace SimpleBase
             fixed (char* inputPtr = text)
             fixed (byte* outputPtr = output)
             {
-                char* pInputEnd = inputPtr + textLen;
-                char* pInput = inputPtr + numZeroes;
-                if (pInput == pInputEnd)
+                if (!internalDecode(
+                    inputPtr,
+                    textLen,
+                    outputPtr,
+                    outputLen,
+                    numZeroes,
+                    out int numBytesWritten))
                 {
-                    return new byte[numZeroes]; // initialized to zero
+                    throw new InvalidOperationException("Output buffer was too small while decoding Base58");
                 }
 
-                var table = Alphabet.ReverseLookupTable;
-                byte* pOutputEnd = outputPtr + outputLen - 1;
-                byte* pMinOutput = pOutputEnd;
-                while (pInput != pInputEnd)
-                {
-                    char c = *pInput;
-                    int carry = table[c] - 1;
-                    if (carry < 0)
-                    {
-                        throw EncodingAlphabet.InvalidCharacter(c);
-                    }
-
-                    for (byte* pOutput = pOutputEnd; pOutput >= outputPtr; pOutput--)
-                    {
-                        carry += 58 * (*pOutput);
-                        *pOutput = (byte)carry;
-                        if (pMinOutput > pOutput && carry != 0)
-                        {
-                            pMinOutput = pOutput;
-                        }
-
-                        carry /= 256;
-                    }
-
-                    pInput++;
-                }
-
-                int startIndex = (int)(pMinOutput - numZeroes - outputPtr);
-                return output[startIndex..];
+                return output[..numBytesWritten];
             }
         }
 
@@ -171,9 +148,88 @@ namespace SimpleBase
         }
 
         /// <inheritdoc/>
-        public bool TryDecode(ReadOnlySpan<char> input, Span<byte> output, out int numBytesWritten)
+        public unsafe bool TryDecode(ReadOnlySpan<char> input, Span<byte> output, out int numBytesWritten)
         {
-            throw new NotImplementedException();
+            int inputLen = input.Length;
+            if (inputLen == 0)
+            {
+                numBytesWritten = 0;
+                return true;
+            }
+
+            int zeroCount = getPrefixCount(input, inputLen, Alphabet.Value[0]);
+            fixed (char* inputPtr = input)
+            fixed (byte* outputPtr = output)
+            {
+                return internalDecode(
+                    inputPtr,
+                    input.Length,
+                    outputPtr,
+                    output.Length,
+                    zeroCount,
+                    out numBytesWritten);
+            }
+        }
+
+        private unsafe bool internalDecode(
+            char* inputPtr,
+            int inputLen,
+            byte* outputPtr,
+            int outputLen,
+            int numZeroes,
+            out int numBytesWritten)
+        {
+            char* pInputEnd = inputPtr + inputLen;
+            char* pInput = inputPtr + numZeroes;
+            if (pInput == pInputEnd)
+            {
+                if (numZeroes > outputLen)
+                {
+                    numBytesWritten = 0;
+                    return false;
+                }
+
+                byte* pOutput = outputPtr;
+                for (int i = 0; i < numZeroes; i++)
+                {
+                    *pOutput++ = 0;
+                }
+
+                numBytesWritten = numZeroes;
+                return true;
+            }
+
+            var table = Alphabet.ReverseLookupTable;
+            byte* pOutputEnd = outputPtr + outputLen - 1;
+            byte* pMinOutput = pOutputEnd;
+            while (pInput != pInputEnd)
+            {
+                char c = *pInput;
+                int carry = table[c] - 1;
+                if (carry < 0)
+                {
+                    throw EncodingAlphabet.InvalidCharacter(c);
+                }
+
+                for (byte* pOutput = pOutputEnd; pOutput >= outputPtr; pOutput--)
+                {
+                    carry += 58 * (*pOutput);
+                    *pOutput = (byte)carry;
+                    if (pMinOutput > pOutput && carry != 0)
+                    {
+                        pMinOutput = pOutput;
+                    }
+
+                    carry >>= 8;
+                }
+
+                pInput++;
+            }
+
+            int startIndex = (int)(pMinOutput - numZeroes - outputPtr);
+            numBytesWritten = outputLen - startIndex;
+            Buffer.MemoryCopy(outputPtr + startIndex, outputPtr, numBytesWritten, numBytesWritten);
+            return true;
         }
 
         private unsafe bool internalEncode(

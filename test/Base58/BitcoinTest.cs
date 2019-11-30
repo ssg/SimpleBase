@@ -78,9 +78,23 @@ namespace SimpleBaseTest.Base58Test
         }
 
         [Test]
+        public void TryDecode_EmptyString_ReturnsEmptyBuffer()
+        {
+            var result = Base58.Bitcoin.TryDecode(String.Empty, new byte[1], out int numBytesWritten);
+            Assert.IsTrue(result);
+            Assert.AreEqual(0, numBytesWritten);
+        }
+
+        [Test]
         public void Decode_InvalidCharacter_Throws()
         {
             Assert.Throws<ArgumentException>(() => Base58.Bitcoin.Decode("?"));
+        }
+
+        [Test]
+        public void TryDecode_InvalidCharacter_Throws()
+        {
+            Assert.Throws<ArgumentException>(() => Base58.Bitcoin.TryDecode("?", new byte[10], out _));
         }
 
         [Test]
@@ -89,6 +103,18 @@ namespace SimpleBaseTest.Base58Test
         {
             var buffer = Base58.Bitcoin.Decode(input);
             string result = BitConverter.ToString(buffer.ToArray()).Replace("-", "",
+                StringComparison.Ordinal);
+            Assert.AreEqual(expectedOutput, result);
+        }
+
+        [Test]
+        [TestCaseSource(nameof(bitcoinTestData))]
+        public void TryDecode_Bitcoin_ReturnsExpectedResults(string expectedOutput, string input)
+        {
+            var output = new byte[Base58.Bitcoin.GetSafeByteCountForDecoding(input)];
+            var success = Base58.Bitcoin.TryDecode(input, output, out int numBytesWritten);
+            Assert.IsTrue(success);
+            string result = BitConverter.ToString(output[..numBytesWritten]).Replace("-", "",
                 StringComparison.Ordinal);
             Assert.AreEqual(expectedOutput, result);
         }
