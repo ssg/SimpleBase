@@ -157,6 +157,16 @@ namespace SimpleBaseTest.Base32Test
 
         [Test]
         [TestCaseSource(nameof(testData))]
+        public void TryEncode_Simple_ReturnsExpectedValues(string input, string expectedOutput)
+        {
+            byte[] bytes = Encoding.ASCII.GetBytes(input);
+            var output = new char[Base32.Crockford.GetSafeCharCountForEncoding(bytes)];
+            bool success = Base32.Crockford.TryEncode(bytes, output, out int numCharsWritten);
+            Assert.AreEqual(expectedOutput, output[..numCharsWritten]);
+        }
+
+        [Test]
+        [TestCaseSource(nameof(testData))]
         public void Decode_ReturnsExpectedValues(string expectedOutput, string input)
         {
             var bytes = Base32.Crockford.Decode(input);
@@ -165,6 +175,30 @@ namespace SimpleBaseTest.Base32Test
             bytes = Base32.Crockford.Decode(input.ToLowerInvariant());
             result = Encoding.ASCII.GetString(bytes.ToArray());
             Assert.AreEqual(expectedOutput, result);
+        }
+
+        [Test]
+        [TestCaseSource(nameof(testData))]
+        public void TryDecode_ReturnsExpectedValues(string expectedOutput, string input)
+        {
+            var output = new byte[Base32.Crockford.GetSafeByteCountForDecoding(input)];
+            var success = Base32.Crockford.TryDecode(input, output, out int numBytesWritten);
+            Assert.IsTrue(success);
+            string result = Encoding.ASCII.GetString(output[..numBytesWritten]);
+            Assert.AreEqual(expectedOutput, result);
+
+            success = Base32.Crockford.TryDecode(input.ToLowerInvariant(), output, out numBytesWritten);
+            Assert.IsTrue(success);
+            result = Encoding.ASCII.GetString(output[..numBytesWritten]);
+            Assert.AreEqual(expectedOutput, result);
+        }
+
+        [Test]
+        public void TryDecode_ZeroBuffer_ReturnsFalse()
+        {
+            var success = Base32.Crockford.TryDecode("test", new byte[0], out int numBytesWritten);
+            Assert.IsFalse(success);
+            Assert.AreEqual(0, numBytesWritten);
         }
 
         [Test]
