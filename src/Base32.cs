@@ -116,7 +116,7 @@ namespace SimpleBase
                     padding,
                     out int numCharsWritten))
                 {
-                    throw new ArgumentException("Invalid input", nameof(bytes));
+                    throw new InvalidOperationException("Internal error: couldn't calculate proper output buffer size for input");
                 }
 
                 return output[..numCharsWritten];
