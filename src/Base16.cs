@@ -151,9 +151,9 @@ namespace SimpleBase
         /// </summary>
         /// <param name="text">Hex string.</param>
         /// <returns>Decoded bytes.</returns>
-        public static Span<byte> DecodeAny(ReadOnlySpan<char> text)
+        public static Span<byte> Decode(string text)
         {
-            return UpperCase.Decode(text);
+            return UpperCase.Decode(text.AsSpan());
         }
 
         /// <summary>

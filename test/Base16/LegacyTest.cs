@@ -93,5 +93,13 @@ namespace SimpleBaseTest.Base16Test
 #pragma warning restore CS0618 // Type or member is obsolete
             Assert.AreEqual(expectedOutput, writer.ToString());
         }
+
+        [Test]
+        public void Decode_DecodesBothLowerAndUpperCase()
+        {
+            var expectedResult = new byte[] { 0xAB, 0xCD, 0xEF, 0xF0 };
+            Assert.AreEqual(expectedResult, Base16.Decode("ABCDEFF0").ToArray());
+            Assert.AreEqual(expectedResult, Base16.Decode("abcdeff0").ToArray());
+        }
     }
 }
