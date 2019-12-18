@@ -8,5 +8,5 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: ssg/SimpleBase/.github/workflows/build
+    - uses: ./.github/workflows/build
     - run: dotnet test
