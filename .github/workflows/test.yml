@@ -9,5 +9,5 @@ jobs:
 
     steps:
     - uses: actions/checkout@v1
-    - uses: workflows/build
+    - uses: build@v1
     - run: dotnet test
