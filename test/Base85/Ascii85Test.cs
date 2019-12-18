@@ -129,5 +129,14 @@ namespace SimpleBaseTest.Base85Test
             var result = Base85.Ascii85.Decode(input);
             CollectionAssert.AreEqual(expectedOutput, result.ToArray());
         }
+
+        [Test]
+        [TestCaseSource(nameof(testVectors))]
+        public void TryDecode_TestVectors_ShouldDecodeCorrectly(byte[] expectedOutput, string input)
+        {
+            var buffer = new byte[Base85.Ascii85.GetSafeByteCountForDecoding(input)];
+            Assert.IsTrue(Base85.Ascii85.TryDecode(input, buffer, out int numBytesWritten));
+            CollectionAssert.AreEqual(expectedOutput, buffer[..numBytesWritten]);
+        }
     }
 }
