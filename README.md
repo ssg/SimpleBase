@@ -2,7 +2,6 @@ SimpleBase
 ==========
 [![NuGet Version](https://img.shields.io/nuget/v/SimpleBase.svg)](https://www.nuget.org/packages/SimpleBase/)
 [![Build Status](https://travis-ci.org/ssg/SimpleBase.svg?branch=master)](https://travis-ci.org/ssg/SimpleBase)
-[![Build Status](https://github.com/ssg/SimpleBase/workflows/build/badge.svg)](https://github.com/ssg/SimpleBase/actions?query=workflow%3Abuild)
 [![Build Status](https://github.com/ssg/SimpleBase/workflows/test/badge.svg)](https://github.com/ssg/SimpleBase/actions?query=workflow%3Atest)
 
 This is my own take for exotic base encodings like Base32, Base58 and Base85. 
