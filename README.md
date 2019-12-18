@@ -2,7 +2,7 @@ SimpleBase
 ==========
 [![NuGet Version](https://img.shields.io/nuget/v/SimpleBase.svg)](https://www.nuget.org/packages/SimpleBase/)
 [![Build Status](https://travis-ci.org/ssg/SimpleBase.svg?branch=master)](https://travis-ci.org/ssg/SimpleBase)
-[![Build Status](https://github.com/ssg/SimpleBase/workflows/dotnetcore/badge.svg)]
+[![Build Status](https://github.com/ssg/SimpleBase/workflows/dotnetcore.yml/badge.svg)]
 
 This is my own take for exotic base encodings like Base32, Base58 and Base85. 
 I started to write it in 2013 as coding practice and kept it as a small pet 
