@@ -179,6 +179,37 @@ using (var reader = new TextReader(input)) // specify encoding here
 }
 ```
 
+### TryEncode/TryDecode
+If you want to use an existing pre-allocated buffer to encode or decode without 
+causing a GC allocation every time, you can make use of TryEncode/TryDecode 
+methods which receive input, output buffers as parameters. 
+
+Encoding is like this:
+
+```csharp
+byte[] input = new byte[] { 1, 2, 3, 4, 5 };
+int outputBufferSize = Base58.Bitcoin.GetSafeCharCountForEncoding(input);
+var output = new char[outputBufferSize];
+
+if (Base58.Bitcoin.TryEncode(input, output, out int numCharsWritten))
+{
+   // there you go
+}
+```
+
+and decoding:
+
+```csharp
+string input = "... some bitcoin address ...";
+int outputBufferSize = Base58.Bitcoin.GetSafeByteCountForDecoding(output);
+var output = new byte[outputBufferSize];
+
+if (Base58.Bitcoin.TryDecode(input, output, out int numBytesWritten))
+{
+    // et voila!
+}
+```
+
 
 Benchmark Results
 -----------------
