@@ -156,7 +156,7 @@ using (var reader = new TextReader(input)) // specify encoding here
 }
 ```
 
-### Asynchronouse Stream Mode
+### Asynchronous Stream Mode
 You can also encode/decode streams in asynchronous fashion:
 
 ```csharp
