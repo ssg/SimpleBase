@@ -26,16 +26,22 @@ namespace SimpleBaseTest.Base32Test
     [TestFixture]
     class CrockfordTest
     {
-        private static readonly string[][] testData = new[]
-        {
-            new[] { "", "" },
-            new[] { "f", "CR" },
-            new[] { "fo", "CSQG" },
-            new[] { "foo", "CSQPY" },
-            new[] { "foob", "CSQPYRG" },
-            new[] { "fooba", "CSQPYRK1" },
-            new[] { "foobar", "CSQPYRK1E8" },
-            new[] { "1234567890123456789012345678901234567890", "64S36D1N6RVKGE9G64S36D1N6RVKGE9G64S36D1N6RVKGE9G64S36D1N6RVKGE9G" },
+        private static readonly object[][] testData = {
+            new object[] { "", "", false },
+            new object[] { "f", "CR", false },
+            new object[] { "f", "CR======", true },
+            new object[] { "fo", "CSQG", false },
+            new object[] { "fo", "CSQG====", true },
+            new object[] { "foo", "CSQPY", false },
+            new object[] { "foo", "CSQPY===", true },
+            new object[] { "foob", "CSQPYRG", false },
+            new object[] { "foob", "CSQPYRG=", true },
+            new object[] { "fooba", "CSQPYRK1", false },
+            new object[] { "fooba", "CSQPYRK1", true },
+            new object[] { "foobar", "CSQPYRK1E8", false },
+            new object[] { "foobar", "CSQPYRK1E8======", true },
+            new object[] { "123456789012345678901234567890123456789", "64S36D1N6RVKGE9G64S36D1N6RVKGE9G64S36D1N6RVKGE9G64S36D1N6RVKGE8", false },
+            new object[] { "123456789012345678901234567890123456789", "64S36D1N6RVKGE9G64S36D1N6RVKGE9G64S36D1N6RVKGE9G64S36D1N6RVKGE8=", true }
         };
 
         [Test]
@@ -60,40 +66,40 @@ namespace SimpleBaseTest.Base32Test
 
         [Test]
         [TestCaseSource(nameof(testData))]
-        public void Encode_Stream_ReturnsExpectedValues(string input, string expectedOutput)
+        public void Encode_Stream_ReturnsExpectedValues(string input, string expectedOutput, bool padded)
         {
             byte[] bytes = Encoding.ASCII.GetBytes(input);
             using var inputStream = new MemoryStream(bytes);
             using var writer = new StringWriter();
-            Base32.Crockford.Encode(inputStream, writer, padding: false);
+            Base32.Crockford.Encode(inputStream, writer, padded);
             Assert.AreEqual(expectedOutput, writer.ToString());
         }
 
         [Test]
         [TestCaseSource(nameof(testData))]
-        public void Encode_SimpleStream_ReturnsExpectedValues(string input, string expectedOutput)
+        public void Encode_SimpleStream_ReturnsExpectedValues(string input, string expectedOutput, bool padded)
         {
             byte[] bytes = Encoding.ASCII.GetBytes(input);
             using var inputStream = new MemoryStream(bytes);
             using var writer = new StringWriter();
-            Base32.Crockford.Encode(inputStream, writer);
+            Base32.Crockford.Encode(inputStream, writer, padded);
             Assert.AreEqual(expectedOutput, writer.ToString());
         }
 
         [Test]
         [TestCaseSource(nameof(testData))]
-        public async Task EncodeAsync_SimpleStream_ReturnsExpectedValues(string input, string expectedOutput)
+        public async Task EncodeAsync_SimpleStream_ReturnsExpectedValues(string input, string expectedOutput, bool padded)
         {
             byte[] bytes = Encoding.ASCII.GetBytes(input);
             using var inputStream = new MemoryStream(bytes);
             using var writer = new StringWriter();
-            await Base32.Crockford.EncodeAsync(inputStream, writer);
+            await Base32.Crockford.EncodeAsync(inputStream, writer, padded);
             Assert.AreEqual(expectedOutput, writer.ToString());
         }
 
         [Test]
         [TestCaseSource(nameof(testData))]
-        public void Decode_Stream_ReturnsExpectedValues(string expectedOutput, string input)
+        public void Decode_Stream_ReturnsExpectedValues(string expectedOutput, string input, bool padded)
         {
             // upper case
             using (var inputStream = new StringReader(input))
@@ -116,7 +122,7 @@ namespace SimpleBaseTest.Base32Test
 
         [Test]
         [TestCaseSource(nameof(testData))]
-        public async Task DecodeAsync_Stream_ReturnsExpectedValues(string expectedOutput, string input)
+        public async Task DecodeAsync_Stream_ReturnsExpectedValues(string expectedOutput, string input, bool padded)
         {
             // upper case
             using (var inputStream = new StringReader(input))
@@ -139,36 +145,36 @@ namespace SimpleBaseTest.Base32Test
 
         [Test]
         [TestCaseSource(nameof(testData))]
-        public void Encode_ReturnsExpectedValues(string input, string expectedOutput)
+        public void Encode_ReturnsExpectedValues(string input, string expectedOutput, bool padded)
         {
             byte[] bytes = Encoding.ASCII.GetBytes(input);
-            string result = Base32.Crockford.Encode(bytes, padding: false);
+            string result = Base32.Crockford.Encode(bytes, padded);
             Assert.AreEqual(expectedOutput, result);
         }
 
         [Test]
         [TestCaseSource(nameof(testData))]
-        public void Encode_Simple_ReturnsExpectedValues(string input, string expectedOutput)
+        public void Encode_Simple_ReturnsExpectedValues(string input, string expectedOutput, bool padded)
         {
             byte[] bytes = Encoding.ASCII.GetBytes(input);
-            string result = Base32.Crockford.Encode(bytes);
+            string result = Base32.Crockford.Encode(bytes, padded);
             Assert.AreEqual(expectedOutput, result);
         }
 
         [Test]
         [TestCaseSource(nameof(testData))]
-        public void TryEncode_Simple_ReturnsExpectedValues(string input, string expectedOutput)
+        public void TryEncode_Simple_ReturnsExpectedValues(string input, string expectedOutput, bool padded)
         {
             byte[] bytes = Encoding.ASCII.GetBytes(input);
             var output = new char[Base32.Crockford.GetSafeCharCountForEncoding(bytes)];
-            bool success = Base32.Crockford.TryEncode(bytes, output, out int numCharsWritten);
+            bool success = Base32.Crockford.TryEncode(bytes, output, padded, out int numCharsWritten);
             Assert.IsTrue(success);
             Assert.AreEqual(expectedOutput, output[..numCharsWritten]);
         }
 
         [Test]
         [TestCaseSource(nameof(testData))]
-        public void Decode_ReturnsExpectedValues(string expectedOutput, string input)
+        public void Decode_ReturnsExpectedValues(string expectedOutput, string input, bool padded)
         {
             var bytes = Base32.Crockford.Decode(input);
             string result = Encoding.ASCII.GetString(bytes.ToArray());
@@ -180,7 +186,7 @@ namespace SimpleBaseTest.Base32Test
 
         [Test]
         [TestCaseSource(nameof(testData))]
-        public void TryDecode_ReturnsExpectedValues(string expectedOutput, string input)
+        public void TryDecode_ReturnsExpectedValues(string expectedOutput, string input, bool padded)
         {
             var output = new byte[Base32.Crockford.GetSafeByteCountForDecoding(input)];
             var success = Base32.Crockford.TryDecode(input, output, out int numBytesWritten);
