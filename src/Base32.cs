@@ -264,7 +264,7 @@ namespace SimpleBase
         /// <inheritdoc/>
         public unsafe bool TryDecode(ReadOnlySpan<char> input, Span<byte> output, out int numBytesWritten)
         {
-            int inputLen = input.Length;
+            int inputLen = input.Length - getPaddingCharCount(input);
             if (inputLen == 0)
             {
                 numBytesWritten = 0;
