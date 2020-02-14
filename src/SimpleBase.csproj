@@ -12,7 +12,7 @@
     <AssemblyOriginatorKeyFile>..\SimpleBase.snk</AssemblyOriginatorKeyFile>
     <DelaySign>false</DelaySign>
 
-    <PackageVersion>3.0.0</PackageVersion>
+    <PackageVersion>3.0.1</PackageVersion>
     <CodeAnalysisRuleSet>../SSG.ruleset</CodeAnalysisRuleSet>
     <DocumentationFile>SimpleBase.xml</DocumentationFile>
     <PackageProjectUrl>https://github.com/ssg/SimpleBase</PackageProjectUrl>
@@ -21,31 +21,8 @@
     <PackageTags>base16 base32 base58 base85 ascii85 z85 hexadecimal bitcoin ripple flickr crockford extended hex rfc4648 z-base-32 geohash</PackageTags>
     <PackageReleaseNotes>
 <![CDATA[
-# Breaking changes
-- This version only supports .NET Standard 2.1 (.NET Core 3.0) and up, because I started using nullable annotations
-  and Span/Range constructs in the code. It's time to move to the future, folks!
-- Base16 encoding/decoding methods have been moved to `Base16.UpperCase` and `Base16.LowerCase` respectively.
-- Changed the static version of `Base16.Decode()` to receive a string as a parameter to avoid signature conflicts. (It's probably more practical this way)
-- Removed string/byte[] overloads for Encode functions as they are redundant with .NET Core 3.0. Only `Base16.Decode`
-  remained as a string due to function signature conflicts.
-- Base32 is no longer whitespace tolerant.
-
-# New features
-- New TryEncode/TryDecode interfaces for non-allocating encoding. Probably would be useful in massive number of encodings.
-- Yubico's ModHex support for Base16.
-
-# Improvements
-- More than 2x faster Base16 decoding
-- Faster Base16 encoding
-- More test coverage
-- No more dependency to System.Runtime.Numerics
-- Encoders now conform to common interfaces like IBaseEncoder, IBaseStreamEncoder, INonAllocatingBaseEncoder 
-  which make them pluggable, replacable with other implementations.
-- Nullable reference annotations
-
 # Fixes 
-- Fix package license expression.
-- Fix regression in Base16 optimizations.
+- Fixed padding being ignored by Base32, thanks to @skwasjer! 
 ]]></PackageReleaseNotes>
     <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
