@@ -38,7 +38,7 @@ namespace SimpleBaseTest.Base16Test
                     {
                         var testValue = testRow[pair.index + 1];
                         yield return new TestCaseData(pair.encoder, testRow[0], testValue)
-                            .SetName($"{pair.encoder.Alphabet.ToString()}_{testValue}");
+                            .SetName($"{pair.encoder.Alphabet}_{testValue}");
                     }
             }
         }

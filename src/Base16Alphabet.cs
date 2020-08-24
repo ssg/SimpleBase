@@ -64,7 +64,7 @@ namespace SimpleBase
         /// Gets a value indicating whether the decoding should be performed in a case sensitive fashion.
         /// The default is false.
         /// </summary>
-        public bool CaseSensitive { get; } = false;
+        public bool CaseSensitive { get; }
 
         private void mapCounterparts()
         {

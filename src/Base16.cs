@@ -57,7 +57,7 @@ namespace SimpleBase
         /// <inheritdoc/>
         public override string ToString()
         {
-            return $"{nameof(Base16)}_{Alphabet.ToString()}";
+            return $"{nameof(Base16)}_{Alphabet}";
         }
 
         /// <inheritdoc/>
