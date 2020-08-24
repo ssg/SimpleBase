@@ -131,7 +131,7 @@ namespace SimpleBase
                     throw new InvalidOperationException("Output buffer was too small while decoding Base58");
                 }
 
-                return output[..numBytesWritten];
+                return output.AsSpan()[..numBytesWritten];
             }
         }
 

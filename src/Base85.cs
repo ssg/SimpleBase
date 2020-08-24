@@ -174,7 +174,7 @@ namespace SimpleBase
             fixed (byte* decodeBufferPtr = decodeBuffer)
             {
                 internalDecode(inputPtr, textLen, decodeBufferPtr, decodeBufferLen, out int numBytesWritten);
-                return decodeBuffer[..numBytesWritten];
+                return decodeBuffer.AsSpan()[..numBytesWritten];
             }
         }
 
@@ -443,7 +443,7 @@ namespace SimpleBase
             return writeDecodedValue(ref pOutput, pOutputEnd, value, byteBlockSize);
         }
 
-        private int getSafeCharCountForEncoding(int bytesLength)
+        private static int getSafeCharCountForEncoding(int bytesLength)
         {
             if (bytesLength < 0)
             {
@@ -458,7 +458,7 @@ namespace SimpleBase
             return (bytesLength + byteBlockSize - 1) * stringBlockSize / byteBlockSize;
         }
 
-        private int getSafeByteCountForDecoding(int textLength, bool usingShortcuts)
+        private static int getSafeByteCountForDecoding(int textLength, bool usingShortcuts)
         {
             if (usingShortcuts)
             {
