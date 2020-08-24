@@ -171,7 +171,7 @@ namespace SimpleBase
         {
             StreamHelper.Encode(input, output, (buffer, lastBlock) =>
             {
-                bool usePadding = lastBlock ? padding : false;
+                bool usePadding = lastBlock && padding;
                 return Encode(buffer.Span, usePadding);
             });
         }
@@ -198,7 +198,7 @@ namespace SimpleBase
         {
             await StreamHelper.EncodeAsync(input, output, (buffer, lastBlock) =>
             {
-                bool usePadding = lastBlock ? padding : false;
+                bool usePadding = lastBlock && padding;
                 return Encode(buffer.Span, usePadding);
             }).ConfigureAwait(false);
         }
