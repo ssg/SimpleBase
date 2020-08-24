@@ -15,7 +15,7 @@ namespace SimpleBaseTest.Base32Test
             const string input = "ezs42";
             var result = Base32.Geohash.Decode(input);
             var expected = new byte[] { 0b01101111, 0b11110000, 0b01000001 };
-            Assert.AreEqual(expected, result.ToArray());
+            Assert.That(result.ToArray(), Is.EqualTo(expected));
         }
 
         [Test]
@@ -24,7 +24,7 @@ namespace SimpleBaseTest.Base32Test
             const string expected = "ezs42";
             var input = new byte[] { 0b01101111, 0b11110000, 0b01000001 };
             var result = Base32.Geohash.Encode(input);
-            Assert.AreEqual(expected, result);
+            Assert.That(result, Is.EqualTo(expected));
         }
     }
 }

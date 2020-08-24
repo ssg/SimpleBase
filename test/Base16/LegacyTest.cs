@@ -34,7 +34,7 @@ namespace SimpleBaseTest.Base16Test
         public void EncodeUpper_Works()
         {
 #pragma warning disable CS0618 // Type or member is obsolete
-            Assert.AreEqual("ABCD", Base16.EncodeUpper(new byte[] { 0xAB, 0xCD }));
+            Assert.That(Base16.EncodeUpper(new byte[] { 0xAB, 0xCD }), Is.EqualTo("ABCD"));
 #pragma warning restore CS0618 // Type or member is obsolete
         }
 
@@ -42,7 +42,7 @@ namespace SimpleBaseTest.Base16Test
         public void EncodeLower_Works()
         {
 #pragma warning disable CS0618 // Type or member is obsolete
-            Assert.AreEqual("abcd", Base16.EncodeLower(new byte[] { 0xAB, 0xCD }));
+            Assert.That(Base16.EncodeLower(new byte[] { 0xAB, 0xCD }), Is.EqualTo("abcd"));
 #pragma warning restore CS0618 // Type or member is obsolete
         }
 
@@ -55,7 +55,7 @@ namespace SimpleBaseTest.Base16Test
 #pragma warning disable CS0618 // Type or member is obsolete
             Base16.EncodeUpper(inputStream, writer);
 #pragma warning restore CS0618 // Type or member is obsolete
-            Assert.AreEqual(expectedOutput, writer.ToString());
+            Assert.That(writer.ToString(), Is.EqualTo(expectedOutput));
         }
 
         [Test]
@@ -67,7 +67,7 @@ namespace SimpleBaseTest.Base16Test
 #pragma warning disable CS0618 // Type or member is obsolete
             await Base16.EncodeUpperAsync(inputStream, writer);
 #pragma warning restore CS0618 // Type or member is obsolete
-            Assert.AreEqual(expectedOutput, writer.ToString());
+            Assert.That(writer.ToString(), Is.EqualTo(expectedOutput));
         }
 
         [Test]
@@ -79,7 +79,7 @@ namespace SimpleBaseTest.Base16Test
 #pragma warning disable CS0618 // Type or member is obsolete
             Base16.EncodeLower(inputStream, writer);
 #pragma warning restore CS0618 // Type or member is obsolete
-            Assert.AreEqual(expectedOutput, writer.ToString());
+            Assert.That(writer.ToString(), Is.EqualTo(expectedOutput));
         }
 
         [Test]
@@ -91,15 +91,15 @@ namespace SimpleBaseTest.Base16Test
 #pragma warning disable CS0618 // Type or member is obsolete
             await Base16.EncodeLowerAsync(inputStream, writer);
 #pragma warning restore CS0618 // Type or member is obsolete
-            Assert.AreEqual(expectedOutput, writer.ToString());
+            Assert.That(writer.ToString(), Is.EqualTo(expectedOutput));
         }
 
         [Test]
         public void Decode_DecodesBothLowerAndUpperCase()
         {
             var expectedResult = new byte[] { 0xAB, 0xCD, 0xEF, 0xF0 };
-            Assert.AreEqual(expectedResult, Base16.Decode("ABCDEFF0").ToArray());
-            Assert.AreEqual(expectedResult, Base16.Decode("abcdeff0").ToArray());
+            Assert.That(Base16.Decode("ABCDEFF0").ToArray(), Is.EqualTo(expectedResult));
+            Assert.That(Base16.Decode("abcdeff0").ToArray(), Is.EqualTo(expectedResult));
         }
     }
 }

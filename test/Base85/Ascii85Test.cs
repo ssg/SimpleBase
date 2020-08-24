@@ -54,7 +54,7 @@ namespace SimpleBaseTest.Base85Test
             using var inputStream = new MemoryStream(input);
             using var writer = new StringWriter();
             Base85.Ascii85.Encode(inputStream, writer);
-            Assert.AreEqual(expectedOutput, writer.ToString());
+            Assert.That(writer.ToString(), Is.EqualTo(expectedOutput));
         }
 
         [Test]
@@ -64,7 +64,7 @@ namespace SimpleBaseTest.Base85Test
             using var inputStream = new MemoryStream(input);
             using var writer = new StringWriter();
             await Base85.Ascii85.EncodeAsync(inputStream, writer);
-            Assert.AreEqual(expectedOutput, writer.ToString());
+            Assert.That(writer.ToString(), Is.EqualTo(expectedOutput));
         }
 
         [Test]
@@ -72,7 +72,7 @@ namespace SimpleBaseTest.Base85Test
         public void Encode_TestVectors_ShouldEncodeCorrectly(byte[] input, string expectedOutput)
         {
             var result = Base85.Ascii85.Encode(input);
-            Assert.AreEqual(expectedOutput, result);
+            Assert.That(result, Is.EqualTo(expectedOutput));
         }
 
         [Test]
@@ -80,8 +80,8 @@ namespace SimpleBaseTest.Base85Test
         public void TryEncode_TestVectors_ShouldEncodeCorrectly(byte[] input, string expectedOutput)
         {
             var output = new char[Base85.Ascii85.GetSafeCharCountForEncoding(input)];
-            Assert.IsTrue(Base85.Ascii85.TryEncode(input, output, out int numCharsWritten));
-            Assert.AreEqual(expectedOutput, new string(output[..numCharsWritten]));
+            Assert.That(Base85.Ascii85.TryEncode(input, output, out int numCharsWritten), Is.True);
+            Assert.That(new string(output[..numCharsWritten]), Is.EqualTo(expectedOutput));
         }
 
         [Test]
@@ -93,7 +93,7 @@ namespace SimpleBaseTest.Base85Test
         [Test]
         public void Encode_NullBuffer_ReturnsEmptyString()
         {
-            Assert.AreEqual(String.Empty, Base85.Ascii85.Encode(null));
+            Assert.That(Base85.Ascii85.Encode(null), Is.EqualTo(String.Empty));
         }
 
         [Test]
@@ -135,7 +135,7 @@ namespace SimpleBaseTest.Base85Test
         public void TryDecode_TestVectors_ShouldDecodeCorrectly(byte[] expectedOutput, string input)
         {
             var buffer = new byte[Base85.Ascii85.GetSafeByteCountForDecoding(input)];
-            Assert.IsTrue(Base85.Ascii85.TryDecode(input, buffer, out int numBytesWritten));
+            Assert.That(Base85.Ascii85.TryDecode(input, buffer, out int numBytesWritten), Is.True);
             CollectionAssert.AreEqual(expectedOutput, buffer[..numBytesWritten]);
         }
     }

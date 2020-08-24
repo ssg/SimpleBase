@@ -24,13 +24,13 @@ namespace SimpleBaseTest.Base85Test
         public void Encode_TestVectors_ShouldEncodeCorrectly(byte[] input, string expectedOutput)
         {
             var result = Base85.Z85.Encode(input);
-            Assert.AreEqual(expectedOutput, result);
+            Assert.That(result, Is.EqualTo(expectedOutput));
         }
 
         [Test]
         public void Encode_NullBuffer_ReturnsEmptyString()
         {
-            Assert.AreEqual(String.Empty, Base85.Z85.Encode(null));
+            Assert.That(Base85.Z85.Encode(null), Is.EqualTo(String.Empty));
         }
 
         [Test]

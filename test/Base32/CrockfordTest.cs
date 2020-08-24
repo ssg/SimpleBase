@@ -51,7 +51,7 @@ namespace SimpleBaseTest.Base32Test
             // do not edit/refactor the code below
             byte[] myBuffer = new byte[0];
             string result = Base32.Crockford.Encode(myBuffer, padding: true);
-            Assert.IsEmpty(result);
+            Assert.That(result, Is.Empty);
         }
 
         [Test]
@@ -61,7 +61,7 @@ namespace SimpleBaseTest.Base32Test
             // do not edit/refactor the code below
             string myText = "CSQPYRK1E8"; // any buffer will do
             Span<byte> result = Base32.Crockford.Decode(myText);
-            Assert.IsTrue(result.Length > 0);
+            Assert.That(result.Length > 0, Is.True);
         }
 
         [Test]
@@ -72,7 +72,7 @@ namespace SimpleBaseTest.Base32Test
             using var inputStream = new MemoryStream(bytes);
             using var writer = new StringWriter();
             Base32.Crockford.Encode(inputStream, writer, padded);
-            Assert.AreEqual(expectedOutput, writer.ToString());
+            Assert.That(writer.ToString(), Is.EqualTo(expectedOutput));
         }
 
         [Test]
@@ -83,7 +83,7 @@ namespace SimpleBaseTest.Base32Test
             using var inputStream = new MemoryStream(bytes);
             using var writer = new StringWriter();
             Base32.Crockford.Encode(inputStream, writer, padded);
-            Assert.AreEqual(expectedOutput, writer.ToString());
+            Assert.That(writer.ToString(), Is.EqualTo(expectedOutput));
         }
 
         [Test]
@@ -94,7 +94,7 @@ namespace SimpleBaseTest.Base32Test
             using var inputStream = new MemoryStream(bytes);
             using var writer = new StringWriter();
             await Base32.Crockford.EncodeAsync(inputStream, writer, padded);
-            Assert.AreEqual(expectedOutput, writer.ToString());
+            Assert.That(writer.ToString(), Is.EqualTo(expectedOutput));
         }
 
         [Test]
@@ -107,7 +107,7 @@ namespace SimpleBaseTest.Base32Test
             {
                 Base32.Crockford.Decode(inputStream, outputStream);
                 string result = Encoding.ASCII.GetString(outputStream.ToArray());
-                Assert.AreEqual(expectedOutput, result);
+                Assert.That(result, Is.EqualTo(expectedOutput));
             }
 
             // lower case
@@ -116,7 +116,7 @@ namespace SimpleBaseTest.Base32Test
             {
                 Base32.Crockford.Decode(inputStream, outputStream);
                 string result = Encoding.ASCII.GetString(outputStream.ToArray());
-                Assert.AreEqual(expectedOutput, result);
+                Assert.That(result, Is.EqualTo(expectedOutput));
             }
         }
 
@@ -130,7 +130,7 @@ namespace SimpleBaseTest.Base32Test
             {
                 await Base32.Crockford.DecodeAsync(inputStream, outputStream);
                 string result = Encoding.ASCII.GetString(outputStream.ToArray());
-                Assert.AreEqual(expectedOutput, result);
+                Assert.That(result, Is.EqualTo(expectedOutput));
             }
 
             // lower case
@@ -139,7 +139,7 @@ namespace SimpleBaseTest.Base32Test
             {
                 await Base32.Crockford.DecodeAsync(inputStream, outputStream);
                 string result = Encoding.ASCII.GetString(outputStream.ToArray());
-                Assert.AreEqual(expectedOutput, result);
+                Assert.That(result, Is.EqualTo(expectedOutput));
             }
         }
 
@@ -149,7 +149,7 @@ namespace SimpleBaseTest.Base32Test
         {
             byte[] bytes = Encoding.ASCII.GetBytes(input);
             string result = Base32.Crockford.Encode(bytes, padded);
-            Assert.AreEqual(expectedOutput, result);
+            Assert.That(result, Is.EqualTo(expectedOutput));
         }
 
         [Test]
@@ -158,7 +158,7 @@ namespace SimpleBaseTest.Base32Test
         {
             byte[] bytes = Encoding.ASCII.GetBytes(input);
             string result = Base32.Crockford.Encode(bytes, padded);
-            Assert.AreEqual(expectedOutput, result);
+            Assert.That(result, Is.EqualTo(expectedOutput));
         }
 
         [Test]
@@ -168,8 +168,8 @@ namespace SimpleBaseTest.Base32Test
             byte[] bytes = Encoding.ASCII.GetBytes(input);
             var output = new char[Base32.Crockford.GetSafeCharCountForEncoding(bytes)];
             bool success = Base32.Crockford.TryEncode(bytes, output, padded, out int numCharsWritten);
-            Assert.IsTrue(success);
-            Assert.AreEqual(expectedOutput, output[..numCharsWritten]);
+            Assert.That(success, Is.True);
+            Assert.That(output[..numCharsWritten], Is.EqualTo(expectedOutput));
         }
 
         [Test]
@@ -178,10 +178,10 @@ namespace SimpleBaseTest.Base32Test
         {
             var bytes = Base32.Crockford.Decode(input);
             string result = Encoding.ASCII.GetString(bytes.ToArray());
-            Assert.AreEqual(expectedOutput, result);
+            Assert.That(result, Is.EqualTo(expectedOutput));
             bytes = Base32.Crockford.Decode(input.ToLowerInvariant());
             result = Encoding.ASCII.GetString(bytes.ToArray());
-            Assert.AreEqual(expectedOutput, result);
+            Assert.That(result, Is.EqualTo(expectedOutput));
         }
 
         [Test]
@@ -190,22 +190,22 @@ namespace SimpleBaseTest.Base32Test
         {
             var output = new byte[Base32.Crockford.GetSafeByteCountForDecoding(input)];
             var success = Base32.Crockford.TryDecode(input, output, out int numBytesWritten);
-            Assert.IsTrue(success);
+            Assert.That(success, Is.True);
             string result = Encoding.ASCII.GetString(output[..numBytesWritten]);
-            Assert.AreEqual(expectedOutput, result);
+            Assert.That(result, Is.EqualTo(expectedOutput));
 
             success = Base32.Crockford.TryDecode(input.ToLowerInvariant(), output, out numBytesWritten);
-            Assert.IsTrue(success);
+            Assert.That(success, Is.True);
             result = Encoding.ASCII.GetString(output[..numBytesWritten]);
-            Assert.AreEqual(expectedOutput, result);
+            Assert.That(result, Is.EqualTo(expectedOutput));
         }
 
         [Test]
         public void TryDecode_ZeroBuffer_ReturnsFalse()
         {
             var success = Base32.Crockford.TryDecode("test", new byte[0], out int numBytesWritten);
-            Assert.IsFalse(success);
-            Assert.AreEqual(0, numBytesWritten);
+            Assert.That(success, Is.False);
+            Assert.That(numBytesWritten, Is.EqualTo(0));
         }
 
         [Test]
@@ -222,13 +222,13 @@ namespace SimpleBaseTest.Base32Test
         {
             var expectedResult = Base32.Crockford.Decode(actual);
             var result = Base32.Crockford.Decode(equivalent);
-            Assert.AreEqual(expectedResult.ToArray(), result.ToArray());
+            Assert.That(result.ToArray(), Is.EqualTo(expectedResult.ToArray()));
         }
 
         [Test]
         public void Encode_NullBytes_ReturnsEmptyString()
         {
-            Assert.AreEqual(String.Empty, Base32.Crockford.Encode(null, true));
+            Assert.That(Base32.Crockford.Encode(null, true), Is.EqualTo(String.Empty));
         }
     }
 }

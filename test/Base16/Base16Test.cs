@@ -60,7 +60,7 @@ namespace SimpleBaseTest.Base16Test
             using var inputStream = new MemoryStream(input);
             using var writer = new StringWriter();
             encoder.Encode(inputStream, writer);
-            Assert.AreEqual(expectedOutput, writer.ToString());
+            Assert.That(writer.ToString(), Is.EqualTo(expectedOutput));
         }
 
         [Test]
@@ -80,7 +80,7 @@ namespace SimpleBaseTest.Base16Test
             using var inputStream = new MemoryStream(input);
             using var writer = new StringWriter();
             await encoder.EncodeAsync(inputStream, writer);
-            Assert.AreEqual(expectedOutput, writer.ToString());
+            Assert.That(writer.ToString(), Is.EqualTo(expectedOutput));
         }
 
         [Test]
@@ -88,7 +88,7 @@ namespace SimpleBaseTest.Base16Test
         public void Encode(Base16 encoder, byte[] input, string expectedOutput)
         {
             var result = encoder.Encode(input);
-            Assert.AreEqual(expectedOutput, result);
+            Assert.That(result, Is.EqualTo(expectedOutput));
         }
 
         [Test]
@@ -96,9 +96,9 @@ namespace SimpleBaseTest.Base16Test
         public void TryEncode_RegularInput_Succeeds(Base16 encoder, byte[] input, string expectedOutput)
         {
             var output = new char[input.Length * 2];
-            Assert.IsTrue(encoder.TryEncode(input, output, out int numCharsWritten));
-            Assert.AreEqual(output.Length, numCharsWritten);
-            Assert.AreEqual(expectedOutput, new string(output));
+            Assert.That(encoder.TryEncode(input, output, out int numCharsWritten), Is.True);
+            Assert.That(numCharsWritten, Is.EqualTo(output.Length));
+            Assert.That(new string(output), Is.EqualTo(expectedOutput));
         }
 
         [Test]
@@ -107,8 +107,8 @@ namespace SimpleBaseTest.Base16Test
         {
             var input = new byte[4];
             var output = new char[0];
-            Assert.IsFalse(encoder.TryEncode(input, output, out int numCharsWritten));
-            Assert.AreEqual(0, numCharsWritten);
+            Assert.That(encoder.TryEncode(input, output, out int numCharsWritten), Is.False);
+            Assert.That(numCharsWritten, Is.EqualTo(0));
         }
 
         [Test]
@@ -124,8 +124,8 @@ namespace SimpleBaseTest.Base16Test
         public void TryDecode_RegularInput_Succeeds(Base16 encoder, byte[] expectedOutput, string input)
         {
             var output = new byte[expectedOutput.Length];
-            Assert.IsTrue(encoder.TryDecode(input, output, out int numBytesWritten));
-            Assert.AreEqual(output.Length, numBytesWritten);
+            Assert.That(encoder.TryDecode(input, output, out int numBytesWritten), Is.True);
+            Assert.That(numBytesWritten, Is.EqualTo(output.Length));
             CollectionAssert.AreEqual(expectedOutput, output);
         }
 
@@ -135,8 +135,8 @@ namespace SimpleBaseTest.Base16Test
         {
             var input = "1234";
             var output = new byte[1];
-            Assert.IsFalse(encoder.TryDecode(input, output, out int numBytesWritten));
-            Assert.AreEqual(0, numBytesWritten);
+            Assert.That(encoder.TryDecode(input, output, out int numBytesWritten), Is.False);
+            Assert.That(numBytesWritten, Is.EqualTo(0));
         }
 
         [Test]
@@ -145,8 +145,8 @@ namespace SimpleBaseTest.Base16Test
         {
             var input = "123";
             var output = new byte[1];
-            Assert.IsFalse(encoder.TryDecode(input, output, out int numBytesWritten));
-            Assert.AreEqual(0, numBytesWritten);
+            Assert.That(encoder.TryDecode(input, output, out int numBytesWritten), Is.False);
+            Assert.That(numBytesWritten, Is.EqualTo(0));
         }
 
         [Test]
@@ -178,7 +178,7 @@ namespace SimpleBaseTest.Base16Test
         public void GetSafeCharCountForEncoding_ReturnsCorrectValue(Base16 encoder)
         {
             var input = new byte[5];
-            Assert.AreEqual(10, encoder.GetSafeCharCountForEncoding(input));
+            Assert.That(encoder.GetSafeCharCountForEncoding(input), Is.EqualTo(10));
         }
 
         [Test]
@@ -186,7 +186,7 @@ namespace SimpleBaseTest.Base16Test
         public void GetSafeByteCountForDecoding_ReturnsCorrectValues(Base16 encoder)
         {
             var input = new char[10];
-            Assert.AreEqual(5, encoder.GetSafeByteCountForDecoding(input));
+            Assert.That(encoder.GetSafeByteCountForDecoding(input), Is.EqualTo(5));
         }
 
         [Test]
@@ -194,7 +194,7 @@ namespace SimpleBaseTest.Base16Test
         public void GetSafeByteCountForDecoding_InvalidBufferSize_ReturnsZero(Base16 encoder)
         {
             var input = new char[11];
-            Assert.AreEqual(0, encoder.GetSafeByteCountForDecoding(input));
+            Assert.That(encoder.GetSafeByteCountForDecoding(input), Is.EqualTo(0));
         }
 
         [Test]
@@ -202,19 +202,19 @@ namespace SimpleBaseTest.Base16Test
         {
             var encoder = new Base16(new Base16Alphabet("abcdefghijklmnop"));
             var result = encoder.Encode(new byte[] { 0, 1, 16, 128, 255 });
-            Assert.AreEqual("aaabbaiapp", result);
+            Assert.That(result, Is.EqualTo("aaabbaiapp"));
         }
 
         [Test]
         public void ToString_ReturnsNameWithAlphabet([ValueSource(nameof(encoders))]Base16 encoder)
         {
-            Assert.AreEqual($"Base16_{encoder.Alphabet}", encoder.ToString());
+            Assert.That(encoder.ToString(), Is.EqualTo($"Base16_{encoder.Alphabet}"));
         }
 
         [Test]
         public void GetHashCode_ReturnsAlphabetHashCode([ValueSource(nameof(encoders))]Base16 encoder)
         {
-            Assert.AreEqual(encoder.Alphabet.GetHashCode(), encoder.GetHashCode());
+            Assert.That(encoder.GetHashCode(), Is.EqualTo(encoder.Alphabet.GetHashCode()));
         }
     }
 }

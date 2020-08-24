@@ -40,7 +40,7 @@ namespace SimpleBaseTest.Base58Test
         [Test]
         public void Encode_NullBuffer_ReturnsEmptyString()
         {
-            Assert.AreEqual(String.Empty, Base58.Flickr.Encode(null));
+            Assert.That(Base58.Flickr.Encode(null), Is.EqualTo(String.Empty));
         }
 
         [Test]
@@ -49,7 +49,7 @@ namespace SimpleBaseTest.Base58Test
         {
             var buffer = Base16.UpperCase.Decode(input);
             string result = Base58.Flickr.Encode(buffer);
-            Assert.AreEqual(expectedOutput, result);
+            Assert.That(result, Is.EqualTo(expectedOutput));
         }
 
         [Test]
@@ -58,21 +58,21 @@ namespace SimpleBaseTest.Base58Test
         {
             var inputBuffer = Base16.UpperCase.Decode(input);
             var outputBuffer = new char[Base58.Flickr.GetSafeCharCountForEncoding(inputBuffer)];
-            Assert.IsTrue(Base58.Flickr.TryEncode(inputBuffer, outputBuffer, out int numWritten));
-            Assert.AreEqual(expectedOutput, outputBuffer[..numWritten]);
+            Assert.That(Base58.Flickr.TryEncode(inputBuffer, outputBuffer, out int numWritten), Is.True);
+            Assert.That(outputBuffer[..numWritten], Is.EqualTo(expectedOutput));
         }
 
         [Test]
         public void Encode_EmptyBuffer_ReturnsEmptyString()
         {
-            Assert.AreEqual(String.Empty, Base58.Flickr.Encode(new byte[0]));
+            Assert.That(Base58.Flickr.Encode(new byte[0]), Is.EqualTo(String.Empty));
         }
 
         [Test]
         public void Decode_EmptyString_ReturnsEmptyBuffer()
         {
             var result = Base58.Flickr.Decode(String.Empty);
-            Assert.AreEqual(0, result.Length);
+            Assert.That(result.Length, Is.EqualTo(0));
         }
 
         [Test]
@@ -88,7 +88,7 @@ namespace SimpleBaseTest.Base58Test
             var buffer = Base58.Flickr.Decode(input);
             string result = BitConverter.ToString(buffer.ToArray()).Replace("-", "",
                 StringComparison.Ordinal);
-            Assert.AreEqual(expectedOutput, result);
+            Assert.That(result, Is.EqualTo(expectedOutput));
         }
     }
 }

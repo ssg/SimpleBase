@@ -42,7 +42,7 @@ namespace SimpleBaseTest.Base58Test
         [Test]
         public void Encode_NullBuffer_ReturnsEmptyString()
         {
-            Assert.AreEqual(String.Empty, Base58.Bitcoin.Encode(null));
+            Assert.That(Base58.Bitcoin.Encode(null), Is.EqualTo(String.Empty));
         }
 
         [Test]
@@ -51,7 +51,7 @@ namespace SimpleBaseTest.Base58Test
         {
             var buffer = Base16.UpperCase.Decode(input);
             string result = Base58.Bitcoin.Encode(buffer);
-            Assert.AreEqual(expectedOutput, result);
+            Assert.That(result, Is.EqualTo(expectedOutput));
         }
 
         [Test]
@@ -60,29 +60,29 @@ namespace SimpleBaseTest.Base58Test
         {
             var inputBuffer = Base16.UpperCase.Decode(input);
             var outputBuffer = new char[Base58.Bitcoin.GetSafeCharCountForEncoding(inputBuffer)];
-            Assert.IsTrue(Base58.Bitcoin.TryEncode(inputBuffer, outputBuffer, out int numWritten));
-            Assert.AreEqual(expectedOutput, outputBuffer[..numWritten]);
+            Assert.That(Base58.Bitcoin.TryEncode(inputBuffer, outputBuffer, out int numWritten), Is.True);
+            Assert.That(outputBuffer[..numWritten], Is.EqualTo(expectedOutput));
         }
 
         [Test]
         public void Encode_EmptyBuffer_ReturnsEmptyString()
         {
-            Assert.AreEqual(String.Empty, Base58.Bitcoin.Encode(new byte[0]));
+            Assert.That(Base58.Bitcoin.Encode(new byte[0]), Is.EqualTo(String.Empty));
         }
 
         [Test]
         public void Decode_EmptyString_ReturnsEmptyBuffer()
         {
             var result = Base58.Bitcoin.Decode(String.Empty);
-            Assert.AreEqual(0, result.Length);
+            Assert.That(result.Length, Is.EqualTo(0));
         }
 
         [Test]
         public void TryDecode_EmptyString_ReturnsEmptyBuffer()
         {
             var result = Base58.Bitcoin.TryDecode(String.Empty, new byte[1], out int numBytesWritten);
-            Assert.IsTrue(result);
-            Assert.AreEqual(0, numBytesWritten);
+            Assert.That(result, Is.True);
+            Assert.That(numBytesWritten, Is.EqualTo(0));
         }
 
         [Test]
@@ -104,7 +104,7 @@ namespace SimpleBaseTest.Base58Test
             var buffer = Base58.Bitcoin.Decode(input);
             string result = BitConverter.ToString(buffer.ToArray()).Replace("-", "",
                 StringComparison.Ordinal);
-            Assert.AreEqual(expectedOutput, result);
+            Assert.That(result, Is.EqualTo(expectedOutput));
         }
 
         [Test]
@@ -113,10 +113,10 @@ namespace SimpleBaseTest.Base58Test
         {
             var output = new byte[Base58.Bitcoin.GetSafeByteCountForDecoding(input)];
             var success = Base58.Bitcoin.TryDecode(input, output, out int numBytesWritten);
-            Assert.IsTrue(success);
+            Assert.That(success, Is.True);
             string result = BitConverter.ToString(output[..numBytesWritten]).Replace("-", "",
                 StringComparison.Ordinal);
-            Assert.AreEqual(expectedOutput, result);
+            Assert.That(result, Is.EqualTo(expectedOutput));
         }
     }
 }

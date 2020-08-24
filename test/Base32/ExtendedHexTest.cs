@@ -44,7 +44,7 @@ namespace SimpleBaseTest.Base32Test
             using var inputStream = new MemoryStream(bytes);
             using var writer = new StringWriter();
             Base32.ExtendedHex.Encode(inputStream, writer, padding: true);
-            Assert.AreEqual(expectedOutput, writer.ToString());
+            Assert.That(writer.ToString(), Is.EqualTo(expectedOutput));
         }
 
         [Test]
@@ -57,7 +57,7 @@ namespace SimpleBaseTest.Base32Test
             {
                 Base32.ExtendedHex.Decode(inputStream, outputStream);
                 string result = Encoding.ASCII.GetString(outputStream.ToArray());
-                Assert.AreEqual(expectedOutput, result);
+                Assert.That(result, Is.EqualTo(expectedOutput));
             }
 
             // lower case
@@ -66,7 +66,7 @@ namespace SimpleBaseTest.Base32Test
             {
                 Base32.ExtendedHex.Decode(inputStream, outputStream);
                 string result = Encoding.ASCII.GetString(outputStream.ToArray());
-                Assert.AreEqual(expectedOutput, result);
+                Assert.That(result, Is.EqualTo(expectedOutput));
             }
         }
 
@@ -76,7 +76,7 @@ namespace SimpleBaseTest.Base32Test
         {
             byte[] bytes = Encoding.ASCII.GetBytes(input);
             string result = Base32.ExtendedHex.Encode(bytes, padding: true);
-            Assert.AreEqual(expectedOutput, result);
+            Assert.That(result, Is.EqualTo(expectedOutput));
         }
 
         [Test]
@@ -85,16 +85,16 @@ namespace SimpleBaseTest.Base32Test
         {
             var bytes = Base32.ExtendedHex.Decode(input);
             string result = Encoding.ASCII.GetString(bytes.ToArray());
-            Assert.AreEqual(expectedOutput, result);
+            Assert.That(result, Is.EqualTo(expectedOutput));
             bytes = Base32.ExtendedHex.Decode(input.ToLowerInvariant());
             result = Encoding.ASCII.GetString(bytes.ToArray());
-            Assert.AreEqual(expectedOutput, result);
+            Assert.That(result, Is.EqualTo(expectedOutput));
         }
 
         [Test]
         public void Encode_NullBytes_ReturnsEmptyString()
         {
-            Assert.AreEqual(String.Empty, Base32.ExtendedHex.Encode(null, false));
+            Assert.That(Base32.ExtendedHex.Encode(null, false), Is.EqualTo(String.Empty));
         }
 
         [Test]

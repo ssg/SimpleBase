@@ -20,14 +20,14 @@ namespace SimpleBaseTest.Base32Test
         {
             // alphabet characters are unimportant here
             var alpha = new Base32Alphabet("0123456789abcdef0123456789abcdef", '!');
-            Assert.AreEqual('!', alpha.PaddingChar);
+            Assert.That(alpha.PaddingChar, Is.EqualTo('!'));
         }
 
         [Test]
         public void GetSafeByteCountForDecoding_Works()
         {
-            Assert.AreEqual(3, Base32.Crockford.GetSafeByteCountForDecoding("12345"));
-            Assert.AreEqual(0, Base32.Crockford.GetSafeByteCountForDecoding(""));
+            Assert.That(Base32.Crockford.GetSafeByteCountForDecoding("12345"), Is.EqualTo(3));
+            Assert.That(Base32.Crockford.GetSafeByteCountForDecoding(""), Is.EqualTo(0));
         }
     }
 }

@@ -19,7 +19,7 @@ namespace SimpleBaseTest
         public void ToString_ReturnsValue()
         {
             var alpha = new Base16Alphabet("0123456789abcdef");
-            Assert.AreEqual("0123456789abcdef", alpha.ToString());
+            Assert.That(alpha.ToString(), Is.EqualTo("0123456789abcdef"));
         }
     }
 }

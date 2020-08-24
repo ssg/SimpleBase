@@ -37,7 +37,7 @@ namespace SimpleBaseTest.Base32Test
         {
             byte[] bytes = Encoding.ASCII.GetBytes(input);
             string result = Base32.ZBase32.Encode(bytes, padding: false);
-            Assert.AreEqual(expectedOutput, result);
+            Assert.That(result, Is.EqualTo(expectedOutput));
         }
 
         [Test]
@@ -46,16 +46,16 @@ namespace SimpleBaseTest.Base32Test
         {
             var bytes = Base32.ZBase32.Decode(input);
             string result = Encoding.ASCII.GetString(bytes.ToArray());
-            Assert.AreEqual(expectedOutput, result);
+            Assert.That(result, Is.EqualTo(expectedOutput));
             bytes = Base32.ZBase32.Decode(input.ToLowerInvariant());
             result = Encoding.ASCII.GetString(bytes.ToArray());
-            Assert.AreEqual(expectedOutput, result);
+            Assert.That(result, Is.EqualTo(expectedOutput));
         }
 
         [Test]
         public void Encode_NullBytes_ReturnsEmptyString()
         {
-            Assert.AreEqual(String.Empty, Base32.ZBase32.Encode(null, padding: false));
+            Assert.That(Base32.ZBase32.Encode(null, padding: false), Is.EqualTo(String.Empty));
         }
 
         [Test]
