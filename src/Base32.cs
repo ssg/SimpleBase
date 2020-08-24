@@ -381,7 +381,6 @@ namespace SimpleBase
             int bitsLeft = bitsPerByte;
 
             byte* pOutput = outputPtr;
-            byte* pOutputEnd = outputPtr + outputLen;
             char* pInput = inputPtr;
             char* pEnd = inputPtr + textLen;
             while (pInput != pEnd)
