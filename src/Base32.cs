@@ -4,6 +4,7 @@
 // </copyright>
 
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 
@@ -381,8 +382,10 @@ namespace SimpleBase
             int bitsLeft = bitsPerByte;
 
             byte* pOutput = outputPtr;
+            byte* pOutputEnd = pOutput + outputLen;
             char* pInput = inputPtr;
             char* pEnd = inputPtr + textLen;
+            numBytesWritten = 0;
             while (pInput != pEnd)
             {
                 char c = *pInput++;
@@ -402,13 +405,19 @@ namespace SimpleBase
 
                 int shiftBits = bitsPerChar - bitsLeft;
                 outputPad |= b >> shiftBits;
+                if (pOutput >= pOutputEnd)
+                {
+                    Debug.WriteLine("Base32.internalDecode: output overflow");
+                    return false;
+                }
+
                 *pOutput++ = (byte)outputPad;
+                numBytesWritten++;
                 b &= (1 << shiftBits) - 1;
                 bitsLeft = bitsPerByte - shiftBits;
                 outputPad = b << bitsLeft;
             }
 
-            numBytesWritten = (int)(pOutput - outputPtr);
             return true;
         }
     }
