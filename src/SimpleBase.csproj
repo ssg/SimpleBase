@@ -12,7 +12,7 @@
     <AssemblyOriginatorKeyFile>..\SimpleBase.snk</AssemblyOriginatorKeyFile>
     <DelaySign>false</DelaySign>
 
-    <PackageVersion>3.0.1</PackageVersion>
+    <PackageVersion>3.1.0</PackageVersion>
     <CodeAnalysisRuleSet>../SSG.ruleset</CodeAnalysisRuleSet>
     <DocumentationFile>SimpleBase.xml</DocumentationFile>
     <PackageProjectUrl>https://github.com/ssg/SimpleBase</PackageProjectUrl>
@@ -21,8 +21,11 @@
     <PackageTags>base16 base32 base58 base85 ascii85 z85 hexadecimal bitcoin ripple flickr crockford extended hex rfc4648 z-base-32 geohash</PackageTags>
     <PackageReleaseNotes>
 <![CDATA[
-# Fixes 
-- Fixed padding being ignored by Base32, thanks to @skwasjer! 
+# New features
+- Added Base32H flavor https://base32h.github.io
+
+# Improvements
+- Added more buffer overflow detection to Base32.
 ]]></PackageReleaseNotes>
     <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>

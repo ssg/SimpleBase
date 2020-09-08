@@ -13,7 +13,8 @@ namespace SimpleBase
     /// <summary>
     /// Base32 encoding/decoding functions.
     /// </summary>
-    public sealed class Base32 : IBaseEncoder, IBaseStreamEncoder, INonAllocatingBaseEncoder
+    public sealed class Base32 : IBaseEncoder, IBaseStreamEncoder, INonAllocatingBaseEncoder,
+        INumericBaseEncoder
     {
         private const int bitsPerByte = 8;
         private const int bitsPerChar = 5;
@@ -23,6 +24,7 @@ namespace SimpleBase
         private static Lazy<Base32> extendedHex = new Lazy<Base32>(() => new Base32(Base32Alphabet.ExtendedHex));
         private static Lazy<Base32> zBase32 = new Lazy<Base32>(() => new Base32(Base32Alphabet.ZBase32));
         private static Lazy<Base32> geohash = new Lazy<Base32>(() => new Base32(Base32Alphabet.Geohash));
+        private static Lazy<Base32> base32H = new Lazy<Base32>(() => new Base32(Base32Alphabet.Base32H));
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Base32"/> class with a
@@ -62,6 +64,11 @@ namespace SimpleBase
         public static Base32 Geohash => geohash.Value;
 
         /// <summary>
+        /// Gets Base32H variant of Base32 coder.
+        /// </summary>
+        public static Base32 Base32H => base32H.Value;
+
+        /// <summary>
         /// Gets the encoding alphabet.
         /// </summary>
         public Base32Alphabet Alphabet { get; }
@@ -76,6 +83,56 @@ namespace SimpleBase
         public int GetSafeCharCountForEncoding(ReadOnlySpan<byte> buffer)
         {
             return (((buffer.Length - 1) / bitsPerChar) + 1) * bitsPerByte;
+        }
+
+        /// <inheritdoc/>
+        public string Encode(long number)
+        {
+            if (number < 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(number), "Number is negative");
+            }
+
+            return Encode((ulong)number);
+        }
+
+        /// <inheritdoc/>
+#pragma warning disable CS3001 // Argument type is not CLS-compliant
+        public string Encode(ulong number)
+#pragma warning restore CS3001 // We provide a CLS-compliant alternative
+        {
+            var buffer = BitConverter.GetBytes(number);
+            bool little = BitConverter.IsLittleEndian;
+            int numBytes = sizeof(ulong);
+            int index = little ? 0 : (numBytes - 1);
+            int increment = little ? -1 : 1;
+            while (buffer[index] == 0)
+            {
+                index += increment;
+            }
+
+            var span = buffer.AsSpan();
+            return Encode(little ? span[..index] : span[index..]);
+        }
+
+        /// <inheritdoc/>
+#pragma warning disable CS3002 // Return type is not CLS-compliant
+        public ulong DecodeUInt64(string text)
+#pragma warning restore CS3002 // We provide a CLS-compliant alternative
+        {
+            var buffer = Decode(text);
+            if (buffer.Length > sizeof(ulong))
+            {
+                throw new InvalidOperationException("Decoded text is too long to fit in a buffer");
+            }
+
+            return BitConverter.ToUInt64(buffer);
+        }
+
+        /// <inheritdoc/>
+        public long DecodeInt64(string text)
+        {
+            return (long)DecodeUInt64(text);
         }
 
         /// <summary>

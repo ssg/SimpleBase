@@ -1,20 +1,21 @@
-﻿// <copyright file="CrockfordBase32Alphabet.cs" company="Sedat Kapanoglu">
+﻿// <copyright file="AliasedBase32Alphabet.cs" company="Sedat Kapanoglu">
 // Copyright (c) 2014-2019 Sedat Kapanoglu
 // Licensed under Apache-2.0 License (see LICENSE.txt file for details)
 // </copyright>
 
-using System;
+using System.Collections.Generic;
 
 namespace SimpleBase
 {
-    internal sealed class CrockfordBase32Alphabet : Base32Alphabet
+    internal sealed class AliasedBase32Alphabet : Base32Alphabet
     {
-        public CrockfordBase32Alphabet()
-            : base("0123456789ABCDEFGHJKMNPQRSTVWXYZ")
+        public AliasedBase32Alphabet(string alphabet, IEnumerable<(char from, char to)> map)
+            : base(alphabet)
         {
-            this.mapAlternate('O', '0');
-            this.mapAlternate('I', '1');
-            this.mapAlternate('L', '1');
+            foreach (var (from, to) in map)
+            {
+                mapAlternate(from, to);
+            }
         }
 
         private void mapAlternate(char source, char destination)

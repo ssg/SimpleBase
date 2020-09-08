@@ -12,9 +12,6 @@ namespace SimpleBase
     /// </summary>
     public class Base32Alphabet : EncodingAlphabet
     {
-        private static Lazy<CrockfordBase32Alphabet> crockfordAlphabet = new Lazy<CrockfordBase32Alphabet>(
-            () => new CrockfordBase32Alphabet());
-
         private static Lazy<Base32Alphabet> rfc4648Alphabet = new Lazy<Base32Alphabet>(
             () => new Base32Alphabet("ABCDEFGHIJKLMNOPQRSTUVWXYZ234567"));
 
@@ -26,6 +23,27 @@ namespace SimpleBase
 
         private static Lazy<Base32Alphabet> geohashAlphabet = new Lazy<Base32Alphabet>(
             () => new Base32Alphabet("0123456789bcdefghjkmnpqrstuvwxyz"));
+
+        private static Lazy<AliasedBase32Alphabet> crockfordAlphabet = new Lazy<AliasedBase32Alphabet>(
+            () => new AliasedBase32Alphabet(
+                "0123456789ABCDEFGHJKMNPQRSTVWXYZ",
+                new[]
+                {
+                    ('O', '0'),
+                    ('I', '1'),
+                    ('L', '1'),
+                }));
+
+        private static Lazy<AliasedBase32Alphabet> base32HAlphabet = new Lazy<AliasedBase32Alphabet>(
+            () => new AliasedBase32Alphabet(
+                "0123456789ABCDEFGHJKLMNPQRTVWXYZ",
+                new[]
+                {
+                    ('O', '0'),
+                    ('I', '1'),
+                    ('S', '5'),
+                    ('U', 'V'),
+                }));
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Base32Alphabet"/> class.
@@ -74,6 +92,11 @@ namespace SimpleBase
         /// Gets Geohash alphabet.
         /// </summary>
         public static Base32Alphabet Geohash => geohashAlphabet.Value;
+
+        /// <summary>
+        /// Gets Base32H alphabet.
+        /// </summary>
+        public static Base32Alphabet Base32H => base32HAlphabet.Value;
 
         /// <summary>
         /// Gets the padding character used in encoding.
