@@ -16,9 +16,9 @@ namespace SimpleBase
     /// </remarks>
     public sealed class Base58 : IBaseEncoder, INonAllocatingBaseEncoder
     {
-        private static Lazy<Base58> bitcoin = new Lazy<Base58>(() => new Base58(Base58Alphabet.Bitcoin));
-        private static Lazy<Base58> ripple = new Lazy<Base58>(() => new Base58(Base58Alphabet.Ripple));
-        private static Lazy<Base58> flickr = new Lazy<Base58>(() => new Base58(Base58Alphabet.Flickr));
+        private static readonly Lazy<Base58> bitcoin = new Lazy<Base58>(() => new Base58(Base58Alphabet.Bitcoin));
+        private static readonly Lazy<Base58> ripple = new Lazy<Base58>(() => new Base58(Base58Alphabet.Ripple));
+        private static readonly Lazy<Base58> flickr = new Lazy<Base58>(() => new Base58(Base58Alphabet.Flickr));
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Base58"/> class

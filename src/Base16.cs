@@ -15,9 +15,9 @@ namespace SimpleBase
     /// </summary>
     public sealed class Base16 : IBaseEncoder, IBaseStreamEncoder, INonAllocatingBaseEncoder
     {
-        private static Lazy<Base16> upperCase = new Lazy<Base16>(() => new Base16(Base16Alphabet.UpperCase));
-        private static Lazy<Base16> lowerCase = new Lazy<Base16>(() => new Base16(Base16Alphabet.LowerCase));
-        private static Lazy<Base16> modHex = new Lazy<Base16>(() => new Base16(Base16Alphabet.ModHex));
+        private static readonly Lazy<Base16> upperCase = new Lazy<Base16>(() => new Base16(Base16Alphabet.UpperCase));
+        private static readonly Lazy<Base16> lowerCase = new Lazy<Base16>(() => new Base16(Base16Alphabet.LowerCase));
+        private static readonly Lazy<Base16> modHex = new Lazy<Base16>(() => new Base16(Base16Alphabet.ModHex));
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Base16"/> class.

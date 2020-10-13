@@ -34,7 +34,7 @@ namespace SimpleBase
                     ('L', '1'),
                 }));
 
-        private static Lazy<AliasedBase32Alphabet> base32HAlphabet = new Lazy<AliasedBase32Alphabet>(
+        private static readonly Lazy<AliasedBase32Alphabet> base32HAlphabet = new Lazy<AliasedBase32Alphabet>(
             () => new AliasedBase32Alphabet(
                 "0123456789ABCDEFGHJKLMNPQRTVWXYZ",
                 new[]
