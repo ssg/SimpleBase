@@ -19,12 +19,13 @@ namespace SimpleBase
         private const int bitsPerByte = 8;
         private const int bitsPerChar = 5;
 
-        private static Lazy<Base32> crockford = new Lazy<Base32>(() => new Base32(Base32Alphabet.Crockford));
-        private static Lazy<Base32> rfc4648 = new Lazy<Base32>(() => new Base32(Base32Alphabet.Rfc4648));
-        private static Lazy<Base32> extendedHex = new Lazy<Base32>(() => new Base32(Base32Alphabet.ExtendedHex));
-        private static Lazy<Base32> zBase32 = new Lazy<Base32>(() => new Base32(Base32Alphabet.ZBase32));
-        private static Lazy<Base32> geohash = new Lazy<Base32>(() => new Base32(Base32Alphabet.Geohash));
-        private static Lazy<Base32> base32H = new Lazy<Base32>(() => new Base32(Base32Alphabet.Base32H));
+        private static readonly Lazy<Base32> crockford = new Lazy<Base32>(() => new Base32(Base32Alphabet.Crockford));
+        private static readonly Lazy<Base32> rfc4648 = new Lazy<Base32>(() => new Base32(Base32Alphabet.Rfc4648));
+        private static readonly Lazy<Base32> extendedHex = new Lazy<Base32>(() => new Base32(Base32Alphabet.ExtendedHex));
+        private static readonly Lazy<Base32> zBase32 = new Lazy<Base32>(() => new Base32(Base32Alphabet.ZBase32));
+        private static readonly Lazy<Base32> geohash = new Lazy<Base32>(() => new Base32(Base32Alphabet.Geohash));
+        private static readonly Lazy<Base32> base32H = new Lazy<Base32>(() => new Base32(Base32Alphabet.Base32H));
+        private static readonly Lazy<Base32> bech32 = new Lazy<Base32>(() => new Base32(Base32Alphabet.Bech32));
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Base32"/> class with a
@@ -67,6 +68,11 @@ namespace SimpleBase
         /// Gets Base32H variant of Base32 coder.
         /// </summary>
         public static Base32 Base32H => base32H.Value;
+
+        /// <summary>
+        /// Gets Bech32 variant of Base32 coder.
+        /// </summary>
+        public static Base32 Bech32 => bech32.Value;
 
         /// <summary>
         /// Gets the encoding alphabet.

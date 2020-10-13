@@ -12,19 +12,22 @@ namespace SimpleBase
     /// </summary>
     public class Base32Alphabet : EncodingAlphabet
     {
-        private static Lazy<Base32Alphabet> rfc4648Alphabet = new Lazy<Base32Alphabet>(
+        private static readonly Lazy<Base32Alphabet> rfc4648Alphabet = new Lazy<Base32Alphabet>(
             () => new Base32Alphabet("ABCDEFGHIJKLMNOPQRSTUVWXYZ234567"));
 
-        private static Lazy<Base32Alphabet> extendedHexAlphabet = new Lazy<Base32Alphabet>(
+        private static readonly Lazy<Base32Alphabet> extendedHexAlphabet = new Lazy<Base32Alphabet>(
             () => new Base32Alphabet("0123456789ABCDEFGHIJKLMNOPQRSTUV"));
 
-        private static Lazy<Base32Alphabet> zBase32Alphabet = new Lazy<Base32Alphabet>(
+        private static readonly Lazy<Base32Alphabet> zBase32Alphabet = new Lazy<Base32Alphabet>(
             () => new Base32Alphabet("ybndrfg8ejkmcpqxot1uwisza345h769"));
 
-        private static Lazy<Base32Alphabet> geohashAlphabet = new Lazy<Base32Alphabet>(
+        private static readonly Lazy<Base32Alphabet> geohashAlphabet = new Lazy<Base32Alphabet>(
             () => new Base32Alphabet("0123456789bcdefghjkmnpqrstuvwxyz"));
 
-        private static Lazy<AliasedBase32Alphabet> crockfordAlphabet = new Lazy<AliasedBase32Alphabet>(
+        private static readonly Lazy<Base32Alphabet> bech32Alphabet= new Lazy<Base32Alphabet>(
+            () => new Base32Alphabet("qpzry9x8gf2tvdw0s3jn54khce6mua7l"));
+
+        private static readonly Lazy<AliasedBase32Alphabet> crockfordAlphabet = new Lazy<AliasedBase32Alphabet>(
             () => new AliasedBase32Alphabet(
                 "0123456789ABCDEFGHJKMNPQRSTVWXYZ",
                 new[]
@@ -97,6 +100,11 @@ namespace SimpleBase
         /// Gets Base32H alphabet.
         /// </summary>
         public static Base32Alphabet Base32H => base32HAlphabet.Value;
+
+        /// <summary>
+        /// Gets Bech32 alphabet.
+        /// </summary>
+        public static Base32Alphabet Bech32 => bech32Alphabet.Value;
 
         /// <summary>
         /// Gets the padding character used in encoding.
