@@ -1,4 +1,4 @@
-﻿// <copyright file="IBaseStreamEncoder.cs" company="Sedat Kapanoglu">
+﻿// <copyright file="IBaseStreamCoder.cs" company="Sedat Kapanoglu">
 // Copyright (c) 2014-2019 Sedat Kapanoglu
 // Licensed under Apache-2.0 License (see LICENSE.txt file for details)
 // </copyright>
@@ -11,7 +11,7 @@ namespace SimpleBase
     /// <summary>
     /// Stream-based encoding functionality.
     /// </summary>
-    public interface IBaseStreamEncoder
+    public interface IBaseStreamCoder
     {
         /// <summary>
         /// Encodes stream of bytes into base-encoded text.

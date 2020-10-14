@@ -14,7 +14,7 @@ namespace SimpleBase
     /// Base58 doesn't implement a Stream-based interface because it's not feasible to use
     /// on large buffers.
     /// </remarks>
-    public sealed class Base58 : IBaseEncoder, INonAllocatingBaseEncoder
+    public sealed class Base58 : IBaseCoder, INonAllocatingBaseCoder
     {
         private static readonly Lazy<Base58> bitcoin = new Lazy<Base58>(() => new Base58(Base58Alphabet.Bitcoin));
         private static readonly Lazy<Base58> ripple = new Lazy<Base58>(() => new Base58(Base58Alphabet.Ripple));
@@ -208,7 +208,7 @@ namespace SimpleBase
                 int carry = table[c] - 1;
                 if (carry < 0)
                 {
-                    throw EncodingAlphabet.InvalidCharacter(c);
+                    throw CodingAlphabet.InvalidCharacter(c);
                 }
 
                 for (byte* pOutput = pOutputEnd; pOutput >= outputPtr; pOutput--)

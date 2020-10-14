@@ -14,7 +14,7 @@ namespace SimpleBase
     /// <summary>
     /// Base58 encoding/decoding class.
     /// </summary>
-    public sealed class Base85 : IBaseEncoder, IBaseStreamEncoder, INonAllocatingBaseEncoder
+    public sealed class Base85 : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCoder
     {
         private const int baseLength = 85;
         private const int byteBlockSize = 4;
@@ -359,7 +359,7 @@ namespace SimpleBase
                 int x = table[c] - 1; // map character to byte value
                 if (x < 0)
                 {
-                    throw EncodingAlphabet.InvalidCharacter(c);
+                    throw CodingAlphabet.InvalidCharacter(c);
                 }
 
                 value = (value * baseLength) + x;

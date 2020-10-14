@@ -1,61 +1,70 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
-  <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
-    <RootNamespace>SimpleBase</RootNamespace>
-    <AssemblyName>SimpleBase</AssemblyName>
-    <Copyright>Copyright 2014-2019 Sedat Kapanoglu</Copyright>
-    <Authors>Sedat Kapanoglu</Authors>
-    <Description>Base16, Base32, Base58, Base85 encoding/decoding library</Description>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
-    <SignAssembly>true</SignAssembly>
-    <AssemblyOriginatorKeyFile>..\SimpleBase.snk</AssemblyOriginatorKeyFile>
-    <DelaySign>false</DelaySign>
+    <PropertyGroup>
+        <TargetFramework>net5.0</TargetFramework>
+        <RootNamespace>SimpleBase</RootNamespace>
+        <AssemblyName>SimpleBase</AssemblyName>
+        <Copyright>Copyright 2014-2019 Sedat Kapanoglu</Copyright>
+        <Authors>Sedat Kapanoglu</Authors>
+        <Description>Base16, Base32, Base58, Base85 encoding/decoding library</Description>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+        <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
+        <SignAssembly>true</SignAssembly>
+        <AssemblyOriginatorKeyFile>..\SimpleBase.snk</AssemblyOriginatorKeyFile>
+        <DelaySign>false</DelaySign>
 
-    <PackageVersion>4.0.0</PackageVersion>
-    <CodeAnalysisRuleSet>../SSG.ruleset</CodeAnalysisRuleSet>
-    <DocumentationFile>SimpleBase.xml</DocumentationFile>
-    <PackageProjectUrl>https://github.com/ssg/SimpleBase</PackageProjectUrl>
-    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
-    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <PackageTags>base16 base32 base58 base85 ascii85 z85 hexadecimal bitcoin ripple flickr crockford extended hex rfc4648 z-base-32 geohash</PackageTags>
-    <PackageReleaseNotes>
-<![CDATA[
+        <PackageVersion>4.0.0</PackageVersion>
+        <CodeAnalysisRuleSet>../SSG.ruleset</CodeAnalysisRuleSet>
+        <DocumentationFile>SimpleBase.xml</DocumentationFile>
+        <PackageProjectUrl>https://github.com/ssg/SimpleBase</PackageProjectUrl>
+        <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+        <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+        <PackageTags>base16 base32 base58 base85 ascii85 z85 hexadecimal bitcoin ripple flickr crockford extended hex rfc4648 z-base-32 geohash</PackageTags>
+        <LangVersion>latest</LangVersion>
+        <Nullable>enable</Nullable>
+        <PlatformTarget>AnyCPU</PlatformTarget>
+        <PackageReleaseNotes>
+            <![CDATA[
 # New features
 - Added Base32H flavor https://base32h.github.io
+- Added Bech32 flavor https://en.bitcoin.it/wiki/Bech32
+
+# Breaking changes
+- Targets .NET 5
+- Changed interface names from Encoder to Coder to signify encoding and
+  decoding functionality better.
 
 # Improvements
 - Added more buffer overflow detection to Base32.
-]]></PackageReleaseNotes>
-    <LangVersion>latest</LangVersion>
-    <Nullable>enable</Nullable>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-  </PropertyGroup>
+]]>
+        </PackageReleaseNotes>
+        <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+        <EnableNETAnalyzers>true</EnableNETAnalyzers>
+    </PropertyGroup>
 
-  <ItemGroup>
-    <None Remove="SimpleBase.net45.v3.ncrunchproject" />
-    <None Remove="SimpleBase.netstandard1.3.v3.ncrunchproject" />
-    <None Remove="SimpleBase.xml" />
-    <None Remove="stylecop.json" />
-  </ItemGroup>
+    <ItemGroup>
+        <None Remove="SimpleBase.net45.v3.ncrunchproject" />
+        <None Remove="SimpleBase.netstandard1.3.v3.ncrunchproject" />
+        <None Remove="SimpleBase.xml" />
+        <None Remove="stylecop.json" />
+    </ItemGroup>
 
-  <ItemGroup>
-    <AdditionalFiles Include="stylecop.json" />
-  </ItemGroup>
+    <ItemGroup>
+        <AdditionalFiles Include="stylecop.json" />
+    </ItemGroup>
 
-  <ItemGroup>
-    <None Include="..\SimpleBase.snk" Link="SimpleBase.snk" />
-  </ItemGroup>
+    <ItemGroup>
+        <None Include="..\SimpleBase.snk" Link="SimpleBase.snk" />
+    </ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="3.3.0">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="StyleCop.Analyzers" Version="1.1.118">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="System.Memory" Version="4.5.4" />
-  </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="3.3.0">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="StyleCop.Analyzers" Version="1.1.118">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="System.Memory" Version="4.5.4" />
+    </ItemGroup>
 </Project>

@@ -13,7 +13,7 @@ namespace SimpleBase
     /// <summary>
     /// Base16 encoding/decoding.
     /// </summary>
-    public sealed class Base16 : IBaseEncoder, IBaseStreamEncoder, INonAllocatingBaseEncoder
+    public sealed class Base16 : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCoder
     {
         private static readonly Lazy<Base16> upperCase = new Lazy<Base16>(() => new Base16(Base16Alphabet.UpperCase));
         private static readonly Lazy<Base16> lowerCase = new Lazy<Base16>(() => new Base16(Base16Alphabet.LowerCase));

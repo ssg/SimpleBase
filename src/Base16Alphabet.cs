@@ -10,7 +10,7 @@ namespace SimpleBase
     /// <summary>
     /// Alphabet representation for Base16 encodings.
     /// </summary>
-    public class Base16Alphabet : EncodingAlphabet
+    public class Base16Alphabet : CodingAlphabet
     {
         private static readonly Lazy<Base16Alphabet> upperCaseAlphabet = new Lazy<Base16Alphabet>(
             () => new Base16Alphabet("0123456789ABCDEF"));

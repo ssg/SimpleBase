@@ -13,8 +13,8 @@ namespace SimpleBase
     /// <summary>
     /// Base32 encoding/decoding functions.
     /// </summary>
-    public sealed class Base32 : IBaseEncoder, IBaseStreamEncoder, INonAllocatingBaseEncoder,
-        INumericBaseEncoder
+    public sealed class Base32 : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCoder,
+        INumericBaseCoder
     {
         private const int bitsPerByte = 8;
         private const int bitsPerChar = 5;

@@ -10,7 +10,7 @@ namespace SimpleBase
     /// <summary>
     /// Base58 alphabet.
     /// </summary>
-    public sealed class Base58Alphabet : EncodingAlphabet
+    public sealed class Base58Alphabet : CodingAlphabet
     {
         private static readonly Lazy<Base58Alphabet> bitcoinAlphabet = new Lazy<Base58Alphabet>(()
             => new Base58Alphabet("123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz"));

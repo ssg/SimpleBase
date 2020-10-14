@@ -1,4 +1,4 @@
-﻿// <copyright file="INumericBaseEncoder.cs" company="Sedat Kapanoglu">
+﻿// <copyright file="INumericBaseCoder.cs" company="Sedat Kapanoglu">
 // Copyright (c) 2014-2019 Sedat Kapanoglu
 // Licensed under Apache-2.0 License (see LICENSE.txt file for details)
 // </copyright>
@@ -10,7 +10,7 @@ namespace SimpleBase
     /// <summary>
     /// Number-based coding functions.
     /// </summary>
-    public interface INumericBaseEncoder
+    public interface INumericBaseCoder
     {
         /// <summary>
         /// Encode the given number to Base32.

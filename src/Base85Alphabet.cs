@@ -11,7 +11,7 @@ namespace SimpleBase
     /// <summary>
     /// Base85 Alphabet.
     /// </summary>
-    public sealed class Base85Alphabet : EncodingAlphabet
+    public sealed class Base85Alphabet : CodingAlphabet
     {
         private static readonly Lazy<Base85Alphabet> z85 = new Lazy<Base85Alphabet>(() => new Base85Alphabet(
                 "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ.-:+=^!/*?&<>()[]{}@%$#"));

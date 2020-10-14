@@ -1,4 +1,4 @@
-﻿// <copyright file="INonAllocatingBaseEncoder.cs" company="Sedat Kapanoglu">
+﻿// <copyright file="INonAllocatingBaseCoder.cs" company="Sedat Kapanoglu">
 // Copyright (c) 2014-2019 Sedat Kapanoglu
 // Licensed under Apache-2.0 License (see LICENSE.txt file for details)
 // </copyright>
@@ -10,7 +10,7 @@ namespace SimpleBase
     /// <summary>
     /// Efficient encoding functionality using pre-allocated memory buffers by the callers.
     /// </summary>
-    public interface INonAllocatingBaseEncoder
+    public interface INonAllocatingBaseCoder
     {
         /// <summary>
         /// Encode a buffer into a base-encoded representation using pre-allocated buffers.

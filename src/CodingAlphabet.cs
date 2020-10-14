@@ -1,4 +1,4 @@
-﻿// <copyright file="EncodingAlphabet.cs" company="Sedat Kapanoglu">
+﻿// <copyright file="CodingAlphabet.cs" company="Sedat Kapanoglu">
 // Copyright (c) 2014-2019 Sedat Kapanoglu
 // Licensed under Apache-2.0 License (see LICENSE.txt file for details)
 // </copyright>
@@ -14,7 +14,7 @@ namespace SimpleBase
     /// alphabets for different encodings. It's suitable if you want to
     /// implement your own encoding based on the existing base classes.
     /// </summary>
-    public abstract class EncodingAlphabet : IEncodingAlphabet
+    public abstract class CodingAlphabet : ICodingAlphabet
     {
         /// <summary>
         /// Specifies the highest possible char value in an encoding alphabet
@@ -31,11 +31,11 @@ namespace SimpleBase
         private readonly byte[] reverseLookupTable = new byte[maxLength];
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="EncodingAlphabet"/> class.
+        /// Initializes a new instance of the <see cref="CodingAlphabet"/> class.
         /// </summary>
         /// <param name="length">Length of the alphabe.</param>
         /// <param name="alphabet">Alphabet character.</param>
-        public EncodingAlphabet(int length, string alphabet)
+        public CodingAlphabet(int length, string alphabet)
         {
             if (alphabet is null)
             {

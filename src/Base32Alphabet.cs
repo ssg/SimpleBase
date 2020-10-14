@@ -10,7 +10,7 @@ namespace SimpleBase
     /// <summary>
     /// Base32 alphabet flavors.
     /// </summary>
-    public class Base32Alphabet : EncodingAlphabet
+    public class Base32Alphabet : CodingAlphabet
     {
         private static readonly Lazy<Base32Alphabet> rfc4648Alphabet = new Lazy<Base32Alphabet>(
             () => new Base32Alphabet("ABCDEFGHIJKLMNOPQRSTUVWXYZ234567"));
@@ -24,7 +24,7 @@ namespace SimpleBase
         private static readonly Lazy<Base32Alphabet> geohashAlphabet = new Lazy<Base32Alphabet>(
             () => new Base32Alphabet("0123456789bcdefghjkmnpqrstuvwxyz"));
 
-        private static readonly Lazy<Base32Alphabet> bech32Alphabet= new Lazy<Base32Alphabet>(
+        private static readonly Lazy<Base32Alphabet> bech32Alphabet = new Lazy<Base32Alphabet>(
             () => new Base32Alphabet("qpzry9x8gf2tvdw0s3jn54khce6mua7l"));
 
         private static readonly Lazy<AliasedBase32Alphabet> crockfordAlphabet = new Lazy<AliasedBase32Alphabet>(
@@ -55,9 +55,7 @@ namespace SimpleBase
         public Base32Alphabet(string alphabet)
             : base(32, alphabet)
         {
-#pragma warning disable CA1062 // Validate arguments of public methods -- already validated in the base class
             mapLowerCaseCounterparts(alphabet);
-#pragma warning restore CA1062 // Validate arguments of public methods -- already validated in the base class
         }
 
         /// <summary>
