@@ -31,10 +31,11 @@
 # Breaking changes
 - Targets .NET 5
 - Changed interface names from Encoder to Coder to signify encoding and
-  decoding functionality better.
+  decoding functionality better
 
 # Improvements
-- Added more buffer overflow detection to Base32.
+- Added more buffer overflow detection to Base32
+- Upgrade to latest dependencies
 ]]>
         </PackageReleaseNotes>
         <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
@@ -57,9 +58,9 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="3.3.0">
-            <PrivateAssets>all</PrivateAssets>
-            <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+        <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="5.0.1">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
         <PackageReference Include="StyleCop.Analyzers" Version="1.1.118">
             <PrivateAssets>all</PrivateAssets>
