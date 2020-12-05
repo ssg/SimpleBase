@@ -12,7 +12,7 @@ namespace SimpleBaseTest.Base16Test
     {
         private static readonly TestCaseData[] upperCaseTestData = new[]
         {
-            new TestCaseData(new byte[] { }, ""),
+            new TestCaseData(System.Array.Empty<byte>(), ""),
             new TestCaseData(new byte[] { 0xAB }, "AB"),
             new TestCaseData(new byte[] { 0x00, 0x01, 0x02, 0x03 }, "00010203"),
             new TestCaseData(new byte[] { 0x10, 0x11, 0x12, 0x13 }, "10111213"),
@@ -22,7 +22,7 @@ namespace SimpleBaseTest.Base16Test
 
         private static readonly TestCaseData[] testData = new[]
         {
-            new TestCaseData(new byte[] { }, ""),
+            new TestCaseData(System.Array.Empty<byte>(), ""),
             new TestCaseData(new byte[] { 0xAB }, "ab"),
             new TestCaseData(new byte[] { 0x00, 0x01, 0x02, 0x03 }, "00010203"),
             new TestCaseData(new byte[] { 0x10, 0x11, 0x12, 0x13 }, "10111213"),

@@ -12,6 +12,21 @@ namespace SimpleBase
         public AliasedBase32Alphabet(string alphabet, IEnumerable<(char from, char to)> map)
             : base(alphabet)
         {
+            setupMap(map);
+        }
+
+        public AliasedBase32Alphabet(
+            string alphabet,
+            char paddingChar,
+            PaddingPosition paddingPosition,
+            IEnumerable<(char from, char to)> map)
+            : base(alphabet, paddingChar, paddingPosition)
+        {
+            setupMap(map);
+        }
+
+        private void setupMap(IEnumerable<(char from, char to)> map)
+        {
             foreach (var (from, to) in map)
             {
                 mapAlternate(from, to);

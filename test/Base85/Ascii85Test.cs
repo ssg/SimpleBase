@@ -10,7 +10,7 @@ namespace SimpleBaseTest.Base85Test
     {
         private static readonly object[][] testVectors = new object[][]
         {
-            new object[] { new byte[] { }, "" },
+            new object[] { Array.Empty<byte>(), "" },
             new object[] { new byte[] { 0, 0, 0, 0 }, "z" },
             new object[] { new byte[] { 0x20, 0x20, 0x20, 0x20 }, "y" },
             new object[] { new byte[] { 0x41, 0x42, 0x43, 0x44, 0x45 }, "5sdq,70" },
@@ -23,14 +23,14 @@ namespace SimpleBaseTest.Base85Test
         public void Decode_InvalidShortcut_ThrowsArgumentException()
         {
             const string input = "9zjqo";
-            Assert.Throws<ArgumentException>(() => Base85.Ascii85.Decode(input));
+            _ = Assert.Throws<ArgumentException>(() => Base85.Ascii85.Decode(input));
         }
 
         [Test]
         public void Decode_InvalidCharacter_ThrowsArgumentException()
         {
             const string input = "~!@#()(";
-            Assert.Throws<ArgumentException>(() => Base85.Ascii85.Decode(input));
+            _ = Assert.Throws<ArgumentException>(() => Base85.Ascii85.Decode(input));
         }
 
         [Test]

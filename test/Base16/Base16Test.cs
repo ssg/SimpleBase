@@ -21,7 +21,7 @@ namespace SimpleBaseTest.Base16Test
 
         private static readonly object[][] testCases = new[]
         {                                                                                   // LowerCase        // UpperCase        // ModHex
-            new object[] { new byte[] { },                                                  "",                 "",                 ""                  },
+            new object[] { Array.Empty<byte>(),                                                  "",                 "",                 ""                  },
             new object[] { new byte[] { 0xAB },                                             "ab",               "AB",               "ln"                },
             new object[] { new byte[] { 0x00, 0x01, 0x02, 0x03 },                           "00010203",         "00010203",         "cccbcdce"          },
             new object[] { new byte[] { 0x10, 0x11, 0x12, 0x13 },                           "10111213",         "10111213",         "bcbbbdbe"          },
@@ -106,7 +106,7 @@ namespace SimpleBaseTest.Base16Test
         public void TryEncode_SmallerOutput_Fails(Base16 encoder)
         {
             var input = new byte[4];
-            var output = new char[0];
+            var output = Array.Empty<char>();
             Assert.That(encoder.TryEncode(input, output, out int numCharsWritten), Is.False);
             Assert.That(numCharsWritten, Is.EqualTo(0));
         }
@@ -161,8 +161,8 @@ namespace SimpleBaseTest.Base16Test
         public void Decode_InvalidChar_Throws(
             [ValueSource(nameof(encoders))]Base16 encoder,
             [Values("AZ12", "ZAAA", "!AAA", "=AAA")]string input)
-        {            
-            Assert.Throws<ArgumentException>(() => encoder.Decode(input));
+        {
+            _ = Assert.Throws<ArgumentException>(() => encoder.Decode(input));
         }
 
         [Test]
@@ -170,7 +170,7 @@ namespace SimpleBaseTest.Base16Test
             [ValueSource(nameof(encoders))]Base16 encoder,
             [Values("123", "12345")]string input)
         {
-            Assert.Throws<ArgumentException>(() => encoder.Decode(input));
+            _ = Assert.Throws<ArgumentException>(() => encoder.Decode(input));
         }
 
         [Test]

@@ -26,7 +26,7 @@ namespace SimpleBaseTest.Base58Test
         [Test]
         public void Ctor_InvalidLength_Throws()
         {
-            Assert.Throws<ArgumentException>(() => new Base58Alphabet("123"));
+            _ = Assert.Throws<ArgumentException>(() => new Base58Alphabet("123"));
         }
 
         [Test]

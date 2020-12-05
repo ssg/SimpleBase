@@ -9,10 +9,11 @@ trim_trailing_whitespace = true
 guidelines = 110
 
 dotnet_naming_rule.private_members_are_camelcase.symbols = private_members
-dotnet_naming_symbols.private_members.applicable_kinds = property,method,field
+dotnet_naming_rule.private_members_are_camelcase.style = camelcase
+
+dotnet_naming_symbols.private_members.applicable_kinds = method, property, field
 dotnet_naming_symbols.private_members.applicable_accessibilities = private
 
-dotnet_naming_rule.private_members_are_camelcase.style = camelcase
 dotnet_naming_style.camelcase.capitalization = camel_case
 
 # CA1303: Do not pass literals as localized parameters
@@ -23,6 +24,12 @@ dotnet_diagnostic.SA1200.severity = none
 
 # SA1204: Static elements should appear before instance elements
 dotnet_diagnostic.SA1204.severity = none
+
+# SA1311: Static readonly fields should begin with upper-case letter
+dotnet_diagnostic.SA1311.severity = none
+
+# IDE1006: Naming Styles
+dotnet_diagnostic.IDE1006.severity = none
 
 [*.md]
 guidelines = 80

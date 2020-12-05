@@ -42,14 +42,14 @@ namespace SimpleBaseTest.Base32Test
             new object[] { "foobar", "CSQPYRK1E8======", true },
             new object[] { "123456789012345678901234567890123456789", "64S36D1N6RVKGE9G64S36D1N6RVKGE9G64S36D1N6RVKGE9G64S36D1N6RVKGE8", false },
             new object[] { "123456789012345678901234567890123456789", "64S36D1N6RVKGE9G64S36D1N6RVKGE9G64S36D1N6RVKGE9G64S36D1N6RVKGE8=", true }
-        };
+        };        
 
         [Test]
         public void Encode_SampleInterface_Compiles()
         {
             // this source code exists in samples and just needs to be compiled and run without errors.
             // do not edit/refactor the code below
-            byte[] myBuffer = new byte[0];
+            byte[] myBuffer = Array.Empty<byte>();
             string result = Base32.Crockford.Encode(myBuffer, padding: true);
             Assert.That(result, Is.Empty);
         }
@@ -203,7 +203,7 @@ namespace SimpleBaseTest.Base32Test
         [Test]
         public void TryDecode_ZeroBuffer_ReturnsFalse()
         {
-            var success = Base32.Crockford.TryDecode("test", new byte[0], out int numBytesWritten);
+            var success = Base32.Crockford.TryDecode("test", Array.Empty<byte>(), out int numBytesWritten);
             Assert.That(success, Is.False);
             Assert.That(numBytesWritten, Is.EqualTo(0));
         }
@@ -211,7 +211,7 @@ namespace SimpleBaseTest.Base32Test
         [Test]
         public void Decode_InvalidInput_ThrowsArgumentException()
         {
-            Assert.Throws<ArgumentException>(() => Base32.Crockford.Decode("[];',m."));
+            _ = Assert.Throws<ArgumentException>(() => Base32.Crockford.Decode("[];',m."));
         }
 
         [Test]

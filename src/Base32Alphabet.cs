@@ -63,10 +63,12 @@ namespace SimpleBase
         /// </summary>
         /// <param name="alphabet">Encoding alphabet to use.</param>
         /// <param name="paddingChar">Padding character.</param>
-        public Base32Alphabet(string alphabet, char paddingChar)
+        /// <param name="paddingPosition">Position of the padding characters in the encoder output.</param>
+        public Base32Alphabet(string alphabet, char paddingChar, PaddingPosition paddingPosition)
             : this(alphabet)
         {
             PaddingChar = paddingChar;
+            PaddingPosition = paddingPosition;
         }
 
         /// <summary>
@@ -108,6 +110,11 @@ namespace SimpleBase
         /// Gets the padding character used in encoding.
         /// </summary>
         public char PaddingChar { get; } = '=';
+
+        /// <summary>
+        /// Gets the position of the padding characters in the encoder output.
+        /// </summary>
+        public PaddingPosition PaddingPosition { get; } = PaddingPosition.End;
 
         private void mapLowerCaseCounterparts(string alphabet)
         {
