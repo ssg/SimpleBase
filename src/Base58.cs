@@ -73,7 +73,7 @@ namespace SimpleBase
         /// <returns>Length of safe allocation.</returns>
         public static int GetSafeByteCountForDecoding(int textLen, int numZeroes)
         {
-            Debug.Assert(textLen < numZeroes, "Number of zeroes cannot be longer than text length");
+            Debug.Assert(textLen >= numZeroes, "Number of zeroes cannot be longer than text length");
             return numZeroes + ((textLen - numZeroes + 1) * reductionFactor / 1000) + 1;
         }
 
