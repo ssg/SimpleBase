@@ -14,6 +14,7 @@
 
     <PackageVersion>3.0.2</PackageVersion>
     <DocumentationFile>SimpleBase.xml</DocumentationFile>
+      <RepositoryUrl>https://github.com/ssg/SimpleBase</RepositoryUrl>
     <PackageProjectUrl>https://github.com/ssg/SimpleBase</PackageProjectUrl>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
