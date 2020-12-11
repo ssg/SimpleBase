@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <OutputType>Exe</OutputType>
-        <TargetFramework>netcoreapp3.0</TargetFramework>
+        <TargetFramework>net5.0</TargetFramework>
         <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
         <SignAssembly>true</SignAssembly>
         <AssemblyOriginatorKeyFile>..\SimpleBase.snk</AssemblyOriginatorKeyFile>
@@ -9,7 +9,7 @@
         <LangVersion>latest</LangVersion>
         <Nullable>enable</Nullable>
         <PlatformTarget>AnyCPU</PlatformTarget>
-        <CodeAnalysisRuleSet>../SSG.ruleset</CodeAnalysisRuleSet>
+        <CodeAnalysisRuleSet></CodeAnalysisRuleSet>
         <OutputType>Exe</OutputType>
     </PropertyGroup>
     <ItemGroup>

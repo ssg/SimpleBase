@@ -13,7 +13,7 @@
     <DelaySign>false</DelaySign>
 
     <PackageVersion>3.0.2</PackageVersion>
-    <CodeAnalysisRuleSet>../SSG.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet></CodeAnalysisRuleSet>
     <DocumentationFile>SimpleBase.xml</DocumentationFile>
     <PackageProjectUrl>https://github.com/ssg/SimpleBase</PackageProjectUrl>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
