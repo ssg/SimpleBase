@@ -19,6 +19,7 @@ namespace SimpleBaseTest.Base16Test
             Base16.ModHex
         };
 
+#pragma warning disable CA1825 // Avoid zero-length array allocations
         private static readonly object[][] testCases = new[]
         {                                                                                   // LowerCase        // UpperCase        // ModHex
             new object[] { new byte[] { },                                                  "",                 "",                 ""                  },
@@ -28,18 +29,21 @@ namespace SimpleBaseTest.Base16Test
             new object[] { new byte[] { 0xAB, 0xCD, 0xEF, 0xBA },                           "abcdefba",         "ABCDEFBA",         "lnrtuvnl"          },
             new object[] { new byte[] { 0xAB, 0xCD, 0xEF, 0xBA, 0xAB, 0xCD, 0xEF, 0xBA },   "abcdefbaabcdefba", "ABCDEFBAABCDEFBA", "lnrtuvnllnrtuvnl"  },
         };
+#pragma warning restore CA1825 // Avoid zero-length array allocations
 
         private static IEnumerable<TestCaseData> testData
         {
             get
             {
                 foreach (var pair in encoders.Select((encoder, index) => (encoder, index)))
+                {
                     foreach (var testRow in testCases)
                     {
                         var testValue = testRow[pair.index + 1];
                         yield return new TestCaseData(pair.encoder, testRow[0], testValue)
-                            .SetName($"{pair.encoder.Alphabet.ToString()}_{testValue}");
+                            .SetName($"{pair.encoder.Alphabet}_{testValue}");
                     }
+                }
             }
         }
 
@@ -106,7 +110,7 @@ namespace SimpleBaseTest.Base16Test
         public void TryEncode_SmallerOutput_Fails(Base16 encoder)
         {
             var input = new byte[4];
-            var output = new char[0];
+            var output = Array.Empty<char>();
             Assert.IsFalse(encoder.TryEncode(input, output, out int numCharsWritten));
             Assert.AreEqual(0, numCharsWritten);
         }
@@ -161,8 +165,8 @@ namespace SimpleBaseTest.Base16Test
         public void Decode_InvalidChar_Throws(
             [ValueSource(nameof(encoders))]Base16 encoder,
             [Values("AZ12", "ZAAA", "!AAA", "=AAA")]string input)
-        {            
-            Assert.Throws<ArgumentException>(() => encoder.Decode(input));
+        {
+            _ = Assert.Throws<ArgumentException>(() => encoder.Decode(input));
         }
 
         [Test]
@@ -170,7 +174,7 @@ namespace SimpleBaseTest.Base16Test
             [ValueSource(nameof(encoders))]Base16 encoder,
             [Values("123", "12345")]string input)
         {
-            Assert.Throws<ArgumentException>(() => encoder.Decode(input));
+            _ = Assert.Throws<ArgumentException>(() => encoder.Decode(input));
         }
 
         [Test]

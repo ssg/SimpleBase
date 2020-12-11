@@ -12,13 +12,13 @@ namespace SimpleBase
     /// </summary>
     public class Base16Alphabet : EncodingAlphabet
     {
-        private static Lazy<Base16Alphabet> upperCaseAlphabet = new Lazy<Base16Alphabet>(
+        private static readonly Lazy<Base16Alphabet> upperCaseAlphabet = new Lazy<Base16Alphabet>(
             () => new Base16Alphabet("0123456789ABCDEF"));
 
-        private static Lazy<Base16Alphabet> lowerCaseAlphabet = new Lazy<Base16Alphabet>(
+        private static readonly Lazy<Base16Alphabet> lowerCaseAlphabet = new Lazy<Base16Alphabet>(
             () => new Base16Alphabet("0123456789abcdef"));
 
-        private static Lazy<Base16Alphabet> modHexAlphabet = new Lazy<Base16Alphabet>(
+        private static readonly Lazy<Base16Alphabet> modHexAlphabet = new Lazy<Base16Alphabet>(
             () => new Base16Alphabet("cbdefghijklnrtuv"));
 
         /// <summary>

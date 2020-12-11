@@ -15,9 +15,9 @@ namespace SimpleBase
     /// </summary>
     public sealed class Base16 : IBaseEncoder, IBaseStreamEncoder, INonAllocatingBaseEncoder
     {
-        private static Lazy<Base16> upperCase = new Lazy<Base16>(() => new Base16(Base16Alphabet.UpperCase));
-        private static Lazy<Base16> lowerCase = new Lazy<Base16>(() => new Base16(Base16Alphabet.LowerCase));
-        private static Lazy<Base16> modHex = new Lazy<Base16>(() => new Base16(Base16Alphabet.ModHex));
+        private static readonly Lazy<Base16> upperCase = new Lazy<Base16>(() => new Base16(Base16Alphabet.UpperCase));
+        private static readonly Lazy<Base16> lowerCase = new Lazy<Base16>(() => new Base16(Base16Alphabet.LowerCase));
+        private static readonly Lazy<Base16> modHex = new Lazy<Base16>(() => new Base16(Base16Alphabet.ModHex));
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Base16"/> class.
@@ -57,19 +57,21 @@ namespace SimpleBase
         /// <inheritdoc/>
         public override string ToString()
         {
-            return $"{nameof(Base16)}_{Alphabet.ToString()}";
+            return $"{nameof(Base16)}_{Alphabet}";
         }
 
         /// <inheritdoc/>
         public int GetSafeByteCountForDecoding(ReadOnlySpan<char> text)
         {
             int textLen = text.Length;
+#pragma warning disable IDE0046 // Convert to conditional expression - prefer clarity
             if ((textLen & 1) != 0)
             {
                 return 0;
             }
 
             return textLen / 2;
+#pragma warning restore IDE0046 // Convert to conditional expression
         }
 
         /// <inheritdoc/>
@@ -218,12 +220,9 @@ namespace SimpleBase
             }
 
             byte[] output = new byte[GetSafeByteCountForDecoding(text)];
-            if (!TryDecode(text, output, out _))
-            {
-                throw new ArgumentException("Invalid text", nameof(text));
-            }
-
-            return output;
+            return TryDecode(text, output, out _)
+                ? output
+                : throw new ArgumentException("Invalid text", nameof(text));
         }
 
         /// <inheritdoc/>
@@ -273,7 +272,7 @@ namespace SimpleBase
                         throw new ArgumentException($"Invalid hex character: {pInput[1]}");
                     }
 
-                    *pOutput++ = (byte)(b1 << 4 | b2);
+                    *pOutput++ = (byte)((b1 << 4) | b2);
                     pInput += 2;
                 }
             }

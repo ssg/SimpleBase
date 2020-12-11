@@ -12,19 +12,19 @@ namespace SimpleBase
     /// </summary>
     public class Base32Alphabet : EncodingAlphabet
     {
-        private static Lazy<CrockfordBase32Alphabet> crockfordAlphabet = new Lazy<CrockfordBase32Alphabet>(
+        private static readonly Lazy<CrockfordBase32Alphabet> crockfordAlphabet = new Lazy<CrockfordBase32Alphabet>(
             () => new CrockfordBase32Alphabet());
 
-        private static Lazy<Base32Alphabet> rfc4648Alphabet = new Lazy<Base32Alphabet>(
+        private static readonly Lazy<Base32Alphabet> rfc4648Alphabet = new Lazy<Base32Alphabet>(
             () => new Base32Alphabet("ABCDEFGHIJKLMNOPQRSTUVWXYZ234567"));
 
-        private static Lazy<Base32Alphabet> extendedHexAlphabet = new Lazy<Base32Alphabet>(
+        private static readonly Lazy<Base32Alphabet> extendedHexAlphabet = new Lazy<Base32Alphabet>(
             () => new Base32Alphabet("0123456789ABCDEFGHIJKLMNOPQRSTUV"));
 
-        private static Lazy<Base32Alphabet> zBase32Alphabet = new Lazy<Base32Alphabet>(
+        private static readonly Lazy<Base32Alphabet> zBase32Alphabet = new Lazy<Base32Alphabet>(
             () => new Base32Alphabet("ybndrfg8ejkmcpqxot1uwisza345h769"));
 
-        private static Lazy<Base32Alphabet> geohashAlphabet = new Lazy<Base32Alphabet>(
+        private static readonly Lazy<Base32Alphabet> geohashAlphabet = new Lazy<Base32Alphabet>(
             () => new Base32Alphabet("0123456789bcdefghjkmnpqrstuvwxyz"));
 
         /// <summary>
@@ -34,9 +34,7 @@ namespace SimpleBase
         public Base32Alphabet(string alphabet)
             : base(32, alphabet)
         {
-#pragma warning disable CA1062 // Validate arguments of public methods -- already validated in the base class
             mapLowerCaseCounterparts(alphabet);
-#pragma warning restore CA1062 // Validate arguments of public methods -- already validated in the base class
         }
 
         /// <summary>

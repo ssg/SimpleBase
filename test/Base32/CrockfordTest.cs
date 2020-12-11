@@ -99,7 +99,7 @@ namespace SimpleBaseTest.Base32Test
 
         [Test]
         [TestCaseSource(nameof(testData))]
-        public void Decode_Stream_ReturnsExpectedValues(string expectedOutput, string input, bool padded)
+        public void Decode_Stream_ReturnsExpectedValues(string expectedOutput, string input, bool _)
         {
             // upper case
             using (var inputStream = new StringReader(input))
@@ -122,7 +122,7 @@ namespace SimpleBaseTest.Base32Test
 
         [Test]
         [TestCaseSource(nameof(testData))]
-        public async Task DecodeAsync_Stream_ReturnsExpectedValues(string expectedOutput, string input, bool padded)
+        public async Task DecodeAsync_Stream_ReturnsExpectedValues(string expectedOutput, string input, bool _)
         {
             // upper case
             using (var inputStream = new StringReader(input))
@@ -174,7 +174,7 @@ namespace SimpleBaseTest.Base32Test
 
         [Test]
         [TestCaseSource(nameof(testData))]
-        public void Decode_ReturnsExpectedValues(string expectedOutput, string input, bool padded)
+        public void Decode_ReturnsExpectedValues(string expectedOutput, string input, bool _)
         {
             var bytes = Base32.Crockford.Decode(input);
             string result = Encoding.ASCII.GetString(bytes.ToArray());
@@ -186,7 +186,7 @@ namespace SimpleBaseTest.Base32Test
 
         [Test]
         [TestCaseSource(nameof(testData))]
-        public void TryDecode_ReturnsExpectedValues(string expectedOutput, string input, bool padded)
+        public void TryDecode_ReturnsExpectedValues(string expectedOutput, string input, bool _)
         {
             var output = new byte[Base32.Crockford.GetSafeByteCountForDecoding(input)];
             var success = Base32.Crockford.TryDecode(input, output, out int numBytesWritten);
@@ -203,7 +203,7 @@ namespace SimpleBaseTest.Base32Test
         [Test]
         public void TryDecode_ZeroBuffer_ReturnsFalse()
         {
-            var success = Base32.Crockford.TryDecode("test", new byte[0], out int numBytesWritten);
+            var success = Base32.Crockford.TryDecode("test", Array.Empty<byte>(), out int numBytesWritten);
             Assert.IsFalse(success);
             Assert.AreEqual(0, numBytesWritten);
         }
@@ -211,7 +211,7 @@ namespace SimpleBaseTest.Base32Test
         [Test]
         public void Decode_InvalidInput_ThrowsArgumentException()
         {
-            Assert.Throws<ArgumentException>(() => Base32.Crockford.Decode("[];',m."));
+            _ = Assert.Throws<ArgumentException>(() => Base32.Crockford.Decode("[];',m."));
         }
 
         [Test]
