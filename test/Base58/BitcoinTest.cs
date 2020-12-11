@@ -37,6 +37,7 @@ namespace SimpleBaseTest.Base58Test
             new TestCaseData("00", "1"),
             new TestCaseData("21", "a"),
             new TestCaseData("000102030405060708090A0B0C0D0E0F000102030405060708090A0B0C0D0E0F", "1thX6LZfHDZZKUs92febWaf4WJZnsKRiVwJusXxB7L"),
+            new TestCaseData("0000000000000000000000000000000000000000000000000000", "11111111111111111111111111"),
         };
 
         [Test]
