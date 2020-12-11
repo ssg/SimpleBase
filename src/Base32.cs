@@ -18,11 +18,11 @@ namespace SimpleBase
         private const int bitsPerByte = 8;
         private const int bitsPerChar = 5;
 
-        private static Lazy<Base32> crockford = new Lazy<Base32>(() => new Base32(Base32Alphabet.Crockford));
-        private static Lazy<Base32> rfc4648 = new Lazy<Base32>(() => new Base32(Base32Alphabet.Rfc4648));
-        private static Lazy<Base32> extendedHex = new Lazy<Base32>(() => new Base32(Base32Alphabet.ExtendedHex));
-        private static Lazy<Base32> zBase32 = new Lazy<Base32>(() => new Base32(Base32Alphabet.ZBase32));
-        private static Lazy<Base32> geohash = new Lazy<Base32>(() => new Base32(Base32Alphabet.Geohash));
+        private static readonly Lazy<Base32> crockford = new Lazy<Base32>(() => new Base32(Base32Alphabet.Crockford));
+        private static readonly Lazy<Base32> rfc4648 = new Lazy<Base32>(() => new Base32(Base32Alphabet.Rfc4648));
+        private static readonly Lazy<Base32> extendedHex = new Lazy<Base32>(() => new Base32(Base32Alphabet.ExtendedHex));
+        private static readonly Lazy<Base32> zBase32 = new Lazy<Base32>(() => new Base32(Base32Alphabet.ZBase32));
+        private static readonly Lazy<Base32> geohash = new Lazy<Base32>(() => new Base32(Base32Alphabet.Geohash));
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Base32"/> class with a
@@ -109,6 +109,7 @@ namespace SimpleBase
             fixed (byte* inputPtr = bytes)
             fixed (char* outputPtr = output)
             {
+#pragma warning disable IDE0046 // Convert to conditional expression - prefer clarity
                 if (!internalEncode(
                     inputPtr,
                     bytesLen,
@@ -121,6 +122,7 @@ namespace SimpleBase
                 }
 
                 return output[..numCharsWritten];
+#pragma warning restore IDE0046 // Convert to conditional expression
             }
         }
 

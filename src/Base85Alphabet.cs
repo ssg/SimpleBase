@@ -13,10 +13,10 @@ namespace SimpleBase
     /// </summary>
     public sealed class Base85Alphabet : EncodingAlphabet
     {
-        private static Lazy<Base85Alphabet> z85 = new Lazy<Base85Alphabet>(() => new Base85Alphabet(
+        private static readonly Lazy<Base85Alphabet> z85 = new Lazy<Base85Alphabet>(() => new Base85Alphabet(
                 "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ.-:+=^!/*?&<>()[]{}@%$#"));
 
-        private static Lazy<Base85Alphabet> ascii85 = new Lazy<Base85Alphabet>(() => new Base85Alphabet(
+        private static readonly Lazy<Base85Alphabet> ascii85 = new Lazy<Base85Alphabet>(() => new Base85Alphabet(
                 "!\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstu",
                 allZeroShortcut: 'z',
                 allSpaceShortcut: 'y'));

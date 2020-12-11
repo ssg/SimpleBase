@@ -9,7 +9,6 @@
         <LangVersion>latest</LangVersion>
         <Nullable>enable</Nullable>
         <PlatformTarget>AnyCPU</PlatformTarget>
-        <CodeAnalysisRuleSet>../SSG.ruleset</CodeAnalysisRuleSet>
         <OutputType>Exe</OutputType>
     </PropertyGroup>
     <ItemGroup>

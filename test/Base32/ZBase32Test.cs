@@ -61,7 +61,7 @@ namespace SimpleBaseTest.Base32Test
         [Test]
         public void Decode_InvalidInput_ThrowsArgumentException()
         {
-            Assert.Throws<ArgumentException>(() => Base32.ZBase32.Decode("[];',m."));
+            _ = Assert.Throws<ArgumentException>(() => Base32.ZBase32.Decode("[];',m."));
         }
     }
 }

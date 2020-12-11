@@ -12,9 +12,9 @@
     <AssemblyOriginatorKeyFile>..\SimpleBase.snk</AssemblyOriginatorKeyFile>
     <DelaySign>false</DelaySign>
 
-    <PackageVersion>3.0.1</PackageVersion>
-    <CodeAnalysisRuleSet>../SSG.ruleset</CodeAnalysisRuleSet>
+    <PackageVersion>3.0.2</PackageVersion>
     <DocumentationFile>SimpleBase.xml</DocumentationFile>
+      <RepositoryUrl>https://github.com/ssg/SimpleBase</RepositoryUrl>
     <PackageProjectUrl>https://github.com/ssg/SimpleBase</PackageProjectUrl>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
@@ -22,7 +22,8 @@
     <PackageReleaseNotes>
 <![CDATA[
 # Fixes 
-- Fixed padding being ignored by Base32, thanks to @skwasjer! 
+- Fixed output buffer was too small error for certain Base58 cases.
+- Avoid redundant memory copy operations
 ]]></PackageReleaseNotes>
     <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
@@ -46,8 +47,9 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="3.3.0">
+    <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="5.0.1">
       <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="StyleCop.Analyzers" Version="1.1.118">
       <PrivateAssets>all</PrivateAssets>

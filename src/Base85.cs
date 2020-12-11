@@ -22,8 +22,8 @@ namespace SimpleBase
         private const long allSpace = 0x20202020;
         private const int decodeBufferSize = 5120; // don't remember what was special with this number
 
-        private static Lazy<Base85> z85 = new Lazy<Base85>(() => new Base85(Base85Alphabet.Z85));
-        private static Lazy<Base85> ascii85 = new Lazy<Base85>(() => new Base85(Base85Alphabet.Ascii85));
+        private static readonly Lazy<Base85> z85 = new Lazy<Base85>(() => new Base85(Base85Alphabet.Z85));
+        private static readonly Lazy<Base85> ascii85 = new Lazy<Base85>(() => new Base85(Base85Alphabet.Ascii85));
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Base85"/> class
@@ -82,12 +82,9 @@ namespace SimpleBase
             fixed (byte* inputPtr = bytes)
             fixed (char* outputPtr = output)
             {
-                if (!internalEncode(inputPtr, inputLen, outputPtr, outputLen, out int numCharsWritten))
-                {
-                    throw new InvalidOperationException("Insufficient output buffer size while encoding Base85");
-                }
-
-                return output[..numCharsWritten];
+                return internalEncode(inputPtr, inputLen, outputPtr, outputLen, out int numCharsWritten)
+                    ? output[..numCharsWritten]
+                    : throw new InvalidOperationException("Insufficient output buffer size while encoding Base85");
             }
         }
 
@@ -173,8 +170,9 @@ namespace SimpleBase
             fixed (char* inputPtr = text)
             fixed (byte* decodeBufferPtr = decodeBuffer)
             {
-                internalDecode(inputPtr, textLen, decodeBufferPtr, decodeBufferLen, out int numBytesWritten);
-                return decodeBuffer.AsSpan()[..numBytesWritten];
+                return internalDecode(inputPtr, textLen, decodeBufferPtr, decodeBufferLen, out int numBytesWritten)
+                    ? decodeBuffer.AsSpan()[..numBytesWritten]
+                    : throw new InvalidOperationException("Internal error: pre-allocated insufficient output buffer size");
             }
         }
 
@@ -423,7 +421,9 @@ namespace SimpleBase
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static bool isWhiteSpace(char c)
         {
+#pragma warning disable IDE0078 // Pattern matchin syntax bugs out here - so temporarily disabling suggestion here
             return c == ' ' || c == 0x85 || c == 0xA0 || (c >= 0x09 && c <= 0x0D);
+#pragma warning restore IDE0078 // Use pattern matching
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -450,12 +450,14 @@ namespace SimpleBase
                 throw new ArgumentOutOfRangeException(nameof(bytesLength));
             }
 
+#pragma warning disable IDE0046 // Convert to conditional expression - prefer clarity
             if (bytesLength == 0)
             {
                 return 0;
             }
 
             return (bytesLength + byteBlockSize - 1) * stringBlockSize / byteBlockSize;
+#pragma warning restore IDE0046 // Convert to conditional expression
         }
 
         private static int getSafeByteCountForDecoding(int textLength, bool usingShortcuts)
