@@ -174,7 +174,7 @@ namespace SimpleBase
             fixed (byte* decodeBufferPtr = decodeBuffer)
             {
                 internalDecode(inputPtr, textLen, decodeBufferPtr, decodeBufferLen, out int numBytesWritten);
-                return decodeBuffer[..numBytesWritten];
+                return decodeBuffer.AsSpan()[..numBytesWritten];
             }
         }
 
