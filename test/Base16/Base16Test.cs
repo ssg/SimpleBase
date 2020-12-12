@@ -19,7 +19,6 @@ namespace SimpleBaseTest.Base16Test
             Base16.ModHex
         };
 
-#pragma warning disable CA1825 // Avoid zero-length array allocations
         private static readonly object[][] testCases = new[]
         {                                                                                   // LowerCase        // UpperCase        // ModHex
             new object[] { new byte[] { },                                                  "",                 "",                 ""                  },
@@ -29,7 +28,6 @@ namespace SimpleBaseTest.Base16Test
             new object[] { new byte[] { 0xAB, 0xCD, 0xEF, 0xBA },                           "abcdefba",         "ABCDEFBA",         "lnrtuvnl"          },
             new object[] { new byte[] { 0xAB, 0xCD, 0xEF, 0xBA, 0xAB, 0xCD, 0xEF, 0xBA },   "abcdefbaabcdefba", "ABCDEFBAABCDEFBA", "lnrtuvnllnrtuvnl"  },
         };
-#pragma warning restore CA1825 // Avoid zero-length array allocations
 
         private static IEnumerable<TestCaseData> testData
         {
