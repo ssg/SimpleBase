@@ -94,12 +94,9 @@ namespace SimpleBase
         /// <inheritdoc/>
         public string Encode(long number)
         {
-            if (number < 0)
-            {
-                throw new ArgumentOutOfRangeException(nameof(number), "Number is negative");
-            }
-
-            return Encode((ulong)number);
+            return number >= 0
+                ? Encode((ulong)number)
+                : throw new ArgumentOutOfRangeException(nameof(number), "Number is negative");
         }
 
         /// <inheritdoc/>
@@ -127,12 +124,9 @@ namespace SimpleBase
 #pragma warning restore CS3002 // We provide a CLS-compliant alternative
         {
             var buffer = Decode(text);
-            if (buffer.Length > sizeof(ulong))
-            {
-                throw new InvalidOperationException("Decoded text is too long to fit in a buffer");
-            }
-
-            return BitConverter.ToUInt64(buffer);
+            return buffer.Length <= sizeof(ulong)
+                ? BitConverter.ToUInt64(buffer)
+                : throw new InvalidOperationException("Decoded text is too long to fit in a buffer");
         }
 
         /// <inheritdoc/>
