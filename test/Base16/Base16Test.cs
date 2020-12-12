@@ -21,7 +21,7 @@ namespace SimpleBaseTest.Base16Test
 
         private static readonly object[][] testCases = new[]
         {                                                                                   // LowerCase        // UpperCase        // ModHex
-            new object[] { Array.Empty<byte>(),                                                  "",                 "",                 ""                  },
+            new object[] { Array.Empty<byte>(),                                             "",                 "",                 ""                  },
             new object[] { new byte[] { 0xAB },                                             "ab",               "AB",               "ln"                },
             new object[] { new byte[] { 0x00, 0x01, 0x02, 0x03 },                           "00010203",         "00010203",         "cccbcdce"          },
             new object[] { new byte[] { 0x10, 0x11, 0x12, 0x13 },                           "10111213",         "10111213",         "bcbbbdbe"          },
@@ -34,12 +34,14 @@ namespace SimpleBaseTest.Base16Test
             get
             {
                 foreach (var pair in encoders.Select((encoder, index) => (encoder, index)))
+                {
                     foreach (var testRow in testCases)
                     {
                         var testValue = testRow[pair.index + 1];
                         yield return new TestCaseData(pair.encoder, testRow[0], testValue)
                             .SetName($"{pair.encoder.Alphabet}_{testValue}");
                     }
+                }
             }
         }
 
