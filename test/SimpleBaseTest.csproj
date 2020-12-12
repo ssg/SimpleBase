@@ -11,7 +11,6 @@
         <DelaySign>false</DelaySign>
         <LangVersion>latest</LangVersion>
         <Nullable>enable</Nullable>
-        <CodeAnalysisRuleSet>../SSG.ruleset</CodeAnalysisRuleSet>
         <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     </PropertyGroup>
     <ItemGroup>
@@ -33,24 +32,6 @@
     <ItemGroup>
         <Service Include="{82a7f48d-3b50-4b1e-b82e-3ada8210c358}" />
     </ItemGroup>
-  <PropertyGroup>
-    <TargetFramework>netcoreapp3.0</TargetFramework>
-    <RootNamespace>SimpleBaseTest</RootNamespace>
-    <AssemblyName>SimpleBaseTest</AssemblyName>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <TestRunner>nunit</TestRunner>
-    <SignAssembly>true</SignAssembly>
-    <AssemblyOriginatorKeyFile>..\SimpleBase.snk</AssemblyOriginatorKeyFile>
-    <DelaySign>false</DelaySign>
-    <LangVersion>latest</LangVersion>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|netcoreapp2.1|AnyCPU'">
-    <NoWarn>1701;1702;IDE0052</NoWarn>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <WarningsAsErrors></WarningsAsErrors>
-  </PropertyGroup>
   <ItemGroup>
     <None Remove="SimpleBaseTest.v3.ncrunchproject" />
   </ItemGroup>
