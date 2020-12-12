@@ -4,6 +4,7 @@
 // </copyright>
 
 using System;
+using System.Diagnostics;
 
 namespace SimpleBase
 {
@@ -16,6 +17,7 @@ namespace SimpleBase
     /// </remarks>
     public sealed class Base58 : IBaseCoder, INonAllocatingBaseCoder
     {
+        private const int reductionFactor = 733; // https://github.com/bitcoin/bitcoin/blob/master/src/base58.cpp#L48
         private static readonly Lazy<Base58> bitcoin = new Lazy<Base58>(() => new Base58(Base58Alphabet.Bitcoin));
         private static readonly Lazy<Base58> ripple = new Lazy<Base58>(() => new Base58(Base58Alphabet.Ripple));
         private static readonly Lazy<Base58> flickr = new Lazy<Base58>(() => new Base58(Base58Alphabet.Flickr));
@@ -28,6 +30,7 @@ namespace SimpleBase
         public Base58(Base58Alphabet alphabet)
         {
             this.Alphabet = alphabet;
+            this.ZeroChar = alphabet.Value[0];
         }
 
         /// <summary>
@@ -50,12 +53,28 @@ namespace SimpleBase
         /// </summary>
         public Base58Alphabet Alphabet { get; }
 
+        /// <summary>
+        /// Gets the character for zero.
+        /// </summary>
+        public char ZeroChar { get; }
+
         /// <inheritdoc/>
         public int GetSafeByteCountForDecoding(ReadOnlySpan<char> text)
         {
-            const int reductionFactor = 733; // https://github.com/bitcoin/bitcoin/blob/master/src/base58.cpp#L48
+            int textLen = text.Length;
+            return GetSafeByteCountForDecoding(textLen, getPrefixCount(text, textLen, ZeroChar));
+        }
 
-            return ((text.Length + 1) * reductionFactor / 1000) + 1;
+        /// <summary>
+        /// Retrieve safe byte count while avoiding multiple counting operations.
+        /// </summary>
+        /// <param name="textLen">Length of text.</param>
+        /// <param name="numZeroes">Number of prefix zeroes.</param>
+        /// <returns>Length of safe allocation.</returns>
+        public static int GetSafeByteCountForDecoding(int textLen, int numZeroes)
+        {
+            Debug.Assert(textLen >= numZeroes, "Number of zeroes cannot be longer than text length");
+            return numZeroes + ((textLen - numZeroes + 1) * reductionFactor / 1000) + 1;
         }
 
         /// <inheritdoc/>
@@ -91,12 +110,9 @@ namespace SimpleBase
             fixed (byte* inputPtr = bytes)
             fixed (char* outputPtr = output)
             {
-                if (!internalEncode(inputPtr, bytesLen, outputPtr, outputLen, numZeroes, out int length))
-                {
-                    throw new InvalidOperationException("Output buffer with insufficient size generated");
-                }
-
-                return output[..length];
+                return internalEncode(inputPtr, bytesLen, outputPtr, outputLen, numZeroes, out int length)
+                    ? output[..length]
+                    : throw new InvalidOperationException("Output buffer with insufficient size generated");
             }
         }
 
@@ -113,13 +129,14 @@ namespace SimpleBase
                 return Array.Empty<byte>();
             }
 
-            int outputLen = GetSafeByteCountForDecoding(text);
-            char zeroChar = Alphabet.Value[0];
+            char zeroChar = ZeroChar;
             int numZeroes = getPrefixCount(text, textLen, zeroChar);
+            int outputLen = GetSafeByteCountForDecoding(textLen, numZeroes);
             byte[] output = new byte[outputLen];
             fixed (char* inputPtr = text)
             fixed (byte* outputPtr = output)
             {
+#pragma warning disable IDE0046 // Convert to conditional expression - prefer clarity
                 if (!internalDecode(
                     inputPtr,
                     textLen,
@@ -132,6 +149,7 @@ namespace SimpleBase
                 }
 
                 return output.AsSpan()[..numBytesWritten];
+#pragma warning restore IDE0046 // Convert to conditional expression
             }
         }
 
@@ -157,7 +175,7 @@ namespace SimpleBase
                 return true;
             }
 
-            int zeroCount = getPrefixCount(input, inputLen, Alphabet.Value[0]);
+            int zeroCount = getPrefixCount(input, inputLen, ZeroChar);
             fixed (char* inputPtr = input)
             fixed (byte* outputPtr = output)
             {
@@ -367,7 +385,7 @@ namespace SimpleBase
         {
             const int growthPercentage = 138;
 
-            return numZeroes + ((((bytesLen - numZeroes) * growthPercentage) / 100) + 1);
+            return numZeroes + ((bytesLen - numZeroes) * growthPercentage / 100) + 1;
         }
     }
 }

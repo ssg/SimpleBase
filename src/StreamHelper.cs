@@ -92,7 +92,7 @@ namespace SimpleBase
                 }
 
                 var result = decodeBufferFunc(buffer.AsMemory(0, bytesRead));
-                await output.WriteAsync(result.Slice(0, result.Length)).ConfigureAwait(false);
+                await output.WriteAsync(result).ConfigureAwait(false);
             }
         }
     }

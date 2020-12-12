@@ -172,6 +172,7 @@ namespace SimpleBase
             fixed (byte* inputPtr = bytes)
             fixed (char* outputPtr = output)
             {
+#pragma warning disable IDE0046 // Convert to conditional expression - prefer clarity
                 if (!internalEncode(
                     inputPtr,
                     bytesLen,
@@ -184,6 +185,7 @@ namespace SimpleBase
                 }
 
                 return output[..numCharsWritten];
+#pragma warning restore IDE0046 // Convert to conditional expression
             }
         }
 

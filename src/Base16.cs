@@ -64,12 +64,14 @@ namespace SimpleBase
         public int GetSafeByteCountForDecoding(ReadOnlySpan<char> text)
         {
             int textLen = text.Length;
+#pragma warning disable IDE0046 // Convert to conditional expression - prefer clarity
             if ((textLen & 1) != 0)
             {
                 return 0;
             }
 
             return textLen / 2;
+#pragma warning restore IDE0046 // Convert to conditional expression
         }
 
         /// <inheritdoc/>
@@ -218,12 +220,9 @@ namespace SimpleBase
             }
 
             byte[] output = new byte[GetSafeByteCountForDecoding(text)];
-            if (!TryDecode(text, output, out _))
-            {
-                throw new ArgumentException("Invalid text", nameof(text));
-            }
-
-            return output;
+            return TryDecode(text, output, out _)
+                ? output
+                : throw new ArgumentException("Invalid text", nameof(text));
         }
 
         /// <inheritdoc/>
@@ -273,7 +272,7 @@ namespace SimpleBase
                         throw new ArgumentException($"Invalid hex character: {pInput[1]}");
                     }
 
-                    *pOutput++ = (byte)(b1 << 4 | b2);
+                    *pOutput++ = (byte)((b1 << 4) | b2);
                     pInput += 2;
                 }
             }

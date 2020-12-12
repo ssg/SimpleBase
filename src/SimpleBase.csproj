@@ -24,18 +24,21 @@
         <PlatformTarget>AnyCPU</PlatformTarget>
         <PackageReleaseNotes>
             <![CDATA[
+# Breaking changes
+- Targets .NET 5
+- Changed interface names from Encoder to Coder to signify encoding and
+decoding functionality better
+
 # New features
 - Added Base32H flavor https://base32h.github.io
 - Added Bech32 flavor https://en.bitcoin.it/wiki/Bech32
 
-# Breaking changes
-- Targets .NET 5
-- Changed interface names from Encoder to Coder to signify encoding and
-  decoding functionality better
-
 # Improvements
 - Added more buffer overflow detection to Base32
-- Upgrade to latest dependencies
+
+# Fixes 
+- Fixed output buffer was too small error for certain Base58 cases.
+- Avoid redundant memory copy operations
 ]]>
         </PackageReleaseNotes>
         <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
@@ -59,8 +62,19 @@
 
     <ItemGroup>
         <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="5.0.1">
-          <PrivateAssets>all</PrivateAssets>
-          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="StyleCop.Analyzers" Version="1.1.118">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="System.Memory" Version="4.5.4" />
+    </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="5.0.1">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
         <PackageReference Include="StyleCop.Analyzers" Version="1.1.118">
             <PrivateAssets>all</PrivateAssets>
