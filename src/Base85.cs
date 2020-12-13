@@ -14,7 +14,7 @@ namespace SimpleBase
     /// <summary>
     /// Base58 encoding/decoding class.
     /// </summary>
-    public sealed class Base85 : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCoder
+    public class Base85 : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCoder
     {
         private const int baseLength = 85;
         private const int byteBlockSize = 4;
@@ -24,6 +24,7 @@ namespace SimpleBase
 
         private static readonly Lazy<Base85> z85 = new Lazy<Base85>(() => new Base85(Base85Alphabet.Z85));
         private static readonly Lazy<Base85> ascii85 = new Lazy<Base85>(() => new Base85(Base85Alphabet.Ascii85));
+        private static readonly Lazy<Base85Ipv6> rfc1924 = new Lazy<Base85Ipv6>(() => new Base85Ipv6(Base85Alphabet.Rfc1924));
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Base85"/> class
@@ -44,6 +45,11 @@ namespace SimpleBase
         /// Gets Ascii85 flavor of Base85.
         /// </summary>
         public static Base85 Ascii85 => ascii85.Value;
+
+        /// <summary>
+        /// Gets RFC 1924 IPv6 flavor of Base85.
+        /// </summary>
+        public static Base85Ipv6 Rfc1924 => rfc1924.Value;
 
         /// <summary>
         /// Gets the encoding alphabet.

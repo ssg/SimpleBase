@@ -29,11 +29,13 @@
 decoding functionality better
 
 # New features
-- Added Base32H flavor https://base32h.github.io
-- Added Bech32 flavor https://en.bitcoin.it/wiki/Bech32
+- Added [Base32H](https://base32h.github.io) encoding 
+- Added [Bech32](https://en.bitcoin.it/wiki/Bech32) flavor to Base32 
+- Added RFC 1924 (IPv6) flavor to Base85 along with 
+  EncodeIpv6 and DecodeIpv6 functions https://tools.ietf.org/html/rfc1924
 
 # Improvements
-- Added more buffer overflow detection to Base32
+- Added more buffer overflow detection to Base32 coder
 
 # Fixes 
 - Fixed output buffer was too small error for certain Base58 cases.

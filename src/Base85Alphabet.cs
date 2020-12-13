@@ -21,6 +21,9 @@ namespace SimpleBase
                 allZeroShortcut: 'z',
                 allSpaceShortcut: 'y'));
 
+        private static readonly Lazy<Base85Alphabet> rfc1924 = new Lazy<Base85Alphabet>(() => new Base85Alphabet(
+                "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz!#$%&()*+-;<=>?@^_`{|}~"));
+
         /// <summary>
         /// Initializes a new instance of the <see cref="Base85Alphabet"/> class
         /// using custom settings.
@@ -48,6 +51,11 @@ namespace SimpleBase
         /// also known as "btoa" encoding.
         /// </summary>
         public static Base85Alphabet Ascii85 => ascii85.Value;
+
+        /// <summary>
+        /// Gets Base85 encoding defined in RFC 1924.
+        /// </summary>
+        public static Base85Alphabet Rfc1924 => rfc1924.Value;
 
         /// <summary>
         /// Gets the character to be used for "all zeros".
