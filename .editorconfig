@@ -43,5 +43,11 @@ dotnet_diagnostic.SA1303.severity = none
 # SA1311: Static readonly fields should begin with upper-case letter
 dotnet_diagnostic.SA1311.severity = none
 
+# CS3002: Return type is not CLS-compliant
+dotnet_diagnostic.CS3002.severity = none
+
+# CS3001: Argument type is not CLS-compliant
+dotnet_diagnostic.CS3001.severity = none
+
 [*.md]
 guidelines = 80

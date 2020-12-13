@@ -29,9 +29,7 @@ namespace benchmark
 
         };
 
-#pragma warning disable CA1801 // Review unused parameters
         static void Main(string[] args)
-#pragma warning restore CA1801 // Review unused parameters
         {
 #if DEBUG
             Console.WriteLine("***************************************");
