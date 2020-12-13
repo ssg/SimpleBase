@@ -40,6 +40,8 @@ namespace SimpleBase
         private static readonly Lazy<AliasedBase32Alphabet> base32HAlphabet = new Lazy<AliasedBase32Alphabet>(
             () => new AliasedBase32Alphabet(
                 "0123456789ABCDEFGHJKLMNPQRTVWXYZ",
+                paddingChar: '0',
+                PaddingPosition.Start,
                 new[]
                 {
                     ('O', '0'),

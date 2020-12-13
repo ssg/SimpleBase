@@ -24,8 +24,8 @@ namespace SimpleBase
         private static readonly Lazy<Base32> extendedHex = new Lazy<Base32>(() => new Base32(Base32Alphabet.ExtendedHex));
         private static readonly Lazy<Base32> zBase32 = new Lazy<Base32>(() => new Base32(Base32Alphabet.ZBase32));
         private static readonly Lazy<Base32> geohash = new Lazy<Base32>(() => new Base32(Base32Alphabet.Geohash));
-        private static readonly Lazy<Base32> base32H = new Lazy<Base32>(() => new Base32(Base32Alphabet.Base32H));
         private static readonly Lazy<Base32> bech32 = new Lazy<Base32>(() => new Base32(Base32Alphabet.Bech32));
+        private static readonly Lazy<Base32H> base32H = new Lazy<Base32H>(() => new Base32H(Base32Alphabet.Base32H));
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Base32"/> class with a
@@ -34,6 +34,13 @@ namespace SimpleBase
         /// <param name="alphabet">Alphabet to use.</param>
         public Base32(Base32Alphabet alphabet)
         {
+            if (alphabet.PaddingPosition != PaddingPosition.End)
+            {
+                throw new ArgumentException(
+                    "Only alphabets with paddings at the end are supported by this implementation",
+                    nameof(alphabet));
+            }
+
             Alphabet = alphabet;
         }
 
@@ -65,14 +72,14 @@ namespace SimpleBase
         public static Base32 Geohash => geohash.Value;
 
         /// <summary>
-        /// Gets Base32H variant of Base32 coder.
-        /// </summary>
-        public static Base32 Base32H => base32H.Value;
-
-        /// <summary>
         /// Gets Bech32 variant of Base32 coder.
         /// </summary>
         public static Base32 Bech32 => bech32.Value;
+
+        /// <summary>
+        /// Gets Base32H variant of Base32 coder.
+        /// </summary>
+        public static Base32H Base32H => base32H.Value;
 
         /// <summary>
         /// Gets the encoding alphabet.
@@ -100,9 +107,7 @@ namespace SimpleBase
         }
 
         /// <inheritdoc/>
-#pragma warning disable CS3001 // Argument type is not CLS-compliant
         public string Encode(ulong number)
-#pragma warning restore CS3001 // We provide a CLS-compliant alternative
         {
             var buffer = BitConverter.GetBytes(number);
             bool little = BitConverter.IsLittleEndian;
@@ -119,9 +124,7 @@ namespace SimpleBase
         }
 
         /// <inheritdoc/>
-#pragma warning disable CS3002 // Return type is not CLS-compliant
         public ulong DecodeUInt64(string text)
-#pragma warning restore CS3002 // We provide a CLS-compliant alternative
         {
             var buffer = Decode(text);
             return buffer.Length <= sizeof(ulong)
@@ -190,7 +193,8 @@ namespace SimpleBase
         /// <returns>Decoded byte array.</returns>
         public unsafe Span<byte> Decode(ReadOnlySpan<char> text)
         {
-            int textLen = text.Length - getPaddingCharCount(text);
+            int paddingLen = getPaddingCharCount(text);
+            int textLen = text.Length - paddingLen;
             int outputLen = getAllocationByteCountForDecoding(textLen);
             if (outputLen == 0)
             {
@@ -421,6 +425,22 @@ namespace SimpleBase
             char paddingChar = Alphabet.PaddingChar;
             int result = 0;
             int textLen = text.Length;
+
+            if (Alphabet.PaddingPosition == PaddingPosition.Start)
+            {
+                foreach (char c in text)
+                {
+                    if (c != paddingChar)
+                    {
+                        return result;
+                    }
+
+                    result++;
+                }
+
+                return result;
+            }
+
             while (textLen > 0 && text[--textLen] == paddingChar)
             {
                 result++;

@@ -27,8 +27,8 @@ namespace SimpleBaseTest.Base32Test
     class Base32HTest
     {
         private static readonly object[][] testData = {
-            new object[] { "", "", false },
-            new object[] { "f", "36", false },
+            new object[] { "", "" },
+            new object[] { "f", "0000036" },
             new object[] { "a", "0000031", true },
             //new object[] { "aq", "CSQG", false },
             //new object[] { "fo", "CSQG====", true },
@@ -50,7 +50,7 @@ namespace SimpleBaseTest.Base32Test
             // this source code exists in samples and just needs to be compiled and run without errors.
             // do not edit/refactor the code below
             byte[] myBuffer = Array.Empty<byte>();
-            string result = Base32.Base32H.Encode(myBuffer, padding: true);
+            string result = Base32.Base32H.Encode(myBuffer);
             Assert.That(result, Is.Empty);
         }
 
@@ -66,108 +66,29 @@ namespace SimpleBaseTest.Base32Test
 
         [Test]
         [TestCaseSource(nameof(testData))]
-        public void Encode_Stream_ReturnsExpectedValues(string input, string expectedOutput, bool padded)
+        public void Encode_ReturnsExpectedValues(string input, string expectedOutput)
         {
             byte[] bytes = Encoding.ASCII.GetBytes(input);
-            using var inputStream = new MemoryStream(bytes);
-            using var writer = new StringWriter();
-            Base32.Base32H.Encode(inputStream, writer, padded);
-            Assert.That(writer.ToString(), Is.EqualTo(expectedOutput));
-        }
-
-        [Test]
-        [TestCaseSource(nameof(testData))]
-        public void Encode_SimpleStream_ReturnsExpectedValues(string input, string expectedOutput, bool padded)
-        {
-            byte[] bytes = Encoding.ASCII.GetBytes(input);
-            using var inputStream = new MemoryStream(bytes);
-            using var writer = new StringWriter();
-            Base32.Base32H.Encode(inputStream, writer, padded);
-            Assert.That(writer.ToString(), Is.EqualTo(expectedOutput));
-        }
-
-        [Test]
-        [TestCaseSource(nameof(testData))]
-        public async Task EncodeAsync_SimpleStream_ReturnsExpectedValues(string input, string expectedOutput, bool padded)
-        {
-            byte[] bytes = Encoding.ASCII.GetBytes(input);
-            using var inputStream = new MemoryStream(bytes);
-            using var writer = new StringWriter();
-            await Base32.Base32H.EncodeAsync(inputStream, writer, padded);
-            Assert.That(writer.ToString(), Is.EqualTo(expectedOutput));
-        }
-
-        [Test]
-        [TestCaseSource(nameof(testData))]
-        public void Decode_Stream_ReturnsExpectedValues(string expectedOutput, string input, bool _)
-        {
-            // upper case
-            using (var inputStream = new StringReader(input))
-            using (var outputStream = new MemoryStream())
-            {
-                Base32.Base32H.Decode(inputStream, outputStream);
-                string result = Encoding.ASCII.GetString(outputStream.ToArray());
-                Assert.That(result, Is.EqualTo(expectedOutput));
-            }
-
-            // lower case
-            using (var inputStream = new StringReader(input.ToLowerInvariant()))
-            using (var outputStream = new MemoryStream())
-            {
-                Base32.Base32H.Decode(inputStream, outputStream);
-                string result = Encoding.ASCII.GetString(outputStream.ToArray());
-                Assert.That(result, Is.EqualTo(expectedOutput));
-            }
-        }
-
-        [Test]
-        [TestCaseSource(nameof(testData))]
-        public async Task DecodeAsync_Stream_ReturnsExpectedValues(string expectedOutput, string input, bool _)
-        {
-            // upper case
-            using (var inputStream = new StringReader(input))
-            using (var outputStream = new MemoryStream())
-            {
-                await Base32.Base32H.DecodeAsync(inputStream, outputStream);
-                string result = Encoding.ASCII.GetString(outputStream.ToArray());
-                Assert.That(result, Is.EqualTo(expectedOutput));
-            }
-
-            // lower case
-            using (var inputStream = new StringReader(input.ToLowerInvariant()))
-            using (var outputStream = new MemoryStream())
-            {
-                await Base32.Base32H.DecodeAsync(inputStream, outputStream);
-                string result = Encoding.ASCII.GetString(outputStream.ToArray());
-                Assert.That(result, Is.EqualTo(expectedOutput));
-            }
-        }
-
-        [Test]
-        [TestCaseSource(nameof(testData))]
-        public void Encode_ReturnsExpectedValues(string input, string expectedOutput, bool padded)
-        {
-            byte[] bytes = Encoding.ASCII.GetBytes(input);
-            string result = Base32.Base32H.Encode(bytes, padded);
+            string result = Base32.Base32H.Encode(bytes);
             Assert.That(result, Is.EqualTo(expectedOutput));
         }
 
         [Test]
         [TestCaseSource(nameof(testData))]
-        public void Encode_Simple_ReturnsExpectedValues(string input, string expectedOutput, bool padded)
+        public void Encode_Simple_ReturnsExpectedValues(string input, string expectedOutput)
         {
             byte[] bytes = Encoding.ASCII.GetBytes(input);
-            string result = Base32.Base32H.Encode(bytes, padded);
+            string result = Base32.Base32H.Encode(bytes);
             Assert.That(result, Is.EqualTo(expectedOutput));
         }
 
         [Test]
         [TestCaseSource(nameof(testData))]
-        public void TryEncode_Simple_ReturnsExpectedValues(string input, string expectedOutput, bool padded)
+        public void TryEncode_Simple_ReturnsExpectedValues(string input, string expectedOutput)
         {
             byte[] bytes = Encoding.ASCII.GetBytes(input);
             var output = new char[Base32.Base32H.GetSafeCharCountForEncoding(bytes)];
-            bool success = Base32.Base32H.TryEncode(bytes, output, padded, out int numCharsWritten);
+            bool success = Base32.Base32H.TryEncode(bytes, output, out int numCharsWritten);
             Assert.That(success, Is.True);
             Assert.That(output[..numCharsWritten], Is.EqualTo(expectedOutput));
         }
@@ -176,11 +97,14 @@ namespace SimpleBaseTest.Base32Test
         [TestCaseSource(nameof(testData))]
         public void Decode_ReturnsExpectedValues(string expectedOutput, string input, bool _)
         {
+            // upper variant
             var bytes = Base32.Base32H.Decode(input);
-            string result = Encoding.ASCII.GetString(bytes.ToArray());
+            string result = Encoding.ASCII.GetString(bytes);
             Assert.That(result, Is.EqualTo(expectedOutput));
+
+            // lower variant
             bytes = Base32.Base32H.Decode(input.ToLowerInvariant());
-            result = Encoding.ASCII.GetString(bytes.ToArray());
+            result = Encoding.ASCII.GetString(bytes);
             Assert.That(result, Is.EqualTo(expectedOutput));
         }
 
@@ -216,8 +140,9 @@ namespace SimpleBaseTest.Base32Test
 
         [Test]
         [TestCase("O0o", "000")]
-        [TestCase("Ll1", "111")]
-        [TestCase("I1i", "111")]
+        [TestCase("Ii1", "111")]
+        [TestCase("Ss5", "555")]
+        [TestCase("UuV", "VVV")]
         public void Decode_Base32HChars_DecodedCorrectly(string equivalent, string actual)
         {
             var expectedResult = Base32.Base32H.Decode(actual);
@@ -228,7 +153,7 @@ namespace SimpleBaseTest.Base32Test
         [Test]
         public void Encode_NullBytes_ReturnsEmptyString()
         {
-            Assert.That(Base32.Base32H.Encode(null, true), Is.EqualTo(String.Empty));
+            Assert.That(Base32.Base32H.Encode(null), Is.EqualTo(String.Empty));
         }
     }
 }
