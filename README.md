@@ -248,10 +248,6 @@ was only able to match it after I converted Base16 to unsafe code with good
 independent interleaving so CPU pipeline optimizations could take place. 
 Still not satisfied though. Is .NET's Base64 implementation native? Perhaps.
 
-Contributors
-------------
-Thanks to those who provided patches: [@carldebilly](https://github.com/carldebilly), [@greg-redefined](https://github.com/greg-redefined), [@Xor-el](https://github.com/Xor-el), [@skwasjer](https://github.com/skwasjer).
-
 Thanks
 ------
 Chatting about this pet project with my friends 
