@@ -20,8 +20,8 @@ namespace SimpleBase
     public class Base32H : IBaseCoder, INonAllocatingBaseCoder,
         INumericBaseCoder
     {
-        private const int encodedBlockSize = 7;
-        private const int byteBlockSize = 4;
+        private const int textBlockSize = 8;
+        private const int byteBlockSize = 5;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Base32H"/> class.
@@ -32,7 +32,7 @@ namespace SimpleBase
             if (alphabet.PaddingPosition != PaddingPosition.Start)
             {
                 throw new ArgumentException(
-                    "Only alphabets with paddings at the start are supported by this implementation",
+                    "Only alphabets with paddings at the start are supported by Base32H",
                     nameof(alphabet));
             }
 
@@ -47,20 +47,61 @@ namespace SimpleBase
         /// <inheritdoc/>
         public Span<byte> Decode(ReadOnlySpan<char> text)
         {
-            if (text.Length % encodedBlockSize != 0)
+            int outputLen = text.Length * byteBlockSize / textBlockSize;
+            var output = new byte[outputLen].AsSpan();
+            var inputBytes = new byte[textBlockSize].AsSpan();
+            if (outputLen == 0)
             {
-                throw new ArgumentException($"Length isn't multiple of {encodedBlockSize}", nameof(text));
+                return output;
             }
 
-            int outputLen = text.Length * byteBlockSize / encodedBlockSize;
-            var output = new byte[outputLen];
+            int inputBlockSize = Math.Min(text.Length, textBlockSize);
+            var table = Alphabet.ReverseLookupTable;
+            char padChar = Alphabet.PaddingChar;
 
-            for (int i = 0; i < text.Length; i += encodedBlockSize)
+            for (int i = 0, j = 0; i < text.Length; i += inputBlockSize, j += byteBlockSize)
             {
-                var block = text.Slice(i, encodedBlockSize);
+                var inputBlock = text.Slice(i, inputBlockSize);
+                if (inputBlockSize < textBlockSize)
+                {
+                    inputBlock = createPaddedBlock(inputBlock, inputBlockSize, padChar);
+                    inputBlockSize = textBlockSize;
+                }
+
+                var outputBlock = output.Slice(j, byteBlockSize);
+                int remainingBits = 8;
+                for (int n = 0; n < textBlockSize; n++)
+                {
+                    byte b = table[inputBlock[n]];
+                    if (b == 0)
+                    {
+                        throw new ArgumentException($"Invalid character: {inputBlock[n]}");
+                    }
+
+                    b = (byte)(b - 1); // normalize the value
+                    byte outputByte;
+                    while (remainingBits > 0)
+                    {
+                        int bitsToMove = Math.Min(remainingBits, 5);
+                        int mask = (1 << bitsToMove) - 1;
+                        outputByte |= 
+                    }
+                }
             }
 
             return output;
+        }
+
+        private static ReadOnlySpan<char> createPaddedBlock(
+            ReadOnlySpan<char> inputBlock,
+            int inputBlockSize,
+            char padChar)
+        {
+            var buffer = new char[textBlockSize].AsSpan();
+            int padLength = textBlockSize - inputBlockSize;
+            buffer.Slice(0, padLength).Fill(padChar);
+            inputBlock.CopyTo(buffer[padLength..]);
+            return buffer;
         }
 
         /// <inheritdoc/>

@@ -124,7 +124,7 @@ namespace SimpleBase
             {
                 if (char.IsUpper(c))
                 {
-                    this.Map(char.ToLowerInvariant(c), this.ReverseLookupTable[c] - 1);
+                    Map(char.ToLowerInvariant(c), this.ReverseLookupTable[c] - 1);
                 }
             }
         }
