@@ -84,7 +84,7 @@ namespace SimpleBase
                     {
                         int bitsToMove = Math.Min(remainingBits, 5);
                         int mask = (1 << bitsToMove) - 1;
-                        outputByte |= 
+                        outputByte |= (byte)(b & mask);
                     }
                 }
             }
