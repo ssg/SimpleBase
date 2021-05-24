@@ -12,7 +12,7 @@
     <AssemblyOriginatorKeyFile>..\SimpleBase.snk</AssemblyOriginatorKeyFile>
     <DelaySign>false</DelaySign>
 
-    <Version>3.0.3</Version>
+    <Version>3.1.0</Version>
     <DocumentationFile>SimpleBase.xml</DocumentationFile>
       <RepositoryUrl>https://github.com/ssg/SimpleBase</RepositoryUrl>
     <PackageProjectUrl>https://github.com/ssg/SimpleBase</PackageProjectUrl>
@@ -24,10 +24,6 @@
 # Improvements
 - Added FileCoin flavor to Base32 (contributed by @farukterzioglu).
 - Upgraded test and benchmark projects to .NET Core 3.1 (LTS).
-
-# Fixes 
-- Fixed output buffer was too small error for certain Base58 cases.
-- Avoid redundant memory copy operations.
 ]]></PackageReleaseNotes>
     <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
