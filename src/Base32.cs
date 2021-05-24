@@ -23,6 +23,7 @@ namespace SimpleBase
         private static readonly Lazy<Base32> extendedHex = new Lazy<Base32>(() => new Base32(Base32Alphabet.ExtendedHex));
         private static readonly Lazy<Base32> zBase32 = new Lazy<Base32>(() => new Base32(Base32Alphabet.ZBase32));
         private static readonly Lazy<Base32> geohash = new Lazy<Base32>(() => new Base32(Base32Alphabet.Geohash));
+        private static readonly Lazy<Base32> filecoin = new Lazy<Base32>(() => new Base32(Base32Alphabet.FileCoin));
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Base32"/> class with a
@@ -60,6 +61,11 @@ namespace SimpleBase
         /// Gets Geohash variant of Base32 coder.
         /// </summary>
         public static Base32 Geohash => geohash.Value;
+
+        /// <summary>
+        /// Gets FileCoin variant of Base32 coder.
+        /// </summary>
+        public static Base32 FileCoin => filecoin.Value;
 
         /// <summary>
         /// Gets the encoding alphabet.

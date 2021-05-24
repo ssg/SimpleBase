@@ -27,6 +27,9 @@ namespace SimpleBase
         private static readonly Lazy<Base32Alphabet> geohashAlphabet = new Lazy<Base32Alphabet>(
             () => new Base32Alphabet("0123456789bcdefghjkmnpqrstuvwxyz"));
 
+        private static readonly Lazy<Base32Alphabet> fileCoinAlphabet = new Lazy<Base32Alphabet>(
+            () => new Base32Alphabet("abcdefghijklmnopqrstuvwxyz234567"));
+
         /// <summary>
         /// Initializes a new instance of the <see cref="Base32Alphabet"/> class.
         /// </summary>
@@ -72,6 +75,11 @@ namespace SimpleBase
         /// Gets Geohash alphabet.
         /// </summary>
         public static Base32Alphabet Geohash => geohashAlphabet.Value;
+
+        /// <summary>
+        /// Gets FileCoin alphabet.
+        /// </summary>
+        public static Base32Alphabet FileCoin => fileCoinAlphabet.Value;
 
         /// <summary>
         /// Gets the padding character used in encoding.

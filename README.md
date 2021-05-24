@@ -13,7 +13,7 @@ math worked.
 
 Features
 --------
- - Base32: RFC 4648, Crockford, z-base-32, Geohash and Extended Hex 
+ - Base32: RFC 4648, Crockford, z-base-32, Geohash, FileCoin and Extended Hex 
    (BASE32-HEX) flavors with Crockford character substitution, or any other 
    custom flavors.
  - Base58: Bitcoin, Ripple, Flickr and custom flavors.
