@@ -97,7 +97,12 @@ namespace SimpleBase
         /// <inheritdoc/>
         public override int GetHashCode()
         {
+#if NETSTANDARD2_1
             return Value.GetHashCode(StringComparison.Ordinal);
+#elif NETSTANDARD2_0
+            return Value.GetHashCode();
+#endif
+
         }
 
         /// <summary>

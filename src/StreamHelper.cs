@@ -45,7 +45,11 @@ namespace SimpleBase
             var buffer = new byte[bufferSize];
             while (true)
             {
+#if NETSTANDARD2_1
                 int bytesRead = await input.ReadAsync(buffer.AsMemory(0, bufferSize)).ConfigureAwait(false);
+#elif NETSTANDARD2_0
+                int bytesRead = await input.ReadAsync(buffer, 0, bufferSize).ConfigureAwait(false);
+#endif
                 if (bytesRead < 1)
                 {
                     break;
@@ -92,7 +96,12 @@ namespace SimpleBase
                 }
 
                 var result = decodeBufferFunc(buffer.AsMemory(0, bytesRead));
+
+#if NETSTANDARD2_1
                 await output.WriteAsync(result).ConfigureAwait(false);
+#elif NETSTANDARD2_0
+                await output.WriteAsync(result.ToArray(), 0, result.Length).ConfigureAwait(false);
+#endif
             }
         }
     }

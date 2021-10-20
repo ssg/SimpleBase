@@ -82,9 +82,15 @@ namespace SimpleBase
             fixed (byte* inputPtr = bytes)
             fixed (char* outputPtr = output)
             {
+#if NETSTANDARD2_1
                 return internalEncode(inputPtr, inputLen, outputPtr, outputLen, out int numCharsWritten)
                     ? output[..numCharsWritten]
                     : throw new InvalidOperationException("Insufficient output buffer size while encoding Base85");
+#elif NETSTANDARD2_0
+                return internalEncode(inputPtr, inputLen, outputPtr, outputLen, out int numCharsWritten)
+                    ? output.Substring(0, numCharsWritten)
+                    : throw new InvalidOperationException("Insufficient output buffer size while encoding Base85");
+#endif
             }
         }
 
@@ -170,9 +176,15 @@ namespace SimpleBase
             fixed (char* inputPtr = text)
             fixed (byte* decodeBufferPtr = decodeBuffer)
             {
+#if NETSTANDARD2_1
                 return internalDecode(inputPtr, textLen, decodeBufferPtr, decodeBufferLen, out int numBytesWritten)
                     ? decodeBuffer.AsSpan()[..numBytesWritten]
                     : throw new InvalidOperationException("Internal error: pre-allocated insufficient output buffer size");
+#elif NETSTANDARD2_0
+                return internalDecode(inputPtr, textLen, decodeBufferPtr, decodeBufferLen, out int numBytesWritten)
+                    ? decodeBuffer.AsSpan().Slice(0, numBytesWritten)
+                    : throw new InvalidOperationException("Internal error: pre-allocated insufficient output buffer size");
+#endif
             }
         }
 

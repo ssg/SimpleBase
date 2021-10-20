@@ -127,7 +127,11 @@ namespace SimpleBase
                     throw new InvalidOperationException("Internal error: couldn't calculate proper output buffer size for input");
                 }
 
+#if NETSTANDARD2_1
                 return output[..numCharsWritten];
+#elif NETSTANDARD2_0
+                return output.Substring(0, numCharsWritten);
+#endif
 #pragma warning restore IDE0046 // Convert to conditional expression
             }
         }

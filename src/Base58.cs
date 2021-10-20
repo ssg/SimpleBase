@@ -110,9 +110,15 @@ namespace SimpleBase
             fixed (byte* inputPtr = bytes)
             fixed (char* outputPtr = output)
             {
+#if NETSTANDARD2_1
                 return internalEncode(inputPtr, bytesLen, outputPtr, outputLen, numZeroes, out int length)
-                    ? output[..length]
-                    : throw new InvalidOperationException("Output buffer with insufficient size generated");
+                                ? output[..length]
+                                : throw new InvalidOperationException("Output buffer with insufficient size generated");
+#elif NETSTANDARD2_0
+                return internalEncode(inputPtr, bytesLen, outputPtr, outputLen, numZeroes, out int length)
+                                ? output.Substring(0, length)
+                                : throw new InvalidOperationException("Output buffer with insufficient size generated");
+#endif
             }
         }
 
@@ -148,7 +154,12 @@ namespace SimpleBase
                     throw new InvalidOperationException("Output buffer was too small while decoding Base58");
                 }
 
+#if NETSTANDARD2_1
                 return output.AsSpan()[..numBytesWritten];
+#elif NETSTANDARD2_0
+                return output.AsSpan().Slice(0, numBytesWritten);
+#endif
+
 #pragma warning restore IDE0046 // Convert to conditional expression
             }
         }

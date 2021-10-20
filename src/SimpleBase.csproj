@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
   <PropertyGroup>
-    <TargetFramework>netstandard2.1</TargetFramework>
+    <TargetFrameworks>netstandard2.0;netstandard2.1</TargetFrameworks>
     <RootNamespace>SimpleBase</RootNamespace>
     <AssemblyName>SimpleBase</AssemblyName>
     <Copyright>Copyright 2014-2019 Sedat Kapanoglu</Copyright>
@@ -12,7 +12,7 @@
     <AssemblyOriginatorKeyFile>..\SimpleBase.snk</AssemblyOriginatorKeyFile>
     <DelaySign>false</DelaySign>
 
-    <Version>3.1.0</Version>
+    <Version>3.1.1</Version>
     <DocumentationFile>SimpleBase.xml</DocumentationFile>
       <RepositoryUrl>https://github.com/ssg/SimpleBase</RepositoryUrl>
     <PackageProjectUrl>https://github.com/ssg/SimpleBase</PackageProjectUrl>
@@ -28,6 +28,7 @@
     <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
     <PlatformTarget>AnyCPU</PlatformTarget>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <ItemGroup>
