@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 namespace SimpleBase
 {
     /// <summary>
-    /// Base58 encoding/decoding class.
+    /// Base85 encoding/decoding class.
     /// </summary>
     public sealed class Base85 : IBaseEncoder, IBaseStreamEncoder, INonAllocatingBaseEncoder
     {
