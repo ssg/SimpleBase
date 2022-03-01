@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
     <PropertyGroup>
-        <TargetFramework>net5.0</TargetFramework>
+        <TargetFramework>net6.0</TargetFramework>
         <RootNamespace>SimpleBase</RootNamespace>
         <AssemblyName>SimpleBase</AssemblyName>
         <Copyright>Copyright 2014-2019 Sedat Kapanoglu</Copyright>
@@ -24,7 +24,7 @@
         <PackageReleaseNotes>
             <![CDATA[
 # Breaking changes
-- Targets .NET 5
+- Targets .NET 6
 - Changed interface names from Encoder to Coder to signify encoding and
 decoding functionality better
 
