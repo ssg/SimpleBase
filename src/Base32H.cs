@@ -45,11 +45,11 @@ namespace SimpleBase
         public Base32Alphabet Alphabet { get; }
 
         /// <inheritdoc/>
-        public Span<byte> Decode(ReadOnlySpan<char> text)
+        public unsafe Span<byte> Decode(ReadOnlySpan<char> text)
         {
             int outputLen = text.Length * byteBlockSize / textBlockSize;
             var output = new byte[outputLen].AsSpan();
-            var inputBytes = new byte[textBlockSize].AsSpan();
+            var inputBytes = stackalloc byte[textBlockSize];
             if (outputLen == 0)
             {
                 return output;
@@ -90,18 +90,6 @@ namespace SimpleBase
             }
 
             return output;
-        }
-
-        private static ReadOnlySpan<char> createPaddedBlock(
-            ReadOnlySpan<char> inputBlock,
-            int inputBlockSize,
-            char padChar)
-        {
-            var buffer = new char[textBlockSize].AsSpan();
-            int padLength = textBlockSize - inputBlockSize;
-            buffer.Slice(0, padLength).Fill(padChar);
-            inputBlock.CopyTo(buffer[padLength..]);
-            return buffer;
         }
 
         /// <inheritdoc/>
@@ -156,6 +144,18 @@ namespace SimpleBase
         public bool TryEncode(ReadOnlySpan<byte> input, Span<char> output, out int numCharsWritten)
         {
             throw new NotImplementedException();
+        }
+
+        private static ReadOnlySpan<char> createPaddedBlock(
+            ReadOnlySpan<char> inputBlock,
+            int inputBlockSize,
+            char padChar)
+        {
+            var buffer = new char[textBlockSize].AsSpan();
+            int padLength = textBlockSize - inputBlockSize;
+            buffer[..padLength].Fill(padChar);
+            inputBlock.CopyTo(buffer[padLength..]);
+            return buffer;
         }
     }
 }
