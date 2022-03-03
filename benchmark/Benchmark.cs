@@ -53,11 +53,7 @@ namespace benchmark
         private static string getPrintable(TimeSpan time, TimeSpan baseline)
         {
             string result = $"{time.TotalMilliseconds / 1000.0:F2}μs";
-            if (time == baseline)
-            {
-                return result;
-            }
-            return result + " (" + compare(time, baseline) + ")";
+            return time == baseline ? result : $"{result} ({compare(time, baseline)})";
         }
 
         public void TestEncode()
@@ -78,7 +74,7 @@ namespace benchmark
 
         public void TestDecode()
         {
-            string str = new String('a', DecodeSize);
+            string str = new('a', DecodeSize);
 
             DecodeFunc(str); // warmup
             var w = Stopwatch.StartNew();
