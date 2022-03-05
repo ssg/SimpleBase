@@ -5,47 +5,46 @@
 
 using System;
 
-namespace SimpleBase
+namespace SimpleBase;
+
+/// <summary>
+/// Number-based coding functions.
+/// </summary>
+public interface INumericBaseCoder
 {
     /// <summary>
-    /// Number-based coding functions.
+    /// Encode the given number.
     /// </summary>
-    public interface INumericBaseCoder
-    {
-        /// <summary>
-        /// Encode the given number.
-        /// </summary>
-        /// <param name="number">Number to encode.</param>
-        /// <returns>Encoded string.</returns>
-        /// <remarks>Negative numbers are not supported.</remarks>
-        /// <exception cref="ArgumentOutOfRangeException">If number is negative.</exception>
-        string Encode(long number);
+    /// <param name="number">Number to encode.</param>
+    /// <returns>Encoded string.</returns>
+    /// <remarks>Negative numbers are not supported.</remarks>
+    /// <exception cref="ArgumentOutOfRangeException">If number is negative.</exception>
+    string Encode(long number);
 
-        /// <summary>
-        /// Encode the given number.
-        /// </summary>
-        /// <param name="number">Number to encode.</param>
-        /// <returns>Encoded string.</returns>
-        string Encode(ulong number);
+    /// <summary>
+    /// Encode the given number.
+    /// </summary>
+    /// <param name="number">Number to encode.</param>
+    /// <returns>Encoded string.</returns>
+    string Encode(ulong number);
 
-        /// <summary>
-        /// Decode text to a number.
-        /// </summary>
-        /// <param name="text">Text to decode.</param>
-        /// <returns>Decoded number.</returns>
-        /// <exception cref="InvalidOperationException">
-        /// If the decoded number is larger to fit in a variable or is negative.
-        /// </exception>
-        long DecodeInt64(string text);
+    /// <summary>
+    /// Decode text to a number.
+    /// </summary>
+    /// <param name="text">Text to decode.</param>
+    /// <returns>Decoded number.</returns>
+    /// <exception cref="InvalidOperationException">
+    /// If the decoded number is larger to fit in a variable or is negative.
+    /// </exception>
+    long DecodeInt64(string text);
 
-        /// <summary>
-        /// Decode text to a number.
-        /// </summary>
-        /// <param name="text">Text to decode.</param>
-        /// <returns>Decoded number.</returns>
-        /// <exception cref="InvalidOperationException">
-        /// If the decoded number is larger to fit in a variable.
-        /// </exception>
-        ulong DecodeUInt64(string text);
-    }
+    /// <summary>
+    /// Decode text to a number.
+    /// </summary>
+    /// <param name="text">Text to decode.</param>
+    /// <returns>Decoded number.</returns>
+    /// <exception cref="InvalidOperationException">
+    /// If the decoded number is larger to fit in a variable.
+    /// </exception>
+    ulong DecodeUInt64(string text);
 }

@@ -5,25 +5,24 @@
 
 using System;
 
-namespace SimpleBase
+namespace SimpleBase;
+
+/// <summary>
+/// Basic encoding functionality.
+/// </summary>
+public interface IBaseCoder
 {
     /// <summary>
-    /// Basic encoding functionality.
+    /// Encode a buffer to base-encoded representation.
     /// </summary>
-    public interface IBaseCoder
-    {
-        /// <summary>
-        /// Encode a buffer to base-encoded representation.
-        /// </summary>
-        /// <param name="bytes">Bytes to encode.</param>
-        /// <returns>Base16 string.</returns>
-        string Encode(ReadOnlySpan<byte> bytes);
+    /// <param name="bytes">Bytes to encode.</param>
+    /// <returns>Base16 string.</returns>
+    string Encode(ReadOnlySpan<byte> bytes);
 
-        /// <summary>
-        /// Decode base-encoded text into bytes.
-        /// </summary>
-        /// <param name="text">Base16 text.</param>
-        /// <returns>Decoded bytes.</returns>
-        Span<byte> Decode(ReadOnlySpan<char> text);
-    }
+    /// <summary>
+    /// Decode base-encoded text into bytes.
+    /// </summary>
+    /// <param name="text">Base16 text.</param>
+    /// <returns>Decoded bytes.</returns>
+    Span<byte> Decode(ReadOnlySpan<char> text);
 }

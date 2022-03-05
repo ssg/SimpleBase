@@ -3,21 +3,20 @@
 // Licensed under Apache-2.0 License (see LICENSE.txt file for details)
 // </copyright>
 
-namespace SimpleBase
+namespace SimpleBase;
+
+/// <summary>
+/// Position of the padding in an encoder output.
+/// </summary>
+public enum PaddingPosition
 {
     /// <summary>
-    /// Position of the padding in an encoder output.
+    /// Padding appears at the start of the encoded buffer.
     /// </summary>
-    public enum PaddingPosition
-    {
-        /// <summary>
-        /// Padding appears at the start of the encoded buffer.
-        /// </summary>
-        Start,
+    Start,
 
-        /// <summary>
-        /// Padding appears at the end of the buffer.
-        /// </summary>
-        End,
-    }
+    /// <summary>
+    /// Padding appears at the end of the buffer.
+    /// </summary>
+    End,
 }

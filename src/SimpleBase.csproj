@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
     <PropertyGroup>
-        <TargetFramework>net6.0</TargetFramework>
+        <TargetFramework>netstandard2.1</TargetFramework>
         <RootNamespace>SimpleBase</RootNamespace>
         <AssemblyName>SimpleBase</AssemblyName>
         <Copyright>Copyright 2014-2019 Sedat Kapanoglu</Copyright>
@@ -29,7 +29,6 @@
 decoding functionality better
 
 # New features
-- Added [Base32H](https://base32h.github.io) encoding 
 - Added [Bech32](https://en.bitcoin.it/wiki/Bech32) flavor to Base32 
 - Added RFC 1924 (IPv6) flavor to Base85 along with 
   EncodeIpv6 and DecodeIpv6 functions https://tools.ietf.org/html/rfc1924
@@ -64,7 +63,7 @@ decoding functionality better
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="StyleCop.Analyzers" Version="1.1.118">
+        <PackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.406">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
         </PackageReference>

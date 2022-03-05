@@ -5,39 +5,38 @@
 
 using System.Collections.Generic;
 
-namespace SimpleBase
+namespace SimpleBase;
+
+internal sealed class AliasedBase32Alphabet : Base32Alphabet
 {
-    internal sealed class AliasedBase32Alphabet : Base32Alphabet
+    public AliasedBase32Alphabet(string alphabet, IEnumerable<CharMap> map)
+        : base(alphabet)
     {
-        public AliasedBase32Alphabet(string alphabet, IEnumerable<(char from, char to)> map)
-            : base(alphabet)
-        {
-            setupMap(map);
-        }
+        setupMap(map);
+    }
 
-        public AliasedBase32Alphabet(
-            string alphabet,
-            char paddingChar,
-            PaddingPosition paddingPosition,
-            IEnumerable<(char from, char to)> map)
-            : base(alphabet, paddingChar, paddingPosition)
-        {
-            setupMap(map);
-        }
+    public AliasedBase32Alphabet(
+        string alphabet,
+        char paddingChar,
+        PaddingPosition paddingPosition,
+        IEnumerable<CharMap> map)
+        : base(alphabet, paddingChar, paddingPosition)
+    {
+        setupMap(map);
+    }
 
-        private void setupMap(IEnumerable<(char from, char to)> map)
+    private void setupMap(IEnumerable<CharMap> map)
+    {
+        foreach (var (from, to) in map)
         {
-            foreach (var (from, to) in map)
-            {
-                mapAlternate(from, to);
-            }
+            mapAlternate(from, to);
         }
+    }
 
-        private void mapAlternate(char source, char destination)
-        {
-            int result = this.ReverseLookupTable[destination] - 1;
-            this.Map(source, result);
-            this.Map(char.ToLowerInvariant(source), result);
-        }
+    private void mapAlternate(char source, char destination)
+    {
+        int result = ReverseLookupTable[destination] - 1;
+        this.Map(source, result);
+        this.Map(char.ToLowerInvariant(source), result);
     }
 }
