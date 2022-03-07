@@ -187,14 +187,14 @@ public sealed class Base32 : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCod
     /// </summary>
     /// <param name="text">Encoded Base32 string.</param>
     /// <returns>Decoded bytes.</returns>
-    public unsafe Span<byte> Decode(ReadOnlySpan<char> text)
+    public unsafe byte[] Decode(ReadOnlySpan<char> text)
     {
         int paddingLen = getPaddingCharCount(text);
         int textLen = text.Length - paddingLen;
         int outputLen = getAllocationByteCountForDecoding(textLen);
         if (outputLen == 0)
         {
-            return Span<byte>.Empty;
+            return Array.Empty<byte>();
         }
 
         var outputBuffer = new byte[outputLen];
@@ -271,7 +271,7 @@ public sealed class Base32 : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCod
     /// <param name="output">Binary output stream.</param>
     public void Decode(TextReader input, Stream output)
     {
-        StreamHelper.Decode(input, output, buffer => Decode(buffer.Span).ToArray());
+        StreamHelper.Decode(input, output, buffer => Decode(buffer.Span));
     }
 
     /// <summary>
@@ -282,7 +282,7 @@ public sealed class Base32 : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCod
     /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
     public async Task DecodeAsync(TextReader input, Stream output)
     {
-        await StreamHelper.DecodeAsync(input, output, buffer => Decode(buffer.Span).ToArray())
+        await StreamHelper.DecodeAsync(input, output, buffer => Decode(buffer.Span))
             .ConfigureAwait(false);
     }
 

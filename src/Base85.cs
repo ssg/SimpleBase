@@ -144,7 +144,7 @@ public class Base85 : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCoder
     /// <param name="output">Output stream.</param>
     public void Decode(TextReader input, Stream output)
     {
-        StreamHelper.Decode(input, output, (text) => Decode(text.Span).ToArray(), decodeBufferSize);
+        StreamHelper.Decode(input, output, (text) => Decode(text.Span), decodeBufferSize);
     }
 
     /// <summary>
@@ -155,7 +155,7 @@ public class Base85 : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCoder
     /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
     public async Task DecodeAsync(TextReader input, Stream output)
     {
-        await StreamHelper.DecodeAsync(input, output, (text) => Decode(text.Span).ToArray(), decodeBufferSize)
+        await StreamHelper.DecodeAsync(input, output, (text) => Decode(text.Span), decodeBufferSize)
             .ConfigureAwait(false);
     }
 
@@ -164,12 +164,12 @@ public class Base85 : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCoder
     /// </summary>
     /// <param name="text">Characters to decode.</param>
     /// <returns>Decoded bytes.</returns>
-    public unsafe Span<byte> Decode(ReadOnlySpan<char> text)
+    public unsafe byte[] Decode(ReadOnlySpan<char> text)
     {
         int textLen = text.Length;
         if (textLen == 0)
         {
-            return Span<byte>.Empty;
+            return Array.Empty<byte>();
         }
 
         bool usingShortcuts = Alphabet.HasShortcut;
@@ -182,7 +182,7 @@ public class Base85 : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCoder
             fixed (byte* decodeBufferPtr = decodeBuffer)
         {
             return internalDecode(inputPtr, textLen, decodeBufferPtr, decodeBufferLen, out int numBytesWritten)
-                ? decodeBuffer.AsSpan()[..numBytesWritten]
+                ? decodeBuffer[..numBytesWritten]
                 : throw new InvalidOperationException("Internal error: pre-allocated insufficient output buffer size");
         }
         }

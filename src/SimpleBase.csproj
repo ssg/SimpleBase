@@ -17,7 +17,7 @@
         <PackageProjectUrl>https://github.com/ssg/SimpleBase</PackageProjectUrl>
         <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
         <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-        <PackageTags>base16 base32 base58 base85 ascii85 z85 hexadecimal bitcoin ripple flickr crockford extended hex rfc4648 z-base-32 geohash</PackageTags>
+        <PackageTags>base16 base32 base58 base85 ascii85 z85 hexadecimal bitcoin ripple flickr crockford extended hex rfc4648 z-base-32 geohash bech32 rfc1924</PackageTags>
         <LangVersion>latest</LangVersion>
         <Nullable>enable</Nullable>
         <PlatformTarget>AnyCPU</PlatformTarget>
@@ -26,7 +26,10 @@
 # Breaking changes
 - Targets .NET 6
 - Changed interface names from Encoder to Coder to signify encoding and
-decoding functionality better
+  decoding functionality better
+- Simple (allocating) versions of Decode() return `byte[]`'s instead of `Span<byte>`'s for correct 
+  ownership semantics. This will cause copying, but at least will save GC from tracking expensive
+  interior references.
 
 # New features
 - Added [Bech32](https://en.bitcoin.it/wiki/Bech32) flavor to Base32 

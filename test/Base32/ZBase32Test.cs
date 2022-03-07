@@ -45,10 +45,10 @@ class ZBase32Test
     public void Decode_ReturnsExpectedValues(string expectedOutput, string input)
     {
         var bytes = Base32.ZBase32.Decode(input);
-        string result = Encoding.ASCII.GetString(bytes.ToArray());
+        string result = Encoding.ASCII.GetString(bytes);
         Assert.That(result, Is.EqualTo(expectedOutput));
         bytes = Base32.ZBase32.Decode(input.ToLowerInvariant());
-        result = Encoding.ASCII.GetString(bytes.ToArray());
+        result = Encoding.ASCII.GetString(bytes);
         Assert.That(result, Is.EqualTo(expectedOutput));
     }
 

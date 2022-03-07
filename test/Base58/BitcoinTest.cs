@@ -103,7 +103,7 @@ class BitcoinTest
     public void Decode_Bitcoin_ReturnsExpectedResults(string expectedOutput, string input)
     {
         var buffer = Base58.Bitcoin.Decode(input);
-        string result = BitConverter.ToString(buffer.ToArray()).Replace("-", "",
+        string result = BitConverter.ToString(buffer).Replace("-", "",
             StringComparison.Ordinal);
         Assert.That(result, Is.EqualTo(expectedOutput));
     }

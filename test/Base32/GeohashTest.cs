@@ -12,7 +12,7 @@ class GeohashTest
         const string input = "ezs42";
         var result = Base32.Geohash.Decode(input);
         var expected = new byte[] { 0b01101111, 0b11110000, 0b01000001 };
-        Assert.That(result.ToArray(), Is.EqualTo(expected));
+        Assert.That(result, Is.EqualTo(expected));
     }
 
     [Test]

@@ -44,7 +44,7 @@ internal class Ascii85Test
         }
         actualInput += " ";
         var result = Base85.Ascii85.Decode(actualInput);
-        CollectionAssert.AreEqual(expectedOutput, result.ToArray());
+        CollectionAssert.AreEqual(expectedOutput, result);
     }
 
     [Test]
@@ -127,7 +127,7 @@ internal class Ascii85Test
     public void Decode_TestVectors_ShouldDecodeCorrectly(byte[] expectedOutput, string input)
     {
         var result = Base85.Ascii85.Decode(input);
-        CollectionAssert.AreEqual(expectedOutput, result.ToArray());
+        CollectionAssert.AreEqual(expectedOutput, result);
     }
 
     [Test]

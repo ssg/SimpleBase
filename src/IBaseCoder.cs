@@ -24,5 +24,5 @@ public interface IBaseCoder
     /// </summary>
     /// <param name="text">Base16 text.</param>
     /// <returns>Decoded bytes.</returns>
-    Span<byte> Decode(ReadOnlySpan<char> text);
+    byte[] Decode(ReadOnlySpan<char> text);
 }

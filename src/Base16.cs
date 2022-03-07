@@ -64,14 +64,12 @@ public sealed class Base16 : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCod
     public int GetSafeByteCountForDecoding(ReadOnlySpan<char> text)
     {
         int textLen = text.Length;
-#pragma warning disable IDE0046 // Convert to conditional expression - prefer clarity
         if ((textLen & 1) != 0)
         {
             return 0;
         }
 
         return textLen / 2;
-#pragma warning restore IDE0046 // Convert to conditional expression
     }
 
     /// <inheritdoc/>
@@ -153,7 +151,7 @@ public sealed class Base16 : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCod
     /// </summary>
     /// <param name="text">Hex string.</param>
     /// <returns>Decoded bytes.</returns>
-    public static Span<byte> Decode(string text)
+    public static byte[] Decode(string text)
     {
         return UpperCase.Decode((ReadOnlySpan<char>)text);
     }
@@ -168,7 +166,7 @@ public sealed class Base16 : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCod
     /// <returns>Task that represents the async operation.</returns>
     public async Task DecodeAsync(TextReader input, Stream output)
     {
-        await StreamHelper.DecodeAsync(input, output, buffer => Decode(buffer.Span).ToArray())
+        await StreamHelper.DecodeAsync(input, output, buffer => Decode(buffer.Span))
             .ConfigureAwait(false);
     }
 
@@ -181,7 +179,7 @@ public sealed class Base16 : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCod
     /// <param name="output">Stream where decoded bytes will be written to.</param>
     public void Decode(TextReader input, Stream output)
     {
-        StreamHelper.Decode(input, output, buffer => Decode(buffer.Span).ToArray());
+        StreamHelper.Decode(input, output, buffer => Decode(buffer.Span));
     }
 
     /// <summary>
@@ -211,12 +209,12 @@ public sealed class Base16 : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCod
     /// </summary>
     /// <param name="text">Base16 text.</param>
     /// <returns>Decoded bytes.</returns>
-    public unsafe Span<byte> Decode(ReadOnlySpan<char> text)
+    public unsafe byte[] Decode(ReadOnlySpan<char> text)
     {
         int textLen = text.Length;
         if (textLen == 0)
         {
-            return Span<byte>.Empty;
+            return Array.Empty<byte>();
         }
 
         byte[] output = new byte[GetSafeByteCountForDecoding(text)];
@@ -290,28 +288,23 @@ public sealed class Base16 : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCod
     /// <returns>Base16 string.</returns>
     public unsafe string Encode(ReadOnlySpan<byte> bytes)
     {
-        int bytesLen = bytes.Length;
-        if (bytesLen == 0)
+        if (bytes.Length == 0)
         {
             return string.Empty;
         }
 
-        var output = new string('\0', GetSafeCharCountForEncoding(bytes));
-        fixed (char* outputPtr = output)
-        {
-            internalEncode(bytes, bytesLen, Alphabet.Value, outputPtr);
-        }
+        var output = new char[GetSafeCharCountForEncoding(bytes)];
+        internalEncode(bytes, Alphabet.Value, output);
 
-        return output;
+        return new string(output);
     }
 
     /// <inheritdoc/>
-    public unsafe bool TryEncode(ReadOnlySpan<byte> bytes, Span<char> output, out int numCharsWritten)
+    public bool TryEncode(ReadOnlySpan<byte> bytes, Span<char> output, out int numCharsWritten)
     {
-        int bytesLen = bytes.Length;
         ReadOnlySpan<char> alphabet = Alphabet.Value;
 
-        int outputLen = bytesLen * 2;
+        int outputLen = bytes.Length * 2;
         if (output.Length < outputLen)
         {
             numCharsWritten = 0;
@@ -324,51 +317,21 @@ public sealed class Base16 : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCod
             return true;
         }
 
-        fixed (char* outputPtr = output)
-        {
-            internalEncode(bytes, bytesLen, alphabet, outputPtr);
-        }
-
+        internalEncode(bytes, alphabet, output);
         numCharsWritten = outputLen;
         return true;
     }
 
-    private static unsafe void internalEncode(
+    private static void internalEncode(
         ReadOnlySpan<byte> bytes,
-        int bytesLen,
         ReadOnlySpan<char> alphabet,
-        char* outputPtr)
+        Span<char> output)
     {
-        fixed (byte* bytesPtr = bytes)
+        for (int i = 0, o = 0; i < bytes.Length; i++, o += 2)
         {
-            char* pOutput = outputPtr;
-            byte* pInput = bytesPtr;
-
-            int octets = bytesLen / sizeof(ulong);
-            for (int i = 0; i < octets; i++, pInput += sizeof(ulong))
-            {
-                // read bigger chunks
-                ulong input = *(ulong*)pInput;
-                for (int j = 0; j < sizeof(ulong) / 2; j++, input >>= 16)
-                {
-                    ushort pair = (ushort)input;
-
-                    // use cpu pipeline to parallelize writes
-                    pOutput[0] = alphabet[(pair >> 4) & 0x0F];
-                    pOutput[1] = alphabet[pair & 0x0F];
-                    pOutput[2] = alphabet[pair >> 12];
-                    pOutput[3] = alphabet[(pair >> 8) & 0x0F];
-                    pOutput += 4;
-                }
-            }
-
-            for (int remaining = bytesLen % sizeof(ulong); remaining > 0; remaining--)
-            {
-                byte b = *pInput++;
-                pOutput[0] = alphabet[b >> 4];
-                pOutput[1] = alphabet[b & 0x0F];
-                pOutput += 2;
-            }
+            byte b = bytes[i];
+            output[o] = alphabet[(b >> 4) & 0x0F];
+            output[o + 1] = alphabet[b & 0x0F];
         }
     }
 }

@@ -177,10 +177,10 @@ class CrockfordTest
     public void Decode_ReturnsExpectedValues(string expectedOutput, string input, bool _)
     {
         var bytes = Base32.Crockford.Decode(input);
-        string result = Encoding.ASCII.GetString(bytes.ToArray());
+        string result = Encoding.ASCII.GetString(bytes);
         Assert.That(result, Is.EqualTo(expectedOutput));
         bytes = Base32.Crockford.Decode(input.ToLowerInvariant());
-        result = Encoding.ASCII.GetString(bytes.ToArray());
+        result = Encoding.ASCII.GetString(bytes);
         Assert.That(result, Is.EqualTo(expectedOutput));
     }
 
@@ -222,7 +222,7 @@ class CrockfordTest
     {
         var expectedResult = Base32.Crockford.Decode(actual);
         var result = Base32.Crockford.Decode(equivalent);
-        Assert.That(result.ToArray(), Is.EqualTo(expectedResult.ToArray()));
+        Assert.That(result, Is.EqualTo(expectedResult));
     }
 
     [Test]

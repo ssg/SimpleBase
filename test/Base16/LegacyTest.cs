@@ -98,7 +98,7 @@ class LegacyTest
     public void Decode_DecodesBothLowerAndUpperCase()
     {
         var expectedResult = new byte[] { 0xAB, 0xCD, 0xEF, 0xF0 };
-        Assert.That(Base16.Decode("ABCDEFF0").ToArray(), Is.EqualTo(expectedResult));
-        Assert.That(Base16.Decode("abcdeff0").ToArray(), Is.EqualTo(expectedResult));
+        Assert.That(Base16.Decode("ABCDEFF0"), Is.EqualTo(expectedResult));
+        Assert.That(Base16.Decode("abcdeff0"), Is.EqualTo(expectedResult));
     }
 }

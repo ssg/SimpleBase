@@ -123,12 +123,12 @@ public sealed class Base58 : IBaseCoder, INonAllocatingBaseCoder
     /// </summary>
     /// <param name="text">Base58 encoded text.</param>
     /// <returns>Decoded bytes.</returns>
-    public unsafe Span<byte> Decode(ReadOnlySpan<char> text)
+    public unsafe byte[] Decode(ReadOnlySpan<char> text)
     {
         int textLen = text.Length;
         if (textLen == 0)
         {
-            return Span<byte>.Empty;
+            return Array.Empty<byte>();
         }
 
         char zeroChar = ZeroChar;
@@ -151,7 +151,7 @@ public sealed class Base58 : IBaseCoder, INonAllocatingBaseCoder
                 throw new InvalidOperationException("Output buffer was too small while decoding Base58");
             }
 
-            return output.AsSpan()[..numBytesWritten];
+            return output[..numBytesWritten];
 #pragma warning restore IDE0046 // Convert to conditional expression
         }
         }
