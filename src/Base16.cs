@@ -155,7 +155,7 @@ public sealed class Base16 : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCod
     /// <returns>Decoded bytes.</returns>
     public static Span<byte> Decode(string text)
     {
-        return UpperCase.Decode(text.AsSpan());
+        return UpperCase.Decode((ReadOnlySpan<char>)text);
     }
 
     /// <summary>

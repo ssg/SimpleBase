@@ -71,17 +71,29 @@ public class Base85Ipv6 : Base85
     /// </summary>
     /// <param name="text">Encoded text.</param>
     /// <returns>Decoded IPv6 address.</returns>
-    public IPAddress DecodeIpv6(string text)
+    public unsafe IPAddress DecodeIpv6(string text)
     {
         if (text.Length != ipv6chars)
         {
             throw new ArgumentException("Invalid encoded IPv6 text length");
         }
 
-        var bytes = Decode(text);
-        return bytes.Length == 16
-            ? new IPAddress(bytes)
-            : throw new ArgumentException(
-                "Invalid encoded IP address. RFC 1924 is only defined for IPv6 addresses");
+        BigInteger num = 0;
+        for (int n = 0; n < ipv6chars; n++)
+        {
+            char c = text[n];
+            int value = Alphabet.ReverseLookupTable[c] - 1;
+            if (value < 0)
+            {
+                throw new InvalidOperationException($"Invalid character: {c}");
+            }
+
+            num = (num * divisor) + value;
+        }
+
+        Span<byte> buffer = stackalloc byte[ipv6bytes];
+        return num.TryWriteBytes(buffer, out int bytesWritten, isUnsigned: false, isBigEndian: true)
+            ? new IPAddress(buffer)
+            : throw new InvalidOperationException("Destination buffer is too small");
     }
 }
