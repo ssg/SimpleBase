@@ -46,9 +46,6 @@ dotnet_diagnostic.SA1101.severity = none
 # SA1118: The parameter spans multiple lines
 dotnet_diagnostic.SA1118.severity = none
 
-# SA1200: Using directives should be placed correctly
-dotnet_diagnostic.SA1200.severity = none
-
 # SA1204: Static elements should appear before instance elements
 dotnet_diagnostic.SA1204.severity = none
 
@@ -66,6 +63,9 @@ dotnet_diagnostic.CS3002.severity = none
 
 # CS3001: Argument type is not CLS-compliant
 dotnet_diagnostic.CS3001.severity = none
+
+dotnet_diagnostic.IDE0046.severity = silent
+
 csharp_indent_labels = one_less_than_current
 csharp_using_directive_placement = outside_namespace:suggestion
 csharp_prefer_simple_using_statement = true:suggestion
