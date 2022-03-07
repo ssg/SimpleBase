@@ -133,7 +133,7 @@ public sealed class Base32 : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCod
     }
 
     /// <summary>
-    /// Encode a byte array into a Base32 string without padding.
+    /// Encode a memory span into a Base32 string without padding.
     /// </summary>
     /// <param name="bytes">Buffer to be encoded.</param>
     /// <returns>Encoded string.</returns>
@@ -143,7 +143,7 @@ public sealed class Base32 : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCod
     }
 
     /// <summary>
-    /// Encode a byte array into a Base32 string.
+    /// Encode a memory span into a Base32 string.
     /// </summary>
     /// <param name="bytes">Buffer to be encoded.</param>
     /// <param name="padding">Append padding characters in the output.</param>
@@ -183,10 +183,10 @@ public sealed class Base32 : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCod
     }
 
     /// <summary>
-    /// Decode a Base32 encoded string into a byte array.
+    /// Decode a Base32 encoded string into bytes.
     /// </summary>
     /// <param name="text">Encoded Base32 string.</param>
-    /// <returns>Decoded byte array.</returns>
+    /// <returns>Decoded bytes.</returns>
     public unsafe Span<byte> Decode(ReadOnlySpan<char> text)
     {
         int paddingLen = getPaddingCharCount(text);
@@ -194,11 +194,10 @@ public sealed class Base32 : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCod
         int outputLen = getAllocationByteCountForDecoding(textLen);
         if (outputLen == 0)
         {
-            return Array.Empty<byte>();
+            return Span<byte>.Empty;
         }
 
         var outputBuffer = new byte[outputLen];
-
         fixed (byte* outputPtr = outputBuffer)
         {
             fixed (char* inputPtr = text)

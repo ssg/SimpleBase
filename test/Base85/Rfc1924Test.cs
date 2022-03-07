@@ -14,4 +14,13 @@ public class Rfc1924Test
         var addr = IPAddress.Parse(ip);
         Assert.That(Base85.Rfc1924.EncodeIpv6(addr), Is.EqualTo(expectedOutput));
     }
+
+    [Test]
+    [TestCase("4)+k&C#VzJ4br>0wv%Yp", "1080:0:0:0:8:800:200C:417A")]
+    public void DecodeIpv6_WorksCorrectly(string encodedText, string expectedIp)
+    {
+        var ip = Base85.Rfc1924.DecodeIpv6(encodedText);
+        Assert.That(ip.ToString(), Is.EqualTo(expectedIp));
+    }
+
 }

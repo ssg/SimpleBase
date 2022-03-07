@@ -122,13 +122,13 @@ public sealed class Base58 : IBaseCoder, INonAllocatingBaseCoder
     /// Decode a Base58 representation.
     /// </summary>
     /// <param name="text">Base58 encoded text.</param>
-    /// <returns>Array of decoded bytes.</returns>
+    /// <returns>Decoded bytes.</returns>
     public unsafe Span<byte> Decode(ReadOnlySpan<char> text)
     {
         int textLen = text.Length;
         if (textLen == 0)
         {
-            return Array.Empty<byte>();
+            return Span<byte>.Empty;
         }
 
         char zeroChar = ZeroChar;

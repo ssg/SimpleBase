@@ -22,10 +22,10 @@ dotnet_style_prefer_inferred_anonymous_type_member_names = true:suggestion
 dotnet_style_prefer_compound_assignment = true:suggestion
 dotnet_style_prefer_simplified_interpolation = true:suggestion
 dotnet_style_namespace_match_folder = true:suggestion
+guidelines = 110
 
 [*.cs]
 trim_trailing_whitespace = true
-guidelines = 110
 
 dotnet_naming_rule.private_members_are_camelcase.symbols = private_members
 dotnet_naming_rule.private_members_are_camelcase.style = camelcase

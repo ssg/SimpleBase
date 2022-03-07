@@ -216,7 +216,7 @@ public sealed class Base16 : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCod
         int textLen = text.Length;
         if (textLen == 0)
         {
-            return Array.Empty<byte>();
+            return Span<byte>.Empty;
         }
 
         byte[] output = new byte[GetSafeByteCountForDecoding(text)];
