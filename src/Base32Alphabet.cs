@@ -124,7 +124,7 @@ public class Base32Alphabet : CodingAlphabet
         {
             if (char.IsUpper(c))
             {
-                Map(char.ToLowerInvariant(c), this.ReverseLookupTable[c] - 1);
+                Map(char.ToLowerInvariant(c), ReverseLookupTable[c] - 1);
             }
         }
     }

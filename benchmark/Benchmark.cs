@@ -20,10 +20,10 @@ internal class Benchmark
 
     public Benchmark(string name, float growth, Action<byte[]> encodeFunc, Action<string> decodeFunc)
     {
-        this.Name = name;
-        this.Growth = growth;
-        this.EncodeFunc = encodeFunc;
-        this.DecodeFunc = decodeFunc;
+        Name = name;
+        Growth = growth;
+        EncodeFunc = encodeFunc;
+        DecodeFunc = decodeFunc;
     }
 
     private static string compare(TimeSpan bench, TimeSpan baseline)
@@ -69,7 +69,7 @@ internal class Benchmark
             EncodeFunc(buf);
         }
         w.Stop();
-        this.EncodeTime = w.Elapsed;
+        EncodeTime = w.Elapsed;
     }
 
     public void TestDecode()
@@ -83,6 +83,6 @@ internal class Benchmark
             DecodeFunc(str);
         }
         w.Stop();
-        this.DecodeTime = w.Elapsed;
+        DecodeTime = w.Elapsed;
     }
 }

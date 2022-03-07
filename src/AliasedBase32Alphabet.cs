@@ -36,7 +36,7 @@ internal sealed class AliasedBase32Alphabet : Base32Alphabet
     private void mapAlternate(char source, char destination)
     {
         int result = ReverseLookupTable[destination] - 1;
-        this.Map(source, result);
-        this.Map(char.ToLowerInvariant(source), result);
+        Map(source, result);
+        Map(char.ToLowerInvariant(source), result);
     }
 }

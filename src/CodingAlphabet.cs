@@ -37,23 +37,18 @@ public abstract class CodingAlphabet : ICodingAlphabet
     /// <param name="alphabet">Alphabet character.</param>
     public CodingAlphabet(int length, string alphabet)
     {
-        if (alphabet is null)
-        {
-            throw new ArgumentNullException(nameof(alphabet));
-        }
-
         if (alphabet.Length != length)
         {
             throw new ArgumentException($"Required alphabet length is {length} but provided alphabet is "
                 + $"{alphabet.Length} characters long");
         }
 
-        this.Length = length;
-        this.Value = alphabet;
+        Length = length;
+        Value = alphabet;
 
         for (short i = 0; i < length; i++)
         {
-            this.Map(alphabet[i], i);
+            Map(alphabet[i], i);
         }
     }
 
@@ -91,7 +86,7 @@ public abstract class CodingAlphabet : ICodingAlphabet
     /// <returns>The characters of the encoding alphabet.</returns>
     public override string ToString()
     {
-        return this.Value;
+        return Value;
     }
 
     /// <inheritdoc/>
@@ -108,6 +103,6 @@ public abstract class CodingAlphabet : ICodingAlphabet
     protected void Map(char c, int value)
     {
         Debug.Assert(c < maxLength, $"Alphabet contains character above {maxLength}");
-        this.reverseLookupTable[c] = (byte)(value + 1);
+        reverseLookupTable[c] = (byte)(value + 1);
     }
 }

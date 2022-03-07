@@ -36,8 +36,8 @@ public sealed class Base85Alphabet : CodingAlphabet
         char? allSpaceShortcut = null)
         : base(85, alphabet)
     {
-        this.AllZeroShortcut = allZeroShortcut;
-        this.AllSpaceShortcut = allSpaceShortcut;
+        AllZeroShortcut = allZeroShortcut;
+        AllSpaceShortcut = allSpaceShortcut;
     }
 
     /// <summary>

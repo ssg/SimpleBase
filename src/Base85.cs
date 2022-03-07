@@ -33,7 +33,7 @@ public class Base85 : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCoder
     /// <param name="alphabet">Alphabet to use.</param>
     public Base85(Base85Alphabet alphabet)
     {
-        this.Alphabet = alphabet;
+        Alphabet = alphabet;
     }
 
     /// <summary>
@@ -284,7 +284,7 @@ public class Base85 : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCoder
                 return false;
             }
 
-            *pOutput++ = this.Alphabet.AllZeroShortcut ?? '!'; // guaranteed to be non-null
+            *pOutput++ = Alphabet.AllZeroShortcut ?? '!'; // guaranteed to be non-null
             return true;
         }
 
@@ -295,7 +295,7 @@ public class Base85 : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCoder
                 return false;
             }
 
-            *pOutput++ = this.Alphabet.AllSpaceShortcut ?? '!'; // guaranteed to be non-null
+            *pOutput++ = Alphabet.AllSpaceShortcut ?? '!'; // guaranteed to be non-null
             return true;
         }
 
@@ -330,7 +330,7 @@ public class Base85 : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCoder
         bool checkZero = allZeroChar is not null;
         bool checkSpace = allSpaceChar is not null;
 
-        var table = this.Alphabet.ReverseLookupTable;
+        var table = Alphabet.ReverseLookupTable;
         byte* pOutput = outputPtr;
         char* pInput = inputPtr;
         char* pInputEnd = pInput + inputLen;

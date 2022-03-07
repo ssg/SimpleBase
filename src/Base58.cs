@@ -29,8 +29,8 @@ public sealed class Base58 : IBaseCoder, INonAllocatingBaseCoder
     /// <param name="alphabet">Alphabet to use.</param>
     public Base58(Base58Alphabet alphabet)
     {
-        this.Alphabet = alphabet;
-        this.ZeroChar = alphabet.Value[0];
+        Alphabet = alphabet;
+        ZeroChar = alphabet.Value[0];
     }
 
     /// <summary>

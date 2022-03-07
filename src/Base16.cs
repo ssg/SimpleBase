@@ -168,7 +168,7 @@ public sealed class Base16 : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCod
     /// <returns>Task that represents the async operation.</returns>
     public async Task DecodeAsync(TextReader input, Stream output)
     {
-        await StreamHelper.DecodeAsync(input, output, buffer => this.Decode(buffer.Span).ToArray())
+        await StreamHelper.DecodeAsync(input, output, buffer => Decode(buffer.Span).ToArray())
             .ConfigureAwait(false);
     }
 
@@ -181,7 +181,7 @@ public sealed class Base16 : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCod
     /// <param name="output">Stream where decoded bytes will be written to.</param>
     public void Decode(TextReader input, Stream output)
     {
-        StreamHelper.Decode(input, output, buffer => this.Decode(buffer.Span).ToArray());
+        StreamHelper.Decode(input, output, buffer => Decode(buffer.Span).ToArray());
     }
 
     /// <summary>
@@ -309,7 +309,7 @@ public sealed class Base16 : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCod
     public unsafe bool TryEncode(ReadOnlySpan<byte> bytes, Span<char> output, out int numCharsWritten)
     {
         int bytesLen = bytes.Length;
-        string alphabet = Alphabet.Value;
+        ReadOnlySpan<char> alphabet = Alphabet.Value;
 
         int outputLen = bytesLen * 2;
         if (output.Length < outputLen)
@@ -336,7 +336,7 @@ public sealed class Base16 : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCod
     private static unsafe void internalEncode(
         ReadOnlySpan<byte> bytes,
         int bytesLen,
-        string alphabet,
+        ReadOnlySpan<char> alphabet,
         char* outputPtr)
     {
         fixed (byte* bytesPtr = bytes)
