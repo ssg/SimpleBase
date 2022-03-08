@@ -225,23 +225,23 @@ AMD Ryzen 9 5950X, 1 CPU, 32 logical and 16 physical cores
 
 Encoding (64 byte buffer)
 
-|                                 Method |      Mean |    Error |   StdDev |
-|--------------------------------------- |----------:|---------:|---------:|
-|                          DotNet_Base64 |  76.29 ns | 1.341 ns | 1.189 ns |
-|            SimpleBase_Base16_UpperCase | 114.19 ns | 1.404 ns | 1.173 ns |
-| SimpleBase_Base32_CrockfordWithPadding | 169.14 ns | 0.423 ns | 0.331 ns |
-|                  SimpleBase_Base85_Z85 | 169.22 ns | 1.894 ns | 1.771 ns |
-|              SimpleBase_Base58_Bitcoin |  65.60 ns | 0.351 ns | 0.311 ns |
+|                                 Method |      Mean |    Error |   StdDev | Ratio | RatioSD |
+|--------------------------------------- |----------:|---------:|---------:|------:|--------:|
+|                          DotNet_Base64 |  75.75 ns | 0.417 ns | 0.326 ns |  1.00 |    0.00 |
+|            SimpleBase_Base16_UpperCase | 114.78 ns | 1.195 ns | 1.059 ns |  1.51 |    0.02 |
+| SimpleBase_Base32_CrockfordWithPadding | 164.77 ns | 1.320 ns | 1.235 ns |  2.17 |    0.02 |
+|                  SimpleBase_Base85_Z85 | 174.41 ns | 2.987 ns | 2.648 ns |  2.30 |    0.04 |
+|              SimpleBase_Base58_Bitcoin |  65.74 ns | 0.936 ns | 0.830 ns |  0.87 |    0.01 |
 
 Decoding (80 character string)
 
-|                      Method |        Mean |     Error |    StdDev |
-|---------------------------- |------------:|----------:|----------:|
-|               DotNet_Base64 |   110.69 ns |  2.219 ns |  2.076 ns |
-| SimpleBase_Base16_UpperCase |    66.63 ns |  1.276 ns |  1.131 ns |
-| SimpleBase_Base32_Crockford |   149.53 ns |  3.033 ns |  3.371 ns |
-|       SimpleBase_Base85_Z85 |   284.25 ns |  2.170 ns |  2.029 ns |
-|   SimpleBase_Base58_Bitcoin | 5,073.45 ns | 68.158 ns | 60.420 ns |
+|                      Method |        Mean |     Error |    StdDev | Ratio | RatioSD |
+|---------------------------- |------------:|----------:|----------:|------:|--------:|
+|               DotNet_Base64 |   112.84 ns |  2.289 ns |  2.811 ns |  1.00 |    0.00 |
+| SimpleBase_Base16_UpperCase |    66.36 ns |  1.122 ns |  1.049 ns |  0.59 |    0.02 |
+| SimpleBase_Base32_Crockford |   148.36 ns |  2.530 ns |  2.366 ns |  1.31 |    0.05 |
+|       SimpleBase_Base85_Z85 |   286.11 ns |  3.287 ns |  3.075 ns |  2.53 |    0.08 |
+|   SimpleBase_Base58_Bitcoin | 5,037.50 ns | 67.846 ns | 63.463 ns | 44.46 |    1.43 |
 
 Notes
 -----
