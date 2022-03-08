@@ -253,7 +253,7 @@ public sealed class Base16 : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCod
         int o = 0;
         unchecked
         {
-            for (int n = 0; n < textLen - 1; n += 2, o++)
+            for (int n = 0; n < textLen - 1; n += 2)
             {
                 char c1 = text[n];
                 char c2 = text[n + 1];
@@ -264,7 +264,7 @@ public sealed class Base16 : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCod
                     throw new ArgumentException($"Invalid hex character: {(b1 < 0 ? c1 : c2)}");
                 }
 
-                output[o] = (byte)((b1 << 4) | b2);
+                output[o++] = (byte)((b1 << 4) | b2);
             }
         }
 
