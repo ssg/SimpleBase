@@ -148,7 +148,7 @@ public sealed class Base32 : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCod
     /// <param name="bytes">Buffer to be encoded.</param>
     /// <param name="padding">Append padding characters in the output.</param>
     /// <returns>Encoded string.</returns>
-    public unsafe string Encode(ReadOnlySpan<byte> bytes, bool padding)
+    public string Encode(ReadOnlySpan<byte> bytes, bool padding)
     {
         int bytesLen = bytes.Length;
         if (bytesLen == 0)
@@ -159,27 +159,17 @@ public sealed class Base32 : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCod
         // we are ok with slightly larger buffer since the output string will always
         // have the exact length of the output produced.
         int outputLen = GetSafeCharCountForEncoding(bytes);
-        string output = new('\0', outputLen);
-        fixed (byte* inputPtr = bytes)
+        Span<char> output = new char[outputLen];
+        if (!internalEncode(
+            bytes,
+            output,
+            padding,
+            out int numCharsWritten))
         {
-            fixed (char* outputPtr = output)
-            {
-#pragma warning disable IDE0046 // Convert to conditional expression - prefer clarity
-                if (!internalEncode(
-                    inputPtr,
-                    bytesLen,
-                    outputPtr,
-                    outputLen,
-                    padding,
-                    out int numCharsWritten))
-                {
-                    throw new InvalidOperationException("Internal error: couldn't calculate proper output buffer size for input");
-                }
-
-                return output[..numCharsWritten];
-#pragma warning restore IDE0046 // Convert to conditional expression
-            }
+            throw new InvalidOperationException("Internal error: couldn't calculate proper output buffer size for input");
         }
+
+        return new string(output[..numCharsWritten]);
     }
 
     /// <summary>
@@ -187,7 +177,7 @@ public sealed class Base32 : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCod
     /// </summary>
     /// <param name="text">Encoded Base32 string.</param>
     /// <returns>Decoded bytes.</returns>
-    public unsafe byte[] Decode(ReadOnlySpan<char> text)
+    public byte[] Decode(ReadOnlySpan<char> text)
     {
         int paddingLen = getPaddingCharCount(text);
         int textLen = text.Length - paddingLen;
@@ -198,15 +188,14 @@ public sealed class Base32 : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCod
         }
 
         var outputBuffer = new byte[outputLen];
-        fixed (byte* outputPtr = outputBuffer)
+        if (!internalDecode(text[..textLen], outputBuffer, out int numBytesWritten))
         {
-            fixed (char* inputPtr = text)
-            {
-                if (!internalDecode(inputPtr, textLen, outputPtr, outputLen, out _))
-                {
-                    throw new ArgumentException("Invalid input or output", nameof(text));
-                }
-            }
+            throw new ArgumentException("Invalid input or output", nameof(text));
+        }
+
+        if (numBytesWritten != outputLen)
+        {
+            throw new InvalidOperationException("Actual written bytes are different");
         }
 
         return outputBuffer;
@@ -300,7 +289,7 @@ public sealed class Base32 : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCod
     /// <param name="padding">Whether to use padding characters at the end.</param>
     /// <param name="numCharsWritten">Number of characters written to the output.</param>
     /// <returns>True if encoding is successful, false if the output is invalid.</returns>
-    public unsafe bool TryEncode(
+    public bool TryEncode(
         ReadOnlySpan<byte> bytes,
         Span<char> output,
         bool padding,
@@ -313,19 +302,11 @@ public sealed class Base32 : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCod
             return true;
         }
 
-        int outputLen = output.Length;
-
-        fixed (byte* inputPtr = bytes)
-        {
-            fixed (char* outputPtr = output)
-            {
-                return internalEncode(inputPtr, bytesLen, outputPtr, outputLen, padding, out numCharsWritten);
-            }
-        }
+        return internalEncode(bytes, output, padding, out numCharsWritten);
     }
 
     /// <inheritdoc/>
-    public unsafe bool TryDecode(ReadOnlySpan<char> input, Span<byte> output, out int numBytesWritten)
+    public bool TryDecode(ReadOnlySpan<char> input, Span<byte> output, out int numBytesWritten)
     {
         int inputLen = input.Length - getPaddingCharCount(input);
         if (inputLen == 0)
@@ -341,78 +322,67 @@ public sealed class Base32 : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCod
             return false;
         }
 
-        fixed (char* inputPtr = input)
-        {
-            fixed (byte* outputPtr = output)
-            {
-                return internalDecode(inputPtr, inputLen, outputPtr, outputLen, out numBytesWritten);
-            }
-        }
+        return internalDecode(input[..inputLen], output, out numBytesWritten);
     }
 
-    private unsafe bool internalEncode(
-       byte* inputPtr,
-       int bytesLen,
-       char* outputPtr,
-       int outputLen,
+    private bool internalEncode(
+       ReadOnlySpan<byte> input,
+       Span<char> output,
        bool padding,
        out int numCharsWritten)
     {
         string table = Alphabet.Value;
-        char* pOutput = outputPtr;
-        char* pOutputEnd = outputPtr + outputLen;
-        byte* pInput = inputPtr;
-        byte* pInputEnd = pInput + bytesLen;
 
-        for (int bitsLeft = bitsPerByte, currentByte = *pInput, outputPad; pInput != pInputEnd;)
+        int bitsLeft = bitsPerByte;
+        int outputPad;
+        int o = 0;
+        int value = input[0];
+        for (int i = 0; i < input.Length;)
         {
             if (bitsLeft > bitsPerChar)
             {
                 bitsLeft -= bitsPerChar;
-                outputPad = currentByte >> bitsLeft;
-                *pOutput++ = table[outputPad];
-                if (pOutput > pOutputEnd)
+                outputPad = value >> bitsLeft;
+                if (o >= output.Length)
                 {
                     goto Overflow;
                 }
 
-                currentByte &= (1 << bitsLeft) - 1;
+                output[o++] = table[outputPad];
+                value &= (1 << bitsLeft) - 1;
             }
 
             int nextBits = bitsPerChar - bitsLeft;
             bitsLeft = bitsPerByte - nextBits;
-            outputPad = currentByte << nextBits;
-            if (++pInput != pInputEnd)
+            outputPad = value << nextBits;
+            if (++i < input.Length)
             {
-                currentByte = *pInput;
-                outputPad |= currentByte >> bitsLeft;
-                currentByte &= (1 << bitsLeft) - 1;
+                value = input[i];
+                outputPad |= value >> bitsLeft;
+                value &= (1 << bitsLeft) - 1;
             }
 
-            *pOutput++ = table[outputPad];
-            if (pOutput > pOutputEnd)
+            if (o >= output.Length)
             {
                 goto Overflow;
             }
+
+            output[o++] = table[outputPad];
         }
 
         if (padding)
         {
             char paddingChar = Alphabet.PaddingChar;
-            while (pOutput != pOutputEnd)
+            while (o < output.Length)
             {
-                *pOutput++ = paddingChar;
-                if (pOutput > pOutputEnd)
-                {
-                    goto Overflow;
-                }
+                output[o++] = paddingChar;
             }
         }
 
-        numCharsWritten = (int)(pOutput - outputPtr);
+        numCharsWritten = o;
         return true;
     Overflow:
-        numCharsWritten = (int)(pOutput - outputPtr);
+        numCharsWritten = o;
         return false;
     }
 
@@ -450,29 +420,24 @@ public sealed class Base32 : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCod
         return result;
     }
 
-    private unsafe bool internalDecode(
-        char* inputPtr,
-        int textLen,
-        byte* outputPtr,
-        int outputLen,
+    private bool internalDecode(
+        ReadOnlySpan<char> input,
+        Span<byte> output,
         out int numBytesWritten)
     {
         var table = Alphabet.ReverseLookupTable;
         int outputPad = 0;
         int bitsLeft = bitsPerByte;
 
-        byte* pOutput = outputPtr;
-        byte* pOutputEnd = pOutput + outputLen;
-        char* pInput = inputPtr;
-        char* pEnd = inputPtr + textLen;
         numBytesWritten = 0;
-        while (pInput != pEnd)
+        int o = 0;
+        for (int i = 0;  i < input.Length; i++)
         {
-            char c = *pInput++;
+            char c = input[i];
             int b = table[c] - 1;
             if (b < 0)
             {
-                numBytesWritten = (int)(pOutput - outputPtr);
+                numBytesWritten = o;
                 return false;
             }
 
@@ -485,19 +450,19 @@ public sealed class Base32 : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCod
 
             int shiftBits = bitsPerChar - bitsLeft;
             outputPad |= b >> shiftBits;
-            if (pOutput >= pOutputEnd)
+            if (o >= output.Length)
             {
                 Debug.WriteLine("Base32.internalDecode: output overflow");
                 return false;
             }
 
-            *pOutput++ = (byte)outputPad;
-            numBytesWritten++;
+            output[o++] = (byte)outputPad;
             b &= (1 << shiftBits) - 1;
             bitsLeft = bitsPerByte - shiftBits;
             outputPad = b << bitsLeft;
         }
 
+        numBytesWritten = o;
         return true;
     }
 }
