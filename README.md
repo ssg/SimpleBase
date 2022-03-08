@@ -219,16 +219,29 @@ Small buffer sizes are used (64 characters). They are closer to real life
 applications. Base58 performs really bad in decoding of larger buffer sizes, 
 due to polynomial complexity of numeric base conversions.
 
-64 byte buffer for encoding
-80 character string for decoding
+BenchmarkDotNet=v0.13.1, OS=Windows 10.0.22000
+AMD Ryzen 9 5950X, 1 CPU, 32 logical and 16 physical cores
+.NET SDK=6.0.200
 
-Implementation              | Growth | Encode                   | Decode
-----------------------------|--------|--------------------------|------------------
-.NET Framework Base64       | 1.33x  | 0.44µs                   | 0.71µs
-SimpleBase Base16           | 2x     | 0.59µs (1.4x slower)     | 0.43µs (1.7x faster! YAY!)
-SimpleBase Base32 Crockford | 1.6x   | 1.35µs (3.1x slower)     | 1.07µs (1.5x slower)
-SimpleBase Base85 Z85       | 1.25x  | 1.00µs (2.3x slower)     | 1.86µs (2.6x slower)
-SimpleBase Base58           | 1.38x  | 29.99µs (68.6x slower)   | 31.36µs (44.1x slower)
+Encoding (64 byte buffer)
+
+|                                 Method |      Mean |    Error |   StdDev |
+|--------------------------------------- |----------:|---------:|---------:|
+|                          DotNet_Base64 |  76.29 ns | 1.341 ns | 1.189 ns |
+|            SimpleBase_Base16_UpperCase | 114.19 ns | 1.404 ns | 1.173 ns |
+| SimpleBase_Base32_CrockfordWithPadding | 169.14 ns | 0.423 ns | 0.331 ns |
+|                  SimpleBase_Base85_Z85 | 169.22 ns | 1.894 ns | 1.771 ns |
+|              SimpleBase_Base58_Bitcoin |  65.60 ns | 0.351 ns | 0.311 ns |
+
+Decoding (80 character string)
+
+|                      Method |        Mean |     Error |    StdDev |
+|---------------------------- |------------:|----------:|----------:|
+|               DotNet_Base64 |   110.69 ns |  2.219 ns |  2.076 ns |
+| SimpleBase_Base16_UpperCase |    66.63 ns |  1.276 ns |  1.131 ns |
+| SimpleBase_Base32_Crockford |   149.53 ns |  3.033 ns |  3.371 ns |
+|       SimpleBase_Base85_Z85 |   284.25 ns |  2.170 ns |  2.029 ns |
+|   SimpleBase_Base58_Bitcoin | 5,073.45 ns | 68.158 ns | 60.420 ns |
 
 Notes
 -----

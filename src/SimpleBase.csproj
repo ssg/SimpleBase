@@ -30,6 +30,7 @@
 - Simple (allocating) versions of Decode() return `byte[]`'s instead of `Span<byte>`'s for correct 
   ownership semantics. This will cause copying, but at least will save GC from tracking expensive
   interior references.
+- Switched to BenchmarkDotNet for benchmarking.
 
 # New features
 - Added [Bech32](https://en.bitcoin.it/wiki/Bech32) flavor to Base32 

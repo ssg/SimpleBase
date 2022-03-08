@@ -224,7 +224,7 @@ public sealed class Base16 : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCod
     }
 
     /// <inheritdoc/>
-    public unsafe bool TryDecode(ReadOnlySpan<char> text, Span<byte> output, out int numBytesWritten)
+    public bool TryDecode(ReadOnlySpan<char> text, Span<byte> output, out int numBytesWritten)
     {
         int textLen = text.Length;
         if (textLen == 0)
@@ -250,34 +250,25 @@ public sealed class Base16 : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCod
 
         var table = Alphabet.ReverseLookupTable;
 
-        fixed (byte* outputPtr = output)
+        int o = 0;
+        unchecked
         {
-            fixed (char* textPtr = text)
-        {
-            byte* pOutput = outputPtr;
-            char* pInput = textPtr;
-            char* pEnd = pInput + textLen;
-            while (pInput != pEnd)
+            for (int n = 0; n < textLen - 1; n += 2, o++)
             {
-                int b1 = table[pInput[0]] - 1;
-                if (b1 < 0)
+                char c1 = text[n];
+                char c2 = text[n + 1];
+                int b1 = table[c1] - 1;
+                int b2 = table[c2] - 1;
+                if (b1 < 0 || b2 < 0)
                 {
-                    throw new ArgumentException($"Invalid hex character: {pInput[0]}");
+                    throw new ArgumentException($"Invalid hex character: {(b1 < 0 ? c1 : c2)}");
                 }
 
-                int b2 = table[pInput[1]] - 1;
-                if (b2 < 0)
-                {
-                    throw new ArgumentException($"Invalid hex character: {pInput[1]}");
-                }
-
-                *pOutput++ = (byte)((b1 << 4) | b2);
-                pInput += 2;
+                output[o] = (byte)((b1 << 4) | b2);
             }
         }
-        }
 
-        numBytesWritten = outputLen;
+        numBytesWritten = o;
         return true;
     }
 
