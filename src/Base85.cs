@@ -19,7 +19,7 @@ public class Base85 : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCoder
     private const int baseLength = 85;
     private const int byteBlockSize = 4;
     private const int stringBlockSize = 5;
-    private const long allSpace = 0x20202020;
+    private const long fourSpaceChars = 0x20202020;
     private const int decodeBufferSize = 5120; // don't remember what was special with this number
     private static readonly Lazy<Base85> z85 = new(() => new Base85(Base85Alphabet.Z85));
     private static readonly Lazy<Base85> ascii85 = new(() => new Base85(Base85Alphabet.Ascii85));
@@ -150,40 +150,25 @@ public class Base85 : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCoder
     /// </summary>
     /// <param name="text">Characters to decode.</param>
     /// <returns>Decoded bytes.</returns>
-    public unsafe byte[] Decode(ReadOnlySpan<char> text)
+    public byte[] Decode(ReadOnlySpan<char> text)
     {
-        int textLen = text.Length;
-        if (textLen == 0)
+        if (text.Length == 0)
         {
             return Array.Empty<byte>();
         }
 
-        bool usingShortcuts = Alphabet.HasShortcut;
-
         // allocate a larger buffer if we're using shortcuts
-        int decodeBufferLen = getSafeByteCountForDecoding(textLen, usingShortcuts);
+        int decodeBufferLen = getSafeByteCountForDecoding(text.Length, Alphabet.HasShortcut);
         byte[] decodeBuffer = new byte[decodeBufferLen];
-        fixed (char* inputPtr = text)
-        {
-            fixed (byte* decodeBufferPtr = decodeBuffer)
-            {
-                return internalDecode(inputPtr, textLen, decodeBufferPtr, decodeBufferLen, out int numBytesWritten)
-                    ? decodeBuffer[..numBytesWritten]
-                    : throw new InvalidOperationException("Internal error: pre-allocated insufficient output buffer size");
-            }
-        }
+        return internalDecode(text, decodeBuffer, out int numBytesWritten)
+            ? decodeBuffer[..numBytesWritten]
+            : throw new InvalidOperationException("Internal error: pre-allocated insufficient output buffer size");
     }
 
     /// <inheritdoc/>
-    public unsafe bool TryDecode(ReadOnlySpan<char> input, Span<byte> output, out int numBytesWritten)
+    public bool TryDecode(ReadOnlySpan<char> input, Span<byte> output, out int numBytesWritten)
     {
-        fixed (char* inputPtr = input)
-        {
-            fixed (byte* outputPtr = output)
-            {
-                return internalDecode(inputPtr, input.Length, outputPtr, output.Length, out numBytesWritten);
-            }
-        }
+        return internalDecode(input, output, out numBytesWritten);
     }
 
     private bool internalEncode(
@@ -274,7 +259,7 @@ public class Base85 : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCoder
             return true;
         }
 
-        if (block == allSpace && spaceShortcutChar is not null)
+        if (block == fourSpaceChars && spaceShortcutChar is not null)
         {
             output[0] = spaceShortcutChar.Value; // guaranteed to be non-null
             numBytesWritten = 1;
@@ -301,52 +286,48 @@ public class Base85 : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCoder
         return true;
     }
 
-    private unsafe bool internalDecode(
-       char* inputPtr,
-       int inputLen,
-       byte* outputPtr,
-       int outputLen,
+    private bool internalDecode(
+       ReadOnlySpan<char> input,
+       Span<byte> output,
        out int numBytesWritten)
     {
         char? allZeroChar = Alphabet.AllZeroShortcut;
         char? allSpaceChar = Alphabet.AllSpaceShortcut;
-        bool checkZero = allZeroChar is not null;
-        bool checkSpace = allSpaceChar is not null;
 
         var table = Alphabet.ReverseLookupTable;
-        byte* pOutput = outputPtr;
-        char* pInput = inputPtr;
-        char* pInputEnd = pInput + inputLen;
-        byte* pOutputEnd = pOutput + outputLen;
 
         int blockIndex = 0;
         long value = 0;
-        while (pInput != pInputEnd)
+        int i = 0;
+        numBytesWritten = 0;
+        while (i < input.Length)
         {
-            char c = *pInput++;
+            char c = input[i++];
             if (isWhiteSpace(c))
             {
                 continue;
             }
 
             // handle shortcut characters
-            if (checkZero && c == allZeroChar)
+            if (c == allZeroChar && allZeroChar is not null)
             {
-                if (!writeShortcut(ref pOutput, pOutputEnd, ref blockIndex, 0))
+                if (!writeShortcut(output[numBytesWritten..], ref blockIndex, 0, out int bytesWritten))
                 {
-                    goto Error;
+                    return false;
                 }
 
+                numBytesWritten += bytesWritten;
                 continue;
             }
 
-            if (checkSpace && c == allSpaceChar)
+            if (c == allSpaceChar && allSpaceChar is not null)
             {
-                if (!writeShortcut(ref pOutput, pOutputEnd, ref blockIndex, allSpace))
+                if (!writeShortcut(output[numBytesWritten..], ref blockIndex, fourSpaceChars, out int bytesWritten))
                 {
-                    goto Error;
+                    return false;
                 }
 
+                numBytesWritten += bytesWritten;
                 continue;
             }
 
@@ -361,11 +342,12 @@ public class Base85 : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCoder
             blockIndex += 1;
             if (blockIndex == stringBlockSize)
             {
-                if (!writeDecodedValue(ref pOutput, pOutputEnd, value, byteBlockSize))
+                if (!writeDecodedValue(output[numBytesWritten..], value, byteBlockSize, out int bytesWritten))
                 {
-                    goto Error;
+                    return false;
                 }
 
+                numBytesWritten += bytesWritten;
                 blockIndex = 0;
                 value = 0;
             }
@@ -375,43 +357,44 @@ public class Base85 : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCoder
         {
             // handle padding by treating the rest of the characters
             // as "u"s. so both big endianness and bit weirdness work out okay.
-            for (int i = 0; i < stringBlockSize - blockIndex; i++)
+            for (int n = 0; n < stringBlockSize - blockIndex; n++)
             {
                 value = (value * baseLength) + (baseLength - 1);
             }
 
-            if (!writeDecodedValue(ref pOutput, pOutputEnd, value, blockIndex - 1))
+            if (!writeDecodedValue(output[numBytesWritten..], value, blockIndex - 1, out int bytesWritten))
             {
-                goto Error;
+                return false;
             }
+
+            numBytesWritten += bytesWritten;
         }
 
-        numBytesWritten = (int)(pOutput - outputPtr);
         return true;
-    Error:
-        numBytesWritten = 0;
-        return false;
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static unsafe bool writeDecodedValue(
-        ref byte* pOutput,
-        byte* pOutputEnd,
+    private static bool writeDecodedValue(
+        Span<byte> output,
         long value,
-        int numBytesToWrite)
+        int numBytesToWrite,
+        out int numBytesWritten)
     {
-        if (pOutput + numBytesToWrite > pOutputEnd)
+        if (numBytesToWrite > output.Length)
         {
             Debug.WriteLine("Buffer overrun while decoding Base85");
+            numBytesWritten = 0;
             return false;
         }
 
+        int o = 0;
         for (int i = byteBlockSize - 1; i >= 0 && numBytesToWrite > 0; i--, numBytesToWrite--)
         {
             byte b = (byte)((value >> (i << 3)) & 0xFF);
-            *pOutput++ = b;
+            output[o++] = b;
         }
 
+        numBytesWritten = o;
         return true;
     }
 
@@ -424,11 +407,11 @@ public class Base85 : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCoder
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static unsafe bool writeShortcut(
-        ref byte* pOutput,
-        byte* pOutputEnd,
+    private static bool writeShortcut(
+        Span<byte> output,
         ref int blockIndex,
-        long value)
+        long value,
+        out int numBytesWritten)
     {
         if (blockIndex != 0)
         {
@@ -437,7 +420,7 @@ public class Base85 : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCoder
         }
 
         blockIndex = 0; // restart block after the shortcut character
-        return writeDecodedValue(ref pOutput, pOutputEnd, value, byteBlockSize);
+        return writeDecodedValue(output, value, byteBlockSize, out numBytesWritten);
     }
 
     private static int getSafeCharCountForEncoding(int bytesLength)
