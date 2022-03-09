@@ -227,21 +227,21 @@ Encoding (64 byte buffer)
 
 |                                 Method |      Mean |    Error |   StdDev | Ratio | RatioSD |
 |--------------------------------------- |----------:|---------:|---------:|------:|--------:|
-|                          DotNet_Base64 |  75.75 ns | 0.417 ns | 0.326 ns |  1.00 |    0.00 |
-|            SimpleBase_Base16_UpperCase | 114.78 ns | 1.195 ns | 1.059 ns |  1.51 |    0.02 |
-| SimpleBase_Base32_CrockfordWithPadding | 164.77 ns | 1.320 ns | 1.235 ns |  2.17 |    0.02 |
-|                  SimpleBase_Base85_Z85 | 174.41 ns | 2.987 ns | 2.648 ns |  2.30 |    0.04 |
-|              SimpleBase_Base58_Bitcoin |  65.74 ns | 0.936 ns | 0.830 ns |  0.87 |    0.01 |
+|                          DotNet_Base64 |  79.09 ns | 1.505 ns | 1.733 ns |  1.00 |    0.00 |
+|            SimpleBase_Base16_UpperCase | 123.14 ns | 2.523 ns | 6.189 ns |  1.61 |    0.10 |
+| SimpleBase_Base32_CrockfordWithPadding | 188.76 ns | 3.587 ns | 3.179 ns |  2.39 |    0.08 |
+|                  SimpleBase_Base85_Z85 | 212.02 ns | 4.112 ns | 4.222 ns |  2.68 |    0.10 |
+|              SimpleBase_Base58_Bitcoin |  70.11 ns | 1.443 ns | 3.012 ns |  0.91 |    0.05 |
 
 Decoding (80 character string)
 
 |                      Method |        Mean |     Error |    StdDev | Ratio | RatioSD |
 |---------------------------- |------------:|----------:|----------:|------:|--------:|
-|               DotNet_Base64 |   112.84 ns |  2.289 ns |  2.811 ns |  1.00 |    0.00 |
-| SimpleBase_Base16_UpperCase |    66.36 ns |  1.122 ns |  1.049 ns |  0.59 |    0.02 |
-| SimpleBase_Base32_Crockford |   148.36 ns |  2.530 ns |  2.366 ns |  1.31 |    0.05 |
-|       SimpleBase_Base85_Z85 |   286.11 ns |  3.287 ns |  3.075 ns |  2.53 |    0.08 |
-|   SimpleBase_Base58_Bitcoin | 5,037.50 ns | 67.846 ns | 63.463 ns | 44.46 |    1.43 |
+|               DotNet_Base64 |   120.86 ns |  1.327 ns |  1.177 ns |  1.00 |    0.00 |
+| SimpleBase_Base16_UpperCase |    65.81 ns |  0.816 ns |  0.723 ns |  0.54 |    0.01 |
+| SimpleBase_Base32_Crockford |   139.15 ns |  1.470 ns |  1.375 ns |  1.15 |    0.01 |
+|       SimpleBase_Base85_Z85 |   362.87 ns |  6.024 ns |  5.340 ns |  3.00 |    0.06 |
+|   SimpleBase_Base58_Bitcoin | 5,118.61 ns | 34.360 ns | 30.459 ns | 42.36 |    0.48 |
 
 Notes
 -----

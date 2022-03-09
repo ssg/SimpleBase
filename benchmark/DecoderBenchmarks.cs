@@ -4,7 +4,6 @@ using SimpleBase;
 
 namespace benchmark;
 
-[SimpleJob()]
 public class DecoderBenchmarks
 {
     private readonly string s = new('a', 80);
