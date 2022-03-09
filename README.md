@@ -263,18 +263,11 @@ was only able to match it after I converted Base16 to unsafe code with good
 independent interleaving so CPU pipeline optimizations could take place. 
 Still not satisfied though. Is .NET's Base64 implementation native? Perhaps.
 
-Future possibilities
---------------------
-- [ ] [Base36](https://en.wikipedia.org/wiki/Base36)
-- [ ] [Base24](https://www.kuon.ch/post/2020-02-27-base24)
-- [ ] Fully usable GeoHash and Google OLC API (perhaps in a separate library)
-
-Contributors
-------------
-Thanks to those who provided patches: [@carldebilly](https://github.com/carldebilly), [@greg-redefined](https://github.com/greg-redefined), [@Xor-el](https://github.com/Xor-el), [@skwasjer](https://github.com/skwasjer).
-
 Thanks
 ------
+Thanks to all contributors (most up to date is on the GitHub sidebar) who
+provided patches, and reported bugs.
+
 Chatting about this pet project with my friends 
 [@detaybey](https://github.com/detaybey), 
 [@vhallac](https://github.com/vhallac), 
