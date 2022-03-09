@@ -264,7 +264,7 @@ public sealed class Base16 : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCod
                     throw new ArgumentException($"Invalid hex character: {(b1 < 0 ? c1 : c2)}");
                 }
 
-                output[o++] = (byte)((b1 << 4) | b2);
+                output[o++] = (byte)((b1 * 16) | b2);
             }
         }
 
@@ -321,7 +321,7 @@ public sealed class Base16 : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCod
         for (int i = 0, o = 0; i < bytes.Length; i++, o += 2)
         {
             byte b = bytes[i];
-            output[o] = alphabet[(b >> 4) & 0x0F];
+            output[o] = alphabet[b >> 4];
             output[o + 1] = alphabet[b & 0x0F];
         }
     }

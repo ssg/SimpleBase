@@ -179,7 +179,7 @@ public class Base85 : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCoder
         char? usesZeroShortcut = Alphabet.AllZeroShortcut;
         char? usesSpaceShortcut = Alphabet.AllSpaceShortcut;
         string table = Alphabet.Value;
-        int fullLen = (input.Length >> 2) << 2; // size of whole 4-byte blocks
+        int fullLen = input.Length / byteBlockSize * byteBlockSize; // size of whole 4-byte blocks
 
         int i = 0;
         numCharsWritten = 0;
@@ -217,7 +217,7 @@ public class Base85 : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCoder
         uint lastBlock = 0;
         for (int n = 0; n < remainingBytes; n++)
         {
-            lastBlock |= ((uint)input[i++]) << ((3 - n) << 3);
+            lastBlock |= ((uint)input[i++]) << ((3 - n) * 8);
         }
 
         if (!writeEncodedValue(
@@ -390,7 +390,7 @@ public class Base85 : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCoder
         int o = 0;
         for (int i = byteBlockSize - 1; i >= 0 && numBytesToWrite > 0; i--, numBytesToWrite--)
         {
-            byte b = (byte)((value >> (i << 3)) & 0xFF);
+            byte b = (byte)((value >> (i * 8)) & 0xFF);
             output[o++] = b;
         }
 

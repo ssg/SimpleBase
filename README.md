@@ -19,7 +19,7 @@ Features
    (BASE32-HEX) flavors with Crockford character substitution, or any other 
    custom flavors.
  - Base58: Bitcoin, Ripple, Flickr and custom flavors.
- - Base85: Ascii85, Z85 and custom flavors.
+ - Base85: Ascii85, Z85 and custom flavors. IPv6 encoding/decoding support.
  - Base16: UpperCase, LowerCase and ModHex flavors. An experimental hexadecimal 
    encoder/decoder just to see how far I 
    can take the optimizations compared to .NET's  implementations. It's quite 
