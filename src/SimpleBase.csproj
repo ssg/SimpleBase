@@ -24,13 +24,14 @@
         <PackageReleaseNotes>
             <![CDATA[
 # Breaking changes
+- Benchmark now uses BenchmarkDotNet.
 - Changed interface names from Encoder to Coder to signify encoding and
   decoding functionality better.
 - Simple (aka allocating) versions of `Decode()` will now return `byte[]`'s instead of `Span<byte>`'s for correct 
-  ownership semantics. It's even possible some copying may be avoided in certain scenarios.
-- Switched to BenchmarkDotNet for benchmarking.
+  ownership semantics. It's even possible that some copying may be avoided in certain scenarios.
 - 3.x will eventually be deprecated and be replaced with 4.x as they both target .NET Standard 2.1.
 - `Base16.TryDecode()` doesn't throw on invalid input, but returns `false` instead.
+- `Base32.Decode()` throws separate exceptions for encountered failures.
 
 # New features
 - Added [Bech32](https://en.bitcoin.it/wiki/Bech32) flavor to Base32 

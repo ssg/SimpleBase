@@ -4,7 +4,6 @@
 // </copyright>
 
 using System;
-using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 
@@ -41,6 +40,13 @@ public sealed class Base32 : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCod
         }
 
         Alphabet = alphabet;
+    }
+
+    private enum DecodeResult
+    {
+        Success = 0,
+        InvalidInput,
+        OutputOverflow,
     }
 
     /// <summary>
@@ -188,17 +194,16 @@ public sealed class Base32 : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCod
         }
 
         var outputBuffer = new byte[outputLen];
-        if (!internalDecode(text[..textLen], outputBuffer, out int numBytesWritten))
+        var result = internalDecode(text[..textLen], outputBuffer, out int numBytesWritten);
+        return result switch
         {
-            throw new ArgumentException("Invalid input or output", nameof(text));
-        }
-
-        if (numBytesWritten != outputLen)
-        {
-            throw new InvalidOperationException("Actual written bytes are different");
-        }
-
-        return outputBuffer;
+            DecodeResult.InvalidInput => throw new ArgumentException("Invalid character in input", nameof(text)),
+            DecodeResult.OutputOverflow => throw new InvalidOperationException("Output buffer is too small"),
+            DecodeResult.Success when numBytesWritten != outputLen => throw
+                new InvalidOperationException("Actual written bytes are different"),
+            DecodeResult.Success => outputBuffer,
+            var x => throw new InvalidOperationException($"Unhandled decode result: {x}"),
+        };
     }
 
     /// <summary>
@@ -322,7 +327,7 @@ public sealed class Base32 : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCod
             return false;
         }
 
-        return internalDecode(input[..inputLen], output, out numBytesWritten);
+        return internalDecode(input[..inputLen], output, out numBytesWritten) == DecodeResult.Success;
     }
 
     private bool internalEncode(
@@ -420,7 +425,7 @@ public sealed class Base32 : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCod
         return result;
     }
 
-    private bool internalDecode(
+    private DecodeResult internalDecode(
         ReadOnlySpan<char> input,
         Span<byte> output,
         out int numBytesWritten)
@@ -438,7 +443,7 @@ public sealed class Base32 : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCod
             if (b < 0)
             {
                 numBytesWritten = o;
-                return false;
+                return DecodeResult.InvalidInput;
             }
 
             if (bitsLeft > bitsPerChar)
@@ -452,8 +457,7 @@ public sealed class Base32 : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCod
             outputPad |= b >> shiftBits;
             if (o >= output.Length)
             {
-                Debug.WriteLine("Base32.internalDecode: output overflow");
-                return false;
+                return DecodeResult.OutputOverflow;
             }
 
             output[o++] = (byte)outputPad;
@@ -463,6 +467,6 @@ public sealed class Base32 : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCod
         }
 
         numBytesWritten = o;
-        return true;
+        return DecodeResult.Success;
     }
 }
