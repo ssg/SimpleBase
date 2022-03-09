@@ -63,7 +63,7 @@ public sealed class Base58 : IBaseCoder, INonAllocatingBaseCoder
     public int GetSafeByteCountForDecoding(ReadOnlySpan<char> text)
     {
         int textLen = text.Length;
-        return GetSafeByteCountForDecoding(textLen, getPrefixCount(text, textLen, ZeroChar));
+        return GetSafeByteCountForDecoding(textLen, getPrefixCount(text, ZeroChar));
     }
 
     /// <summary>
@@ -92,7 +92,7 @@ public sealed class Base58 : IBaseCoder, INonAllocatingBaseCoder
     /// </summary>
     /// <param name="bytes">Bytes to encode.</param>
     /// <returns>Encoded string.</returns>
-    public unsafe string Encode(ReadOnlySpan<byte> bytes)
+    public string Encode(ReadOnlySpan<byte> bytes)
     {
         if (bytes.Length == 0)
         {
@@ -113,38 +113,27 @@ public sealed class Base58 : IBaseCoder, INonAllocatingBaseCoder
     /// </summary>
     /// <param name="text">Base58 encoded text.</param>
     /// <returns>Decoded bytes.</returns>
-    public unsafe byte[] Decode(ReadOnlySpan<char> text)
+    public byte[] Decode(ReadOnlySpan<char> text)
     {
-        int textLen = text.Length;
-        if (textLen == 0)
+        if (text.Length == 0)
         {
             return Array.Empty<byte>();
         }
 
         char zeroChar = ZeroChar;
-        int numZeroes = getPrefixCount(text, textLen, zeroChar);
-        int outputLen = GetSafeByteCountForDecoding(textLen, numZeroes);
+        int numZeroes = getPrefixCount(text, zeroChar);
+        int outputLen = GetSafeByteCountForDecoding(text.Length, numZeroes);
         byte[] output = new byte[outputLen];
-        fixed (char* inputPtr = text)
+        if (!internalDecode(
+            text,
+            output.AsSpan()[..outputLen],
+            numZeroes,
+            out int numBytesWritten))
         {
-            fixed (byte* outputPtr = output)
-            {
-#pragma warning disable IDE0046 // Convert to conditional expression - prefer clarity
-                if (!internalDecode(
-                    inputPtr,
-                    textLen,
-                    outputPtr,
-                    outputLen,
-                    numZeroes,
-                    out int numBytesWritten))
-                {
-                    throw new InvalidOperationException("Output buffer was too small while decoding Base58");
-                }
-
-                return output[..numBytesWritten];
-#pragma warning restore IDE0046 // Convert to conditional expression
-            }
+            throw new InvalidOperationException("Output buffer was too small while decoding Base58");
         }
+
+        return output[..numBytesWritten];
     }
 
     /// <inheritdoc/>
@@ -155,89 +144,73 @@ public sealed class Base58 : IBaseCoder, INonAllocatingBaseCoder
     }
 
     /// <inheritdoc/>
-    public unsafe bool TryDecode(ReadOnlySpan<char> input, Span<byte> output, out int numBytesWritten)
+    public bool TryDecode(ReadOnlySpan<char> input, Span<byte> output, out int numBytesWritten)
     {
-        int inputLen = input.Length;
-        if (inputLen == 0)
+        if (input.Length == 0)
         {
             numBytesWritten = 0;
             return true;
         }
 
-        int zeroCount = getPrefixCount(input, inputLen, ZeroChar);
-        fixed (char* inputPtr = input)
-        {
-            fixed (byte* outputPtr = output)
-            {
-                return internalDecode(
-                    inputPtr,
-                    input.Length,
-                    outputPtr,
-                    output.Length,
-                    zeroCount,
-                    out numBytesWritten);
-            }
-        }
+        int zeroCount = getPrefixCount(input, ZeroChar);
+        return internalDecode(
+            input,
+            output,
+            zeroCount,
+            out numBytesWritten);
     }
 
-    private unsafe bool internalDecode(
-        char* inputPtr,
-        int inputLen,
-        byte* outputPtr,
-        int outputLen,
+    private bool internalDecode(
+        ReadOnlySpan<char> input,
+        Span<byte> output,
         int numZeroes,
         out int numBytesWritten)
     {
-        char* pInputEnd = inputPtr + inputLen;
-        char* pInput = inputPtr + numZeroes;
-        if (pInput == pInputEnd)
+        if (numZeroes == input.Length)
         {
-            if (numZeroes > outputLen)
-            {
-                numBytesWritten = 0;
-                return false;
-            }
-
-            byte* pOutput = outputPtr;
-            for (int i = 0; i < numZeroes; i++)
-            {
-                *pOutput++ = 0;
-            }
-
-            numBytesWritten = numZeroes;
-            return true;
+            return decodeZeroes(output, numZeroes, out numBytesWritten);
         }
 
         var table = Alphabet.ReverseLookupTable;
-        byte* pOutputEnd = outputPtr + outputLen - 1;
-        byte* pMinOutput = pOutputEnd;
-        while (pInput != pInputEnd)
+        int min = output.Length - 1;
+        for (int i = 0; i < input.Length; i++)
         {
-            char c = *pInput;
+            char c = input[i];
             int carry = table[c] - 1;
             if (carry < 0)
             {
                 throw CodingAlphabet.InvalidCharacter(c);
             }
 
-            for (byte* pOutput = pOutputEnd; pOutput >= outputPtr; pOutput--)
+            for (int o = output.Length - 1; o >= 0; o--)
             {
-                carry += 58 * (*pOutput);
-                *pOutput = (byte)carry;
-                if (pMinOutput > pOutput && carry != 0)
+                carry += 58 * output[o];
+                output[o] = (byte)carry;
+                if (min > o && carry != 0)
                 {
-                    pMinOutput = pOutput;
+                    min = o;
                 }
 
                 carry >>= 8;
             }
-
-            pInput++;
         }
 
-        int startIndex = (int)(pMinOutput - numZeroes - outputPtr);
-        numBytesWritten = outputLen - startIndex;
-        Buffer.MemoryCopy(outputPtr + startIndex, outputPtr, numBytesWritten, numBytesWritten);
+        int startIndex = min - numZeroes;
+        numBytesWritten = output.Length - startIndex;
+        output[startIndex..].CopyTo(output[..numBytesWritten]);
+        return true;
+    }
+
+    private static bool decodeZeroes(Span<byte> output, int length, out int numBytesWritten)
+    {
+        if (length > output.Length)
+        {
+            numBytesWritten = 0;
+            return false;
+        }
+
+        output[..length].Fill(0);
+        numBytesWritten = length;
         return true;
     }
 
@@ -332,22 +305,17 @@ public sealed class Base58 : IBaseCoder, INonAllocatingBaseCoder
         return numZeroes;
     }
 
-    private static unsafe int getPrefixCount(ReadOnlySpan<char> input, int length, char value)
+    private static int getPrefixCount(ReadOnlySpan<char> input, char value)
     {
-        if (length == 0)
-        {
-            return 0;
-        }
-
         int numZeroes = 0;
-        fixed (char* inputPtr = input)
+        for (int i = 0; i < input.Length; i++)
         {
-            var pInput = inputPtr;
-            while (*pInput == value && numZeroes < length)
+            if (input[i] != value)
             {
-                numZeroes++;
-                pInput++;
+                break;
             }
+
+            numZeroes += 1;
         }
 
         return numZeroes;

@@ -84,7 +84,7 @@ public sealed class Base16 : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCod
     /// <param name="bytes">Bytes to encode.</param>
     /// <returns>Base16 string.</returns>
     [Obsolete("Deprecated. Use Base16.UpperCase.Encode() instead")]
-    public static unsafe string EncodeUpper(ReadOnlySpan<byte> bytes)
+    public static string EncodeUpper(ReadOnlySpan<byte> bytes)
     {
         return UpperCase.Encode(bytes);
     }
@@ -95,7 +95,7 @@ public sealed class Base16 : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCod
     /// <param name="bytes">Bytes to encode.</param>
     /// <returns>Base16 string.</returns>
     [Obsolete("Deprecated. Use Base16.LowerCase.Encode() instead")]
-    public static unsafe string EncodeLower(ReadOnlySpan<byte> bytes)
+    public static string EncodeLower(ReadOnlySpan<byte> bytes)
     {
         return LowerCase.Encode(bytes);
     }
@@ -209,7 +209,7 @@ public sealed class Base16 : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCod
     /// </summary>
     /// <param name="text">Base16 text.</param>
     /// <returns>Decoded bytes.</returns>
-    public unsafe byte[] Decode(ReadOnlySpan<char> text)
+    public byte[] Decode(ReadOnlySpan<char> text)
     {
         int textLen = text.Length;
         if (textLen == 0)
@@ -277,7 +277,7 @@ public sealed class Base16 : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCod
     /// </summary>
     /// <param name="bytes">Bytes to encode.</param>
     /// <returns>Base16 string.</returns>
-    public unsafe string Encode(ReadOnlySpan<byte> bytes)
+    public string Encode(ReadOnlySpan<byte> bytes)
     {
         if (bytes.Length == 0)
         {
