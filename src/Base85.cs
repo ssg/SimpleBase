@@ -401,9 +401,7 @@ public class Base85 : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCoder
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static bool isWhiteSpace(char c)
     {
-#pragma warning disable IDE0078 // Pattern matchin syntax bugs out here - so temporarily disabling suggestion here
-        return c == ' ' || c == 0x85 || c == 0xA0 || (c >= 0x09 && c <= 0x0D);
-#pragma warning restore IDE0078 // Use pattern matching
+        return c is '\x20' or '\x85' or '\xA0' or (>= '\x09' and <= '\x0D');
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
