@@ -30,7 +30,7 @@
   ownership semantics. It's even possible some copying may be avoided in certain scenarios.
 - Switched to BenchmarkDotNet for benchmarking.
 - 3.x will eventually be deprecated and be replaced with 4.x as they both target .NET Standard 2.1.
-- `Base16.TryDecode()` doesn't throw on invalid input, but returns false instead.
+- `Base16.TryDecode()` doesn't throw on invalid input, but returns `false` instead.
 
 # New features
 - Added [Bech32](https://en.bitcoin.it/wiki/Bech32) flavor to Base32 
