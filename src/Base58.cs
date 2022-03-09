@@ -18,6 +18,7 @@ namespace SimpleBase;
 public sealed class Base58 : IBaseCoder, INonAllocatingBaseCoder
 {
     private const int reductionFactor = 733; // https://github.com/bitcoin/bitcoin/blob/master/src/base58.cpp#L48
+    private const int divisor = 58;
     private static readonly Lazy<Base58> bitcoin = new(() => new Base58(Base58Alphabet.Bitcoin));
     private static readonly Lazy<Base58> ripple = new(() => new Base58(Base58Alphabet.Ripple));
     private static readonly Lazy<Base58> flickr = new(() => new Base58(Base58Alphabet.Flickr));
@@ -81,7 +82,7 @@ public sealed class Base58 : IBaseCoder, INonAllocatingBaseCoder
     public int GetSafeCharCountForEncoding(ReadOnlySpan<byte> bytes)
     {
         int bytesLen = bytes.Length;
-        int numZeroes = getZeroCount(bytes, bytesLen);
+        int numZeroes = getZeroCount(bytes);
 
         return getSafeCharCountForEncoding(bytesLen, numZeroes);
     }
@@ -93,29 +94,18 @@ public sealed class Base58 : IBaseCoder, INonAllocatingBaseCoder
     /// <returns>Encoded string.</returns>
     public unsafe string Encode(ReadOnlySpan<byte> bytes)
     {
-        int bytesLen = bytes.Length;
-        if (bytesLen == 0)
+        if (bytes.Length == 0)
         {
             return string.Empty;
         }
 
-        int numZeroes = getZeroCount(bytes, bytesLen);
-        int outputLen = getSafeCharCountForEncoding(bytesLen, numZeroes);
-        string output = new('\0', outputLen);
+        int numZeroes = getZeroCount(bytes);
+        int outputLen = getSafeCharCountForEncoding(bytes.Length, numZeroes);
+        Span<char> output = new char[outputLen];
 
-        // 29.70µs (64.9x slower)   | 31.63µs (40.8x slower)
-        // 30.93µs (first tryencode impl)
-        // 29.36µs (single pass translation/copy + shift over multiply)
-        // 31.04µs (70x slower)     | 24.71µs (34.3x slower)
-        fixed (byte* inputPtr = bytes)
-        {
-            fixed (char* outputPtr = output)
-        {
-            return internalEncode(inputPtr, bytesLen, outputPtr, outputLen, numZeroes, out int length)
-                ? output[..length]
-                : throw new InvalidOperationException("Output buffer with insufficient size generated");
-        }
-        }
+        return internalEncode(bytes, output, numZeroes, out int numCharsWritten)
+            ? new string(output[..numCharsWritten])
+            : throw new InvalidOperationException("Output buffer with insufficient size generated");
     }
 
     /// <summary>
@@ -138,37 +128,30 @@ public sealed class Base58 : IBaseCoder, INonAllocatingBaseCoder
         fixed (char* inputPtr = text)
         {
             fixed (byte* outputPtr = output)
-        {
-#pragma warning disable IDE0046 // Convert to conditional expression - prefer clarity
-            if (!internalDecode(
-                inputPtr,
-                textLen,
-                outputPtr,
-                outputLen,
-                numZeroes,
-                out int numBytesWritten))
             {
-                throw new InvalidOperationException("Output buffer was too small while decoding Base58");
-            }
+#pragma warning disable IDE0046 // Convert to conditional expression - prefer clarity
+                if (!internalDecode(
+                    inputPtr,
+                    textLen,
+                    outputPtr,
+                    outputLen,
+                    numZeroes,
+                    out int numBytesWritten))
+                {
+                    throw new InvalidOperationException("Output buffer was too small while decoding Base58");
+                }
 
-            return output[..numBytesWritten];
+                return output[..numBytesWritten];
 #pragma warning restore IDE0046 // Convert to conditional expression
-        }
+            }
         }
     }
 
     /// <inheritdoc/>
-    public unsafe bool TryEncode(ReadOnlySpan<byte> input, Span<char> output, out int numCharsWritten)
+    public bool TryEncode(ReadOnlySpan<byte> input, Span<char> output, out int numCharsWritten)
     {
-        fixed (byte* inputPtr = input)
-        {
-            fixed (char* outputPtr = output)
-        {
-            int inputLen = input.Length;
-            int numZeroes = getZeroCount(input, inputLen);
-            return internalEncode(inputPtr, inputLen, outputPtr, output.Length, numZeroes, out numCharsWritten);
-        }
-        }
+        int numZeroes = getZeroCount(input);
+        return internalEncode(input, output, numZeroes, out numCharsWritten);
     }
 
     /// <inheritdoc/>
@@ -185,15 +168,15 @@ public sealed class Base58 : IBaseCoder, INonAllocatingBaseCoder
         fixed (char* inputPtr = input)
         {
             fixed (byte* outputPtr = output)
-        {
-            return internalDecode(
-                inputPtr,
-                input.Length,
-                outputPtr,
-                output.Length,
-                zeroCount,
-                out numBytesWritten);
-        }
+            {
+                return internalDecode(
+                    inputPtr,
+                    input.Length,
+                    outputPtr,
+                    output.Length,
+                    zeroCount,
+                    out numBytesWritten);
+            }
         }
     }
 
@@ -258,111 +241,92 @@ public sealed class Base58 : IBaseCoder, INonAllocatingBaseCoder
         return true;
     }
 
-    private unsafe bool internalEncode(
-        byte* inputPtr,
-        int inputLen,
-        char* outputPtr,
-        int outputLen,
+    private bool internalEncode(
+        ReadOnlySpan<byte> input,
+        Span<char> output,
         int numZeroes,
         out int numCharsWritten)
     {
-        if (inputLen == 0)
+        if (input.Length == 0)
         {
             numCharsWritten = 0;
             return true;
         }
 
-        fixed (char* alphabetPtr = Alphabet.Value)
+        ReadOnlySpan<char> alphabet = Alphabet.Value;
+        if (numZeroes == input.Length)
         {
-            byte* pInput = inputPtr + numZeroes;
-            byte* pInputEnd = inputPtr + inputLen;
-            char zeroChar = alphabetPtr[0];
+            return encodeAllZeroes(output, numZeroes, out numCharsWritten, alphabet[0]);
+        }
 
-            // optimized path for an all zero buffer
-            if (pInput == pInputEnd)
+        int numDigits = 0;
+        int index = numZeroes;
+        while (index < input.Length)
+        {
+            int carry = input[index++];
+            int i = 0;
+            for (int j = output.Length - 1; (carry != 0 || i < numDigits)
+                && j >= 0; j--, i++)
             {
-                if (outputLen < numZeroes)
-                {
-                    numCharsWritten = 0;
-                    return false;
-                }
-
-                for (int i = 0; i < numZeroes; i++)
-                {
-                    *outputPtr++ = zeroChar;
-                }
-
-                numCharsWritten = numZeroes;
-                return true;
+                carry += output[j] << 8;
+                carry = Math.DivRem(carry, divisor, out int remainder);
+                output[j] = (char)remainder;
             }
 
-            int length = 0;
-            char* pOutput = outputPtr;
-            char* pLastChar = pOutput + outputLen - 1;
-            while (pInput != pInputEnd)
-            {
-                int carry = *pInput;
-                int i = 0;
-                for (char* pDigit = pLastChar; (carry != 0 || i < length)
-                    && pDigit >= outputPtr; pDigit--, i++)
-                {
-                    carry += *pDigit << 8;
-                    carry = Math.DivRem(carry, 58, out int remainder);
-                    *pDigit = (char)remainder;
-                }
+            numDigits = i;
+        }
 
-                length = i;
-                pInput++;
-            }
+        translatedCopy(output[^numDigits..], output[numZeroes..], alphabet);
+        if (numZeroes > 0)
+        {
+            output[..numZeroes].Fill(alphabet[0]);
+        }
 
-            var pOutputEnd = pOutput + outputLen;
+        numCharsWritten = numZeroes + numDigits;
+        return true;
+    }
 
-            // copy the characters to the beginning of the buffer
-            // and translate them at the same time. if no copying
-            // is needed, this only acts as the translation phase.
-            for (char* a = outputPtr + numZeroes, b = pOutputEnd - length;
-                b != pOutputEnd;
-                a++, b++)
-            {
-                *a = alphabetPtr[*b];
-            }
-
-            // translate the zeroes at the start
-            while (pOutput != pOutputEnd)
-            {
-                char c = *pOutput;
-                if (c != '\0')
-                {
-                    break;
-                }
-
-                *pOutput = alphabetPtr[c];
-                pOutput++;
-            }
-
-            int actualLen = numZeroes + length;
-
-            numCharsWritten = actualLen;
-            return true;
+    private static void translatedCopy(
+        ReadOnlySpan<char> source,
+        Span<char> destination,
+        ReadOnlySpan<char> alphabet)
+    {
+        Debug.Assert(source.Length <= destination.Length, "source is too big");
+        for (int n = 0; n < source.Length; n++)
+        {
+            destination[n] = alphabet[source[n]];
         }
     }
 
-    private static unsafe int getZeroCount(ReadOnlySpan<byte> bytes, int bytesLen)
+    private static bool encodeAllZeroes(
+        Span<char> output,
+        int numZeroes,
+        out int numCharsWritten,
+        char zeroChar)
     {
-        if (bytesLen == 0)
+        if (output.Length < numZeroes)
         {
-            return 0;
+            // insufficient output buffer length
+            numCharsWritten = 0;
+            return false;
         }
 
+        output[..numZeroes].Fill(zeroChar);
+        numCharsWritten = numZeroes;
+        return true;
+    }
+
+    private static int getZeroCount(ReadOnlySpan<byte> bytes)
+    {
         int numZeroes = 0;
-        fixed (byte* inputPtr = bytes)
+        for (int i = 0; i < bytes.Length; i++)
         {
-            var pInput = inputPtr;
-            while (*pInput == 0 && numZeroes < bytesLen)
+            if (bytes[i] != 0)
             {
-                numZeroes++;
-                pInput++;
+                break;
             }
+
+            numZeroes += 1;
         }
 
         return numZeroes;
