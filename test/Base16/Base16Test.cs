@@ -132,6 +132,14 @@ internal class Base16Test
     }
 
     [Test]
+    public void TryDecode_InvalidChar_ReturnsFalse()
+    {
+        var output = new byte[3];
+        Assert.That(Base16.UpperCase.TryDecode("1234ZB", output, out int numWritten), Is.False);
+        Assert.That(numWritten, Is.EqualTo(2));
+    }
+
+    [Test]
     [TestCaseSource(nameof(encoders))]
     public void TryDecode_SmallOutputBuffer_Fails(Base16 encoder)
     {

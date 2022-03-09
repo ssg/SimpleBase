@@ -261,7 +261,9 @@ public sealed class Base16 : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCod
                 int b2 = table[c2] - 1;
                 if (b1 < 0 || b2 < 0)
                 {
-                    throw new ArgumentException($"Invalid hex character: {(b1 < 0 ? c1 : c2)}");
+                    Debug.WriteLine($"Invalid hex character: {(b1 < 0 ? c1 : c2)}");
+                    numBytesWritten = o;
+                    return false;
                 }
 
                 output[o++] = (byte)((b1 * 16) | b2);
@@ -293,7 +295,6 @@ public sealed class Base16 : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCod
     public bool TryEncode(ReadOnlySpan<byte> bytes, Span<char> output, out int numCharsWritten)
     {
         ReadOnlySpan<char> alphabet = Alphabet.Value;
-
         int outputLen = bytes.Length * 2;
         if (output.Length < outputLen)
         {
