@@ -6,7 +6,7 @@
         <Copyright>Copyright 2014-2019 Sedat Kapanoglu</Copyright>
         <Authors>Sedat Kapanoglu</Authors>
         <Description>Base16, Base32, Base58, Base85 encoding/decoding library</Description>
-        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+        <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
         <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
         <SignAssembly>true</SignAssembly>
         <AssemblyOriginatorKeyFile>..\SimpleBase.snk</AssemblyOriginatorKeyFile>
@@ -39,6 +39,7 @@
 
 # Improvements
 - Added more buffer overflow detection to Base32 coder
+- Removed all unsafe code. New Span<T>-based optimizations make the code come close to unsafe perf.
 
 # Fixes 
 - Fixed output buffer was too small error for certain Base58 cases.
