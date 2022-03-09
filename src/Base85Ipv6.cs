@@ -42,7 +42,7 @@ public class Base85Ipv6 : Base85
     /// </summary>
     /// <param name="ip">IPv6 address.</param>
     /// <returns>Encoded text.</returns>
-    public unsafe string EncodeIpv6(IPAddress ip)
+    public string EncodeIpv6(IPAddress ip)
     {
         if (ip.AddressFamily != AddressFamily.InterNetworkV6)
         {
@@ -71,7 +71,7 @@ public class Base85Ipv6 : Base85
     /// </summary>
     /// <param name="text">Encoded text.</param>
     /// <returns>Decoded IPv6 address.</returns>
-    public unsafe IPAddress DecodeIpv6(string text)
+    public IPAddress DecodeIpv6(string text)
     {
         if (text.Length != ipv6chars)
         {
