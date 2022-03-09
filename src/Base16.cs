@@ -284,9 +284,8 @@ public sealed class Base16 : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCod
             return string.Empty;
         }
 
-        var output = new char[GetSafeCharCountForEncoding(bytes)];
-        internalEncode(bytes, Alphabet.Value, output);
-
+        Span<char> output = new char[GetSafeCharCountForEncoding(bytes)];
+        internalEncode(bytes, output, Alphabet.Value);
         return new string(output);
     }
 
@@ -308,19 +307,19 @@ public sealed class Base16 : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCod
             return true;
         }
 
-        internalEncode(bytes, alphabet, output);
+        internalEncode(bytes, output, alphabet);
         numCharsWritten = outputLen;
         return true;
     }
 
     private static void internalEncode(
-        ReadOnlySpan<byte> bytes,
-        ReadOnlySpan<char> alphabet,
-        Span<char> output)
+        ReadOnlySpan<byte> input,
+        Span<char> output,
+        ReadOnlySpan<char> alphabet)
     {
-        for (int i = 0, o = 0; i < bytes.Length; i++, o += 2)
+        for (int i = 0, o = 0; i < input.Length; i++, o += 2)
         {
-            byte b = bytes[i];
+            byte b = input[i];
             output[o] = alphabet[b >> 4];
             output[o + 1] = alphabet[b & 0x0F];
         }
