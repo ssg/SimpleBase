@@ -24,12 +24,11 @@
         <PackageReleaseNotes>
             <![CDATA[
 # Breaking changes
-- Targets .NET 6
 - Changed interface names from Encoder to Coder to signify encoding and
   decoding functionality better
 - Simple (allocating) versions of Decode() return `byte[]`'s instead of `Span<byte>`'s for correct 
-  ownership semantics. This will cause copying, but at least will save GC from tracking expensive
-  interior references.
+  ownership semantics. This may cause copying in some cases, but at least will save GC from tracking expensive
+  interior references and avoid any trouble assigning the result to a member.
 - Switched to BenchmarkDotNet for benchmarking.
 
 # New features
