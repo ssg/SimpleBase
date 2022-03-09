@@ -29,6 +29,7 @@
 - Simple (aka allocating) versions of `Decode()` will now return `byte[]`'s instead of `Span<byte>`'s for correct 
   ownership semantics. It's even possible some copying may be avoided in certain scenarios.
 - Switched to BenchmarkDotNet for benchmarking.
+- 3.x will eventually be deprecated and be replaced with 4.x as they both target .NET Standard 2.1.
 
 # New features
 - Added [Bech32](https://en.bitcoin.it/wiki/Bech32) flavor to Base32 
