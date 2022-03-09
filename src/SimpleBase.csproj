@@ -3,7 +3,7 @@
         <TargetFramework>netstandard2.1</TargetFramework>
         <RootNamespace>SimpleBase</RootNamespace>
         <AssemblyName>SimpleBase</AssemblyName>
-        <Copyright>Copyright 2014-2019 Sedat Kapanoglu</Copyright>
+        <Copyright>Copyright 2014-2022 Sedat Kapanoglu</Copyright>
         <Authors>Sedat Kapanoglu</Authors>
         <Description>Base16, Base32, Base58, Base85 encoding/decoding library</Description>
         <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
@@ -39,6 +39,8 @@
 # Improvements
 - Added more buffer overflow detection to Base32 coder
 - Removed all unsafe code. New Span<T>-based optimizations make the code come close to unsafe perf.
+- Removed slow and hard to read optimizations like bit shift operations for multiplication and division
+  where compiler almost always does a better job of optimizing.
 
 # Fixes 
 - Fixed output buffer was too small error for certain Base58 cases.
