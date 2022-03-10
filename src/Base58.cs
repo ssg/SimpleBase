@@ -20,7 +20,7 @@ public sealed class Base58 : IBaseCoder, INonAllocatingBaseCoder
 {
     private const int reductionFactor = 733; // https://github.com/bitcoin/bitcoin/blob/master/src/base58.cpp#L48
     private const int divisor = 58;
-    private const int maxBase58CheckPayloadLength = 256;
+    private const int maxCheckPayloadLength = 256;
     private const int sha256Bytes = 32;
     private const int sha256DigestBytes = 4;
     private static readonly Lazy<Base58> bitcoin = new(() => new Base58(Base58Alphabet.Bitcoin));
@@ -99,7 +99,7 @@ public sealed class Base58 : IBaseCoder, INonAllocatingBaseCoder
     /// <returns>Base58Check address.</returns>
     public string EncodeCheck(ReadOnlySpan<byte> payload, byte version)
     {
-        if (payload.Length > maxBase58CheckPayloadLength)
+        if (payload.Length > maxCheckPayloadLength)
         {
             throw new ArgumentException("Invalid payload", nameof(payload));
         }
@@ -110,12 +110,9 @@ public sealed class Base58 : IBaseCoder, INonAllocatingBaseCoder
         var outputSpan = output.AsSpan();
         outputSpan[0] = version;
         payload.CopyTo(outputSpan[1..]);
-
         Span<byte> sha256 = stackalloc byte[sha256Bytes];
         computeDoubleSha256(outputSpan[..versionPlusPayloadLen], sha256);
-
         sha256[..sha256DigestBytes].CopyTo(outputSpan[versionPlusPayloadLen..]);
-
         return Encode(outputSpan);
     }
 
@@ -123,7 +120,7 @@ public sealed class Base58 : IBaseCoder, INonAllocatingBaseCoder
     /// Try to decode and verify a Base58Check address.
     /// </summary>
     /// <param name="address">Address string.</param>
-    /// <param name="payload">Output address buffer (20-32 bytes, depending on the address type).</param>
+    /// <param name="payload">Output address buffer.</param>
     /// <param name="version">Address version.</param>
     /// <param name="numBytesWritten">Number of bytes written in the output payload.</param>
     /// <returns>True if address was decoded successfully and passed validation. False, otherwise.</returns>
@@ -133,7 +130,7 @@ public sealed class Base58 : IBaseCoder, INonAllocatingBaseCoder
         out byte version,
         out int numBytesWritten)
     {
-        Span<byte> buffer = stackalloc byte[maxBase58CheckPayloadLength + sha256DigestBytes + 1];
+        Span<byte> buffer = stackalloc byte[maxCheckPayloadLength + sha256DigestBytes + 1];
         if (!TryDecode(address, buffer, out numBytesWritten) || numBytesWritten < 5)
         {
             version = 0;
@@ -145,6 +142,77 @@ public sealed class Base58 : IBaseCoder, INonAllocatingBaseCoder
         Span<byte> sha256 = stackalloc byte[sha256Bytes];
         computeDoubleSha256(buffer[..^sha256DigestBytes], sha256);
         if (!sha256[..sha256DigestBytes].SequenceEqual(buffer[^sha256DigestBytes..]))
+        {
+            version = 0;
+            return false;
+        }
+
+        var finalBuffer = buffer[1..^4];
+        version = buffer[0];
+        finalBuffer.CopyTo(payload);
+        numBytesWritten = finalBuffer.Length;
+        return true;
+    }
+
+    /// <summary>
+    /// Generate an Avalanche CB58 string out of a version and payload.
+    /// </summary>
+    /// <param name="payload">Address data.</param>
+    /// <param name="version">Address version.</param>
+    /// <returns>CB58 address.</returns>
+    public string EncodeCb58(ReadOnlySpan<byte> payload, byte version)
+    {
+        if (payload.Length > maxCheckPayloadLength)
+        {
+            throw new ArgumentException("Invalid payload", nameof(payload));
+        }
+
+        int versionPlusPayloadLen = payload.Length + 1;
+        int outputLen = versionPlusPayloadLen + sha256DigestBytes;
+        byte[] output = new byte[outputLen];
+        var outputSpan = output.AsSpan();
+        outputSpan[0] = version;
+        payload.CopyTo(outputSpan[1..]);
+        Span<byte> sha256 = stackalloc byte[sha256Bytes];
+        using (var hasher = SHA256.Create())
+        {
+            computeSha256(hasher, outputSpan[..versionPlusPayloadLen], sha256);
+        }
+
+        sha256[^sha256DigestBytes..].CopyTo(outputSpan[versionPlusPayloadLen..]);
+        return Encode(outputSpan);
+    }
+
+    /// <summary>
+    /// Try to decode and verify an Avalanche CB58 address.
+    /// </summary>
+    /// <param name="address">Address string.</param>
+    /// <param name="payload">Output address buffer.</param>
+    /// <param name="version">Address version.</param>
+    /// <param name="numBytesWritten">Number of bytes written in the output payload.</param>
+    /// <returns>True if address was decoded successfully and passed validation. False, otherwise.</returns>
+    public bool TryDecodeCb58(
+        ReadOnlySpan<char> address,
+        Span<byte> payload,
+        out byte version,
+        out int numBytesWritten)
+    {
+        Span<byte> buffer = stackalloc byte[maxCheckPayloadLength + sha256DigestBytes + 1];
+        if (!TryDecode(address, buffer, out numBytesWritten) || numBytesWritten < 5)
+        {
+            version = 0;
+            return false;
+        }
+
+        buffer = buffer[..numBytesWritten];
+        version = buffer[0];
+        Span<byte> sha256 = stackalloc byte[sha256Bytes];
+        using (var hasher = SHA256.Create())
+        {
+            computeSha256(hasher, buffer[..^sha256DigestBytes], sha256);
+        }
+
+        if (!sha256[^sha256DigestBytes..].SequenceEqual(buffer[^sha256DigestBytes..]))
         {
             version = 0;
             return false;
@@ -382,34 +450,24 @@ public sealed class Base58 : IBaseCoder, INonAllocatingBaseCoder
 
     private static int getZeroCount(ReadOnlySpan<byte> bytes)
     {
-        int numZeroes = 0;
-        for (int i = 0; i < bytes.Length; i++)
+        int count = 0;
+        for (; count < bytes.Length && bytes[count] == 0; count++)
         {
-            if (bytes[i] != 0)
-            {
-                break;
-            }
-
-            numZeroes += 1;
         }
 
-        return numZeroes;
+        return count;
     }
 
+    // we can't make this a generic method and reuse it with getZeroCount()
+    // because IEquatable<T> is way slower than equality operator.
     private static int getPrefixCount(ReadOnlySpan<char> input, char value)
     {
-        int numZeroes = 0;
-        for (int i = 0; i < input.Length; i++)
+        int count = 0;
+        for (; count < input.Length && input[count] == value; count++)
         {
-            if (input[i] != value)
-            {
-                break;
-            }
-
-            numZeroes += 1;
         }
 
-        return numZeroes;
+        return count;
     }
 
     private static int getSafeCharCountForEncoding(int bytesLen, int numZeroes)
