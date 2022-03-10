@@ -45,7 +45,6 @@ public abstract class CodingAlphabet : ICodingAlphabet
 
         Length = length;
         Value = alphabet;
-
         for (short i = 0; i < length; i++)
         {
             Map(alphabet[i], i);
