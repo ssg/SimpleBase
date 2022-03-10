@@ -18,7 +18,8 @@ Features
  - Base32: RFC 4648, BECH32, Crockford, z-base-32, Geohash and Extended Hex 
    (BASE32-HEX) flavors with Crockford character substitution, or any other 
    custom flavors.
- - Base58: Bitcoin, Ripple, Flickr, and custom flavors. Base58Check implementation.
+ - Base58: Bitcoin, Ripple, Flickr, and custom flavors. Also provides 
+   Base58Check and Avalanche CB58 encoding helpers.
  - Base85: Ascii85, Z85 and custom flavors. IPv6 encoding/decoding support.
  - Base16: UpperCase, LowerCase and ModHex flavors. An experimental hexadecimal 
    encoder/decoder just to see how far I 
@@ -58,10 +59,7 @@ Decode a Base32-encoded string:
 using SimpleBase;
 
 string myText = ...
-Span<byte> result = Base32.Crockford.Decode(myText);
-// Span<byte> is analogous to byte[] in usage but allows the library
-// to avoid unnecessary memory copy operations unless needed.
-// you can also use "ExtendedHex" or "Rfc4648" as decoder flavors
+byte[] result = Base32.Crockford.Decode(myText);
 ```
 
 ### Base58
@@ -78,10 +76,24 @@ Decode a Base58-encoded string:
 
 ```csharp
 string myText = ...
-Span<byte> result = Base58.Bitcoin.Decode(myText);
-// Span<byte> is analogous to byte[] in usage but allows the library
-// to avoid unnecessary memory copy operations unless needed.
-// you can also use "Ripple" or "Flickr" as decoder flavors
+byte[] result = Base58.Bitcoin.Decode(myText);
+```
+
+Encode a Base58Check address:
+
+```csharp
+byte[] address = ...
+byte version = 1; // P2PKH address
+string result = Base58.Bitcoin.EncodeCheck(address, version);
+```
+
+Decode a Base58Check address:
+
+```csharp
+string address = ...
+Span<byte> buffer = new byte[maxAddressLength];
+if (Base58.Bitcoin.TryDecodeCheck(address, buffer, out byte version, out int numBytesWritten));
+buffer = buffer[..numBytesWritten]; // use only the written portion of the buffer
 ```
 
 ### Base85
@@ -98,10 +110,7 @@ Decode an encoded Ascii85 string:
 
 ```csharp
 string encodedString = ...
-Span<byte> result = Base85.Ascii85.Decode(encodedString);
-// Span<byte> is analogous to byte[] in usage but allows the library
-// to avoid unnecessary memory copy operations unless needed.
-// you can also use Z85 as a flavor
+byte[] result = Base85.Ascii85.Decode(encodedString);
 ```
 
 Both "zero" and "space" shortcuts are supported for Ascii85. Z85 is still 
@@ -122,9 +131,7 @@ To decode a valid hex string:
 
 ```csharp
 string text = ...
-Span<byte> result = Base16.Decode(text); // decodes both upper and lowercase
-// Span<byte> is analogous to byte[] in usage but allows the library
-// to avoid unnecessary memory copy operations unless needed.
+byte[] result = Base16.Decode(text); // decodes both upper and lowercase
 ```
 
 ### Stream Mode

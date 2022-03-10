@@ -38,6 +38,7 @@
 - Added RFC 1924 (IPv6) flavor to Base85 along with 
   EncodeIpv6 and DecodeIpv6 functions https://tools.ietf.org/html/rfc1924
 - Added `Base58.Bitcoin.EncodeCheck()` and `Base58.Bitcoin.TryDecodeCheck()` methods.
+- Added `Base58.Bitcoin.EncodeCb58()` and `Base58.Bitcoin.TryDecodeCb58()` methods.
 
 # Improvements
 - Added more buffer overflow detection to Base32 coder
