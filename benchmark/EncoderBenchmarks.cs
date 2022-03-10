@@ -12,10 +12,10 @@ public class EncoderBenchmarks
     public string DotNet_Base64() => Convert.ToBase64String(buffer);
 
     [Benchmark]
-    public string SimpleBase_Base16_UpperCase() => SimpleBase.Base16.UpperCase.Encode(buffer);
+    public string SimpleBase_Base16_UpperCase() => Base16.UpperCase.Encode(buffer);
 
     [Benchmark]
-    public string SimpleBase_Base32_CrockfordWithPadding() => SimpleBase.Base32.Crockford.Encode(buffer, padding: true);
+    public string SimpleBase_Base32_CrockfordWithPadding() => Base32.Crockford.Encode(buffer, padding: true);
 
     [Benchmark]
     public string SimpleBase_Base85_Z85() => Base85.Z85.Encode(buffer);

@@ -18,7 +18,7 @@ Features
  - Base32: RFC 4648, BECH32, Crockford, z-base-32, Geohash and Extended Hex 
    (BASE32-HEX) flavors with Crockford character substitution, or any other 
    custom flavors.
- - Base58: Bitcoin, Ripple, Flickr and custom flavors.
+ - Base58: Bitcoin, Ripple, Flickr, and custom flavors. Base58Check implementation.
  - Base85: Ascii85, Z85 and custom flavors. IPv6 encoding/decoding support.
  - Base16: UpperCase, LowerCase and ModHex flavors. An experimental hexadecimal 
    encoder/decoder just to see how far I 
@@ -27,8 +27,7 @@ Features
    method since it's missing from .NET Core.
  - One-shot memory buffer based APIs for simple use cases.
  - Stream-based async APIs for more advanced scenarios.
- - Lightweight: No third-party dependencies (depends only on 
-   [System.Memory](https://www.nuget.org/packages/System.Memory/) package)
+ - Lightweight: No dependencies.
  - Thread-safe.
  - Simple to use.
 
