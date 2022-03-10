@@ -97,8 +97,7 @@ buffer = buffer[..numBytesWritten]; // use only the written portion of the buffe
 ```
 
 Avalanche CB58 usage is the same. Just use `EncodeCb58` and `TryDecodeCb58`
-methods instead. NOTE: Avalanche CB58 support is currently experimental
-as there are no tests for it yet.
+methods instead. 
 
 ### Base85
 

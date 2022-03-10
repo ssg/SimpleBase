@@ -147,7 +147,7 @@ public sealed class Base58 : IBaseCoder, INonAllocatingBaseCoder
             return false;
         }
 
-        var finalBuffer = buffer[1..^4];
+        var finalBuffer = buffer[1..^sha256DigestBytes];
         version = buffer[0];
         finalBuffer.CopyTo(payload);
         numBytesWritten = finalBuffer.Length;
@@ -158,28 +158,25 @@ public sealed class Base58 : IBaseCoder, INonAllocatingBaseCoder
     /// Generate an Avalanche CB58 string out of a version and payload.
     /// </summary>
     /// <param name="payload">Address data.</param>
-    /// <param name="version">Address version.</param>
     /// <returns>CB58 address.</returns>
-    public string EncodeCb58(ReadOnlySpan<byte> payload, byte version)
+    public string EncodeCb58(ReadOnlySpan<byte> payload)
     {
         if (payload.Length > maxCheckPayloadLength)
         {
             throw new ArgumentException("Invalid payload", nameof(payload));
         }
 
-        int versionPlusPayloadLen = payload.Length + 1;
-        int outputLen = versionPlusPayloadLen + sha256DigestBytes;
+        int outputLen = payload.Length + sha256DigestBytes;
         byte[] output = new byte[outputLen];
         var outputSpan = output.AsSpan();
-        outputSpan[0] = version;
-        payload.CopyTo(outputSpan[1..]);
+        payload.CopyTo(outputSpan);
         Span<byte> sha256 = stackalloc byte[sha256Bytes];
         using (var hasher = SHA256.Create())
         {
-            computeSha256(hasher, outputSpan[..versionPlusPayloadLen], sha256);
+            computeSha256(hasher, outputSpan[..payload.Length], sha256);
         }
 
-        sha256[^sha256DigestBytes..].CopyTo(outputSpan[versionPlusPayloadLen..]);
+        sha256[^sha256DigestBytes..].CopyTo(outputSpan[payload.Length..]);
         return Encode(outputSpan);
     }
 
@@ -188,24 +185,20 @@ public sealed class Base58 : IBaseCoder, INonAllocatingBaseCoder
     /// </summary>
     /// <param name="address">Address string.</param>
     /// <param name="payload">Output address buffer.</param>
-    /// <param name="version">Address version.</param>
     /// <param name="numBytesWritten">Number of bytes written in the output payload.</param>
     /// <returns>True if address was decoded successfully and passed validation. False, otherwise.</returns>
     public bool TryDecodeCb58(
         ReadOnlySpan<char> address,
         Span<byte> payload,
-        out byte version,
         out int numBytesWritten)
     {
-        Span<byte> buffer = stackalloc byte[maxCheckPayloadLength + sha256DigestBytes + 1];
-        if (!TryDecode(address, buffer, out numBytesWritten) || numBytesWritten < 5)
+        Span<byte> buffer = stackalloc byte[maxCheckPayloadLength + sha256DigestBytes];
+        if (!TryDecode(address, buffer, out numBytesWritten) || numBytesWritten < 4)
         {
-            version = 0;
             return false;
         }
 
         buffer = buffer[..numBytesWritten];
-        version = buffer[0];
         Span<byte> sha256 = stackalloc byte[sha256Bytes];
         using (var hasher = SHA256.Create())
         {
@@ -214,12 +207,10 @@ public sealed class Base58 : IBaseCoder, INonAllocatingBaseCoder
 
         if (!sha256[^sha256DigestBytes..].SequenceEqual(buffer[^sha256DigestBytes..]))
         {
-            version = 0;
             return false;
         }
 
-        var finalBuffer = buffer[1..^4];
-        version = buffer[0];
+        var finalBuffer = buffer[..^sha256DigestBytes];
         finalBuffer.CopyTo(payload);
         numBytesWritten = finalBuffer.Length;
         return true;

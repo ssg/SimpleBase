@@ -4,6 +4,7 @@ using SimpleBase;
 
 namespace benchmark;
 
+[MarkdownExporterAttribute.GitHub]
 public class EncoderBenchmarks
 {
     private readonly byte[] buffer = new byte[64];

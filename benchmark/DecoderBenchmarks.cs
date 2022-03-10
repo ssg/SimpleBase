@@ -4,6 +4,8 @@ using SimpleBase;
 
 namespace benchmark;
 
+[MarkdownExporterAttribute.GitHub]
+[MarkdownExporter()]
 public class DecoderBenchmarks
 {
     private readonly string s = new('a', 80);
