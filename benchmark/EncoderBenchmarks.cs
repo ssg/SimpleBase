@@ -3,9 +3,6 @@ using BenchmarkDotNet.Attributes;
 using SimpleBase;
 
 namespace benchmark;
-#if DEBUG
-#error Benchmarks on DEBUG mode aren't supported. Switch to "Release" configuration and try again.
-#endif
 
 public class EncoderBenchmarks
 {
