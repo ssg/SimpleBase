@@ -96,8 +96,24 @@ if (Base58.Bitcoin.TryDecodeCheck(address, buffer, out byte version, out int num
 buffer = buffer[..numBytesWritten]; // use only the written portion of the buffer
 ```
 
-Avalanche CB58 usage is the same. Just use `EncodeCb58` and `TryDecodeCb58`
-methods instead. 
+Avalanche CB58 usage is pretty much the same except it doesn't have a separate
+version field. Just use `EncodeCb58` and `TryDecodeCb58` methods instead. For 
+encoding:
+
+```
+byte[] address = ...
+byte version = 1;
+string result = Base58.Bitcoin.EncodeCb58(address);
+```
+
+For decoding:
+
+```csharp
+string address = ...
+Span<byte> buffer = new byte[maxAddressLength];
+if (Base58.Bitcoin.TryDecodeCb58(address, buffer, out int numBytesWritten));
+buffer = buffer[..numBytesWritten]; // use only the written portion of the buffer
+```
 
 ### Base85
 
