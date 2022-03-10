@@ -96,6 +96,9 @@ if (Base58.Bitcoin.TryDecodeCheck(address, buffer, out byte version, out int num
 buffer = buffer[..numBytesWritten]; // use only the written portion of the buffer
 ```
 
+Avalanche CB58 usage is the same. Just use `EncodeCb58` and `TryDecodeCb58`
+methods instead.
+
 ### Base85
 
 Encode a byte array to Ascii85 string:
