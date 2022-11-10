@@ -12,22 +12,22 @@ namespace SimpleBase
     /// </summary>
     public class Base32Alphabet : EncodingAlphabet
     {
-        private static readonly Lazy<CrockfordBase32Alphabet> crockfordAlphabet = new Lazy<CrockfordBase32Alphabet>(
+        private static readonly Lazy<CrockfordBase32Alphabet> crockfordAlphabet = new (
             () => new CrockfordBase32Alphabet());
 
-        private static readonly Lazy<Base32Alphabet> rfc4648Alphabet = new Lazy<Base32Alphabet>(
+        private static readonly Lazy<Base32Alphabet> rfc4648Alphabet = new (
             () => new Base32Alphabet("ABCDEFGHIJKLMNOPQRSTUVWXYZ234567"));
 
-        private static readonly Lazy<Base32Alphabet> extendedHexAlphabet = new Lazy<Base32Alphabet>(
+        private static readonly Lazy<Base32Alphabet> extendedHexAlphabet = new (
             () => new Base32Alphabet("0123456789ABCDEFGHIJKLMNOPQRSTUV"));
 
-        private static readonly Lazy<Base32Alphabet> zBase32Alphabet = new Lazy<Base32Alphabet>(
+        private static readonly Lazy<Base32Alphabet> zBase32Alphabet = new (
             () => new Base32Alphabet("ybndrfg8ejkmcpqxot1uwisza345h769"));
 
-        private static readonly Lazy<Base32Alphabet> geohashAlphabet = new Lazy<Base32Alphabet>(
+        private static readonly Lazy<Base32Alphabet> geohashAlphabet = new (
             () => new Base32Alphabet("0123456789bcdefghjkmnpqrstuvwxyz"));
 
-        private static readonly Lazy<Base32Alphabet> fileCoinAlphabet = new Lazy<Base32Alphabet>(
+        private static readonly Lazy<Base32Alphabet> fileCoinAlphabet = new (
             () => new Base32Alphabet("abcdefghijklmnopqrstuvwxyz234567"));
 
         /// <summary>

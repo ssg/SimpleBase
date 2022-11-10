@@ -18,12 +18,12 @@ namespace SimpleBase
         private const int bitsPerByte = 8;
         private const int bitsPerChar = 5;
 
-        private static readonly Lazy<Base32> crockford = new Lazy<Base32>(() => new Base32(Base32Alphabet.Crockford));
-        private static readonly Lazy<Base32> rfc4648 = new Lazy<Base32>(() => new Base32(Base32Alphabet.Rfc4648));
-        private static readonly Lazy<Base32> extendedHex = new Lazy<Base32>(() => new Base32(Base32Alphabet.ExtendedHex));
-        private static readonly Lazy<Base32> zBase32 = new Lazy<Base32>(() => new Base32(Base32Alphabet.ZBase32));
-        private static readonly Lazy<Base32> geohash = new Lazy<Base32>(() => new Base32(Base32Alphabet.Geohash));
-        private static readonly Lazy<Base32> filecoin = new Lazy<Base32>(() => new Base32(Base32Alphabet.FileCoin));
+        private static readonly Lazy<Base32> crockford = new (() => new Base32(Base32Alphabet.Crockford));
+        private static readonly Lazy<Base32> rfc4648 = new (() => new Base32(Base32Alphabet.Rfc4648));
+        private static readonly Lazy<Base32> extendedHex = new (() => new Base32(Base32Alphabet.ExtendedHex));
+        private static readonly Lazy<Base32> zBase32 = new (() => new Base32(Base32Alphabet.ZBase32));
+        private static readonly Lazy<Base32> geohash = new (() => new Base32(Base32Alphabet.Geohash));
+        private static readonly Lazy<Base32> filecoin = new (() => new Base32(Base32Alphabet.FileCoin));
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Base32"/> class with a
@@ -111,7 +111,7 @@ namespace SimpleBase
             // we are ok with slightly larger buffer since the output string will always
             // have the exact length of the output produced.
             int outputLen = GetSafeCharCountForEncoding(bytes);
-            string output = new string('\0', outputLen);
+            string output = new ('\0', outputLen);
             fixed (byte* inputPtr = bytes)
             fixed (char* outputPtr = output)
             {

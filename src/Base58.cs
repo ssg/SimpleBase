@@ -18,9 +18,9 @@ namespace SimpleBase
     public sealed class Base58 : IBaseEncoder, INonAllocatingBaseEncoder
     {
         private const int reductionFactor = 733; // https://github.com/bitcoin/bitcoin/blob/master/src/base58.cpp#L48
-        private static readonly Lazy<Base58> bitcoin = new Lazy<Base58>(() => new Base58(Base58Alphabet.Bitcoin));
-        private static readonly Lazy<Base58> ripple = new Lazy<Base58>(() => new Base58(Base58Alphabet.Ripple));
-        private static readonly Lazy<Base58> flickr = new Lazy<Base58>(() => new Base58(Base58Alphabet.Flickr));
+        private static readonly Lazy<Base58> bitcoin = new (() => new Base58(Base58Alphabet.Bitcoin));
+        private static readonly Lazy<Base58> ripple = new (() => new Base58(Base58Alphabet.Ripple));
+        private static readonly Lazy<Base58> flickr = new (() => new Base58(Base58Alphabet.Flickr));
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Base58"/> class
@@ -101,7 +101,7 @@ namespace SimpleBase
 
             int numZeroes = getZeroCount(bytes, bytesLen);
             int outputLen = getSafeCharCountForEncoding(bytesLen, numZeroes);
-            string output = new string('\0', outputLen);
+            string output = new ('\0', outputLen);
 
             // 29.70µs (64.9x slower)   | 31.63µs (40.8x slower)
             // 30.93µs (first tryencode impl)

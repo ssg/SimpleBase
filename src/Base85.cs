@@ -22,8 +22,8 @@ namespace SimpleBase
         private const long allSpace = 0x20202020;
         private const int decodeBufferSize = 5120; // don't remember what was special with this number
 
-        private static readonly Lazy<Base85> z85 = new Lazy<Base85>(() => new Base85(Base85Alphabet.Z85));
-        private static readonly Lazy<Base85> ascii85 = new Lazy<Base85>(() => new Base85(Base85Alphabet.Ascii85));
+        private static readonly Lazy<Base85> z85 = new (() => new Base85(Base85Alphabet.Z85));
+        private static readonly Lazy<Base85> ascii85 = new (() => new Base85(Base85Alphabet.Ascii85));
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Base85"/> class
@@ -77,7 +77,7 @@ namespace SimpleBase
             }
 
             int outputLen = GetSafeCharCountForEncoding(bytes);
-            string output = new string('\0', outputLen);
+            string output = new ('\0', outputLen);
 
             fixed (byte* inputPtr = bytes)
             fixed (char* outputPtr = output)
