@@ -90,6 +90,9 @@ csharp_style_unused_value_assignment_preference = discard_variable:suggestion
 csharp_space_around_binary_operators = before_and_after
 csharp_style_unused_value_expression_statement_preference = discard_variable:suggestion
 
+# IDE0230: Use UTF-8 string literal
+dotnet_diagnostic.IDE0230.severity = none
+
 [*.vb]
 #### Naming styles ####
 
@@ -164,3 +167,6 @@ dotnet_style_prefer_inferred_anonymous_type_member_names = true:suggestion
 dotnet_style_prefer_compound_assignment = true:suggestion
 dotnet_style_prefer_simplified_interpolation = true:suggestion
 dotnet_style_namespace_match_folder = true:suggestion
+
+# CA1016: Mark assemblies with assembly version
+dotnet_diagnostic.CA1016.severity = none

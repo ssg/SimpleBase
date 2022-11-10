@@ -3,8 +3,6 @@
 // Licensed under Apache-2.0 License (see LICENSE.txt file for details)
 // </copyright>
 
-using System;
-
 namespace SimpleBase
 {
     internal sealed class CrockfordBase32Alphabet : Base32Alphabet

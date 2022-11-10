@@ -1,7 +1,5 @@
 ﻿using NUnit.Framework;
 using SimpleBase;
-using System.IO;
-using System.Threading.Tasks;
 
 namespace SimpleBaseTest.Base16Test
 {

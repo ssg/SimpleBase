@@ -1,6 +1,5 @@
 ﻿using NUnit.Framework;
 using SimpleBase;
-using System;
 
 namespace SimpleBaseTest.Base32Test
 {
