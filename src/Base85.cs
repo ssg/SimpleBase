@@ -53,7 +53,7 @@ namespace SimpleBase
         /// <inheritdoc/>
         public int GetSafeByteCountForDecoding(ReadOnlySpan<char> text)
         {
-            bool usingShortcuts = Alphabet.AllZeroShortcut is object || Alphabet.AllSpaceShortcut is object;
+            bool usingShortcuts = Alphabet.AllZeroShortcut is not null || Alphabet.AllSpaceShortcut is not null;
             return getSafeByteCountForDecoding(text.Length, usingShortcuts);
         }
 
@@ -193,8 +193,8 @@ namespace SimpleBase
             int outputLen,
             out int numCharsWritten)
         {
-            bool usesZeroShortcut = Alphabet.AllZeroShortcut is object;
-            bool usesSpaceShortcut = Alphabet.AllSpaceShortcut is object;
+            bool usesZeroShortcut = Alphabet.AllZeroShortcut is not null;
+            bool usesSpaceShortcut = Alphabet.AllSpaceShortcut is not null;
             string table = Alphabet.Value;
             int fullLen = (inputLen >> 2) << 2; // size of whole 4-byte blocks
 
@@ -313,8 +313,8 @@ namespace SimpleBase
         {
             char? allZeroChar = Alphabet.AllZeroShortcut;
             char? allSpaceChar = Alphabet.AllSpaceShortcut;
-            bool checkZero = allZeroChar is object;
-            bool checkSpace = allSpaceChar is object;
+            bool checkZero = allZeroChar is not null;
+            bool checkSpace = allSpaceChar is not null;
 
             var table = this.Alphabet.ReverseLookupTable;
             byte* pOutput = outputPtr;
