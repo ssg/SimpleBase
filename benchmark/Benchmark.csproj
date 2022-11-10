@@ -15,7 +15,7 @@
         <None Include="..\SimpleBase.snk" Link="SimpleBase.snk" />
     </ItemGroup>
     <ItemGroup>
-      <PackageReference Include="BenchmarkDotNet" Version="0.13.1" />
+      <PackageReference Include="BenchmarkDotNet" Version="0.13.2" />
     </ItemGroup>
     <ItemGroup>
         <ProjectReference Include="..\src\SimpleBase.csproj" />
