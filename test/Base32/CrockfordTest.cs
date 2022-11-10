@@ -203,7 +203,7 @@ namespace SimpleBaseTest.Base32Test
         [Test]
         public void TryDecode_ZeroBuffer_ReturnsFalse()
         {
-            var success = Base32.Crockford.TryDecode("test", new byte[0], out int numBytesWritten);
+            var success = Base32.Crockford.TryDecode("test", Array.Empty<byte>(), out int numBytesWritten);
             Assert.That(success, Is.False);
             Assert.That(numBytesWritten, Is.EqualTo(0));
         }

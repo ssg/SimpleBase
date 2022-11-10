@@ -65,7 +65,7 @@ namespace SimpleBaseTest.Base58Test
         [Test]
         public void Encode_EmptyBuffer_ReturnsEmptyString()
         {
-            Assert.That(Base58.Ripple.Encode(new byte[0]), Is.EqualTo(String.Empty));
+            Assert.That(Base58.Ripple.Encode(Array.Empty<byte>()), Is.EqualTo(String.Empty));
         }
 
         [Test]

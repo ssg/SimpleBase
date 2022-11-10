@@ -10,9 +10,7 @@ namespace SimpleBaseTest.Base32Test
         [Test]
         public void ctor_NullAlphabet_Throws()
         {
-#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
             _ = Assert.Throws<ArgumentNullException>(() => new Base32Alphabet(null));
-#pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
         }
 
         [Test]

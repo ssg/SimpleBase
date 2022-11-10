@@ -12,7 +12,7 @@ namespace SimpleBaseTest.Base16Test
     {
         private static readonly TestCaseData[] upperCaseTestData = new[]
         {
-            new TestCaseData(new byte[] { }, ""),
+            new TestCaseData(System.Array.Empty<byte>(), ""),
             new TestCaseData(new byte[] { 0xAB }, "AB"),
             new TestCaseData(new byte[] { 0x00, 0x01, 0x02, 0x03 }, "00010203"),
             new TestCaseData(new byte[] { 0x10, 0x11, 0x12, 0x13 }, "10111213"),
@@ -22,7 +22,7 @@ namespace SimpleBaseTest.Base16Test
 
         private static readonly TestCaseData[] testData = new[]
         {
-            new TestCaseData(new byte[] { }, ""),
+            new TestCaseData(System.Array.Empty<byte>(), ""),
             new TestCaseData(new byte[] { 0xAB }, "ab"),
             new TestCaseData(new byte[] { 0x00, 0x01, 0x02, 0x03 }, "00010203"),
             new TestCaseData(new byte[] { 0x10, 0x11, 0x12, 0x13 }, "10111213"),
@@ -33,17 +33,13 @@ namespace SimpleBaseTest.Base16Test
         [Test]
         public void EncodeUpper_Works()
         {
-#pragma warning disable CS0618 // Type or member is obsolete
             Assert.That(Base16.EncodeUpper(new byte[] { 0xAB, 0xCD }), Is.EqualTo("ABCD"));
-#pragma warning restore CS0618 // Type or member is obsolete
         }
 
         [Test]
         public void EncodeLower_Works()
         {
-#pragma warning disable CS0618 // Type or member is obsolete
             Assert.That(Base16.EncodeLower(new byte[] { 0xAB, 0xCD }), Is.EqualTo("abcd"));
-#pragma warning restore CS0618 // Type or member is obsolete
         }
 
         [Test]
@@ -52,9 +48,7 @@ namespace SimpleBaseTest.Base16Test
         {
             using var inputStream = new MemoryStream(input);
             using var writer = new StringWriter();
-#pragma warning disable CS0618 // Type or member is obsolete
             Base16.EncodeUpper(inputStream, writer);
-#pragma warning restore CS0618 // Type or member is obsolete
             Assert.That(writer.ToString(), Is.EqualTo(expectedOutput));
         }
 
@@ -64,9 +58,7 @@ namespace SimpleBaseTest.Base16Test
         {
             using var inputStream = new MemoryStream(input);
             using var writer = new StringWriter();
-#pragma warning disable CS0618 // Type or member is obsolete
             await Base16.EncodeUpperAsync(inputStream, writer);
-#pragma warning restore CS0618 // Type or member is obsolete
             Assert.That(writer.ToString(), Is.EqualTo(expectedOutput));
         }
 
@@ -76,9 +68,7 @@ namespace SimpleBaseTest.Base16Test
         {
             using var inputStream = new MemoryStream(input);
             using var writer = new StringWriter();
-#pragma warning disable CS0618 // Type or member is obsolete
             Base16.EncodeLower(inputStream, writer);
-#pragma warning restore CS0618 // Type or member is obsolete
             Assert.That(writer.ToString(), Is.EqualTo(expectedOutput));
         }
 
@@ -88,9 +78,7 @@ namespace SimpleBaseTest.Base16Test
         {
             using var inputStream = new MemoryStream(input);
             using var writer = new StringWriter();
-#pragma warning disable CS0618 // Type or member is obsolete
             await Base16.EncodeLowerAsync(inputStream, writer);
-#pragma warning restore CS0618 // Type or member is obsolete
             Assert.That(writer.ToString(), Is.EqualTo(expectedOutput));
         }
 
