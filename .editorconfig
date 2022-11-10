@@ -116,6 +116,13 @@ dotnet_naming_style.camelcase.required_suffix =
 dotnet_naming_style.camelcase.word_separator = 
 dotnet_naming_style.camelcase.capitalization = camel_case
 dotnet_diagnostic.SA1000.severity = warning
+csharp_space_around_binary_operators = before_and_after
+csharp_style_prefer_method_group_conversion = true:silent
+csharp_style_prefer_top_level_statements = true:silent
+csharp_style_prefer_utf8_string_literals = true:none
+
+# IDE0230: Use UTF-8 string literal
+dotnet_diagnostic.IDE0230.severity = none
 
 [*.vb]
 #### Naming styles ####
@@ -173,3 +180,6 @@ dotnet_naming_style.pascal_case.required_prefix =
 dotnet_naming_style.pascal_case.required_suffix = 
 dotnet_naming_style.pascal_case.word_separator = 
 dotnet_naming_style.pascal_case.capitalization = pascal_case
+
+# CA1016: Mark assemblies with assembly version
+dotnet_diagnostic.CA1016.severity = none
