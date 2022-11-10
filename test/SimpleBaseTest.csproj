@@ -1,6 +1,5 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
     <TargetFramework>net6.0</TargetFramework>
     <RootNamespace>SimpleBaseTest</RootNamespace>
     <AssemblyName>SimpleBaseTest</AssemblyName>
@@ -28,8 +27,6 @@
     <ProjectReference Include="..\src\SimpleBase.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="NUnit" Version="3.13.2" />
-    <PackageReference Include="NUnit3TestAdapter" Version="3.17.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.4.0" />
     <PackageReference Include="Microsoft.TestPlatform.TestHost" Version="17.4.0" />
     <PackageReference Include="NUnit" Version="3.13.3" />

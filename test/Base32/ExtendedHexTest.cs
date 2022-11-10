@@ -102,7 +102,7 @@ namespace SimpleBaseTest.Base32Test
         [TestCase("||||")]
         public void Decode_InvalidInput_ThrowsArgumentException(string input)
         {
-            Assert.Throws<ArgumentException>(() => Base32.ExtendedHex.Decode(input));
+            _ = Assert.Throws<ArgumentException>(() => Base32.ExtendedHex.Decode(input));
         }
     }
 }

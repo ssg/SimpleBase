@@ -78,7 +78,7 @@ namespace SimpleBaseTest.Base58Test
         [Test]
         public void Decode_InvalidCharacter_Throws()
         {
-            Assert.Throws<ArgumentException>(() => Base58.Ripple.Decode("?"));
+            _ = Assert.Throws<ArgumentException>(() => Base58.Ripple.Decode("?"));
         }
 
         [Test]

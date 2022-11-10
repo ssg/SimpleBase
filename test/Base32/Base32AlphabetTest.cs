@@ -8,12 +8,6 @@ namespace SimpleBaseTest.Base32Test
     class Base32AlphabetTest
     {
         [Test]
-        public void ctor_NullAlphabet_Throws()
-        {
-            _ = Assert.Throws<ArgumentNullException>(() => new Base32Alphabet(null));
-        }
-
-        [Test]
         public void ctorWithPaddingChar_Works()
         {
             // alphabet characters are unimportant here

@@ -23,14 +23,14 @@ namespace SimpleBaseTest.Base85Test
         public void Decode_InvalidShortcut_ThrowsArgumentException()
         {
             const string input = "9zjqo";
-            Assert.Throws<ArgumentException>(() => Base85.Ascii85.Decode(input));
+            _ = Assert.Throws<ArgumentException>(() => Base85.Ascii85.Decode(input));
         }
 
         [Test]
         public void Decode_InvalidCharacter_ThrowsArgumentException()
         {
             const string input = "~!@#()(";
-            Assert.Throws<ArgumentException>(() => Base85.Ascii85.Decode(input));
+            _ = Assert.Throws<ArgumentException>(() => Base85.Ascii85.Decode(input));
         }
 
         [Test]
