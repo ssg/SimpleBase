@@ -19,90 +19,89 @@ using SimpleBase;
 using NUnit.Framework;
 using System.IO;
 
-namespace SimpleBaseTest.Base32Test
+namespace SimpleBaseTest.Base32Test;
+
+[TestFixture]
+class ExtendedHexTest
 {
-    [TestFixture]
-    class ExtendedHexTest
+    private static readonly string[][] testData = new[]
     {
-        private static readonly string[][] testData = new[]
-        {
-            new[] { "", "" },
-            new[] { "f", "CO======" },
-            new[] { "fo", "CPNG====" },
-            new[] { "foo", "CPNMU===" },
-            new[] { "foob", "CPNMUOG=" },
-            new[] { "fooba", "CPNMUOJ1" },
-            new[] { "foobar", "CPNMUOJ1E8======" },
-            new[] { "1234567890123456789012345678901234567890", "64P36D1L6ORJGE9G64P36D1L6ORJGE9G64P36D1L6ORJGE9G64P36D1L6ORJGE9G" },
-        };
+        new[] { "", "" },
+        new[] { "f", "CO======" },
+        new[] { "fo", "CPNG====" },
+        new[] { "foo", "CPNMU===" },
+        new[] { "foob", "CPNMUOG=" },
+        new[] { "fooba", "CPNMUOJ1" },
+        new[] { "foobar", "CPNMUOJ1E8======" },
+        new[] { "1234567890123456789012345678901234567890", "64P36D1L6ORJGE9G64P36D1L6ORJGE9G64P36D1L6ORJGE9G64P36D1L6ORJGE9G" },
+    };
 
-        [Test]
-        [TestCaseSource(nameof(testData))]
-        public void Encode_Stream_ReturnsExpectedValues(string input, string expectedOutput)
-        {
-            byte[] bytes = Encoding.ASCII.GetBytes(input);
-            using var inputStream = new MemoryStream(bytes);
-            using var writer = new StringWriter();
-            Base32.ExtendedHex.Encode(inputStream, writer, padding: true);
-            Assert.That(writer.ToString(), Is.EqualTo(expectedOutput));
-        }
+    [Test]
+    [TestCaseSource(nameof(testData))]
+    public void Encode_Stream_ReturnsExpectedValues(string input, string expectedOutput)
+    {
+        byte[] bytes = Encoding.ASCII.GetBytes(input);
+        using var inputStream = new MemoryStream(bytes);
+        using var writer = new StringWriter();
+        Base32.ExtendedHex.Encode(inputStream, writer, padding: true);
+        Assert.That(writer.ToString(), Is.EqualTo(expectedOutput));
+    }
 
-        [Test]
-        [TestCaseSource(nameof(testData))]
-        public void Decode_Stream_ReturnsExpectedValues(string expectedOutput, string input)
+    [Test]
+    [TestCaseSource(nameof(testData))]
+    public void Decode_Stream_ReturnsExpectedValues(string expectedOutput, string input)
+    {
+        // upper case
+        using (var inputStream = new StringReader(input))
+        using (var outputStream = new MemoryStream())
         {
-            // upper case
-            using (var inputStream = new StringReader(input))
-            using (var outputStream = new MemoryStream())
-            {
-                Base32.ExtendedHex.Decode(inputStream, outputStream);
-                string result = Encoding.ASCII.GetString(outputStream.ToArray());
-                Assert.That(result, Is.EqualTo(expectedOutput));
-            }
-
-            // lower case
-            using (var inputStream = new StringReader(input.ToLowerInvariant()))
-            using (var outputStream = new MemoryStream())
-            {
-                Base32.ExtendedHex.Decode(inputStream, outputStream);
-                string result = Encoding.ASCII.GetString(outputStream.ToArray());
-                Assert.That(result, Is.EqualTo(expectedOutput));
-            }
-        }
-
-        [Test]
-        [TestCaseSource(nameof(testData))]
-        public void Encode_ReturnsExpectedValues(string input, string expectedOutput)
-        {
-            byte[] bytes = Encoding.ASCII.GetBytes(input);
-            string result = Base32.ExtendedHex.Encode(bytes, padding: true);
+            Base32.ExtendedHex.Decode(inputStream, outputStream);
+            string result = Encoding.ASCII.GetString(outputStream.ToArray());
             Assert.That(result, Is.EqualTo(expectedOutput));
         }
 
-        [Test]
-        [TestCaseSource(nameof(testData))]
-        public void Decode_ReturnsExpectedValues(string expectedOutput, string input)
+        // lower case
+        using (var inputStream = new StringReader(input.ToLowerInvariant()))
+        using (var outputStream = new MemoryStream())
         {
-            var bytes = Base32.ExtendedHex.Decode(input);
-            string result = Encoding.ASCII.GetString(bytes.ToArray());
-            Assert.That(result, Is.EqualTo(expectedOutput));
-            bytes = Base32.ExtendedHex.Decode(input.ToLowerInvariant());
-            result = Encoding.ASCII.GetString(bytes.ToArray());
+            Base32.ExtendedHex.Decode(inputStream, outputStream);
+            string result = Encoding.ASCII.GetString(outputStream.ToArray());
             Assert.That(result, Is.EqualTo(expectedOutput));
         }
+    }
 
-        [Test]
-        public void Encode_NullBytes_ReturnsEmptyString()
-        {
-            Assert.That(Base32.ExtendedHex.Encode(null, false), Is.EqualTo(String.Empty));
-        }
+    [Test]
+    [TestCaseSource(nameof(testData))]
+    public void Encode_ReturnsExpectedValues(string input, string expectedOutput)
+    {
+        byte[] bytes = Encoding.ASCII.GetBytes(input);
+        string result = Base32.ExtendedHex.Encode(bytes, padding: true);
+        Assert.That(result, Is.EqualTo(expectedOutput));
+    }
 
-        [Test]
-        [TestCase("!@#!#@!#@#!@")]
-        [TestCase("||||")]
-        public void Decode_InvalidInput_ThrowsArgumentException(string input)
-        {
-            _ = Assert.Throws<ArgumentException>(() => Base32.ExtendedHex.Decode(input));
-        }
+    [Test]
+    [TestCaseSource(nameof(testData))]
+    public void Decode_ReturnsExpectedValues(string expectedOutput, string input)
+    {
+        var bytes = Base32.ExtendedHex.Decode(input);
+        string result = Encoding.ASCII.GetString(bytes);
+        Assert.That(result, Is.EqualTo(expectedOutput));
+        bytes = Base32.ExtendedHex.Decode(input.ToLowerInvariant());
+        result = Encoding.ASCII.GetString(bytes);
+        Assert.That(result, Is.EqualTo(expectedOutput));
+    }
+
+    [Test]
+    public void Encode_NullBytes_ReturnsEmptyString()
+    {
+        Assert.That(Base32.ExtendedHex.Encode(null, false), Is.EqualTo(String.Empty));
+    }
+
+    [Test]
+    [TestCase("!@#!#@!#@#!@")]
+    [TestCase("||||")]
+    public void Decode_InvalidInput_ThrowsArgumentException(string input)
+    {
+        _ = Assert.Throws<ArgumentException>(() => Base32.ExtendedHex.Decode(input));
     }
 }

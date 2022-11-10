@@ -17,23 +17,22 @@ using NUnit.Framework;
 using SimpleBase;
 using System;
 
-namespace SimpleBaseTest.Base58Test
-{
-    [TestFixture]
-    [Parallelizable]
-    class Base58AlphabetTest
-    {
-        [Test]
-        public void Ctor_InvalidLength_Throws()
-        {
-            _ = Assert.Throws<ArgumentException>(() => new Base58Alphabet("123"));
-        }
+namespace SimpleBaseTest.Base58Test;
 
-        [Test]
-        public void GetSafeCharCountForEncoding_Works()
-        {
-            var input = new byte[] { 0, 0, 0, 0, 1, 2, 3, 4 };
-            Assert.That(Base58.Bitcoin.GetSafeCharCountForEncoding(input), Is.EqualTo(10));
-        }
+[TestFixture]
+[Parallelizable]
+class Base58AlphabetTest
+{
+    [Test]
+    public void Ctor_InvalidLength_Throws()
+    {
+        _ = Assert.Throws<ArgumentException>(() => new Base58Alphabet("123"));
+    }
+
+    [Test]
+    public void GetSafeCharCountForEncoding_Works()
+    {
+        var input = new byte[] { 0, 0, 0, 0, 1, 2, 3, 4 };
+        Assert.That(Base58.Bitcoin.GetSafeCharCountForEncoding(input), Is.EqualTo(10));
     }
 }

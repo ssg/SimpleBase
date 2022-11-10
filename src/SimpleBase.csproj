@@ -1,16 +1,50 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
-  <PropertyGroup>
-    <TargetFramework>netstandard2.1</TargetFramework>
-    <RootNamespace>SimpleBase</RootNamespace>
-    <AssemblyName>SimpleBase</AssemblyName>
-    <Copyright>Copyright 2014-2019 Sedat Kapanoglu</Copyright>
-    <Authors>Sedat Kapanoglu</Authors>
-    <Description>Base16, Base32, Base58, Base85 encoding/decoding library</Description>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
-    <SignAssembly>true</SignAssembly>
-    <AssemblyOriginatorKeyFile>..\SimpleBase.snk</AssemblyOriginatorKeyFile>
-    <DelaySign>false</DelaySign>
+    <PropertyGroup>
+        <TargetFramework>netstandard2.1</TargetFramework>
+        <RootNamespace>SimpleBase</RootNamespace>
+        <AssemblyName>SimpleBase</AssemblyName>
+        <Copyright>Copyright 2014-2022 Sedat Kapanoglu</Copyright>
+        <Authors>Sedat Kapanoglu</Authors>
+        <Description>Base16, Base32, Base58, Base85 encoding/decoding library</Description>
+        <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+        <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
+        <SignAssembly>true</SignAssembly>
+        <AssemblyOriginatorKeyFile>..\SimpleBase.snk</AssemblyOriginatorKeyFile>
+        <DelaySign>false</DelaySign>
+
+        <PackageVersion>4.0.0</PackageVersion>
+        <DocumentationFile>SimpleBase.xml</DocumentationFile>
+        <PackageProjectUrl>https://github.com/ssg/SimpleBase</PackageProjectUrl>
+        <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+        <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+        <PackageTags>base16 base32 base58 base85 ascii85 z85 hexadecimal bitcoin ripple flickr crockford extended hex rfc4648 z-base-32 geohash bech32 rfc1924</PackageTags>
+        <LangVersion>latest</LangVersion>
+        <Nullable>enable</Nullable>
+        <PlatformTarget>AnyCPU</PlatformTarget>
+        <PackageReleaseNotes>
+            <![CDATA[
+# Breaking changes
+- This version is built with .NET 6 SDK.
+- Benchmark now uses BenchmarkDotNet.
+- Changed interface names from Encoder to Coder to signify encoding and
+  decoding functionality better.
+- Simple (aka allocating) versions of `Decode()` will now return `byte[]`'s instead of `Span<byte>`'s for correct 
+  ownership semantics. It's even possible that some copying may be avoided in certain scenarios.
+- `Base16.TryDecode()` doesn't throw on invalid input, but returns `false` instead.
+- `Base32.Decode()` throws separate exceptions for encountered failures.
+
+# New features
+- Added [Bech32](https://en.bitcoin.it/wiki/Bech32) flavor to Base32 
+- Added RFC 1924 (IPv6) flavor to Base85 along with 
+  EncodeIpv6 and DecodeIpv6 functions https://tools.ietf.org/html/rfc1924
+- Added `Base58.Bitcoin.EncodeCheck()` and `Base58.Bitcoin.TryDecodeCheck()` methods.
+- Added `Base58.Bitcoin.EncodeCb58()` and `Base58.Bitcoin.TryDecodeCb58()` methods.
+
+# Improvements
+- Added more buffer overflow detection to Base32 coder
+- Removed all unsafe code. New Span<T>-based optimizations make the code come close to unsafe perf.
+- Removed slow and hard to read optimizations like bit shift operations for multiplication and division
+  where compiler almost always does a better job of optimizing.
 
     <Version>3.1.0</Version>
     <DocumentationFile>SimpleBase.xml</DocumentationFile>
@@ -29,21 +63,27 @@
     <Nullable>enable</Nullable>
     <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
+# Fixes 
+- Fixed output buffer was too small error for certain Base58 cases.
+- Avoid redundant memory copy operations
+]]>
+        </PackageReleaseNotes>
+    </PropertyGroup>
 
-  <ItemGroup>
-    <None Remove="SimpleBase.net45.v3.ncrunchproject" />
-    <None Remove="SimpleBase.netstandard1.3.v3.ncrunchproject" />
-    <None Remove="SimpleBase.xml" />
-    <None Remove="stylecop.json" />
-  </ItemGroup>
+    <ItemGroup>
+        <None Remove="SimpleBase.net45.v3.ncrunchproject" />
+        <None Remove="SimpleBase.netstandard1.3.v3.ncrunchproject" />
+        <None Remove="SimpleBase.xml" />
+        <None Remove="stylecop.json" />
+    </ItemGroup>
 
-  <ItemGroup>
-    <AdditionalFiles Include="stylecop.json" />
-  </ItemGroup>
+    <ItemGroup>
+        <AdditionalFiles Include="stylecop.json" />
+    </ItemGroup>
 
-  <ItemGroup>
-    <None Include="..\SimpleBase.snk" Link="SimpleBase.snk" />
-  </ItemGroup>
+    <ItemGroup>
+        <None Include="..\SimpleBase.snk" Link="SimpleBase.snk" />
+    </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="StyleCop.Analyzers" Version="1.1.118">
@@ -52,4 +92,15 @@
     </PackageReference>
     <PackageReference Include="System.Memory" Version="4.5.5" />
   </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="IDisposableAnalyzers" Version="4.0.2">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.406">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+        </PackageReference>
+        <!--<PackageReference Include="System.Memory" Version="4.5.4" />-->
+    </ItemGroup>
 </Project>

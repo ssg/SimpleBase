@@ -18,50 +18,49 @@ using System.Text;
 using NUnit.Framework;
 using SimpleBase;
 
-namespace SimpleBaseTest.Base32Test
+namespace SimpleBaseTest.Base32Test;
+
+[TestFixture]
+class ZBase32Test
 {
-    [TestFixture]
-    class ZBase32Test
+    private static readonly string[][] testData = new[]
     {
-        private static readonly string[][] testData = new[]
-        {
-            new[] { "", "" },
-            new[] { "dCode z-base-32", "ctbs63dfrb7n4aubqp114c31" },
-            new[] { "Never did sun more beautifully steep",
-                "j31zc3m1rb1g13byqp4shedpp73gkednciozk7djc34sa5d3rb3ze3mfqy" },
-        };
+        new[] { "", "" },
+        new[] { "dCode z-base-32", "ctbs63dfrb7n4aubqp114c31" },
+        new[] { "Never did sun more beautifully steep",
+            "j31zc3m1rb1g13byqp4shedpp73gkednciozk7djc34sa5d3rb3ze3mfqy" },
+    };
 
-        [Test]
-        [TestCaseSource(nameof(testData))]
-        public void Encode_ReturnsExpectedValues(string input, string expectedOutput)
-        {
-            byte[] bytes = Encoding.ASCII.GetBytes(input);
-            string result = Base32.ZBase32.Encode(bytes, padding: false);
-            Assert.That(result, Is.EqualTo(expectedOutput));
-        }
+    [Test]
+    [TestCaseSource(nameof(testData))]
+    public void Encode_ReturnsExpectedValues(string input, string expectedOutput)
+    {
+        byte[] bytes = Encoding.ASCII.GetBytes(input);
+        string result = Base32.ZBase32.Encode(bytes, padding: false);
+        Assert.That(result, Is.EqualTo(expectedOutput));
+    }
 
-        [Test]
-        [TestCaseSource(nameof(testData))]
-        public void Decode_ReturnsExpectedValues(string expectedOutput, string input)
-        {
-            var bytes = Base32.ZBase32.Decode(input);
-            string result = Encoding.ASCII.GetString(bytes.ToArray());
-            Assert.That(result, Is.EqualTo(expectedOutput));
-            bytes = Base32.ZBase32.Decode(input.ToLowerInvariant());
-            result = Encoding.ASCII.GetString(bytes.ToArray());
-            Assert.That(result, Is.EqualTo(expectedOutput));
-        }
+    [Test]
+    [TestCaseSource(nameof(testData))]
+    public void Decode_ReturnsExpectedValues(string expectedOutput, string input)
+    {
+        var bytes = Base32.ZBase32.Decode(input);
+        string result = Encoding.ASCII.GetString(bytes);
+        Assert.That(result, Is.EqualTo(expectedOutput));
+        bytes = Base32.ZBase32.Decode(input.ToLowerInvariant());
+        result = Encoding.ASCII.GetString(bytes);
+        Assert.That(result, Is.EqualTo(expectedOutput));
+    }
 
-        [Test]
-        public void Encode_NullBytes_ReturnsEmptyString()
-        {
-            Assert.That(Base32.ZBase32.Encode(null, padding: false), Is.EqualTo(String.Empty));
-        }
+    [Test]
+    public void Encode_NullBytes_ReturnsEmptyString()
+    {
+        Assert.That(Base32.ZBase32.Encode(null, padding: false), Is.EqualTo(String.Empty));
+    }
 
-        [Test]
-        public void Decode_InvalidInput_ThrowsArgumentException()
-        {
-            _ = Assert.Throws<ArgumentException>(() => Base32.ZBase32.Decode("[];',m."));
-        }
+    [Test]
+    public void Decode_InvalidInput_ThrowsArgumentException()
+    {
+        _ = Assert.Throws<ArgumentException>(() => Base32.ZBase32.Decode("[];',m."));
     }
 }

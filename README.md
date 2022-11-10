@@ -1,3 +1,5 @@
+TEST CHANGE
+
 SimpleBase
 ==========
 [![NuGet Version](https://img.shields.io/nuget/v/SimpleBase.svg)](https://www.nuget.org/packages/SimpleBase/)
@@ -12,11 +14,12 @@ math worked.
 
 Features
 --------
- - Base32: RFC 4648, Crockford, z-base-32, Geohash, FileCoin and Extended Hex 
+ - Base32: RFC 4648, BECH32, Crockford, z-base-32, Geohash, FileCoin and Extended Hex 
    (BASE32-HEX) flavors with Crockford character substitution, or any other 
    custom flavors.
- - Base58: Bitcoin, Ripple, Flickr and custom flavors.
- - Base85: Ascii85, Z85 and custom flavors.
+ - Base58: Bitcoin, Ripple, Flickr, and custom flavors. Also provides 
+   Base58Check and Avalanche CB58 encoding helpers.
+ - Base85: Ascii85, Z85 and custom flavors. IPv6 encoding/decoding support.
  - Base16: UpperCase, LowerCase and ModHex flavors. An experimental hexadecimal 
    encoder/decoder just to see how far I 
    can take the optimizations compared to .NET's  implementations. It's quite 
@@ -24,8 +27,7 @@ Features
    method since it's missing from .NET Core.
  - One-shot memory buffer based APIs for simple use cases.
  - Stream-based async APIs for more advanced scenarios.
- - Lightweight: No third-party dependencies (depends only on 
-   [System.Memory](https://www.nuget.org/packages/System.Memory/) package)
+ - Lightweight: No dependencies.
  - Thread-safe.
  - Simple to use.
 
@@ -56,10 +58,7 @@ Decode a Base32-encoded string:
 using SimpleBase;
 
 string myText = ...
-Span<byte> result = Base32.Crockford.Decode(myText);
-// Span<byte> is analogous to byte[] in usage but allows the library
-// to avoid unnecessary memory copy operations unless needed.
-// you can also use "ExtendedHex" or "Rfc4648" as decoder flavors
+byte[] result = Base32.Crockford.Decode(myText);
 ```
 
 ### Base58
@@ -76,10 +75,43 @@ Decode a Base58-encoded string:
 
 ```csharp
 string myText = ...
-Span<byte> result = Base58.Bitcoin.Decode(myText);
-// Span<byte> is analogous to byte[] in usage but allows the library
-// to avoid unnecessary memory copy operations unless needed.
-// you can also use "Ripple" or "Flickr" as decoder flavors
+byte[] result = Base58.Bitcoin.Decode(myText);
+```
+
+Encode a Base58Check address:
+
+```csharp
+byte[] address = ...
+byte version = 1; // P2PKH address
+string result = Base58.Bitcoin.EncodeCheck(address, version);
+```
+
+Decode a Base58Check address:
+
+```csharp
+string address = ...
+Span<byte> buffer = new byte[maxAddressLength];
+if (Base58.Bitcoin.TryDecodeCheck(address, buffer, out byte version, out int numBytesWritten));
+buffer = buffer[..numBytesWritten]; // use only the written portion of the buffer
+```
+
+Avalanche CB58 usage is pretty much the same except it doesn't have a separate
+version field. Just use `EncodeCb58` and `TryDecodeCb58` methods instead. For 
+encoding:
+
+```
+byte[] address = ...
+byte version = 1;
+string result = Base58.Bitcoin.EncodeCb58(address);
+```
+
+For decoding:
+
+```csharp
+string address = ...
+Span<byte> buffer = new byte[maxAddressLength];
+if (Base58.Bitcoin.TryDecodeCb58(address, buffer, out int numBytesWritten));
+buffer = buffer[..numBytesWritten]; // use only the written portion of the buffer
 ```
 
 ### Base85
@@ -96,10 +128,7 @@ Decode an encoded Ascii85 string:
 
 ```csharp
 string encodedString = ...
-Span<byte> result = Base85.Ascii85.Decode(encodedString);
-// Span<byte> is analogous to byte[] in usage but allows the library
-// to avoid unnecessary memory copy operations unless needed.
-// you can also use Z85 as a flavor
+byte[] result = Base85.Ascii85.Decode(encodedString);
 ```
 
 Both "zero" and "space" shortcuts are supported for Ascii85. Z85 is still 
@@ -120,9 +149,7 @@ To decode a valid hex string:
 
 ```csharp
 string text = ...
-Span<byte> result = Base16.Decode(text); // decodes both upper and lowercase
-// Span<byte> is analogous to byte[] in usage but allows the library
-// to avoid unnecessary memory copy operations unless needed.
+byte[] result = Base16.Decode(text); // decodes both upper and lowercase
 ```
 
 ### Stream Mode
@@ -216,16 +243,29 @@ Small buffer sizes are used (64 characters). They are closer to real life
 applications. Base58 performs really bad in decoding of larger buffer sizes, 
 due to polynomial complexity of numeric base conversions.
 
-64 byte buffer for encoding
-80 character string for decoding
+BenchmarkDotNet=v0.13.1, OS=Windows 10.0.22000
+AMD Ryzen 9 5950X, 1 CPU, 32 logical and 16 physical cores
+.NET SDK=6.0.200
 
-Implementation              | Growth | Encode                   | Decode
-----------------------------|--------|--------------------------|------------------
-.NET Framework Base64       | 1.33x  | 0.44µs                   | 0.71µs
-SimpleBase Base16           | 2x     | 0.59µs (1.4x slower)     | 0.43µs (1.7x faster! YAY!)
-SimpleBase Base32 Crockford | 1.6x   | 1.35µs (3.1x slower)     | 1.07µs (1.5x slower)
-SimpleBase Base85 Z85       | 1.25x  | 1.00µs (2.3x slower)     | 1.86µs (2.6x slower)
-SimpleBase Base58           | 1.38x  | 29.99µs (68.6x slower)   | 31.36µs (44.1x slower)
+Encoding (64 byte buffer)
+
+|                                 Method |      Mean |    Error |   StdDev | Ratio | RatioSD |
+|--------------------------------------- |----------:|---------:|---------:|------:|--------:|
+|                          DotNet_Base64 |  79.09 ns | 1.505 ns | 1.733 ns |  1.00 |    0.00 |
+|            SimpleBase_Base16_UpperCase | 123.14 ns | 2.523 ns | 6.189 ns |  1.61 |    0.10 |
+| SimpleBase_Base32_CrockfordWithPadding | 188.76 ns | 3.587 ns | 3.179 ns |  2.39 |    0.08 |
+|                  SimpleBase_Base85_Z85 | 212.02 ns | 4.112 ns | 4.222 ns |  2.68 |    0.10 |
+|              SimpleBase_Base58_Bitcoin |  70.11 ns | 1.443 ns | 3.012 ns |  0.91 |    0.05 |
+
+Decoding (80 character string)
+
+|                      Method |        Mean |     Error |    StdDev | Ratio | RatioSD |
+|---------------------------- |------------:|----------:|----------:|------:|--------:|
+|               DotNet_Base64 |   120.86 ns |  1.327 ns |  1.177 ns |  1.00 |    0.00 |
+| SimpleBase_Base16_UpperCase |    65.81 ns |  0.816 ns |  0.723 ns |  0.54 |    0.01 |
+| SimpleBase_Base32_Crockford |   139.15 ns |  1.470 ns |  1.375 ns |  1.15 |    0.01 |
+|       SimpleBase_Base85_Z85 |   362.87 ns |  6.024 ns |  5.340 ns |  3.00 |    0.06 |
+|   SimpleBase_Base58_Bitcoin | 5,118.61 ns | 34.360 ns | 30.459 ns | 42.36 |    0.48 |
 
 Notes
 -----
@@ -249,6 +289,9 @@ Still not satisfied though. Is .NET's Base64 implementation native? Perhaps.
 
 Thanks
 ------
+Thanks to all contributors (most up to date is on the GitHub sidebar) who
+provided patches, and reported bugs.
+
 Chatting about this pet project with my friends 
 [@detaybey](https://github.com/detaybey), 
 [@vhallac](https://github.com/vhallac), 

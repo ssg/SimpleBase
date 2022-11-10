@@ -9,466 +9,443 @@ using System.IO;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
-namespace SimpleBase
+namespace SimpleBase;
+
+/// <summary>
+/// Base58 encoding/decoding class.
+/// </summary>
+public class Base85 : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCoder
 {
+    private const int baseLength = 85;
+    private const int byteBlockSize = 4;
+    private const int stringBlockSize = 5;
+    private const long fourSpaceChars = 0x20202020;
+    private const int decodeBufferSize = 5120; // don't remember what was special with this number
+    private static readonly Lazy<Base85> z85 = new(() => new Base85(Base85Alphabet.Z85));
+    private static readonly Lazy<Base85> ascii85 = new(() => new Base85(Base85Alphabet.Ascii85));
+    private static readonly Lazy<Base85Ipv6> rfc1924 = new(() => new Base85Ipv6(Base85Alphabet.Rfc1924));
+
     /// <summary>
-    /// Base85 encoding/decoding class.
+    /// Initializes a new instance of the <see cref="Base85"/> class
+    /// using a custom alphabet.
     /// </summary>
-    public sealed class Base85 : IBaseEncoder, IBaseStreamEncoder, INonAllocatingBaseEncoder
+    /// <param name="alphabet">Alphabet to use.</param>
+    public Base85(Base85Alphabet alphabet)
     {
-        private const int baseLength = 85;
-        private const int byteBlockSize = 4;
-        private const int stringBlockSize = 5;
-        private const long allSpace = 0x20202020;
-        private const int decodeBufferSize = 5120; // don't remember what was special with this number
+        Alphabet = alphabet;
+    }
 
-        private static readonly Lazy<Base85> z85 = new (() => new Base85(Base85Alphabet.Z85));
-        private static readonly Lazy<Base85> ascii85 = new (() => new Base85(Base85Alphabet.Ascii85));
+    /// <summary>
+    /// Gets Z85 flavor of Base85.
+    /// </summary>
+    public static Base85 Z85 => z85.Value;
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Base85"/> class
-        /// using a custom alphabet.
-        /// </summary>
-        /// <param name="alphabet">Alphabet to use.</param>
-        public Base85(Base85Alphabet alphabet)
+    /// <summary>
+    /// Gets Ascii85 flavor of Base85.
+    /// </summary>
+    public static Base85 Ascii85 => ascii85.Value;
+
+    /// <summary>
+    /// Gets RFC 1924 IPv6 flavor of Base85.
+    /// </summary>
+    public static Base85Ipv6 Rfc1924 => rfc1924.Value;
+
+    /// <summary>
+    /// Gets the encoding alphabet.
+    /// </summary>
+    public Base85Alphabet Alphabet { get; }
+
+    /// <inheritdoc/>
+    public int GetSafeByteCountForDecoding(ReadOnlySpan<char> text)
+    {
+        bool usingShortcuts = Alphabet.AllZeroShortcut is not null || Alphabet.AllSpaceShortcut is not null;
+        return getSafeByteCountForDecoding(text.Length, usingShortcuts);
+    }
+
+    /// <inheritdoc/>
+    public int GetSafeCharCountForEncoding(ReadOnlySpan<byte> bytes)
+    {
+        return getSafeCharCountForEncoding(bytes.Length);
+    }
+
+    /// <summary>
+    /// Encode the given bytes into Base85.
+    /// </summary>
+    /// <param name="bytes">Bytes to encode.</param>
+    /// <returns>Encoded text.</returns>
+    public string Encode(ReadOnlySpan<byte> bytes)
+    {
+        if (bytes.Length == 0)
         {
-            this.Alphabet = alphabet;
+            return string.Empty;
         }
 
-        /// <summary>
-        /// Gets Z85 flavor of Base85.
-        /// </summary>
-        public static Base85 Z85 => z85.Value;
+        int outputLen = GetSafeCharCountForEncoding(bytes);
+        char[] output = new char[outputLen];
 
-        /// <summary>
-        /// Gets Ascii85 flavor of Base85.
-        /// </summary>
-        public static Base85 Ascii85 => ascii85.Value;
+        return internalEncode(bytes, output, out int numCharsWritten)
+            ? new string(output[..numCharsWritten])
+            : throw new InvalidOperationException("Insufficient output buffer size while encoding Base85");
+    }
 
-        /// <summary>
-        /// Gets the encoding alphabet.
-        /// </summary>
-        public Base85Alphabet Alphabet { get; }
-
-        /// <inheritdoc/>
-        public int GetSafeByteCountForDecoding(ReadOnlySpan<char> text)
+    /// <inheritdoc/>
+    public bool TryEncode(ReadOnlySpan<byte> input, Span<char> output, out int numCharsWritten)
+    {
+        int inputLen = input.Length;
+        if (inputLen == 0)
         {
-            bool usingShortcuts = Alphabet.AllZeroShortcut is not null || Alphabet.AllSpaceShortcut is not null;
-            return getSafeByteCountForDecoding(text.Length, usingShortcuts);
-        }
-
-        /// <inheritdoc/>
-        public int GetSafeCharCountForEncoding(ReadOnlySpan<byte> bytes)
-        {
-            return getSafeCharCountForEncoding(bytes.Length);
-        }
-
-        /// <summary>
-        /// Encode the given bytes into Base85.
-        /// </summary>
-        /// <param name="bytes">Bytes to encode.</param>
-        /// <returns>Encoded text.</returns>
-        public unsafe string Encode(ReadOnlySpan<byte> bytes)
-        {
-            int inputLen = bytes.Length;
-            if (inputLen == 0)
-            {
-                return string.Empty;
-            }
-
-            int outputLen = GetSafeCharCountForEncoding(bytes);
-            string output = new ('\0', outputLen);
-
-            fixed (byte* inputPtr = bytes)
-            fixed (char* outputPtr = output)
-            {
-                return internalEncode(inputPtr, inputLen, outputPtr, outputLen, out int numCharsWritten)
-                    ? output[..numCharsWritten]
-                    : throw new InvalidOperationException("Insufficient output buffer size while encoding Base85");
-            }
-        }
-
-        /// <inheritdoc/>
-        public unsafe bool TryEncode(ReadOnlySpan<byte> input, Span<char> output, out int numCharsWritten)
-        {
-            int inputLen = input.Length;
-            if (inputLen == 0)
-            {
-                numCharsWritten = 0;
-                return true;
-            }
-
-            fixed (byte* inputPtr = input)
-            fixed (char* outputPtr = output)
-            {
-                return internalEncode(inputPtr, inputLen, outputPtr, output.Length, out numCharsWritten);
-            }
-        }
-
-        /// <summary>
-        /// Encode a given stream into a text writer.
-        /// </summary>
-        /// <param name="input">Input stream.</param>
-        /// <param name="output">Output writer.</param>
-        public void Encode(Stream input, TextWriter output)
-        {
-            StreamHelper.Encode(input, output, (buffer, lastBlock) => Encode(buffer.Span));
-        }
-
-        /// <summary>
-        /// Encode a given stream into a text writer.
-        /// </summary>
-        /// <param name="input">Input stream.</param>
-        /// <param name="output">Output writer.</param>
-        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-        public async Task EncodeAsync(Stream input, TextWriter output)
-        {
-            await StreamHelper.EncodeAsync(input, output, (buffer, lastBlock) => Encode(buffer.Span))
-                .ConfigureAwait(false);
-        }
-
-        /// <summary>
-        /// Decode a text reader into a stream.
-        /// </summary>
-        /// <param name="input">Input reader.</param>
-        /// <param name="output">Output stream.</param>
-        public void Decode(TextReader input, Stream output)
-        {
-            StreamHelper.Decode(input, output, (text) => Decode(text.Span).ToArray(), decodeBufferSize);
-        }
-
-        /// <summary>
-        /// Decode a text reader into a stream.
-        /// </summary>
-        /// <param name="input">Input reader.</param>
-        /// <param name="output">Output stream.</param>
-        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-        public async Task DecodeAsync(TextReader input, Stream output)
-        {
-            await StreamHelper.DecodeAsync(input, output, (text) => Decode(text.Span).ToArray(), decodeBufferSize)
-                .ConfigureAwait(false);
-        }
-
-        /// <summary>
-        /// Decode given characters into bytes.
-        /// </summary>
-        /// <param name="text">Characters to decode.</param>
-        /// <returns>Decoded bytes.</returns>
-        public unsafe Span<byte> Decode(ReadOnlySpan<char> text)
-        {
-            int textLen = text.Length;
-            if (textLen == 0)
-            {
-                return Array.Empty<byte>();
-            }
-
-            bool usingShortcuts = Alphabet.HasShortcut;
-
-            // allocate a larger buffer if we're using shortcuts
-            int decodeBufferLen = getSafeByteCountForDecoding(textLen, usingShortcuts);
-            byte[] decodeBuffer = new byte[decodeBufferLen];
-            fixed (char* inputPtr = text)
-            fixed (byte* decodeBufferPtr = decodeBuffer)
-            {
-                return internalDecode(inputPtr, textLen, decodeBufferPtr, decodeBufferLen, out int numBytesWritten)
-                    ? decodeBuffer.AsSpan()[..numBytesWritten]
-                    : throw new InvalidOperationException("Internal error: pre-allocated insufficient output buffer size");
-            }
-        }
-
-        /// <inheritdoc/>
-        public unsafe bool TryDecode(ReadOnlySpan<char> input, Span<byte> output, out int numBytesWritten)
-        {
-            fixed (char* inputPtr = input)
-            fixed (byte* outputPtr = output)
-            {
-                return internalDecode(inputPtr, input.Length, outputPtr, output.Length, out numBytesWritten);
-            }
-        }
-
-        private unsafe bool internalEncode(
-            byte* inputPtr,
-            int inputLen,
-            char* outputPtr,
-            int outputLen,
-            out int numCharsWritten)
-        {
-            bool usesZeroShortcut = Alphabet.AllZeroShortcut is not null;
-            bool usesSpaceShortcut = Alphabet.AllSpaceShortcut is not null;
-            string table = Alphabet.Value;
-            int fullLen = (inputLen >> 2) << 2; // size of whole 4-byte blocks
-
-            char* pOutput = outputPtr;
-            char* pOutputEnd = pOutput + outputLen;
-            byte* pInput = inputPtr;
-            byte* pInputEnd = pInput + fullLen;
-            while (pInput != pInputEnd)
-            {
-                // build a 32-bit representation of input
-                long input = ((uint)*pInput++ << 24)
-                    | ((uint)*pInput++ << 16)
-                    | ((uint)*pInput++ << 8)
-                    | *pInput++;
-
-                if (!writeEncodedValue(
-                    input,
-                    ref pOutput,
-                    pOutputEnd,
-                    table,
-                    stringBlockSize,
-                    usesZeroShortcut,
-                    usesSpaceShortcut))
-                {
-                    numCharsWritten = 0;
-                    return false;
-                }
-            }
-
-            // check if a part is remaining
-            int remainingBytes = inputLen - fullLen;
-            if (remainingBytes > 0)
-            {
-                long input = 0;
-                for (int n = 0; n < remainingBytes; n++)
-                {
-                    input |= (uint)*pInput++ << ((3 - n) << 3);
-                }
-
-                if (!writeEncodedValue(
-                    input,
-                    ref pOutput,
-                    pOutputEnd,
-                    table,
-                    remainingBytes + 1,
-                    usesZeroShortcut,
-                    usesSpaceShortcut))
-                {
-                    numCharsWritten = 0;
-                    return false;
-                }
-            }
-
-            numCharsWritten = (int)(pOutput - outputPtr);
+            numCharsWritten = 0;
             return true;
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private unsafe bool writeEncodedValue(
-            long input,
-            ref char* pOutput,
-            char* pOutputEnd,
-            string table,
-            int stringLength,
-            bool usesZeroShortcut,
-            bool usesSpaceShortcut)
+        return internalEncode(input, output, out numCharsWritten);
+    }
+
+    /// <summary>
+    /// Encode a given stream into a text writer.
+    /// </summary>
+    /// <param name="input">Input stream.</param>
+    /// <param name="output">Output writer.</param>
+    public void Encode(Stream input, TextWriter output)
+    {
+        StreamHelper.Encode(input, output, (buffer, lastBlock) => Encode(buffer.Span));
+    }
+
+    /// <summary>
+    /// Encode a given stream into a text writer.
+    /// </summary>
+    /// <param name="input">Input stream.</param>
+    /// <param name="output">Output writer.</param>
+    /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+    public async Task EncodeAsync(Stream input, TextWriter output)
+    {
+        await StreamHelper.EncodeAsync(input, output, (buffer, lastBlock) => Encode(buffer.Span))
+            .ConfigureAwait(false);
+    }
+
+    /// <summary>
+    /// Decode a text reader into a stream.
+    /// </summary>
+    /// <param name="input">Input reader.</param>
+    /// <param name="output">Output stream.</param>
+    public void Decode(TextReader input, Stream output)
+    {
+        StreamHelper.Decode(input, output, (text) => Decode(text.Span), decodeBufferSize);
+    }
+
+    /// <summary>
+    /// Decode a text reader into a stream.
+    /// </summary>
+    /// <param name="input">Input reader.</param>
+    /// <param name="output">Output stream.</param>
+    /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+    public async Task DecodeAsync(TextReader input, Stream output)
+    {
+        await StreamHelper.DecodeAsync(input, output, (text) => Decode(text.Span), decodeBufferSize)
+            .ConfigureAwait(false);
+    }
+
+    /// <summary>
+    /// Decode given characters into bytes.
+    /// </summary>
+    /// <param name="text">Characters to decode.</param>
+    /// <returns>Decoded bytes.</returns>
+    public byte[] Decode(ReadOnlySpan<char> text)
+    {
+        if (text.Length == 0)
         {
-            // handle shortcuts
-            if (input == 0 && usesZeroShortcut)
+            return Array.Empty<byte>();
+        }
+
+        // allocate a larger buffer if we're using shortcuts
+        int decodeBufferLen = getSafeByteCountForDecoding(text.Length, Alphabet.HasShortcut);
+        byte[] decodeBuffer = new byte[decodeBufferLen];
+        return internalDecode(text, decodeBuffer, out int numBytesWritten)
+            ? decodeBuffer[..numBytesWritten]
+            : throw new InvalidOperationException("Internal error: pre-allocated insufficient output buffer size");
+    }
+
+    /// <inheritdoc/>
+    public bool TryDecode(ReadOnlySpan<char> input, Span<byte> output, out int numBytesWritten)
+    {
+        return internalDecode(input, output, out numBytesWritten);
+    }
+
+    private bool internalEncode(
+        ReadOnlySpan<byte> input,
+        Span<char> output,
+        out int numCharsWritten)
+    {
+        char? usesZeroShortcut = Alphabet.AllZeroShortcut;
+        char? usesSpaceShortcut = Alphabet.AllSpaceShortcut;
+        string table = Alphabet.Value;
+        int fullLen = input.Length / byteBlockSize * byteBlockSize; // size of whole 4-byte blocks
+
+        int i = 0;
+        numCharsWritten = 0;
+        while (i < fullLen)
+        {
+            // build a 32-bit representation of input
+            uint block = (((uint)input[i++]) << 24)
+                | (((uint)input[i++]) << 16)
+                | (((uint)input[i++]) << 8)
+                | input[i++];
+
+            if (!writeEncodedValue(
+                block,
+                output[numCharsWritten..],
+                table,
+                stringBlockSize,
+                usesZeroShortcut,
+                usesSpaceShortcut,
+                out int numWritten))
             {
-                if (pOutput >= pOutputEnd)
-                {
-                    return false;
-                }
-
-                *pOutput++ = this.Alphabet.AllZeroShortcut ?? '!'; // guaranteed to be non-null
-                return true;
-            }
-
-            if (input == allSpace && usesSpaceShortcut)
-            {
-                if (pOutput >= pOutputEnd)
-                {
-                    return false;
-                }
-
-                *pOutput++ = this.Alphabet.AllSpaceShortcut ?? '!'; // guaranteed to be non-null
-                return true;
-            }
-
-            if (pOutput >= pOutputEnd - stringLength)
-            {
+                numCharsWritten += numWritten;
                 return false;
             }
 
-            // map the 4-byte packet to to 5-byte octets
-            for (int i = stringBlockSize - 1; i >= 0; i--)
-            {
-                input = Math.DivRem(input, baseLength, out long result);
-                if (i < stringLength)
-                {
-                    pOutput[i] = table[(int)result];
-                }
-            }
+            numCharsWritten += numWritten;
+        }
 
-            pOutput += stringLength;
+        // check if a part is remaining
+        int remainingBytes = input.Length - fullLen;
+        if (remainingBytes == 0)
+        {
             return true;
         }
 
-        private unsafe bool internalDecode(
-           char* inputPtr,
-           int inputLen,
-           byte* outputPtr,
-           int outputLen,
-           out int numBytesWritten)
+        uint lastBlock = 0;
+        for (int n = 0; n < remainingBytes; n++)
         {
-            char? allZeroChar = Alphabet.AllZeroShortcut;
-            char? allSpaceChar = Alphabet.AllSpaceShortcut;
-            bool checkZero = allZeroChar is not null;
-            bool checkSpace = allSpaceChar is not null;
+            lastBlock |= ((uint)input[i++]) << ((3 - n) * 8);
+        }
 
-            var table = this.Alphabet.ReverseLookupTable;
-            byte* pOutput = outputPtr;
-            char* pInput = inputPtr;
-            char* pInputEnd = pInput + inputLen;
-            byte* pOutputEnd = pOutput + outputLen;
+        if (!writeEncodedValue(
+            lastBlock,
+            output[numCharsWritten..],
+            table,
+            remainingBytes + 1,
+            usesZeroShortcut,
+            usesSpaceShortcut,
+            out int numWrittenFinal))
+        {
+            return false;
+        }
 
-            int blockIndex = 0;
-            long value = 0;
-            while (pInput != pInputEnd)
-            {
-                char c = *pInput++;
-                if (isWhiteSpace(c))
-                {
-                    continue;
-                }
+        numCharsWritten += numWrittenFinal;
+        return true;
+    }
 
-                // handle shortcut characters
-                if (checkZero && c == allZeroChar)
-                {
-                    if (!writeShortcut(ref pOutput, pOutputEnd, ref blockIndex, 0))
-                    {
-                        goto Error;
-                    }
-
-                    continue;
-                }
-
-                if (checkSpace && c == allSpaceChar)
-                {
-                    if (!writeShortcut(ref pOutput, pOutputEnd, ref blockIndex, allSpace))
-                    {
-                        goto Error;
-                    }
-
-                    continue;
-                }
-
-                // handle regular blocks
-                int x = table[c] - 1; // map character to byte value
-                if (x < 0)
-                {
-                    throw EncodingAlphabet.InvalidCharacter(c);
-                }
-
-                value = (value * baseLength) + x;
-                blockIndex += 1;
-                if (blockIndex == stringBlockSize)
-                {
-                    if (!writeDecodedValue(ref pOutput, pOutputEnd, value, byteBlockSize))
-                    {
-                        goto Error;
-                    }
-
-                    blockIndex = 0;
-                    value = 0;
-                }
-            }
-
-            if (blockIndex > 0)
-            {
-                // handle padding by treating the rest of the characters
-                // as "u"s. so both big endianness and bit weirdness work out okay.
-                for (int i = 0; i < stringBlockSize - blockIndex; i++)
-                {
-                    value = (value * baseLength) + (baseLength - 1);
-                }
-
-                if (!writeDecodedValue(ref pOutput, pOutputEnd, value, blockIndex - 1))
-                {
-                    goto Error;
-                }
-            }
-
-            numBytesWritten = (int)(pOutput - outputPtr);
-            return true;
-            Error:
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static bool writeEncodedValue(
+        uint block,
+        Span<char> output,
+        string table,
+        int blockLength,
+        char? zeroShortcutChar,
+        char? spaceShortcutChar,
+        out int numBytesWritten)
+    {
+        if (output.Length == 0)
+        {
             numBytesWritten = 0;
             return false;
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static unsafe bool writeDecodedValue(
-            ref byte* pOutput,
-            byte* pOutputEnd,
-            long value,
-            int numBytesToWrite)
+        if (block == 0 && zeroShortcutChar is not null)
         {
-            if (pOutput + numBytesToWrite > pOutputEnd)
-            {
-                Debug.WriteLine("Buffer overrun while decoding Base85");
-                return false;
-            }
-
-            for (int i = byteBlockSize - 1; i >= 0 && numBytesToWrite > 0; i--, numBytesToWrite--)
-            {
-                byte b = (byte)((value >> (i << 3)) & 0xFF);
-                *pOutput++ = b;
-            }
-
+            output[0] = zeroShortcutChar.Value; // guaranteed to be non-null
+            numBytesWritten = 1;
             return true;
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static bool isWhiteSpace(char c)
+        if (block == fourSpaceChars && spaceShortcutChar is not null)
         {
-#pragma warning disable IDE0078 // Pattern matchin syntax bugs out here - so temporarily disabling suggestion here
-            return c == ' ' || c == 0x85 || c == 0xA0 || (c >= 0x09 && c <= 0x0D);
-#pragma warning restore IDE0078 // Use pattern matching
+            output[0] = spaceShortcutChar.Value; // guaranteed to be non-null
+            numBytesWritten = 1;
+            return true;
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static unsafe bool writeShortcut(
-            ref byte* pOutput,
-            byte* pOutputEnd,
-            ref int blockIndex,
-            long value)
+        if (blockLength > output.Length)
         {
-            if (blockIndex != 0)
-            {
-                throw new ArgumentException(
-                    $"Unexpected shortcut character in the middle of a regular block");
-            }
-
-            blockIndex = 0; // restart block after the shortcut character
-            return writeDecodedValue(ref pOutput, pOutputEnd, value, byteBlockSize);
+            numBytesWritten = 0;
+            return false;
         }
 
-        private static int getSafeCharCountForEncoding(int bytesLength)
+        // map the 4-byte packet to to 5-byte octets
+        for (int i = stringBlockSize - 1; i >= 0; i--)
         {
-            if (bytesLength < 0)
+            block = (uint)Math.DivRem(block, baseLength, out long remainder);
+            if (i < blockLength)
             {
-                throw new ArgumentOutOfRangeException(nameof(bytesLength));
+                output[i] = table[(int)remainder];
             }
+        }
+
+        numBytesWritten = blockLength;
+        return true;
+    }
+
+    private bool internalDecode(
+       ReadOnlySpan<char> input,
+       Span<byte> output,
+       out int numBytesWritten)
+    {
+        char? allZeroChar = Alphabet.AllZeroShortcut;
+        char? allSpaceChar = Alphabet.AllSpaceShortcut;
+
+        var table = Alphabet.ReverseLookupTable;
+
+        int blockIndex = 0;
+        long value = 0;
+        int i = 0;
+        numBytesWritten = 0;
+        while (i < input.Length)
+        {
+            char c = input[i++];
+            if (isWhiteSpace(c))
+            {
+                continue;
+            }
+
+            // handle shortcut characters
+            if (c == allZeroChar && allZeroChar is not null)
+            {
+                if (!writeShortcut(output[numBytesWritten..], ref blockIndex, 0, out int bytesWritten))
+                {
+                    return false;
+                }
+
+                numBytesWritten += bytesWritten;
+                continue;
+            }
+
+            if (c == allSpaceChar && allSpaceChar is not null)
+            {
+                if (!writeShortcut(output[numBytesWritten..], ref blockIndex, fourSpaceChars, out int bytesWritten))
+                {
+                    return false;
+                }
+
+                numBytesWritten += bytesWritten;
+                continue;
+            }
+
+            // handle regular blocks
+            int x = table[c] - 1; // map character to byte value
+            if (x < 0)
+            {
+                throw CodingAlphabet.InvalidCharacter(c);
+            }
+
+            value = (value * baseLength) + x;
+            blockIndex += 1;
+            if (blockIndex == stringBlockSize)
+            {
+                if (!writeDecodedValue(output[numBytesWritten..], value, byteBlockSize, out int bytesWritten))
+                {
+                    return false;
+                }
+
+                numBytesWritten += bytesWritten;
+                blockIndex = 0;
+                value = 0;
+            }
+        }
+
+        if (blockIndex > 0)
+        {
+            // handle padding by treating the rest of the characters
+            // as "u"s. so both big endianness and bit weirdness work out okay.
+            for (int n = 0; n < stringBlockSize - blockIndex; n++)
+            {
+                value = (value * baseLength) + (baseLength - 1);
+            }
+
+            if (!writeDecodedValue(output[numBytesWritten..], value, blockIndex - 1, out int bytesWritten))
+            {
+                return false;
+            }
+
+            numBytesWritten += bytesWritten;
+        }
+
+        return true;
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static bool writeDecodedValue(
+        Span<byte> output,
+        long value,
+        int numBytesToWrite,
+        out int numBytesWritten)
+    {
+        if (numBytesToWrite > output.Length)
+        {
+            Debug.WriteLine("Buffer overrun while decoding Base85");
+            numBytesWritten = 0;
+            return false;
+        }
+
+        int o = 0;
+        for (int i = byteBlockSize - 1; i >= 0 && numBytesToWrite > 0; i--, numBytesToWrite--)
+        {
+            byte b = (byte)((value >> (i * 8)) & 0xFF);
+            output[o++] = b;
+        }
+
+        numBytesWritten = o;
+        return true;
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static bool isWhiteSpace(char c)
+    {
+        return c is '\x20' or '\x85' or '\xA0' or (>= '\x09' and <= '\x0D');
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static bool writeShortcut(
+        Span<byte> output,
+        ref int blockIndex,
+        long value,
+        out int numBytesWritten)
+    {
+        if (blockIndex != 0)
+        {
+            throw new ArgumentException(
+                $"Unexpected shortcut character in the middle of a regular block");
+        }
+
+        blockIndex = 0; // restart block after the shortcut character
+        return writeDecodedValue(output, value, byteBlockSize, out numBytesWritten);
+    }
+
+    private static int getSafeCharCountForEncoding(int bytesLength)
+    {
+        if (bytesLength < 0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(bytesLength));
+        }
 
 #pragma warning disable IDE0046 // Convert to conditional expression - prefer clarity
-            if (bytesLength == 0)
-            {
-                return 0;
-            }
-
-            return (bytesLength + byteBlockSize - 1) * stringBlockSize / byteBlockSize;
-#pragma warning restore IDE0046 // Convert to conditional expression
-        }
-
-        private static int getSafeByteCountForDecoding(int textLength, bool usingShortcuts)
+        if (bytesLength == 0)
         {
-            if (usingShortcuts)
-            {
-                return textLength * byteBlockSize; // max possible size using shortcuts
-            }
-
-            // max possible size without shortcuts
-            return (((textLength - 1) / stringBlockSize) + 1) * byteBlockSize;
+            return 0;
         }
+
+        return (bytesLength + byteBlockSize - 1) * stringBlockSize / byteBlockSize;
+#pragma warning restore IDE0046 // Convert to conditional expression
+    }
+
+    private static int getSafeByteCountForDecoding(int textLength, bool usingShortcuts)
+    {
+        if (usingShortcuts)
+        {
+            return textLength * byteBlockSize; // max possible size using shortcuts
+        }
+
+        // max possible size without shortcuts
+        return (((textLength - 1) / stringBlockSize) + 1) * byteBlockSize;
     }
 }
