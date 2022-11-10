@@ -124,6 +124,15 @@ csharp_style_prefer_utf8_string_literals = true:none
 # IDE0230: Use UTF-8 string literal
 dotnet_diagnostic.IDE0230.severity = none
 
+# SA1200: Using directives should be placed correctly
+dotnet_diagnostic.SA1200.severity = none
+
+# SA1008: Opening parenthesis should be spaced correctly
+dotnet_diagnostic.SA1008.severity = none
+
+# SA1313: Parameter names should begin with lower-case letter
+dotnet_diagnostic.SA1313.severity = none
+
 [*.vb]
 #### Naming styles ####
 

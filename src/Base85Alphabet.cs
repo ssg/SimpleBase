@@ -12,15 +12,15 @@ namespace SimpleBase;
 /// </summary>
 public sealed class Base85Alphabet : CodingAlphabet
 {
-    private static readonly Lazy<Base85Alphabet> z85 = new(() => new Base85Alphabet(
+    private static readonly Lazy<Base85Alphabet> z85 = new (() => new Base85Alphabet(
             "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ.-:+=^!/*?&<>()[]{}@%$#"));
 
-        private static readonly Lazy<Base85Alphabet> ascii85 = new (() => new Base85Alphabet(
-                "!\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstu",
-                allZeroShortcut: 'z',
-                allSpaceShortcut: 'y'));
+    private static readonly Lazy<Base85Alphabet> ascii85 = new (() => new Base85Alphabet(
+            "!\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstu",
+            allZeroShortcut: 'z',
+            allSpaceShortcut: 'y'));
 
-    private static readonly Lazy<Base85Alphabet> rfc1924 = new(() => new Base85Alphabet(
+    private static readonly Lazy<Base85Alphabet> rfc1924 = new (() => new Base85Alphabet(
             "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz!#$%&()*+-;<=>?@^_`{|}~"));
 
     /// <summary>

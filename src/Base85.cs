@@ -21,9 +21,9 @@ public class Base85 : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCoder
     private const int stringBlockSize = 5;
     private const long fourSpaceChars = 0x20202020;
     private const int decodeBufferSize = 5120; // don't remember what was special with this number
-    private static readonly Lazy<Base85> z85 = new(() => new Base85(Base85Alphabet.Z85));
-    private static readonly Lazy<Base85> ascii85 = new(() => new Base85(Base85Alphabet.Ascii85));
-    private static readonly Lazy<Base85Ipv6> rfc1924 = new(() => new Base85Ipv6(Base85Alphabet.Rfc1924));
+    private static readonly Lazy<Base85> z85 = new (() => new Base85(Base85Alphabet.Z85));
+    private static readonly Lazy<Base85> ascii85 = new (() => new Base85(Base85Alphabet.Ascii85));
+    private static readonly Lazy<Base85Ipv6> rfc1924 = new (() => new Base85Ipv6(Base85Alphabet.Rfc1924));
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Base85"/> class

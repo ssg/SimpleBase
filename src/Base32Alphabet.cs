@@ -12,42 +12,45 @@ namespace SimpleBase;
 /// </summary>
 public class Base32Alphabet : CodingAlphabet
 {
-    private static readonly Lazy<Base32Alphabet> rfc4648Alphabet = new(
-        () => new Base32Alphabet("ABCDEFGHIJKLMNOPQRSTUVWXYZ234567"));
+    private static readonly Lazy<Base32Alphabet> rfc4648Alphabet = new
+        (() => new Base32Alphabet("ABCDEFGHIJKLMNOPQRSTUVWXYZ234567"));
 
-    private static readonly Lazy<Base32Alphabet> extendedHexAlphabet = new(
-        () => new Base32Alphabet("0123456789ABCDEFGHIJKLMNOPQRSTUV"));
+    private static readonly Lazy<Base32Alphabet> extendedHexAlphabet = new
+        (() => new Base32Alphabet("0123456789ABCDEFGHIJKLMNOPQRSTUV"));
 
-    private static readonly Lazy<Base32Alphabet> zBase32Alphabet = new(
-        () => new Base32Alphabet("ybndrfg8ejkmcpqxot1uwisza345h769"));
+    private static readonly Lazy<Base32Alphabet> zBase32Alphabet = new
+        (() => new Base32Alphabet("ybndrfg8ejkmcpqxot1uwisza345h769"));
 
-    private static readonly Lazy<Base32Alphabet> geohashAlphabet = new(
-        () => new Base32Alphabet("0123456789bcdefghjkmnpqrstuvwxyz"));
+    private static readonly Lazy<Base32Alphabet> geohashAlphabet = new
+        (() => new Base32Alphabet("0123456789bcdefghjkmnpqrstuvwxyz"));
 
-    private static readonly Lazy<Base32Alphabet> bech32Alphabet = new(
-        () => new Base32Alphabet("qpzry9x8gf2tvdw0s3jn54khce6mua7l"));
+    private static readonly Lazy<Base32Alphabet> bech32Alphabet = new
+        (() => new Base32Alphabet("qpzry9x8gf2tvdw0s3jn54khce6mua7l"));
 
-    private static readonly Lazy<AliasedBase32Alphabet> crockfordAlphabet = new(
-        () => new AliasedBase32Alphabet(
+    private static readonly Lazy<Base32Alphabet> fileCoinAlphabet = new
+        (() => new Base32Alphabet("abcdefghijklmnopqrstuvwxyz234567"));
+
+    private static readonly Lazy<AliasedBase32Alphabet> crockfordAlphabet = new
+        (() => new AliasedBase32Alphabet(
             "0123456789ABCDEFGHJKMNPQRSTVWXYZ",
             new CharMap[]
             {
-                new('O', '0'),
-                new('I', '1'),
-                new('L', '1'),
+                new ('O', '0'),
+                new ('I', '1'),
+                new ('L', '1'),
             }));
 
-    private static readonly Lazy<AliasedBase32Alphabet> base32HAlphabet = new(
+    private static readonly Lazy<AliasedBase32Alphabet> base32HAlphabet = new (
         () => new AliasedBase32Alphabet(
             "0123456789ABCDEFGHJKLMNPQRTVWXYZ",
             paddingChar: '0',
             PaddingPosition.Start,
             new CharMap[]
             {
-                new('O', '0'),
-                new('I', '1'),
-                new('S', '5'),
-                new('U', 'V'),
+                new ('O', '0'),
+                new ('I', '1'),
+                new ('S', '5'),
+                new ('U', 'V'),
             }));
 
     /// <summary>
@@ -98,15 +101,11 @@ public class Base32Alphabet : CodingAlphabet
     /// </summary>
     public static Base32Alphabet Geohash => geohashAlphabet.Value;
 
-        /// <summary>
-        /// Gets FileCoin alphabet.
-        /// </summary>
-        public static Base32Alphabet FileCoin => fileCoinAlphabet.Value;
+    /// <summary>
+    /// Gets FileCoin alphabet.
+    /// </summary>
+    public static Base32Alphabet FileCoin => fileCoinAlphabet.Value;
 
-        /// <summary>
-        /// Gets the padding character used in encoding.
-        /// </summary>
-        public char PaddingChar { get; } = '=';
     /// <summary>
     /// Gets Base32H alphabet.
     /// </summary>

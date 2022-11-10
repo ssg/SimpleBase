@@ -8,16 +8,16 @@ using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 
-namespace SimpleBase
+namespace SimpleBase;
+
+/// <summary>
+/// Base16 encoding/decoding.
+/// </summary>
+public sealed class Base16 : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCoder
 {
-    /// <summary>
-    /// Base16 encoding/decoding.
-    /// </summary>
-    public sealed class Base16 : IBaseEncoder, IBaseStreamEncoder, INonAllocatingBaseEncoder
-    {
-        private static readonly Lazy<Base16> upperCase = new (() => new Base16(Base16Alphabet.UpperCase));
-        private static readonly Lazy<Base16> lowerCase = new (() => new Base16(Base16Alphabet.LowerCase));
-        private static readonly Lazy<Base16> modHex = new (() => new Base16(Base16Alphabet.ModHex));
+    private static readonly Lazy<Base16> upperCase = new (() => new Base16(Base16Alphabet.UpperCase));
+    private static readonly Lazy<Base16> lowerCase = new (() => new Base16(Base16Alphabet.LowerCase));
+    private static readonly Lazy<Base16> modHex = new (() => new Base16(Base16Alphabet.ModHex));
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Base16"/> class.
@@ -78,83 +78,15 @@ namespace SimpleBase
         return buffer.Length * 2;
     }
 
-        /// <summary>
-        /// Encode to Base16 representation using uppercase lettering.
-        /// </summary>
-        /// <param name="bytes">Bytes to encode.</param>
-        /// <returns>Base16 string.</returns>
-        [Obsolete("Deprecated. Use Base16.UpperCase.Encode() instead")]
-        public static unsafe string EncodeUpper(ReadOnlySpan<byte> bytes)
-        {
-            return UpperCase.Encode(bytes);
-        }
-
-        /// <summary>
-        /// Encode to Base16 representation using lowercase lettering.
-        /// </summary>
-        /// <param name="bytes">Bytes to encode.</param>
-        /// <returns>Base16 string.</returns>
-        [Obsolete("Deprecated. Use Base16.LowerCase.Encode() instead")]
-        public static unsafe string EncodeLower(ReadOnlySpan<byte> bytes)
-        {
-            return LowerCase.Encode(bytes);
-        }
-
-        /// <summary>
-        /// Encodes stream of bytes into a Base16 text.
-        /// </summary>
-        /// <param name="input">Stream that provides bytes to be encoded.</param>
-        /// <param name="output">Stream that the encoded text is written to.</param>
-        [Obsolete("Deprecated. Use Base16.UpperCase.Encode() instead")]
-        public static void EncodeUpper(Stream input, TextWriter output)
-        {
-            UpperCase.Encode(input, output);
-        }
-
-        /// <summary>
-        /// Encodes stream of bytes into a Base16 text.
-        /// </summary>
-        /// <param name="input">Stream that provides bytes to be encoded.</param>
-        /// <param name="output">Stream that the encoded text is written to.</param>
-        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-        [Obsolete("Deprecated. Use Base16.UpperCase.EncodeAsync instead")]
-        public static Task EncodeUpperAsync(Stream input, TextWriter output)
-        {
-            return UpperCase.EncodeAsync(input, output);
-        }
-
-        /// <summary>
-        /// Encodes stream of bytes into a Base16 text.
-        /// </summary>
-        /// <param name="input">Stream that provides bytes to be encoded.</param>
-        /// <param name="output">Stream that the encoded text is written to.</param>
-        [Obsolete("Deprecated. Use Base16.LowerCase.Encode() instead")]
-        public static void EncodeLower(Stream input, TextWriter output)
-        {
-            LowerCase.Encode(input, output);
-        }
-
-        /// <summary>
-        /// Encodes stream of bytes into a Base16 text.
-        /// </summary>
-        /// <param name="input">Stream that provides bytes to be encoded.</param>
-        /// <param name="output">Stream that the encoded text is written to.</param>
-        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-        [Obsolete("Deprecated. Use Base16.LowerCase.EncodeLower instead")]
-        public static Task EncodeLowerAsync(Stream input, TextWriter output)
-        {
-            return LowerCase.EncodeAsync(input, output);
-        }
-
-        /// <summary>
-        /// Decode Upper/Lowercase Base16 text into bytes.
-        /// </summary>
-        /// <param name="text">Hex string.</param>
-        /// <returns>Decoded bytes.</returns>
-        public static Span<byte> Decode(string text)
-        {
-            return UpperCase.Decode(text.AsSpan());
-        }
+    /// <summary>
+    /// Decode Upper/Lowercase Base16 text into bytes.
+    /// </summary>
+    /// <param name="text">Hex string.</param>
+    /// <returns>Decoded bytes.</returns>
+    public static Span<byte> Decode(string text)
+    {
+        return UpperCase.Decode(text.AsSpan());
+    }
 
     /// <summary>
     /// Decode Base16 text through streams for generic use. Stream based variant tries to consume

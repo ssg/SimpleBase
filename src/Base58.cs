@@ -23,9 +23,9 @@ public sealed class Base58 : IBaseCoder, INonAllocatingBaseCoder
     private const int maxCheckPayloadLength = 256;
     private const int sha256Bytes = 32;
     private const int sha256DigestBytes = 4;
-    private static readonly Lazy<Base58> bitcoin = new(() => new Base58(Base58Alphabet.Bitcoin));
-    private static readonly Lazy<Base58> ripple = new(() => new Base58(Base58Alphabet.Ripple));
-    private static readonly Lazy<Base58> flickr = new(() => new Base58(Base58Alphabet.Flickr));
+    private static readonly Lazy<Base58> bitcoin = new (() => new Base58(Base58Alphabet.Bitcoin));
+    private static readonly Lazy<Base58> ripple = new (() => new Base58(Base58Alphabet.Ripple));
+    private static readonly Lazy<Base58> flickr = new (() => new Base58(Base58Alphabet.Flickr));
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Base58"/> class
