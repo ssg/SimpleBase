@@ -23,9 +23,9 @@ public sealed class Base58 : IBaseCoder, INonAllocatingBaseCoder
     private const int maxCheckPayloadLength = 256;
     private const int sha256Bytes = 32;
     private const int sha256DigestBytes = 4;
-    private static readonly Lazy<Base58> bitcoin = new (() => new Base58(Base58Alphabet.Bitcoin));
-    private static readonly Lazy<Base58> ripple = new (() => new Base58(Base58Alphabet.Ripple));
-    private static readonly Lazy<Base58> flickr = new (() => new Base58(Base58Alphabet.Flickr));
+    private static readonly Lazy<Base58> bitcoin = new(() => new Base58(Base58Alphabet.Bitcoin));
+    private static readonly Lazy<Base58> ripple = new(() => new Base58(Base58Alphabet.Ripple));
+    private static readonly Lazy<Base58> flickr = new(() => new Base58(Base58Alphabet.Flickr));
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Base58"/> class
@@ -63,13 +63,6 @@ public sealed class Base58 : IBaseCoder, INonAllocatingBaseCoder
     /// </summary>
     public char ZeroChar { get; }
 
-    /// <inheritdoc/>
-    public int GetSafeByteCountForDecoding(ReadOnlySpan<char> text)
-    {
-        int textLen = text.Length;
-        return GetSafeByteCountForDecoding(textLen, getPrefixCount(text, ZeroChar));
-    }
-
     /// <summary>
     /// Retrieve safe byte count while avoiding multiple counting operations.
     /// </summary>
@@ -80,6 +73,13 @@ public sealed class Base58 : IBaseCoder, INonAllocatingBaseCoder
     {
         Debug.Assert(textLen >= numZeroes, "Number of zeroes cannot be longer than text length");
         return numZeroes + ((textLen - numZeroes + 1) * reductionFactor / 1000) + 1;
+    }
+
+    /// <inheritdoc/>
+    public int GetSafeByteCountForDecoding(ReadOnlySpan<char> text)
+    {
+        int textLen = text.Length;
+        return GetSafeByteCountForDecoding(textLen, getPrefixCount(text, ZeroChar));
     }
 
     /// <inheritdoc/>
@@ -310,47 +310,6 @@ public sealed class Base58 : IBaseCoder, INonAllocatingBaseCoder
         }
     }
 
-    private bool internalDecode(
-        ReadOnlySpan<char> input,
-        Span<byte> output,
-        int numZeroes,
-        out int numBytesWritten)
-    {
-        if (numZeroes == input.Length)
-        {
-            return decodeZeroes(output, numZeroes, out numBytesWritten);
-        }
-
-        var table = Alphabet.ReverseLookupTable;
-        int min = output.Length - 1;
-        for (int i = 0; i < input.Length; i++)
-        {
-            char c = input[i];
-            int carry = table[c] - 1;
-            if (carry < 0)
-            {
-                throw CodingAlphabet.InvalidCharacter(c);
-            }
-
-            for (int o = output.Length - 1; o >= 0; o--)
-            {
-                carry += 58 * output[o];
-                output[o] = (byte)carry;
-                if (min > o && carry != 0)
-                {
-                    min = o;
-                }
-
-                carry >>= 8;
-            }
-        }
-
-        int startIndex = min - numZeroes;
-        numBytesWritten = output.Length - startIndex;
-        output[startIndex..].CopyTo(output[..numBytesWritten]);
-        return true;
-    }
-
     private static bool decodeZeroes(Span<byte> output, int length, out int numBytesWritten)
     {
         if (length > output.Length)
@@ -361,51 +320,6 @@ public sealed class Base58 : IBaseCoder, INonAllocatingBaseCoder
 
         output[..length].Fill(0);
         numBytesWritten = length;
-        return true;
-    }
-
-    private bool internalEncode(
-        ReadOnlySpan<byte> input,
-        Span<char> output,
-        int numZeroes,
-        out int numCharsWritten)
-    {
-        if (input.Length == 0)
-        {
-            numCharsWritten = 0;
-            return true;
-        }
-
-        ReadOnlySpan<char> alphabet = Alphabet.Value;
-        if (numZeroes == input.Length)
-        {
-            return encodeAllZeroes(output, numZeroes, out numCharsWritten, alphabet[0]);
-        }
-
-        int numDigits = 0;
-        int index = numZeroes;
-        while (index < input.Length)
-        {
-            int carry = input[index++];
-            int i = 0;
-            for (int j = output.Length - 1; (carry != 0 || i < numDigits)
-                && j >= 0; j--, i++)
-            {
-                carry += output[j] << 8;
-                carry = Math.DivRem(carry, divisor, out int remainder);
-                output[j] = (char)remainder;
-            }
-
-            numDigits = i;
-        }
-
-        translatedCopy(output[^numDigits..], output[numZeroes..], alphabet);
-        if (numZeroes > 0)
-        {
-            output[..numZeroes].Fill(alphabet[0]);
-        }
-
-        numCharsWritten = numZeroes + numDigits;
         return true;
     }
 
@@ -466,5 +380,91 @@ public sealed class Base58 : IBaseCoder, INonAllocatingBaseCoder
         const int growthPercentage = 138;
 
         return numZeroes + ((bytesLen - numZeroes) * growthPercentage / 100) + 1;
+    }
+
+    private bool internalEncode(
+        ReadOnlySpan<byte> input,
+        Span<char> output,
+        int numZeroes,
+        out int numCharsWritten)
+    {
+        if (input.Length == 0)
+        {
+            numCharsWritten = 0;
+            return true;
+        }
+
+        ReadOnlySpan<char> alphabet = Alphabet.Value;
+        if (numZeroes == input.Length)
+        {
+            return encodeAllZeroes(output, numZeroes, out numCharsWritten, alphabet[0]);
+        }
+
+        int numDigits = 0;
+        int index = numZeroes;
+        while (index < input.Length)
+        {
+            int carry = input[index++];
+            int i = 0;
+            for (int j = output.Length - 1; (carry != 0 || i < numDigits)
+                && j >= 0; j--, i++)
+            {
+                carry += output[j] << 8;
+                carry = Math.DivRem(carry, divisor, out int remainder);
+                output[j] = (char)remainder;
+            }
+
+            numDigits = i;
+        }
+
+        translatedCopy(output[^numDigits..], output[numZeroes..], alphabet);
+        if (numZeroes > 0)
+        {
+            output[..numZeroes].Fill(alphabet[0]);
+        }
+
+        numCharsWritten = numZeroes + numDigits;
+        return true;
+    }
+
+    private bool internalDecode(
+        ReadOnlySpan<char> input,
+        Span<byte> output,
+        int numZeroes,
+        out int numBytesWritten)
+    {
+        if (numZeroes == input.Length)
+        {
+            return decodeZeroes(output, numZeroes, out numBytesWritten);
+        }
+
+        var table = Alphabet.ReverseLookupTable;
+        int min = output.Length - 1;
+        for (int i = 0; i < input.Length; i++)
+        {
+            char c = input[i];
+            int carry = table[c] - 1;
+            if (carry < 0)
+            {
+                throw CodingAlphabet.InvalidCharacter(c);
+            }
+
+            for (int o = output.Length - 1; o >= 0; o--)
+            {
+                carry += 58 * output[o];
+                output[o] = (byte)carry;
+                if (min > o && carry != 0)
+                {
+                    min = o;
+                }
+
+                carry >>= 8;
+            }
+        }
+
+        int startIndex = min - numZeroes;
+        numBytesWritten = output.Length - startIndex;
+        output[startIndex..].CopyTo(output[..numBytesWritten]);
+        return true;
     }
 }

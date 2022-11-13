@@ -21,9 +21,9 @@ public class Base85 : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCoder
     private const int stringBlockSize = 5;
     private const long fourSpaceChars = 0x20202020;
     private const int decodeBufferSize = 5120; // don't remember what was special with this number
-    private static readonly Lazy<Base85> z85 = new (() => new Base85(Base85Alphabet.Z85));
-    private static readonly Lazy<Base85> ascii85 = new (() => new Base85(Base85Alphabet.Ascii85));
-    private static readonly Lazy<Base85Ipv6> rfc1924 = new (() => new Base85Ipv6(Base85Alphabet.Rfc1924));
+    private static readonly Lazy<Base85> z85 = new(() => new Base85(Base85Alphabet.Z85));
+    private static readonly Lazy<Base85> ascii85 = new(() => new Base85(Base85Alphabet.Ascii85));
+    private static readonly Lazy<Base85Ipv6> rfc1924 = new(() => new Base85Ipv6(Base85Alphabet.Rfc1924));
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Base85"/> class
@@ -171,6 +171,132 @@ public class Base85 : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCoder
         return internalDecode(input, output, out numBytesWritten);
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static bool writeEncodedValue(
+        uint block,
+        Span<char> output,
+        string table,
+        int blockLength,
+        char? zeroShortcutChar,
+        char? spaceShortcutChar,
+        out int numBytesWritten)
+    {
+        if (output.Length == 0)
+        {
+            numBytesWritten = 0;
+            return false;
+        }
+
+        if (block == 0 && zeroShortcutChar is not null)
+        {
+            output[0] = zeroShortcutChar.Value; // guaranteed to be non-null
+            numBytesWritten = 1;
+            return true;
+        }
+
+        if (block == fourSpaceChars && spaceShortcutChar is not null)
+        {
+            output[0] = spaceShortcutChar.Value; // guaranteed to be non-null
+            numBytesWritten = 1;
+            return true;
+        }
+
+        if (blockLength > output.Length)
+        {
+            numBytesWritten = 0;
+            return false;
+        }
+
+        // map the 4-byte packet to to 5-byte octets
+        for (int i = stringBlockSize - 1; i >= 0; i--)
+        {
+            block = (uint)Math.DivRem(block, baseLength, out long remainder);
+            if (i < blockLength)
+            {
+                output[i] = table[(int)remainder];
+            }
+        }
+
+        numBytesWritten = blockLength;
+        return true;
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static bool writeDecodedValue(
+        Span<byte> output,
+        long value,
+        int numBytesToWrite,
+        out int numBytesWritten)
+    {
+        if (numBytesToWrite > output.Length)
+        {
+            Debug.WriteLine("Buffer overrun while decoding Base85");
+            numBytesWritten = 0;
+            return false;
+        }
+
+        int o = 0;
+        for (int i = byteBlockSize - 1; i >= 0 && numBytesToWrite > 0; i--, numBytesToWrite--)
+        {
+            byte b = (byte)((value >> (i * 8)) & 0xFF);
+            output[o++] = b;
+        }
+
+        numBytesWritten = o;
+        return true;
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static bool isWhiteSpace(char c)
+    {
+        return c is '\x20' or '\x85' or '\xA0' or (>= '\x09' and <= '\x0D');
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static bool writeShortcut(
+        Span<byte> output,
+        ref int blockIndex,
+        long value,
+        out int numBytesWritten)
+    {
+        if (blockIndex != 0)
+        {
+            throw new ArgumentException(
+                $"Unexpected shortcut character in the middle of a regular block");
+        }
+
+        blockIndex = 0; // restart block after the shortcut character
+        return writeDecodedValue(output, value, byteBlockSize, out numBytesWritten);
+    }
+
+    private static int getSafeCharCountForEncoding(int bytesLength)
+    {
+        if (bytesLength < 0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(bytesLength));
+        }
+
+#pragma warning disable IDE0046 // Convert to conditional expression - prefer clarity
+        if (bytesLength == 0)
+        {
+            return 0;
+        }
+
+        return (bytesLength + byteBlockSize - 1) * stringBlockSize / byteBlockSize;
+#pragma warning restore IDE0046 // Convert to conditional expression
+    }
+
+    private static int getSafeByteCountForDecoding(int textLength, bool usingShortcuts)
+    {
+        if (usingShortcuts)
+        {
+            return textLength * byteBlockSize; // max possible size using shortcuts
+        }
+
+        // max possible size without shortcuts
+        return (((textLength - 1) / stringBlockSize) + 1) * byteBlockSize;
+    }
+
     private bool internalEncode(
         ReadOnlySpan<byte> input,
         Span<char> output,
@@ -233,56 +359,6 @@ public class Base85 : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCoder
         }
 
         numCharsWritten += numWrittenFinal;
-        return true;
-    }
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static bool writeEncodedValue(
-        uint block,
-        Span<char> output,
-        string table,
-        int blockLength,
-        char? zeroShortcutChar,
-        char? spaceShortcutChar,
-        out int numBytesWritten)
-    {
-        if (output.Length == 0)
-        {
-            numBytesWritten = 0;
-            return false;
-        }
-
-        if (block == 0 && zeroShortcutChar is not null)
-        {
-            output[0] = zeroShortcutChar.Value; // guaranteed to be non-null
-            numBytesWritten = 1;
-            return true;
-        }
-
-        if (block == fourSpaceChars && spaceShortcutChar is not null)
-        {
-            output[0] = spaceShortcutChar.Value; // guaranteed to be non-null
-            numBytesWritten = 1;
-            return true;
-        }
-
-        if (blockLength > output.Length)
-        {
-            numBytesWritten = 0;
-            return false;
-        }
-
-        // map the 4-byte packet to to 5-byte octets
-        for (int i = stringBlockSize - 1; i >= 0; i--)
-        {
-            block = (uint)Math.DivRem(block, baseLength, out long remainder);
-            if (i < blockLength)
-            {
-                output[i] = table[(int)remainder];
-            }
-        }
-
-        numBytesWritten = blockLength;
         return true;
     }
 
@@ -371,81 +447,5 @@ public class Base85 : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCoder
         }
 
         return true;
-    }
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static bool writeDecodedValue(
-        Span<byte> output,
-        long value,
-        int numBytesToWrite,
-        out int numBytesWritten)
-    {
-        if (numBytesToWrite > output.Length)
-        {
-            Debug.WriteLine("Buffer overrun while decoding Base85");
-            numBytesWritten = 0;
-            return false;
-        }
-
-        int o = 0;
-        for (int i = byteBlockSize - 1; i >= 0 && numBytesToWrite > 0; i--, numBytesToWrite--)
-        {
-            byte b = (byte)((value >> (i * 8)) & 0xFF);
-            output[o++] = b;
-        }
-
-        numBytesWritten = o;
-        return true;
-    }
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static bool isWhiteSpace(char c)
-    {
-        return c is '\x20' or '\x85' or '\xA0' or (>= '\x09' and <= '\x0D');
-    }
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static bool writeShortcut(
-        Span<byte> output,
-        ref int blockIndex,
-        long value,
-        out int numBytesWritten)
-    {
-        if (blockIndex != 0)
-        {
-            throw new ArgumentException(
-                $"Unexpected shortcut character in the middle of a regular block");
-        }
-
-        blockIndex = 0; // restart block after the shortcut character
-        return writeDecodedValue(output, value, byteBlockSize, out numBytesWritten);
-    }
-
-    private static int getSafeCharCountForEncoding(int bytesLength)
-    {
-        if (bytesLength < 0)
-        {
-            throw new ArgumentOutOfRangeException(nameof(bytesLength));
-        }
-
-#pragma warning disable IDE0046 // Convert to conditional expression - prefer clarity
-        if (bytesLength == 0)
-        {
-            return 0;
-        }
-
-        return (bytesLength + byteBlockSize - 1) * stringBlockSize / byteBlockSize;
-#pragma warning restore IDE0046 // Convert to conditional expression
-    }
-
-    private static int getSafeByteCountForDecoding(int textLength, bool usingShortcuts)
-    {
-        if (usingShortcuts)
-        {
-            return textLength * byteBlockSize; // max possible size using shortcuts
-        }
-
-        // max possible size without shortcuts
-        return (((textLength - 1) / stringBlockSize) + 1) * byteBlockSize;
     }
 }

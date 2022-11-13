@@ -35,22 +35,22 @@ public class Base32Alphabet : CodingAlphabet
             "0123456789ABCDEFGHJKMNPQRSTVWXYZ",
             new CharMap[]
             {
-                new ('O', '0'),
-                new ('I', '1'),
-                new ('L', '1'),
+                new('O', '0'),
+                new('I', '1'),
+                new('L', '1'),
             }));
 
-    private static readonly Lazy<AliasedBase32Alphabet> base32HAlphabet = new (
+    private static readonly Lazy<AliasedBase32Alphabet> base32HAlphabet = new(
         () => new AliasedBase32Alphabet(
             "0123456789ABCDEFGHJKLMNPQRTVWXYZ",
             paddingChar: '0',
             PaddingPosition.Start,
             new CharMap[]
             {
-                new ('O', '0'),
-                new ('I', '1'),
-                new ('S', '5'),
-                new ('U', 'V'),
+                new('O', '0'),
+                new('I', '1'),
+                new('S', '5'),
+                new('U', 'V'),
             }));
 
     /// <summary>

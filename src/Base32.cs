@@ -18,13 +18,13 @@ public sealed class Base32 : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCod
     private const int bitsPerByte = 8;
     private const int bitsPerChar = 5;
 
-    private static readonly Lazy<Base32> crockford = new (() => new Base32(Base32Alphabet.Crockford));
-    private static readonly Lazy<Base32> rfc4648 = new (() => new Base32(Base32Alphabet.Rfc4648));
-    private static readonly Lazy<Base32> extendedHex = new (() => new Base32(Base32Alphabet.ExtendedHex));
-    private static readonly Lazy<Base32> zBase32 = new (() => new Base32(Base32Alphabet.ZBase32));
-    private static readonly Lazy<Base32> geohash = new (() => new Base32(Base32Alphabet.Geohash));
-    private static readonly Lazy<Base32> bech32 = new (() => new Base32(Base32Alphabet.Bech32));
-    private static readonly Lazy<Base32> filecoin = new (() => new Base32(Base32Alphabet.FileCoin));
+    private static readonly Lazy<Base32> crockford = new(() => new Base32(Base32Alphabet.Crockford));
+    private static readonly Lazy<Base32> rfc4648 = new(() => new Base32(Base32Alphabet.Rfc4648));
+    private static readonly Lazy<Base32> extendedHex = new(() => new Base32(Base32Alphabet.ExtendedHex));
+    private static readonly Lazy<Base32> zBase32 = new(() => new Base32(Base32Alphabet.ZBase32));
+    private static readonly Lazy<Base32> geohash = new(() => new Base32(Base32Alphabet.Geohash));
+    private static readonly Lazy<Base32> bech32 = new(() => new Base32(Base32Alphabet.Bech32));
+    private static readonly Lazy<Base32> filecoin = new(() => new Base32(Base32Alphabet.FileCoin));
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Base32"/> class with a
@@ -336,6 +336,11 @@ public sealed class Base32 : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCod
         return internalDecode(input[..inputLen], output, out numBytesWritten) == DecodeResult.Success;
     }
 
+    private static int getAllocationByteCountForDecoding(int textLenWithoutPadding)
+    {
+        return textLenWithoutPadding * bitsPerChar / bitsPerByte;
+    }
+
     private bool internalEncode(
        ReadOnlySpan<byte> input,
        Span<char> output,
@@ -395,11 +400,6 @@ public sealed class Base32 : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCod
     Overflow:
         numCharsWritten = o;
         return false;
-    }
-
-    private static int getAllocationByteCountForDecoding(int textLenWithoutPadding)
-    {
-        return textLenWithoutPadding * bitsPerChar / bitsPerByte;
     }
 
     private int getPaddingCharCount(ReadOnlySpan<char> text)

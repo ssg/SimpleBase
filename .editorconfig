@@ -40,24 +40,6 @@ dotnet_naming_style.camelcase.capitalization = camel_case
 # CA1303: Do not pass literals as localized parameters
 dotnet_diagnostic.CA1303.severity = none
 
-# SA1101: Prefix local calls with this
-dotnet_diagnostic.SA1101.severity = none
-
-# SA1118: The parameter spans multiple lines
-dotnet_diagnostic.SA1118.severity = none
-
-# SA1204: Static elements should appear before instance elements
-dotnet_diagnostic.SA1204.severity = none
-
-# SA1300: Element should begin with upper-case letter
-dotnet_diagnostic.SA1300.severity = none
-
-# SA1303: Const field names should begin with upper-case letter
-dotnet_diagnostic.SA1303.severity = none
-
-# SA1311: Static readonly fields should begin with upper-case letter
-dotnet_diagnostic.SA1311.severity = none
-
 # CS3002: Return type is not CLS-compliant
 dotnet_diagnostic.CS3002.severity = none
 
@@ -133,6 +115,16 @@ dotnet_diagnostic.SA1008.severity = none
 # SA1313: Parameter names should begin with lower-case letter
 dotnet_diagnostic.SA1313.severity = none
 
+# SA1303: Const field names should begin with upper-case letter
+dotnet_diagnostic.SA1303.severity = none
+
+# SA1101: Prefix local calls with this
+dotnet_diagnostic.SA1101.severity = none
+
+# SA1300: Element should begin with upper-case letter
+dotnet_diagnostic.SA1300.severity = silent
+dotnet_diagnostic.SA1311.severity = silent
+
 [*.vb]
 #### Naming styles ####
 
@@ -192,3 +184,7 @@ dotnet_naming_style.pascal_case.capitalization = pascal_case
 
 # CA1016: Mark assemblies with assembly version
 dotnet_diagnostic.CA1016.severity = none
+dotnet_style_qualification_for_field = false:warning
+dotnet_style_qualification_for_property = false:warning
+dotnet_style_qualification_for_method = false:warning
+dotnet_style_qualification_for_event = false:warning

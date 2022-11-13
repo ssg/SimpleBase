@@ -15,9 +15,9 @@ namespace SimpleBase;
 /// </summary>
 public sealed class Base16 : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCoder
 {
-    private static readonly Lazy<Base16> upperCase = new (() => new Base16(Base16Alphabet.UpperCase));
-    private static readonly Lazy<Base16> lowerCase = new (() => new Base16(Base16Alphabet.LowerCase));
-    private static readonly Lazy<Base16> modHex = new (() => new Base16(Base16Alphabet.ModHex));
+    private static readonly Lazy<Base16> upperCase = new(() => new Base16(Base16Alphabet.UpperCase));
+    private static readonly Lazy<Base16> lowerCase = new(() => new Base16(Base16Alphabet.LowerCase));
+    private static readonly Lazy<Base16> modHex = new(() => new Base16(Base16Alphabet.ModHex));
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Base16"/> class.
@@ -48,6 +48,16 @@ public sealed class Base16 : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCod
     /// </summary>
     public Base16Alphabet Alphabet { get; }
 
+    /// <summary>
+    /// Decode Upper/Lowercase Base16 text into bytes.
+    /// </summary>
+    /// <param name="text">Hex string.</param>
+    /// <returns>Decoded bytes.</returns>
+    public static Span<byte> Decode(string text)
+    {
+        return UpperCase.Decode(text.AsSpan());
+    }
+
     /// <inheritdoc/>
     public override int GetHashCode()
     {
@@ -76,16 +86,6 @@ public sealed class Base16 : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCod
     public int GetSafeCharCountForEncoding(ReadOnlySpan<byte> buffer)
     {
         return buffer.Length * 2;
-    }
-
-    /// <summary>
-    /// Decode Upper/Lowercase Base16 text into bytes.
-    /// </summary>
-    /// <param name="text">Hex string.</param>
-    /// <returns>Decoded bytes.</returns>
-    public static Span<byte> Decode(string text)
-    {
-        return UpperCase.Decode(text.AsSpan());
     }
 
     /// <summary>

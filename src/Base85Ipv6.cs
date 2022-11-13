@@ -26,7 +26,7 @@ public class Base85Ipv6 : Base85
 {
     private const int ipv6bytes = 16;
     private const int ipv6chars = 20;
-    private static readonly BigInteger divisor = new (85);
+    private static readonly BigInteger divisor = new(85);
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Base85Ipv6"/> class.

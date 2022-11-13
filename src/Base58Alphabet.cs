@@ -12,13 +12,13 @@ namespace SimpleBase;
 /// </summary>
 public sealed class Base58Alphabet : CodingAlphabet
 {
-    private static readonly Lazy<Base58Alphabet> bitcoinAlphabet = new (()
+    private static readonly Lazy<Base58Alphabet> bitcoinAlphabet = new(()
         => new Base58Alphabet("123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz"));
 
-    private static readonly Lazy<Base58Alphabet> rippleAlphabet = new (()
+    private static readonly Lazy<Base58Alphabet> rippleAlphabet = new(()
         => new Base58Alphabet("rpshnaf39wBUDNEGHJKLM4PQRST7VWXYZ2bcdeCg65jkm8oFqi1tuvAxyz"));
 
-    private static readonly Lazy<Base58Alphabet> flickrAlphabet = new (()
+    private static readonly Lazy<Base58Alphabet> flickrAlphabet = new(()
         => new Base58Alphabet("123456789abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ"));
 
     /// <summary>
