@@ -1,0 +1,150 @@
+﻿override SimpleBase.Base16.GetHashCode() -> int
+override SimpleBase.Base16.ToString() -> string!
+override SimpleBase.CodingAlphabet.GetHashCode() -> int
+override SimpleBase.CodingAlphabet.ToString() -> string!
+SimpleBase.Base16
+SimpleBase.Base16.Alphabet.get -> SimpleBase.Base16Alphabet!
+SimpleBase.Base16.Base16(SimpleBase.Base16Alphabet! alphabet) -> void
+SimpleBase.Base16.Decode(System.IO.TextReader! input, System.IO.Stream! output) -> void
+SimpleBase.Base16.Decode(System.ReadOnlySpan<char> text) -> byte[]!
+SimpleBase.Base16.DecodeAsync(System.IO.TextReader! input, System.IO.Stream! output) -> System.Threading.Tasks.Task!
+SimpleBase.Base16.Encode(System.IO.Stream! input, System.IO.TextWriter! output) -> void
+SimpleBase.Base16.Encode(System.ReadOnlySpan<byte> bytes) -> string!
+SimpleBase.Base16.EncodeAsync(System.IO.Stream! input, System.IO.TextWriter! output) -> System.Threading.Tasks.Task!
+SimpleBase.Base16.GetSafeByteCountForDecoding(System.ReadOnlySpan<char> text) -> int
+SimpleBase.Base16.GetSafeCharCountForEncoding(System.ReadOnlySpan<byte> buffer) -> int
+SimpleBase.Base16.TryDecode(System.ReadOnlySpan<char> text, System.Span<byte> output, out int numBytesWritten) -> bool
+SimpleBase.Base16.TryEncode(System.ReadOnlySpan<byte> bytes, System.Span<char> output, out int numCharsWritten) -> bool
+SimpleBase.Base16Alphabet
+SimpleBase.Base16Alphabet.Base16Alphabet(string! alphabet) -> void
+SimpleBase.Base16Alphabet.Base16Alphabet(string! alphabet, bool caseSensitive) -> void
+SimpleBase.Base16Alphabet.CaseSensitive.get -> bool
+SimpleBase.Base32
+SimpleBase.Base32.Alphabet.get -> SimpleBase.Base32Alphabet!
+SimpleBase.Base32.Base32(SimpleBase.Base32Alphabet! alphabet) -> void
+SimpleBase.Base32.Decode(System.IO.TextReader! input, System.IO.Stream! output) -> void
+SimpleBase.Base32.Decode(System.ReadOnlySpan<char> text) -> byte[]!
+SimpleBase.Base32.DecodeAsync(System.IO.TextReader! input, System.IO.Stream! output) -> System.Threading.Tasks.Task!
+SimpleBase.Base32.DecodeInt64(string! text) -> long
+SimpleBase.Base32.DecodeUInt64(string! text) -> ulong
+SimpleBase.Base32.Encode(long number) -> string!
+SimpleBase.Base32.Encode(System.IO.Stream! input, System.IO.TextWriter! output) -> void
+SimpleBase.Base32.Encode(System.IO.Stream! input, System.IO.TextWriter! output, bool padding) -> void
+SimpleBase.Base32.Encode(System.ReadOnlySpan<byte> bytes) -> string!
+SimpleBase.Base32.Encode(System.ReadOnlySpan<byte> bytes, bool padding) -> string!
+SimpleBase.Base32.Encode(ulong number) -> string!
+SimpleBase.Base32.EncodeAsync(System.IO.Stream! input, System.IO.TextWriter! output) -> System.Threading.Tasks.Task!
+SimpleBase.Base32.EncodeAsync(System.IO.Stream! input, System.IO.TextWriter! output, bool padding) -> System.Threading.Tasks.Task!
+SimpleBase.Base32.GetSafeByteCountForDecoding(System.ReadOnlySpan<char> text) -> int
+SimpleBase.Base32.GetSafeCharCountForEncoding(System.ReadOnlySpan<byte> buffer) -> int
+SimpleBase.Base32.TryDecode(System.ReadOnlySpan<char> input, System.Span<byte> output, out int numBytesWritten) -> bool
+SimpleBase.Base32.TryEncode(System.ReadOnlySpan<byte> bytes, System.Span<char> output, bool padding, out int numCharsWritten) -> bool
+SimpleBase.Base32.TryEncode(System.ReadOnlySpan<byte> bytes, System.Span<char> output, out int numCharsWritten) -> bool
+SimpleBase.Base32Alphabet
+SimpleBase.Base32Alphabet.Base32Alphabet(string! alphabet) -> void
+SimpleBase.Base32Alphabet.Base32Alphabet(string! alphabet, char paddingChar, SimpleBase.PaddingPosition paddingPosition) -> void
+SimpleBase.Base32Alphabet.PaddingChar.get -> char
+SimpleBase.Base32Alphabet.PaddingPosition.get -> SimpleBase.PaddingPosition
+SimpleBase.Base58
+SimpleBase.Base58.Alphabet.get -> SimpleBase.Base58Alphabet!
+SimpleBase.Base58.Base58(SimpleBase.Base58Alphabet! alphabet) -> void
+SimpleBase.Base58.Decode(System.ReadOnlySpan<char> text) -> byte[]!
+SimpleBase.Base58.Encode(System.ReadOnlySpan<byte> bytes) -> string!
+SimpleBase.Base58.EncodeCb58(System.ReadOnlySpan<byte> payload) -> string!
+SimpleBase.Base58.EncodeCheck(System.ReadOnlySpan<byte> payload, byte version) -> string!
+SimpleBase.Base58.GetSafeByteCountForDecoding(System.ReadOnlySpan<char> text) -> int
+SimpleBase.Base58.GetSafeCharCountForEncoding(System.ReadOnlySpan<byte> bytes) -> int
+SimpleBase.Base58.TryDecode(System.ReadOnlySpan<char> input, System.Span<byte> output, out int numBytesWritten) -> bool
+SimpleBase.Base58.TryDecodeCb58(System.ReadOnlySpan<char> address, System.Span<byte> payload, out int numBytesWritten) -> bool
+SimpleBase.Base58.TryDecodeCheck(System.ReadOnlySpan<char> address, System.Span<byte> payload, out byte version, out int numBytesWritten) -> bool
+SimpleBase.Base58.TryEncode(System.ReadOnlySpan<byte> input, System.Span<char> output, out int numCharsWritten) -> bool
+SimpleBase.Base58.ZeroChar.get -> char
+SimpleBase.Base58Alphabet
+SimpleBase.Base58Alphabet.Base58Alphabet(string! alphabet) -> void
+SimpleBase.Base85
+SimpleBase.Base85.Alphabet.get -> SimpleBase.Base85Alphabet!
+SimpleBase.Base85.Base85(SimpleBase.Base85Alphabet! alphabet) -> void
+SimpleBase.Base85.Decode(System.IO.TextReader! input, System.IO.Stream! output) -> void
+SimpleBase.Base85.Decode(System.ReadOnlySpan<char> text) -> byte[]!
+SimpleBase.Base85.DecodeAsync(System.IO.TextReader! input, System.IO.Stream! output) -> System.Threading.Tasks.Task!
+SimpleBase.Base85.Encode(System.IO.Stream! input, System.IO.TextWriter! output) -> void
+SimpleBase.Base85.Encode(System.ReadOnlySpan<byte> bytes) -> string!
+SimpleBase.Base85.EncodeAsync(System.IO.Stream! input, System.IO.TextWriter! output) -> System.Threading.Tasks.Task!
+SimpleBase.Base85.GetSafeByteCountForDecoding(System.ReadOnlySpan<char> text) -> int
+SimpleBase.Base85.GetSafeCharCountForEncoding(System.ReadOnlySpan<byte> bytes) -> int
+SimpleBase.Base85.TryDecode(System.ReadOnlySpan<char> input, System.Span<byte> output, out int numBytesWritten) -> bool
+SimpleBase.Base85.TryEncode(System.ReadOnlySpan<byte> input, System.Span<char> output, out int numCharsWritten) -> bool
+SimpleBase.Base85Alphabet
+SimpleBase.Base85Alphabet.AllSpaceShortcut.get -> char?
+SimpleBase.Base85Alphabet.AllZeroShortcut.get -> char?
+SimpleBase.Base85Alphabet.Base85Alphabet(string! alphabet, char? allZeroShortcut = null, char? allSpaceShortcut = null) -> void
+SimpleBase.Base85Alphabet.HasShortcut.get -> bool
+SimpleBase.Base85Ipv6
+SimpleBase.Base85Ipv6.Base85Ipv6(SimpleBase.Base85Alphabet! alphabet) -> void
+SimpleBase.Base85Ipv6.DecodeIpv6(string! text) -> System.Net.IPAddress!
+SimpleBase.Base85Ipv6.EncodeIpv6(System.Net.IPAddress! ip) -> string!
+SimpleBase.CodingAlphabet
+SimpleBase.CodingAlphabet.CodingAlphabet(int length, string! alphabet) -> void
+SimpleBase.CodingAlphabet.Length.get -> int
+SimpleBase.CodingAlphabet.Map(char c, int value) -> void
+SimpleBase.CodingAlphabet.Value.get -> string!
+SimpleBase.IBaseCoder
+SimpleBase.IBaseCoder.Decode(System.ReadOnlySpan<char> text) -> byte[]!
+SimpleBase.IBaseCoder.Encode(System.ReadOnlySpan<byte> bytes) -> string!
+SimpleBase.IBaseStreamCoder
+SimpleBase.IBaseStreamCoder.Decode(System.IO.TextReader! input, System.IO.Stream! output) -> void
+SimpleBase.IBaseStreamCoder.DecodeAsync(System.IO.TextReader! input, System.IO.Stream! output) -> System.Threading.Tasks.Task!
+SimpleBase.IBaseStreamCoder.Encode(System.IO.Stream! input, System.IO.TextWriter! output) -> void
+SimpleBase.IBaseStreamCoder.EncodeAsync(System.IO.Stream! input, System.IO.TextWriter! output) -> System.Threading.Tasks.Task!
+SimpleBase.ICodingAlphabet
+SimpleBase.ICodingAlphabet.Length.get -> int
+SimpleBase.ICodingAlphabet.Value.get -> string!
+SimpleBase.INonAllocatingBaseCoder
+SimpleBase.INonAllocatingBaseCoder.GetSafeByteCountForDecoding(System.ReadOnlySpan<char> text) -> int
+SimpleBase.INonAllocatingBaseCoder.GetSafeCharCountForEncoding(System.ReadOnlySpan<byte> buffer) -> int
+SimpleBase.INonAllocatingBaseCoder.TryDecode(System.ReadOnlySpan<char> input, System.Span<byte> output, out int numBytesWritten) -> bool
+SimpleBase.INonAllocatingBaseCoder.TryEncode(System.ReadOnlySpan<byte> input, System.Span<char> output, out int numCharsWritten) -> bool
+SimpleBase.INumericBaseCoder
+SimpleBase.INumericBaseCoder.DecodeInt64(string! text) -> long
+SimpleBase.INumericBaseCoder.DecodeUInt64(string! text) -> ulong
+SimpleBase.INumericBaseCoder.Encode(long number) -> string!
+SimpleBase.INumericBaseCoder.Encode(ulong number) -> string!
+SimpleBase.PaddingPosition
+SimpleBase.PaddingPosition.End = 1 -> SimpleBase.PaddingPosition
+SimpleBase.PaddingPosition.Start = 0 -> SimpleBase.PaddingPosition
+static SimpleBase.Base16.Decode(string! text) -> System.Span<byte>
+static SimpleBase.Base16.LowerCase.get -> SimpleBase.Base16!
+static SimpleBase.Base16.ModHex.get -> SimpleBase.Base16!
+static SimpleBase.Base16.UpperCase.get -> SimpleBase.Base16!
+static SimpleBase.Base16Alphabet.LowerCase.get -> SimpleBase.Base16Alphabet!
+static SimpleBase.Base16Alphabet.ModHex.get -> SimpleBase.Base16Alphabet!
+static SimpleBase.Base16Alphabet.UpperCase.get -> SimpleBase.Base16Alphabet!
+static SimpleBase.Base32.Bech32.get -> SimpleBase.Base32!
+static SimpleBase.Base32.Crockford.get -> SimpleBase.Base32!
+static SimpleBase.Base32.ExtendedHex.get -> SimpleBase.Base32!
+static SimpleBase.Base32.FileCoin.get -> SimpleBase.Base32!
+static SimpleBase.Base32.Geohash.get -> SimpleBase.Base32!
+static SimpleBase.Base32.Rfc4648.get -> SimpleBase.Base32!
+static SimpleBase.Base32.ZBase32.get -> SimpleBase.Base32!
+static SimpleBase.Base32Alphabet.Base32H.get -> SimpleBase.Base32Alphabet!
+static SimpleBase.Base32Alphabet.Bech32.get -> SimpleBase.Base32Alphabet!
+static SimpleBase.Base32Alphabet.Crockford.get -> SimpleBase.Base32Alphabet!
+static SimpleBase.Base32Alphabet.ExtendedHex.get -> SimpleBase.Base32Alphabet!
+static SimpleBase.Base32Alphabet.FileCoin.get -> SimpleBase.Base32Alphabet!
+static SimpleBase.Base32Alphabet.Geohash.get -> SimpleBase.Base32Alphabet!
+static SimpleBase.Base32Alphabet.Rfc4648.get -> SimpleBase.Base32Alphabet!
+static SimpleBase.Base32Alphabet.ZBase32.get -> SimpleBase.Base32Alphabet!
+static SimpleBase.Base58.Bitcoin.get -> SimpleBase.Base58!
+static SimpleBase.Base58.Flickr.get -> SimpleBase.Base58!
+static SimpleBase.Base58.GetSafeByteCountForDecoding(int textLen, int numZeroes) -> int
+static SimpleBase.Base58.Ripple.get -> SimpleBase.Base58!
+static SimpleBase.Base58Alphabet.Bitcoin.get -> SimpleBase.Base58Alphabet!
+static SimpleBase.Base58Alphabet.Flickr.get -> SimpleBase.Base58Alphabet!
+static SimpleBase.Base58Alphabet.Ripple.get -> SimpleBase.Base58Alphabet!
+static SimpleBase.Base85.Ascii85.get -> SimpleBase.Base85!
+static SimpleBase.Base85.Rfc1924.get -> SimpleBase.Base85Ipv6!
+static SimpleBase.Base85.Z85.get -> SimpleBase.Base85!
+static SimpleBase.Base85Alphabet.Ascii85.get -> SimpleBase.Base85Alphabet!
+static SimpleBase.Base85Alphabet.Rfc1924.get -> SimpleBase.Base85Alphabet!
+static SimpleBase.Base85Alphabet.Z85.get -> SimpleBase.Base85Alphabet!
+static SimpleBase.CodingAlphabet.InvalidCharacter(char c) -> System.Exception!
