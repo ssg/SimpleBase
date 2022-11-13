@@ -113,7 +113,7 @@ dotnet_diagnostic.SA1200.severity = none
 dotnet_diagnostic.SA1008.severity = none
 
 # SA1313: Parameter names should begin with lower-case letter
-dotnet_diagnostic.SA1313.severity = none
+dotnet_diagnostic.SA1313.severity = warning
 
 # SA1303: Const field names should begin with upper-case letter
 dotnet_diagnostic.SA1303.severity = none
