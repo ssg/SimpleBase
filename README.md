@@ -21,8 +21,8 @@ Features
  - Base16: UpperCase, LowerCase and ModHex flavors. An experimental hexadecimal 
    encoder/decoder just to see how far I 
    can take the optimizations compared to .NET's  implementations. It's quite 
-   fast now. It can also be used as a replacement for `SoapHexBinary.Parse` 
-   method since it's missing from .NET Core.
+   fast now. It could also be used as a replacement for `SoapHexBinary.Parse` although
+   .NET has [`Convert.FromHexString()`](https://learn.microsoft.com/en-us/dotnet/api/system.convert.fromhexstring?view=net-5.0) method since .NET 5.
  - One-shot memory buffer based APIs for simple use cases.
  - Stream-based async APIs for more advanced scenarios.
  - Lightweight: No dependencies.
