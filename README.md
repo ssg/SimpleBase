@@ -295,5 +295,4 @@ Chatting about this pet project with my friends
 [@vhallac](https://github.com/vhallac), 
 [@alkimake](https://github.com/alkimake) and 
 [@Utopians](https://github.com/Utopians) at one of our friend's birthday 
-encouraged me to finish this. Thanks guys. Special thanks to my wife Günyüz for 
-unlimited tea and love.
+encouraged me to finish this. Thanks guys.
