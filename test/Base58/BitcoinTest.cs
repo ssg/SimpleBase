@@ -24,8 +24,8 @@ namespace SimpleBaseTest.Base58Test;
 [Parallelizable]
 class BitcoinTest
 {
-    private static readonly TestCaseData[] bitcoinTestData = new TestCaseData[]
-    {
+    private static readonly TestCaseData[] bitcoinTestData =
+    [
         new TestCaseData("0001", "12"),
         new TestCaseData("0000010203", "11Ldp"),
         new TestCaseData("009C1CA2CBA6422D3988C735BB82B5C880B0441856B9B0910F", "1FESiat4YpNeoYhW3Lp7sW1T6WydcW7vcE"),
@@ -38,7 +38,7 @@ class BitcoinTest
         new TestCaseData("21", "a"),
         new TestCaseData("000102030405060708090A0B0C0D0E0F000102030405060708090A0B0C0D0E0F", "1thX6LZfHDZZKUs92febWaf4WJZnsKRiVwJusXxB7L"),
         new TestCaseData("0000000000000000000000000000000000000000000000000000", "11111111111111111111111111"),
-    };
+    ];
 
     [Test]
     public void Encode_NullBuffer_ReturnsEmptyString()

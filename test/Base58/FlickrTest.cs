@@ -24,8 +24,8 @@ namespace SimpleBaseTest.Base58Test;
 [Parallelizable]
 class FlickrTest
 {
-    private static readonly TestCaseData[] flickrTestData = new TestCaseData[]
-    {
+    private static readonly TestCaseData[] flickrTestData =
+    [
         new TestCaseData("0000010203", "11kCP"),
         new TestCaseData("009C1CA2CBA6422D3988C735BB82B5C880B0441856B9B0910F", "1ferHzT4xPnDNxGv3kP7Sv1s6vYCBv7VBe"),
         new TestCaseData("000860C220EBBAF591D40F51994C4E2D9C9D88168C33E761F6", "1LijqnBz45gt2ipUhyQyJhfnKTzQaS7FG"),
@@ -35,7 +35,7 @@ class FlickrTest
         new TestCaseData("FFEEDDCCBBAA", "3crWn61oo"),
         new TestCaseData("00", "1"),
         new TestCaseData("21", "z"),
-    };
+    ];
 
     [Test]
     public void Encode_NullBuffer_ReturnsEmptyString()

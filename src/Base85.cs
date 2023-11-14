@@ -14,7 +14,12 @@ namespace SimpleBase;
 /// <summary>
 /// Base58 encoding/decoding class.
 /// </summary>
-public class Base85 : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCoder
+/// <remarks>
+/// Initializes a new instance of the <see cref="Base85"/> class
+/// using a custom alphabet.
+/// </remarks>
+/// <param name="alphabet">Alphabet to use.</param>
+public class Base85(Base85Alphabet alphabet) : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCoder
 {
     private const int baseLength = 85;
     private const int byteBlockSize = 4;
@@ -24,16 +29,6 @@ public class Base85 : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCoder
     private static readonly Lazy<Base85> z85 = new(() => new Base85(Base85Alphabet.Z85));
     private static readonly Lazy<Base85> ascii85 = new(() => new Base85(Base85Alphabet.Ascii85));
     private static readonly Lazy<Base85Ipv6> rfc1924 = new(() => new Base85Ipv6(Base85Alphabet.Rfc1924));
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="Base85"/> class
-    /// using a custom alphabet.
-    /// </summary>
-    /// <param name="alphabet">Alphabet to use.</param>
-    public Base85(Base85Alphabet alphabet)
-    {
-        Alphabet = alphabet;
-    }
 
     /// <summary>
     /// Gets Z85 flavor of Base85.
@@ -53,7 +48,7 @@ public class Base85 : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCoder
     /// <summary>
     /// Gets the encoding alphabet.
     /// </summary>
-    public Base85Alphabet Alphabet { get; }
+    public Base85Alphabet Alphabet { get; } = alphabet;
 
     /// <inheritdoc/>
     public int GetSafeByteCountForDecoding(ReadOnlySpan<char> text)
@@ -154,7 +149,7 @@ public class Base85 : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCoder
     {
         if (text.Length == 0)
         {
-            return Array.Empty<byte>();
+            return [];
         }
 
         // allocate a larger buffer if we're using shortcuts

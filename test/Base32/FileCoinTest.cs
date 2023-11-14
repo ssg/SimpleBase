@@ -9,25 +9,25 @@ namespace SimpleBaseTest.Base32Test;
 [TestFixture]
 class FileCoinTest
 {
-    private static readonly string[][] testData = new[]
-    {
-        new[] { "", "" },
-        new[] {"f", "my======" },
-        new[] {"fo", "mzxq====" },
-        new[] {"foo", "mzxw6===" },
-        new[] {"foob", "mzxw6yq=" },
-        new[] {"fooba", "mzxw6ytb" },
-        new[] {"foobar", "mzxw6ytboi======" },
-        new[] {"foobar1", "mzxw6ytboiyq====" },
-        new[] {"foobar12", "mzxw6ytboiyte===" },
-        new[] {"foobar123", "mzxw6ytboiytemy=" },
-        new[] {"1234567890123456789012345678901234567890", "gezdgnbvgy3tqojqgezdgnbvgy3tqojqgezdgnbvgy3tqojqgezdgnbvgy3tqojq" }
-    };
+    private static readonly string[][] testData =
+    [
+        ["", ""],
+        ["f", "my======"],
+        ["fo", "mzxq===="],
+        ["foo", "mzxw6==="],
+        ["foob", "mzxw6yq="],
+        ["fooba", "mzxw6ytb"],
+        ["foobar", "mzxw6ytboi======"],
+        ["foobar1", "mzxw6ytboiyq===="],
+        ["foobar12", "mzxw6ytboiyte==="],
+        ["foobar123", "mzxw6ytboiytemy="],
+        ["1234567890123456789012345678901234567890", "gezdgnbvgy3tqojqgezdgnbvgy3tqojqgezdgnbvgy3tqojqgezdgnbvgy3tqojq"]
+    ];
 
-    private static readonly object[] byteTestData = new object[]
-    {
+    private static readonly object[] byteTestData =
+    [
         new object[] { new byte[] { 245, 202, 80, 149, 94, 201, 222, 50, 17, 198, 138, 104, 32, 183, 131, 33, 139, 208, 203, 211, 197, 191, 92, 194 }, "6xffbfk6zhpdeeogrjucbn4degf5bs6tyw7vzqq", false },
-    };
+    ];
 
     [Test]
     [TestCaseSource(nameof(testData))]

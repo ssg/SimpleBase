@@ -9,21 +9,21 @@ namespace SimpleBaseTest.Base32Test;
 class Bech32Test
 {
     // test data was genereated with cryptii.com with a custom alphabet
-    private static readonly string[][] testData = new[]
-    {
-        new[] { "", "" },
-        new[] {"f", "vc======" },
-        new[] {"fo", "vehs====" },
-        new[] {"foo", "vehk7===" },
-        new[] {"foob", "vehk7cs=" },
-        new[] {"fooba", "vehk7cnp" },
-        new[] {"foobar", "vehk7cnpwg======" },
-        new[] {"foobar1", "vehk7cnpwgcs====" },
-        new[] {"foobar12", "vehk7cnpwgcny===" },
-        new[] {"foobar123", "vehk7cnpwgcnyvc=" },
-        new[] {"foobar1234", "vehk7cnpwgcnyve5" },
-        new[] {"1234567890123456789012345678901234567890", "xyerxdp4xcmnswfsxyerxdp4xcmnswfsxyerxdp4xcmnswfsxyerxdp4xcmnswfs" },
-    };
+    private static readonly string[][] testData =
+    [
+        ["", ""],
+        ["f", "vc======"],
+        ["fo", "vehs===="],
+        ["foo", "vehk7==="],
+        ["foob", "vehk7cs="],
+        ["fooba", "vehk7cnp"],
+        ["foobar", "vehk7cnpwg======"],
+        ["foobar1", "vehk7cnpwgcs===="],
+        ["foobar12", "vehk7cnpwgcny==="],
+        ["foobar123", "vehk7cnpwgcnyvc="],
+        ["foobar1234", "vehk7cnpwgcnyve5"],
+        ["1234567890123456789012345678901234567890", "xyerxdp4xcmnswfsxyerxdp4xcmnswfsxyerxdp4xcmnswfsxyerxdp4xcmnswfs"],
+    ];
 
     [Test]
     [TestCaseSource(nameof(testData))]

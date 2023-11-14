@@ -8,16 +8,16 @@ namespace SimpleBaseTest.Base85Test;
 
 internal class Ascii85Test
 {
-    private static readonly object[][] testVectors = new object[][]
-    {
-        new object[] { Array.Empty<byte>(), "" },
-        new object[] { new byte[] { 0, 0, 0, 0 }, "z" },
-        new object[] { new byte[] { 0x20, 0x20, 0x20, 0x20 }, "y" },
-        new object[] { new byte[] { 0x41, 0x42, 0x43, 0x44, 0x45 }, "5sdq,70" },
-        new object[] { new byte[] { 0x86, 0x4F, 0xD2, 0x6F, 0xB5, 0x59, 0xF7, 0x5B }, "L/669[9<6." },
-        new object[] { new byte[] { 0x11, 0x22, 0x33 }, "&L'\"" },
-        new object[] { new byte[] { 77, 97, 110, 32 }, "9jqo^" },
-    };
+    private static readonly object[][] testVectors =
+    [
+        [Array.Empty<byte>(), ""],
+        [new byte[] { 0, 0, 0, 0 }, "z"],
+        [new byte[] { 0x20, 0x20, 0x20, 0x20 }, "y"],
+        [new byte[] { 0x41, 0x42, 0x43, 0x44, 0x45 }, "5sdq,70"],
+        [new byte[] { 0x86, 0x4F, 0xD2, 0x6F, 0xB5, 0x59, 0xF7, 0x5B }, "L/669[9<6."],
+        [new byte[] { 0x11, 0x22, 0x33 }, "&L'\""],
+        [new byte[] { 77, 97, 110, 32 }, "9jqo^"],
+    ];
 
     [Test]
     public void Decode_InvalidShortcut_ThrowsArgumentException()

@@ -16,7 +16,12 @@ namespace SimpleBase;
 /// Base58 doesn't implement a Stream-based interface because it's not feasible to use
 /// on large buffers.
 /// </remarks>
-public sealed class Base58 : IBaseCoder, INonAllocatingBaseCoder
+/// <remarks>
+/// Initializes a new instance of the <see cref="Base58"/> class
+/// using a custom alphabet.
+/// </remarks>
+/// <param name="alphabet">Alphabet to use.</param>
+public sealed class Base58(Base58Alphabet alphabet) : IBaseCoder, INonAllocatingBaseCoder
 {
     private const int reductionFactor = 733; // https://github.com/bitcoin/bitcoin/blob/master/src/base58.cpp#L48
     private const int divisor = 58;
@@ -26,17 +31,6 @@ public sealed class Base58 : IBaseCoder, INonAllocatingBaseCoder
     private static readonly Lazy<Base58> bitcoin = new(() => new Base58(Base58Alphabet.Bitcoin));
     private static readonly Lazy<Base58> ripple = new(() => new Base58(Base58Alphabet.Ripple));
     private static readonly Lazy<Base58> flickr = new(() => new Base58(Base58Alphabet.Flickr));
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="Base58"/> class
-    /// using a custom alphabet.
-    /// </summary>
-    /// <param name="alphabet">Alphabet to use.</param>
-    public Base58(Base58Alphabet alphabet)
-    {
-        Alphabet = alphabet;
-        ZeroChar = alphabet.Value[0];
-    }
 
     /// <summary>
     /// Gets Bitcoin flavor.
@@ -56,12 +50,12 @@ public sealed class Base58 : IBaseCoder, INonAllocatingBaseCoder
     /// <summary>
     /// Gets the encoding alphabet.
     /// </summary>
-    public Base58Alphabet Alphabet { get; }
+    public Base58Alphabet Alphabet { get; } = alphabet;
 
     /// <summary>
     /// Gets the character for zero.
     /// </summary>
-    public char ZeroChar { get; }
+    public char ZeroChar { get; } = alphabet.Value[0];
 
     /// <summary>
     /// Retrieve safe byte count while avoiding multiple counting operations.
@@ -246,7 +240,7 @@ public sealed class Base58 : IBaseCoder, INonAllocatingBaseCoder
     {
         if (text.Length == 0)
         {
-            return Array.Empty<byte>();
+            return [];
         }
 
         char zeroChar = ZeroChar;

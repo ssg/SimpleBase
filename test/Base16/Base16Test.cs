@@ -12,22 +12,22 @@ namespace SimpleBaseTest.Base16Test;
 [Parallelizable]
 internal class Base16Test
 {
-    private static readonly Base16[] encoders = new[]
-    {
+    private static readonly Base16[] encoders =
+    [
         Base16.LowerCase,
         Base16.UpperCase,
         Base16.ModHex
-    };
+    ];
 
-    private static readonly object[][] testCases = new[]
-    {                                                                                   // LowerCase        // UpperCase        // ModHex
-        new object[] { Array.Empty<byte>(),                                             "",                 "",                 ""                  },
-        new object[] { new byte[] { 0xAB },                                             "ab",               "AB",               "ln"                },
-        new object[] { new byte[] { 0x00, 0x01, 0x02, 0x03 },                           "00010203",         "00010203",         "cccbcdce"          },
-        new object[] { new byte[] { 0x10, 0x11, 0x12, 0x13 },                           "10111213",         "10111213",         "bcbbbdbe"          },
-        new object[] { new byte[] { 0xAB, 0xCD, 0xEF, 0xBA },                           "abcdefba",         "ABCDEFBA",         "lnrtuvnl"          },
-        new object[] { new byte[] { 0xAB, 0xCD, 0xEF, 0xBA, 0xAB, 0xCD, 0xEF, 0xBA },   "abcdefbaabcdefba", "ABCDEFBAABCDEFBA", "lnrtuvnllnrtuvnl"  },
-    };
+    private static readonly object[][] testCases =
+    [                                                                   // LowerCase        // UpperCase        // ModHex
+        [Array.Empty<byte>(),                                           "",                 "",                 ""],
+        [new byte[] { 0xAB },                                           "ab",               "AB",               "ln"],
+        [new byte[] { 0x00, 0x01, 0x02, 0x03 },                         "00010203",         "00010203",         "cccbcdce"],
+        [new byte[] { 0x10, 0x11, 0x12, 0x13 },                         "10111213",         "10111213",         "bcbbbdbe"],
+        [new byte[] { 0xAB, 0xCD, 0xEF, 0xBA },                         "abcdefba",         "ABCDEFBA",         "lnrtuvnl"],
+        [new byte[] { 0xAB, 0xCD, 0xEF, 0xBA, 0xAB, 0xCD, 0xEF, 0xBA }, "abcdefbaabcdefba", "ABCDEFBAABCDEFBA", "lnrtuvnllnrtuvnl"],
+    ];
 
     private static IEnumerable<TestCaseData> testData
     {

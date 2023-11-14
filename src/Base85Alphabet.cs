@@ -10,7 +10,17 @@ namespace SimpleBase;
 /// <summary>
 /// Base85 Alphabet.
 /// </summary>
-public sealed class Base85Alphabet : CodingAlphabet
+/// <remarks>
+/// Initializes a new instance of the <see cref="Base85Alphabet"/> class
+/// using custom settings.
+/// </remarks>
+/// <param name="alphabet">Alphabet to use.</param>
+/// <param name="allZeroShortcut">Character to substitute for all zero.</param>
+/// <param name="allSpaceShortcut">Character to substitute for all space.</param>
+public sealed class Base85Alphabet(
+    string alphabet,
+    char? allZeroShortcut = null,
+    char? allSpaceShortcut = null) : CodingAlphabet(85, alphabet)
 {
     private static readonly Lazy<Base85Alphabet> z85 = new(() => new Base85Alphabet(
             "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ.-:+=^!/*?&<>()[]{}@%$#"));
@@ -22,23 +32,6 @@ public sealed class Base85Alphabet : CodingAlphabet
 
     private static readonly Lazy<Base85Alphabet> rfc1924 = new(() => new Base85Alphabet(
             "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz!#$%&()*+-;<=>?@^_`{|}~"));
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="Base85Alphabet"/> class
-    /// using custom settings.
-    /// </summary>
-    /// <param name="alphabet">Alphabet to use.</param>
-    /// <param name="allZeroShortcut">Character to substitute for all zero.</param>
-    /// <param name="allSpaceShortcut">Character to substitute for all space.</param>
-    public Base85Alphabet(
-        string alphabet,
-        char? allZeroShortcut = null,
-        char? allSpaceShortcut = null)
-        : base(85, alphabet)
-    {
-        AllZeroShortcut = allZeroShortcut;
-        AllSpaceShortcut = allSpaceShortcut;
-    }
 
     /// <summary>
     /// Gets ZeroMQ Z85 Alphabet.
@@ -59,12 +52,12 @@ public sealed class Base85Alphabet : CodingAlphabet
     /// <summary>
     /// Gets the character to be used for "all zeros".
     /// </summary>
-    public char? AllZeroShortcut { get; }
+    public char? AllZeroShortcut { get; } = allZeroShortcut;
 
     /// <summary>
     /// Gets the character to be used for "all spaces".
     /// </summary>
-    public char? AllSpaceShortcut { get; }
+    public char? AllSpaceShortcut { get; } = allSpaceShortcut;
 
     /// <summary>
     /// Gets a value indicating whether the alphabet uses one of shortcut characters for all spaces

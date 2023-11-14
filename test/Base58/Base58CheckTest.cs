@@ -25,8 +25,8 @@ public class Base58CheckTest
     //WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
     //ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
     //OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-    private static readonly object[] testData = new object[]
-    {
+    private static readonly object[] testData =
+    [
         new object[] { 20, "", "3MNQE1X"},
         new object[] { 20, " ", "B2Kr6dBE"},
         new object[] { 20, "-", "B3jv1Aft"},
@@ -38,7 +38,7 @@ public class Base58CheckTest
         new object[] { 20, "1234598760", "ZmNb8uQn5zvnUohNCEPP"},
         new object[] { 20, "abcdefghijklmnopqrstuvwxyz", "K2RYDcKfupxwXdWhSAxQPCeiULntKm63UXyx5MvEH2"},
         new object[] { 20, "00000000000000000000000000000000000000000000000000000000000000", "bi1EWXwJay2udZVxLJozuTb8Meg4W9c6xnmJaRDjg6pri5MBAxb9XwrpQXbtnqEoRV5U2pixnFfwyXC8tRAVC8XxnjK"},
-    };
+    ];
 
     [Test]
     [TestCaseSource(nameof(testData))]

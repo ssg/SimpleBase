@@ -23,20 +23,20 @@ namespace SimpleBaseTest.Base32Test;
 [TestFixture]
 class Rfc4648Test
 {
-    private static readonly string[][] testData = new[]
-    {
-        new[] { "", "" },
-        new[] {"f", "MY======" },
-        new[] {"fo", "MZXQ====" },
-        new[] {"foo", "MZXW6===" },
-        new[] {"foob", "MZXW6YQ=" },
-        new[] {"fooba", "MZXW6YTB" },
-        new[] {"foobar", "MZXW6YTBOI======" },
-        new[] {"foobar1", "MZXW6YTBOIYQ====" },
-        new[] {"foobar12", "MZXW6YTBOIYTE===" },
-        new[] {"foobar123", "MZXW6YTBOIYTEMY=" },
-        new[] {"1234567890123456789012345678901234567890", "GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ" },
-    };
+    private static readonly string[][] testData =
+    [
+        ["", ""],
+        ["f", "MY======"],
+        ["fo", "MZXQ===="],
+        ["foo", "MZXW6==="],
+        ["foob", "MZXW6YQ="],
+        ["fooba", "MZXW6YTB"],
+        ["foobar", "MZXW6YTBOI======"],
+        ["foobar1", "MZXW6YTBOIYQ===="],
+        ["foobar12", "MZXW6YTBOIYTE==="],
+        ["foobar123", "MZXW6YTBOIYTEMY="],
+        ["1234567890123456789012345678901234567890", "GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ"],
+    ];
 
     [Test]
     [TestCaseSource(nameof(testData))]

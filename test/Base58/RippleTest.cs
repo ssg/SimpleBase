@@ -24,8 +24,8 @@ namespace SimpleBaseTest.Base58Test;
 [Parallelizable]
 class RippleTest
 {
-    private static readonly TestCaseData[] rippleTestData = new TestCaseData[]
-    {
+    private static readonly TestCaseData[] rippleTestData =
+    [
         new TestCaseData("0000010203", "rrLdF"),
         new TestCaseData("009C1CA2CBA6422D3988C735BB82B5C880B0441856B9B0910F", "rENS52thYF4eoY6WsLFf1WrTaWydcWfvcN"),
         new TestCaseData("000860C220EBBAF591D40F51994C4E2D9C9D88168C33E761F6", "rmJKR4c2hnG7pJQuHZqZjHE4kt2qw1fg6"),
@@ -35,7 +35,7 @@ class RippleTest
         new TestCaseData("FFEEDDCCBBAA", "sUSA4arPP"),
         new TestCaseData("00", "r"),
         new TestCaseData("21", "2"),
-    };
+    ];
 
     [Test]
     public void Encode_NullBuffer_ReturnsEmptyString()

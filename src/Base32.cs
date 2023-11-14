@@ -196,7 +196,7 @@ public sealed class Base32 : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCod
         int outputLen = getAllocationByteCountForDecoding(textLen);
         if (outputLen == 0)
         {
-            return Array.Empty<byte>();
+            return [];
         }
 
         var outputBuffer = new byte[outputLen];

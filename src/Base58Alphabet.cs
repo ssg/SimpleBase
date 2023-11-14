@@ -10,7 +10,12 @@ namespace SimpleBase;
 /// <summary>
 /// Base58 alphabet.
 /// </summary>
-public sealed class Base58Alphabet : CodingAlphabet
+/// <remarks>
+/// Initializes a new instance of the <see cref="Base58Alphabet"/> class
+/// using a custom alphabet.
+/// </remarks>
+/// <param name="alphabet">Alphabet to use.</param>
+public sealed class Base58Alphabet(string alphabet) : CodingAlphabet(58, alphabet)
 {
     private static readonly Lazy<Base58Alphabet> bitcoinAlphabet = new(()
         => new Base58Alphabet("123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz"));
@@ -20,16 +25,6 @@ public sealed class Base58Alphabet : CodingAlphabet
 
     private static readonly Lazy<Base58Alphabet> flickrAlphabet = new(()
         => new Base58Alphabet("123456789abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ"));
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="Base58Alphabet"/> class
-    /// using a custom alphabet.
-    /// </summary>
-    /// <param name="alphabet">Alphabet to use.</param>
-    public Base58Alphabet(string alphabet)
-        : base(58, alphabet)
-    {
-    }
 
     /// <summary>
     /// Gets Bitcoin alphabet.

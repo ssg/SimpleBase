@@ -23,13 +23,13 @@ namespace SimpleBaseTest.Base32Test;
 [TestFixture]
 class ZBase32Test
 {
-    private static readonly string[][] testData = new[]
-    {
-        new[] { "", "" },
-        new[] { "dCode z-base-32", "ctbs63dfrb7n4aubqp114c31" },
-        new[] { "Never did sun more beautifully steep",
-            "j31zc3m1rb1g13byqp4shedpp73gkednciozk7djc34sa5d3rb3ze3mfqy" },
-    };
+    private static readonly string[][] testData =
+    [
+        ["", ""],
+        ["dCode z-base-32", "ctbs63dfrb7n4aubqp114c31"],
+        [ "Never did sun more beautifully steep",
+            "j31zc3m1rb1g13byqp4shedpp73gkednciozk7djc34sa5d3rb3ze3mfqy" ],
+    ];
 
     [Test]
     [TestCaseSource(nameof(testData))]

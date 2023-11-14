@@ -24,17 +24,17 @@ namespace SimpleBaseTest.Base32Test;
 [TestFixture]
 class ExtendedHexTest
 {
-    private static readonly string[][] testData = new[]
-    {
-        new[] { "", "" },
-        new[] { "f", "CO======" },
-        new[] { "fo", "CPNG====" },
-        new[] { "foo", "CPNMU===" },
-        new[] { "foob", "CPNMUOG=" },
-        new[] { "fooba", "CPNMUOJ1" },
-        new[] { "foobar", "CPNMUOJ1E8======" },
-        new[] { "1234567890123456789012345678901234567890", "64P36D1L6ORJGE9G64P36D1L6ORJGE9G64P36D1L6ORJGE9G64P36D1L6ORJGE9G" },
-    };
+    private static readonly string[][] testData =
+    [
+        ["", ""],
+        ["f", "CO======"],
+        ["fo", "CPNG===="],
+        ["foo", "CPNMU==="],
+        ["foob", "CPNMUOG="],
+        ["fooba", "CPNMUOJ1"],
+        ["foobar", "CPNMUOJ1E8======"],
+        ["1234567890123456789012345678901234567890", "64P36D1L6ORJGE9G64P36D1L6ORJGE9G64P36D1L6ORJGE9G64P36D1L6ORJGE9G"],
+    ];
 
     [Test]
     [TestCaseSource(nameof(testData))]

@@ -13,20 +13,15 @@ namespace SimpleBase;
 /// <summary>
 /// Base16 encoding/decoding.
 /// </summary>
-public sealed class Base16 : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCoder
+/// <remarks>
+/// Initializes a new instance of the <see cref="Base16"/> class.
+/// </remarks>
+/// <param name="alphabet">Alphabet to use.</param>
+public sealed class Base16(Base16Alphabet alphabet) : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCoder
 {
     private static readonly Lazy<Base16> upperCase = new(() => new Base16(Base16Alphabet.UpperCase));
     private static readonly Lazy<Base16> lowerCase = new(() => new Base16(Base16Alphabet.LowerCase));
     private static readonly Lazy<Base16> modHex = new(() => new Base16(Base16Alphabet.ModHex));
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="Base16"/> class.
-    /// </summary>
-    /// <param name="alphabet">Alphabet to use.</param>
-    public Base16(Base16Alphabet alphabet)
-    {
-        Alphabet = alphabet;
-    }
 
     /// <summary>
     /// Gets upper case Base16 encoder. Decoding is case-insensitive.
@@ -46,7 +41,7 @@ public sealed class Base16 : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCod
     /// <summary>
     /// Gets the alphabet used by the encoder.
     /// </summary>
-    public Base16Alphabet Alphabet { get; }
+    public Base16Alphabet Alphabet { get; } = alphabet;
 
     /// <summary>
     /// Decode Upper/Lowercase Base16 text into bytes.
@@ -146,7 +141,7 @@ public sealed class Base16 : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCod
         int textLen = text.Length;
         if (textLen == 0)
         {
-            return Array.Empty<byte>();
+            return [];
         }
 
         byte[] output = new byte[GetSafeByteCountForDecoding(text)];

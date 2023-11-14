@@ -26,30 +26,30 @@ namespace SimpleBaseTest.Base32Test;
 [TestFixture]
 class CrockfordTest
 {
-    private static readonly object[][] testData = {
-        new object[] { "", "", false },
-        new object[] { "f", "CR", false },
-        new object[] { "f", "CR======", true },
-        new object[] { "fo", "CSQG", false },
-        new object[] { "fo", "CSQG====", true },
-        new object[] { "foo", "CSQPY", false },
-        new object[] { "foo", "CSQPY===", true },
-        new object[] { "foob", "CSQPYRG", false },
-        new object[] { "foob", "CSQPYRG=", true },
-        new object[] { "fooba", "CSQPYRK1", false },
-        new object[] { "fooba", "CSQPYRK1", true },
-        new object[] { "foobar", "CSQPYRK1E8", false },
-        new object[] { "foobar", "CSQPYRK1E8======", true },
-        new object[] { "123456789012345678901234567890123456789", "64S36D1N6RVKGE9G64S36D1N6RVKGE9G64S36D1N6RVKGE9G64S36D1N6RVKGE8", false },
-        new object[] { "123456789012345678901234567890123456789", "64S36D1N6RVKGE9G64S36D1N6RVKGE9G64S36D1N6RVKGE9G64S36D1N6RVKGE8=", true }
-    };        
+    private static readonly object[][] testData = [
+        ["", "", false],
+        ["f", "CR", false],
+        ["f", "CR======", true],
+        ["fo", "CSQG", false],
+        ["fo", "CSQG====", true],
+        ["foo", "CSQPY", false],
+        ["foo", "CSQPY===", true],
+        ["foob", "CSQPYRG", false],
+        ["foob", "CSQPYRG=", true],
+        ["fooba", "CSQPYRK1", false],
+        ["fooba", "CSQPYRK1", true],
+        ["foobar", "CSQPYRK1E8", false],
+        ["foobar", "CSQPYRK1E8======", true],
+        ["123456789012345678901234567890123456789", "64S36D1N6RVKGE9G64S36D1N6RVKGE9G64S36D1N6RVKGE9G64S36D1N6RVKGE8", false],
+        ["123456789012345678901234567890123456789", "64S36D1N6RVKGE9G64S36D1N6RVKGE9G64S36D1N6RVKGE9G64S36D1N6RVKGE8=", true]
+    ];        
 
     [Test]
     public void Encode_SampleInterface_Compiles()
     {
         // this source code exists in samples and just needs to be compiled and run without errors.
         // do not edit/refactor the code below
-        byte[] myBuffer = Array.Empty<byte>();
+        byte[] myBuffer = [];
         string result = Base32.Crockford.Encode(myBuffer, padding: true);
         Assert.That(result, Is.Empty);
     }

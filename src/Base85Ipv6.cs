@@ -22,20 +22,15 @@ namespace SimpleBase;
 /// So, that's why I only included a proof of concept implementation instead of working on optimizing it.
 /// RFC 1924 should die, and this code should only be used to support some obscure standard or code somewhere.
 /// </remarks>
-public class Base85Ipv6 : Base85
+/// <remarks>
+/// Initializes a new instance of the <see cref="Base85Ipv6"/> class.
+/// </remarks>
+/// <param name="alphabet">Coding alphabet.</param>
+public class Base85Ipv6(Base85Alphabet alphabet) : Base85(alphabet)
 {
     private const int ipv6bytes = 16;
     private const int ipv6chars = 20;
     private static readonly BigInteger divisor = new(85);
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="Base85Ipv6"/> class.
-    /// </summary>
-    /// <param name="alphabet">Coding alphabet.</param>
-    public Base85Ipv6(Base85Alphabet alphabet)
-        : base(alphabet)
-    {
-    }
 
     /// <summary>
     /// Encode IPv6 address into RFC 1924 Base85 text.
