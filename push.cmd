@@ -1,3 +1,3 @@
 @echo off
-nuget push %1 -Source https://api.nuget.org/v3/index.json
-nuget push %1 -Source "GitHub"
+dotnet nuget push %1 --source https://api.nuget.org/v3/index.json
+dotnet nuget push %1 --source "GitHub"
