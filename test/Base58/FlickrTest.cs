@@ -65,7 +65,7 @@ class FlickrTest
     [Test]
     public void Encode_EmptyBuffer_ReturnsEmptyString()
     {
-        Assert.That(Base58.Flickr.Encode(Array.Empty<byte>()), Is.EqualTo(String.Empty));
+        Assert.That(Base58.Flickr.Encode([]), Is.EqualTo(String.Empty));
     }
 
     [Test]

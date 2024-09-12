@@ -211,7 +211,7 @@ internal class Base16Test
     public void CustomCtor()
     {
         var encoder = new Base16(new Base16Alphabet("abcdefghijklmnop"));
-        var result = encoder.Encode(new byte[] { 0, 1, 16, 128, 255 });
+        var result = encoder.Encode([0, 1, 16, 128, 255]);
         Assert.That(result, Is.EqualTo("aaabbaiapp"));
     }
 

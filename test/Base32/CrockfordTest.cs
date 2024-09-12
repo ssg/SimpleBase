@@ -203,7 +203,7 @@ class CrockfordTest
     [Test]
     public void TryDecode_ZeroBuffer_ReturnsFalse()
     {
-        var success = Base32.Crockford.TryDecode("test", Array.Empty<byte>(), out int numBytesWritten);
+        var success = Base32.Crockford.TryDecode("test", [], out int numBytesWritten);
         Assert.That(success, Is.False);
         Assert.That(numBytesWritten, Is.EqualTo(0));
     }

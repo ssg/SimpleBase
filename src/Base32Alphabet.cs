@@ -33,25 +33,23 @@ public class Base32Alphabet : CodingAlphabet
     private static readonly Lazy<AliasedBase32Alphabet> crockfordAlphabet = new
         (() => new AliasedBase32Alphabet(
             "0123456789ABCDEFGHJKMNPQRSTVWXYZ",
-            new CharMap[]
-            {
+            [
                 new('O', '0'),
                 new('I', '1'),
                 new('L', '1'),
-            }));
+            ]));
 
     private static readonly Lazy<AliasedBase32Alphabet> base32HAlphabet = new(
         () => new AliasedBase32Alphabet(
             "0123456789ABCDEFGHJKLMNPQRTVWXYZ",
             paddingChar: '0',
             PaddingPosition.Start,
-            new CharMap[]
-            {
+            [
                 new('O', '0'),
                 new('I', '1'),
                 new('S', '5'),
                 new('U', 'V'),
-            }));
+            ]));
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Base32Alphabet"/> class.

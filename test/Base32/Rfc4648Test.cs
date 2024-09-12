@@ -96,6 +96,6 @@ class Rfc4648Test
     [Test]
     public void Encode_long_NegativeValues_Throws()
     {
-        Assert.Throws<ArgumentOutOfRangeException>(() => Base32.Rfc4648.Encode(-1));
+        _ = Assert.Throws<ArgumentOutOfRangeException>(() => Base32.Rfc4648.Encode(-1));
     }
 }

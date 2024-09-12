@@ -124,6 +124,7 @@ dotnet_diagnostic.SA1101.severity = none
 # SA1300: Element should begin with upper-case letter
 dotnet_diagnostic.SA1300.severity = silent
 dotnet_diagnostic.SA1311.severity = silent
+csharp_style_prefer_primary_constructors = true:suggestion
 
 [*.vb]
 #### Naming styles ####
@@ -188,3 +189,4 @@ dotnet_style_qualification_for_field = false:warning
 dotnet_style_qualification_for_property = false:warning
 dotnet_style_qualification_for_method = false:warning
 dotnet_style_qualification_for_event = false:warning
+dotnet_style_prefer_collection_expression = when_types_loosely_match:suggestion
