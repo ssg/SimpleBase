@@ -24,7 +24,7 @@
 		<PackageReleaseNotes>
 			<![CDATA[
 ## Fixes
-- Fixes #58 - `Encode(long)` failing -- reported by Pascal Schwarz <@pschwarzapp> 
+- Fixes #58 - `Encode(long)` failing -- reported by Pascal Schwarz <@pschwarzpp> 
 ]]>
 		</PackageReleaseNotes>
 	</PropertyGroup>

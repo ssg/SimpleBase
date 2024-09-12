@@ -1,7 +1,7 @@
 # 4.0.1
 
 ## Fixes
-- Fixes #58 - `Encode(long)` failing -- reported by Pascal Schwarz <@pschwarzapp> 
+- Fixes #58 - `Encode(long)` failing -- reported by Pascal Schwarz <@pschwarzpp> 
 
 # 4.0.0
 
