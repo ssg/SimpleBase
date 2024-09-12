@@ -5,6 +5,8 @@
 
 using System;
 using System.IO;
+using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 
 namespace SimpleBase;
@@ -112,21 +114,36 @@ public sealed class Base32 : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCod
             : throw new ArgumentOutOfRangeException(nameof(number), "Number is negative");
     }
 
+    private static readonly byte[] zeroBuffer = [0];
+
     /// <inheritdoc/>
     public string Encode(ulong number)
     {
-        var buffer = BitConverter.GetBytes(number);
-        bool little = BitConverter.IsLittleEndian;
-        int numBytes = sizeof(ulong);
-        int index = little ? 0 : (numBytes - 1);
-        int increment = little ? -1 : 1;
-        while (buffer[index] == 0)
+        const int numBytes = sizeof(ulong);
+        if (number == 0)
         {
-            index += increment;
+            return Encode(zeroBuffer.AsSpan());
         }
 
-        var span = buffer.AsSpan();
-        return Encode(little ? span[..index] : span[index..]);
+        var buffer = BitConverter.GetBytes(number);
+
+        // skip zeroes for encoding
+        int i;
+        bool bigEndian = !BitConverter.IsLittleEndian;
+        if (bigEndian)
+        {
+            for (i = 0; buffer[i] == 0 && i < numBytes; i++)
+            {
+            }
+            var span = buffer.AsSpan();
+            span.Reverse(); // so the encoding is consistent between systems with different endianness
+            return Encode(buffer.AsSpan()[i..]);
+        }
+
+        for (i = numBytes - 1; buffer[i] == 0 && i > 0; i--)
+        {
+        }
+        return Encode(buffer.AsSpan()[..(i + 1)]);
     }
 
     /// <inheritdoc/>

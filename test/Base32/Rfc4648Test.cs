@@ -70,4 +70,32 @@ class Rfc4648Test
     {
         _ = Assert.Throws<ArgumentException>(() => Base32.Rfc4648.Decode("[];',m."));
     }
+
+    [Test]
+    [TestCase(0,                  ExpectedResult = "AA")]
+    [TestCase(0x0000000000000011, ExpectedResult = "CE")]
+    [TestCase(0x0000000000001122, ExpectedResult = "EIIQ")]
+    [TestCase(0x0000000000112233, ExpectedResult = "GMRBC")]
+    [TestCase(0x0000000011223344, ExpectedResult = "IQZSEEI")]
+    [TestCase(0x0000001122334455, ExpectedResult = "KVCDGIQR")]
+    [TestCase(0x0000112233445566, ExpectedResult = "MZKUIMZCCE")]
+    [TestCase(0x0011223344556677, ExpectedResult = "O5TFKRBTEIIQ")]
+    [TestCase(0x1122334455667788, ExpectedResult = "RB3WMVKEGMRBC")]
+    [TestCase(0x1100000000000000, ExpectedResult = "AAAAAAAAAAABC")]
+    [TestCase(0x1122000000000000, ExpectedResult = "AAAAAAAAAARBC")]
+    [TestCase(0x1122330000000000, ExpectedResult = "AAAAAAAAGMRBC")]
+    [TestCase(0x1122334400000000, ExpectedResult = "AAAAAACEGMRBC")]
+    [TestCase(0x1122334455000000, ExpectedResult = "AAAAAVKEGMRBC")]
+    [TestCase(0x1122334455660000, ExpectedResult = "AAAGMVKEGMRBC")]
+    [TestCase(0x1122334455667700, ExpectedResult = "AB3WMVKEGMRBC")]
+    public string Encode_long_ReturnsExpectedValues(long number)
+    {
+        return Base32.Rfc4648.Encode(number);
+    }
+
+    [Test]
+    public void Encode_long_NegativeValues_Throws()
+    {
+        Assert.Throws<ArgumentOutOfRangeException>(() => Base32.Rfc4648.Encode(-1));
+    }
 }
