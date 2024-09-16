@@ -71,26 +71,72 @@ class Rfc4648Test
         _ = Assert.Throws<ArgumentException>(() => Base32.Rfc4648.Decode("[];',m."));
     }
 
+    private static readonly TestCaseData[] ulongTestCases =
+    [
+        new TestCaseData(0UL,                  "AA"),
+        new TestCaseData(0x0000000000000011UL, "CE"),
+        new TestCaseData(0x0000000000001122UL, "EIIQ"),
+        new TestCaseData(0x0000000000112233UL, "GMRBC"),
+        new TestCaseData(0x0000000011223344UL, "IQZSEEI"),
+        new TestCaseData(0x0000001122334455UL, "KVCDGIQR"),
+        new TestCaseData(0x0000112233445566UL, "MZKUIMZCCE"),
+        new TestCaseData(0x0011223344556677UL, "O5TFKRBTEIIQ"),
+        new TestCaseData(0x1122334455667788UL, "RB3WMVKEGMRBC"),
+        new TestCaseData(0x1100000000000000UL, "AAAAAAAAAAABC"),
+        new TestCaseData(0x1122000000000000UL, "AAAAAAAAAARBC"),
+        new TestCaseData(0x1122330000000000UL, "AAAAAAAAGMRBC"),
+        new TestCaseData(0x1122334400000000UL, "AAAAAACEGMRBC"),
+        new TestCaseData(0x1122334455000000UL, "AAAAAVKEGMRBC"),
+        new TestCaseData(0x1122334455660000UL, "AAAGMVKEGMRBC"),
+        new TestCaseData(0x1122334455667700UL, "AB3WMVKEGMRBC"),
+    ];
+
     [Test]
-    [TestCase(0,                  ExpectedResult = "AA")]
-    [TestCase(0x0000000000000011, ExpectedResult = "CE")]
-    [TestCase(0x0000000000001122, ExpectedResult = "EIIQ")]
-    [TestCase(0x0000000000112233, ExpectedResult = "GMRBC")]
-    [TestCase(0x0000000011223344, ExpectedResult = "IQZSEEI")]
-    [TestCase(0x0000001122334455, ExpectedResult = "KVCDGIQR")]
-    [TestCase(0x0000112233445566, ExpectedResult = "MZKUIMZCCE")]
-    [TestCase(0x0011223344556677, ExpectedResult = "O5TFKRBTEIIQ")]
-    [TestCase(0x1122334455667788, ExpectedResult = "RB3WMVKEGMRBC")]
-    [TestCase(0x1100000000000000, ExpectedResult = "AAAAAAAAAAABC")]
-    [TestCase(0x1122000000000000, ExpectedResult = "AAAAAAAAAARBC")]
-    [TestCase(0x1122330000000000, ExpectedResult = "AAAAAAAAGMRBC")]
-    [TestCase(0x1122334400000000, ExpectedResult = "AAAAAACEGMRBC")]
-    [TestCase(0x1122334455000000, ExpectedResult = "AAAAAVKEGMRBC")]
-    [TestCase(0x1122334455660000, ExpectedResult = "AAAGMVKEGMRBC")]
-    [TestCase(0x1122334455667700, ExpectedResult = "AB3WMVKEGMRBC")]
-    public string Encode_long_ReturnsExpectedValues(long number)
+    [TestCaseSource(nameof(ulongTestCases))]
+    public void Encode_ulong_ReturnsExpectedValues(ulong number, string expectedOutput)
     {
-        return Base32.Rfc4648.Encode(number);
+        Assert.That(Base32.Rfc4648.Encode(number), Is.EqualTo(expectedOutput));
+    }
+
+    [Test]
+    [TestCaseSource(nameof(ulongTestCases))]
+    public void Encode_BigEndian_ulong_ReturnsExpectedValues(ulong number, string expectedOutput)
+    {
+        if (!BitConverter.IsLittleEndian)
+        {
+            throw new InvalidOperationException("big endian tests are only supported on little endian archs");
+        }
+        number = reverseBytes(number);
+
+        var bigEndian = new Base32(Base32Alphabet.Rfc4648, isBigEndian: true);
+        Assert.That(bigEndian.Encode(number), Is.EqualTo(expectedOutput));
+    }
+
+    private static ulong reverseBytes(ulong number)
+    {
+        var span = BitConverter.GetBytes(number).AsSpan();
+        span.Reverse();
+        return BitConverter.ToUInt64(span);
+    }
+
+    [Test]
+    [TestCaseSource(nameof(ulongTestCases))]
+    public void DecodeUInt64_ReturnsExpectedValues(ulong expectedNumber, string input)
+    {
+        Assert.That(Base32.Rfc4648.DecodeUInt64(input), Is.EqualTo(expectedNumber));
+    }
+
+    [Test]
+    [TestCaseSource(nameof(ulongTestCases))]
+    public void DecodeUInt64_BigEndian_ReturnsExpectedValues(ulong expectedNumber, string input)
+    {
+        if (!BitConverter.IsLittleEndian)
+        {
+            throw new InvalidOperationException("big endian tests are only supported on little endian archs");
+        }
+        expectedNumber = reverseBytes(expectedNumber);
+        var bigEndian = new Base32(Base32Alphabet.Rfc4648, isBigEndian: true);
+        Assert.That(bigEndian.DecodeUInt64(input), Is.EqualTo(expectedNumber));
     }
 
     [Test]

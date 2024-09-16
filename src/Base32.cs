@@ -6,7 +6,6 @@
 using System;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Threading.Tasks;
 
 namespace SimpleBase;
@@ -19,6 +18,9 @@ public sealed class Base32 : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCod
 {
     private const int bitsPerByte = 8;
     private const int bitsPerChar = 5;
+
+    // this is an instance variable to allow unit tests to test this behavior
+    internal readonly bool IsBigEndian;
 
     private static readonly Lazy<Base32> crockford = new(() => new Base32(Base32Alphabet.Crockford));
     private static readonly Lazy<Base32> rfc4648 = new(() => new Base32(Base32Alphabet.Rfc4648));
@@ -34,15 +36,21 @@ public sealed class Base32 : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCod
     /// </summary>
     /// <param name="alphabet">Alphabet to use.</param>
     public Base32(Base32Alphabet alphabet)
+        : this(alphabet, !BitConverter.IsLittleEndian)
+    {
+    }
+
+    internal Base32(Base32Alphabet alphabet, bool isBigEndian)
     {
         if (alphabet.PaddingPosition != PaddingPosition.End)
         {
             throw new ArgumentException(
-                "Only alphabets with paddings at the end are supported by this implementation",
+                "Only encoding alphabets with paddings at the end are supported by this implementation",
                 nameof(alphabet));
         }
 
         Alphabet = alphabet;
+        IsBigEndian = isBigEndian;
     }
 
     private enum DecodeResult
@@ -129,15 +137,14 @@ public sealed class Base32 : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCod
 
         // skip zeroes for encoding
         int i;
-        bool bigEndian = !BitConverter.IsLittleEndian;
-        if (bigEndian)
+        if (IsBigEndian)
         {
             for (i = 0; buffer[i] == 0 && i < numBytes; i++)
             {
             }
-            var span = buffer.AsSpan();
+            var span = buffer.AsSpan()[i..];
             span.Reverse(); // so the encoding is consistent between systems with different endianness
-            return Encode(buffer.AsSpan()[i..]);
+            return Encode(span);
         }
 
         for (i = numBytes - 1; buffer[i] == 0 && i > 0; i--)
@@ -150,15 +157,31 @@ public sealed class Base32 : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCod
     public ulong DecodeUInt64(string text)
     {
         var buffer = Decode(text);
-        return buffer.Length <= sizeof(ulong)
-            ? BitConverter.ToUInt64(buffer)
-            : throw new InvalidOperationException("Decoded text is too long to fit in a buffer");
+        if (buffer.Length > sizeof(ulong))
+        {
+            throw new InvalidOperationException("Decoded text is too long to fit in a buffer");
+        }
+
+        var span = buffer.AsSpan();
+        var newSpan = new byte[sizeof(ulong)].AsSpan();
+        span.CopyTo(newSpan);
+        if (IsBigEndian)
+        {
+            newSpan.Reverse();
+        }
+
+        return BitConverter.ToUInt64(newSpan);
     }
 
     /// <inheritdoc/>
     public long DecodeInt64(string text)
     {
-        return (long)DecodeUInt64(text);
+        var result = DecodeUInt64(text);
+        if (result > long.MaxValue)
+        {
+            throw new ArgumentOutOfRangeException("Decoded buffer is out of Int64 range");
+        }
+        return (long)result;
     }
 
     /// <summary>

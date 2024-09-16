@@ -26,6 +26,7 @@ Features
  - One-shot memory buffer based APIs for simple use cases.
  - Stream-based async APIs for more advanced scenarios.
  - Lightweight: No dependencies.
+ - Support for big-endian CPUs like IBM s390x (zArchitecture).
  - Thread-safe.
  - Simple to use.
 

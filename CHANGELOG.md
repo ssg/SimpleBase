@@ -1,3 +1,8 @@
+# 4.0.2
+
+## Fixes
+- Fixes #59 - Base32's `Encode(ulong)` and `DecodeUInt64()` works consistently among platforms with different endianness
+
 # 4.0.1
 
 ## Fixes
