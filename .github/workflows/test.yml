@@ -13,4 +13,4 @@ jobs:
       with:
         dotnet-version: 8.0.x
     - name: Run tests
-      run: dotnet test
+      run: dotnet test test/SimpleBase.Tests.csproj
