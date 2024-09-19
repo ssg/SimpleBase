@@ -44,7 +44,7 @@ internal class Ascii85Test
         }
         actualInput += " ";
         var result = Base85.Ascii85.Decode(actualInput);
-        CollectionAssert.AreEqual(expectedOutput, result);
+        Assert.That(result, Is.EqualTo(expectedOutput));
     }
 
     [Test]
@@ -80,8 +80,11 @@ internal class Ascii85Test
     public void TryEncode_TestVectors_ShouldEncodeCorrectly(byte[] input, string expectedOutput)
     {
         var output = new char[Base85.Ascii85.GetSafeCharCountForEncoding(input)];
-        Assert.That(Base85.Ascii85.TryEncode(input, output, out int numCharsWritten), Is.True);
-        Assert.That(new string(output[..numCharsWritten]), Is.EqualTo(expectedOutput));
+        Assert.Multiple(() =>
+        {
+            Assert.That(Base85.Ascii85.TryEncode(input, output, out int numCharsWritten), Is.True);
+            Assert.That(new string(output[..numCharsWritten]), Is.EqualTo(expectedOutput));
+        });
     }
 
     [Test]
@@ -109,7 +112,7 @@ internal class Ascii85Test
         using var inputStream = new StringReader(input);
         using var writer = new MemoryStream();
         Base85.Ascii85.Decode(inputStream, writer);
-        CollectionAssert.AreEqual(expectedOutput, writer.ToArray());
+        Assert.That(writer.ToArray(), Is.EqualTo(expectedOutput));
     }
 
     [Test]
@@ -119,7 +122,7 @@ internal class Ascii85Test
         using var inputStream = new StringReader(input);
         using var writer = new MemoryStream();
         await Base85.Ascii85.DecodeAsync(inputStream, writer);
-        CollectionAssert.AreEqual(expectedOutput, writer.ToArray());
+        Assert.That(writer.ToArray(), Is.EqualTo(expectedOutput));
     }
 
     [Test]
@@ -127,7 +130,7 @@ internal class Ascii85Test
     public void Decode_TestVectors_ShouldDecodeCorrectly(byte[] expectedOutput, string input)
     {
         var result = Base85.Ascii85.Decode(input);
-        CollectionAssert.AreEqual(expectedOutput, result);
+        Assert.That(result, Is.EqualTo(expectedOutput));
     }
 
     [Test]
@@ -135,7 +138,10 @@ internal class Ascii85Test
     public void TryDecode_TestVectors_ShouldDecodeCorrectly(byte[] expectedOutput, string input)
     {
         var buffer = new byte[Base85.Ascii85.GetSafeByteCountForDecoding(input)];
-        Assert.That(Base85.Ascii85.TryDecode(input, buffer, out int numBytesWritten), Is.True);
-        CollectionAssert.AreEqual(expectedOutput, buffer[..numBytesWritten]);
+        Assert.Multiple(() =>
+        {
+            Assert.That(Base85.Ascii85.TryDecode(input, buffer, out int numBytesWritten), Is.True);
+            Assert.That(buffer[..numBytesWritten], Is.EqualTo(expectedOutput));
+        });
     }
 }

@@ -55,8 +55,11 @@ public class Base58CheckTest
     {
         Span<byte> outputBuffer = new byte[256];
         bool result = Base58.Bitcoin.TryDecodeCheck(input, outputBuffer, out byte actualVersion, out int numBytesWritten);
-        Assert.IsTrue(result);
-        Assert.That(actualVersion, Is.EqualTo(expectedVersion));
+        Assert.Multiple(() =>
+        {
+            Assert.That(result, Is.True);
+            Assert.That(actualVersion, Is.EqualTo(expectedVersion));
+        });
         string output = Encoding.ASCII.GetString(outputBuffer[..numBytesWritten]);
         Assert.That(output, Is.EqualTo(expectedOutput));
     }

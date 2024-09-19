@@ -38,6 +38,6 @@ class Z85Test
     public void Decode_TestVectors_ShouldDecodeCorrectly(byte[] expectedOutput, string input)
     {
         var result = Base85.Z85.Decode(input);
-        CollectionAssert.AreEqual(expectedOutput, result);
+        Assert.That(result, Is.EqualTo(expectedOutput));
     }
 }

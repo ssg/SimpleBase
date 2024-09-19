@@ -61,8 +61,11 @@ class BitcoinTest
     {
         var inputBuffer = Base16.UpperCase.Decode(input);
         var outputBuffer = new char[Base58.Bitcoin.GetSafeCharCountForEncoding(inputBuffer)];
-        Assert.That(Base58.Bitcoin.TryEncode(inputBuffer, outputBuffer, out int numWritten), Is.True);
-        Assert.That(outputBuffer[..numWritten], Is.EqualTo(expectedOutput));
+        Assert.Multiple(() =>
+        {
+            Assert.That(Base58.Bitcoin.TryEncode(inputBuffer, outputBuffer, out int numWritten), Is.True);
+            Assert.That(outputBuffer[..numWritten], Is.EqualTo(expectedOutput));
+        });
     }
 
     [Test]
@@ -75,15 +78,18 @@ class BitcoinTest
     public void Decode_EmptyString_ReturnsEmptyBuffer()
     {
         var result = Base58.Bitcoin.Decode(String.Empty);
-        Assert.That(result.Length, Is.EqualTo(0));
+        Assert.That(result, Is.Empty);
     }
 
     [Test]
     public void TryDecode_EmptyString_ReturnsEmptyBuffer()
     {
         var result = Base58.Bitcoin.TryDecode(String.Empty, new byte[1], out int numBytesWritten);
-        Assert.That(result, Is.True);
-        Assert.That(numBytesWritten, Is.EqualTo(0));
+        Assert.Multiple(() =>
+        {
+            Assert.That(result, Is.True);
+            Assert.That(numBytesWritten, Is.EqualTo(0));
+        });
     }
 
     [Test]

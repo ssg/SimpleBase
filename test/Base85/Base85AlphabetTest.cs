@@ -30,7 +30,10 @@ class Base85AlphabetTest
     [Test]
     public void HasShortcut()
     {
-        Assert.That(Base85.Ascii85.Alphabet.HasShortcut, Is.True);
-        Assert.That(Base85.Z85.Alphabet.HasShortcut, Is.False);
+        Assert.Multiple(() =>
+        {
+            Assert.That(Base85.Ascii85.Alphabet.HasShortcut, Is.True);
+            Assert.That(Base85.Z85.Alphabet.HasShortcut, Is.False);
+        });
     }
 }

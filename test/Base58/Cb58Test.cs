@@ -60,10 +60,13 @@ public class Cb58Test
     [TestCaseSource(nameof(testData))]
     public void TryDecodeCheck_ValidInput_ReturnsExpectedResult(byte[] expectedOutput, string input)
     {
-        Span<byte> outputBuffer = new byte[256];
-        bool result = Base58.Bitcoin.TryDecodeCb58(input, outputBuffer, out int numBytesWritten);
-        Assert.IsTrue(result);
-        Assert.That(outputBuffer[..numBytesWritten].ToArray(), Is.EqualTo(expectedOutput));
+        byte[] outputBuffer = new byte[256];
+        bool result = Base58.Bitcoin.TryDecodeCb58(input, outputBuffer.AsSpan(), out int numBytesWritten);
+        Assert.Multiple(() =>
+        {
+            Assert.That(result, Is.True);
+            Assert.That(outputBuffer[..numBytesWritten], Is.EqualTo(expectedOutput));
+        });
     }
 
 }

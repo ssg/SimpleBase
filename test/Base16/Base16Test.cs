@@ -52,7 +52,7 @@ internal class Base16Test
         using var memoryStream = new MemoryStream();
         using var reader = new StringReader(input);
         encoder.Decode(reader, memoryStream);
-        CollectionAssert.AreEqual(expectedOutput, memoryStream.ToArray());
+        Assert.That(memoryStream.ToArray(), Is.EqualTo(expectedOutput));
     }
 
     [Test]
@@ -72,7 +72,7 @@ internal class Base16Test
         using var memoryStream = new MemoryStream();
         using var reader = new StringReader(input);
         await encoder.DecodeAsync(reader, memoryStream);
-        CollectionAssert.AreEqual(expectedOutput, memoryStream.ToArray());
+        Assert.That(memoryStream.ToArray(), Is.EqualTo(expectedOutput));
     }
 
     [Test]
@@ -98,9 +98,12 @@ internal class Base16Test
     public void TryEncode_RegularInput_Succeeds(Base16 encoder, byte[] input, string expectedOutput)
     {
         var output = new char[input.Length * 2];
-        Assert.That(encoder.TryEncode(input, output, out int numCharsWritten), Is.True);
-        Assert.That(numCharsWritten, Is.EqualTo(output.Length));
-        Assert.That(new string(output), Is.EqualTo(expectedOutput));
+        Assert.Multiple(() =>
+        {
+            Assert.That(encoder.TryEncode(input, output, out int numCharsWritten), Is.True);
+            Assert.That(numCharsWritten, Is.EqualTo(output.Length));
+            Assert.That(new string(output), Is.EqualTo(expectedOutput));
+        });
     }
 
     [Test]
@@ -109,8 +112,11 @@ internal class Base16Test
     {
         var input = new byte[4];
         var output = Array.Empty<char>();
-        Assert.That(encoder.TryEncode(input, output, out int numCharsWritten), Is.False);
-        Assert.That(numCharsWritten, Is.EqualTo(0));
+        Assert.Multiple(() =>
+        {
+            Assert.That(encoder.TryEncode(input, output, out int numCharsWritten), Is.False);
+            Assert.That(numCharsWritten, Is.EqualTo(0));
+        });
     }
 
     [Test]
@@ -118,7 +124,7 @@ internal class Base16Test
     public void Decode(Base16 encoder, byte[] expectedOutput, string input)
     {
         var result = encoder.Decode(input);
-        CollectionAssert.AreEqual(expectedOutput, result.ToArray());
+        Assert.That(result.ToArray(), Is.EqualTo(expectedOutput));
     }
 
     [Test]
@@ -126,17 +132,23 @@ internal class Base16Test
     public void TryDecode_RegularInput_Succeeds(Base16 encoder, byte[] expectedOutput, string input)
     {
         var output = new byte[expectedOutput.Length];
-        Assert.That(encoder.TryDecode(input, output, out int numBytesWritten), Is.True);
-        Assert.That(numBytesWritten, Is.EqualTo(output.Length));
-        CollectionAssert.AreEqual(expectedOutput, output);
+        Assert.Multiple(() =>
+        {
+            Assert.That(encoder.TryDecode(input, output, out int numBytesWritten), Is.True);
+            Assert.That(numBytesWritten, Is.EqualTo(output.Length));
+            Assert.That(output, Is.EqualTo(expectedOutput));
+        });
     }
 
     [Test]
     public void TryDecode_InvalidChar_ReturnsFalse()
     {
         var output = new byte[3];
-        Assert.That(Base16.UpperCase.TryDecode("1234ZB", output, out int numWritten), Is.False);
-        Assert.That(numWritten, Is.EqualTo(2));
+        Assert.Multiple(() =>
+        {
+            Assert.That(Base16.UpperCase.TryDecode("1234ZB", output, out int numWritten), Is.False);
+            Assert.That(numWritten, Is.EqualTo(2));
+        });
     }
 
     [Test]
@@ -145,8 +157,11 @@ internal class Base16Test
     {
         var input = "1234";
         var output = new byte[1];
-        Assert.That(encoder.TryDecode(input, output, out int numBytesWritten), Is.False);
-        Assert.That(numBytesWritten, Is.EqualTo(0));
+        Assert.Multiple(() =>
+        {
+            Assert.That(encoder.TryDecode(input, output, out int numBytesWritten), Is.False);
+            Assert.That(numBytesWritten, Is.EqualTo(0));
+        });
     }
 
     [Test]
@@ -155,8 +170,11 @@ internal class Base16Test
     {
         var input = "123";
         var output = new byte[1];
-        Assert.That(encoder.TryDecode(input, output, out int numBytesWritten), Is.False);
-        Assert.That(numBytesWritten, Is.EqualTo(0));
+        Assert.Multiple(() =>
+        {
+            Assert.That(encoder.TryDecode(input, output, out int numBytesWritten), Is.False);
+            Assert.That(numBytesWritten, Is.EqualTo(0));
+        });
     }
 
     [Test]
@@ -164,7 +182,7 @@ internal class Base16Test
     public void Decode_OtherCase_StillPasses(Base16 encoder, byte[] expectedOutput, string input)
     {
         var result = encoder.Decode(input.ToUpperInvariant());
-        CollectionAssert.AreEqual(expectedOutput, result.ToArray());
+        Assert.That(result.ToArray(), Is.EqualTo(expectedOutput));
     }
 
     [Test]

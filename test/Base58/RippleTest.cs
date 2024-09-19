@@ -58,8 +58,11 @@ class RippleTest
     {
         var inputBuffer = Base16.UpperCase.Decode(input);
         var outputBuffer = new char[Base58.Ripple.GetSafeCharCountForEncoding(inputBuffer)];
-        Assert.That(Base58.Ripple.TryEncode(inputBuffer, outputBuffer, out int numWritten), Is.True);
-        Assert.That(outputBuffer[..numWritten], Is.EqualTo(expectedOutput));
+        Assert.Multiple(() =>
+        {
+            Assert.That(Base58.Ripple.TryEncode(inputBuffer, outputBuffer, out int numWritten), Is.True);
+            Assert.That(outputBuffer[..numWritten], Is.EqualTo(expectedOutput));
+        });
     }
 
     [Test]
@@ -72,7 +75,7 @@ class RippleTest
     public void Decode_EmptyString_ReturnsEmptyBuffer()
     {
         var result = Base58.Ripple.Decode(String.Empty);
-        Assert.That(result.Length, Is.EqualTo(0));
+        Assert.That(result, Is.Empty);
     }
 
     [Test]

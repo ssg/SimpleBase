@@ -61,7 +61,7 @@ class CrockfordTest
         // do not edit/refactor the code below
         string myText = "CSQPYRK1E8"; // any buffer will do
         Span<byte> result = Base32.Crockford.Decode(myText);
-        Assert.That(result.Length > 0, Is.True);
+        Assert.That(result.Length, Is.GreaterThan(0));
     }
 
     [Test]
@@ -168,8 +168,11 @@ class CrockfordTest
         byte[] bytes = Encoding.ASCII.GetBytes(input);
         var output = new char[Base32.Crockford.GetSafeCharCountForEncoding(bytes)];
         bool success = Base32.Crockford.TryEncode(bytes, output, padded, out int numCharsWritten);
-        Assert.That(success, Is.True);
-        Assert.That(output[..numCharsWritten], Is.EqualTo(expectedOutput));
+        Assert.Multiple(() =>
+        {
+            Assert.That(success, Is.True);
+            Assert.That(output[..numCharsWritten], Is.EqualTo(expectedOutput));
+        });
     }
 
     [Test]
@@ -204,8 +207,11 @@ class CrockfordTest
     public void TryDecode_ZeroBuffer_ReturnsFalse()
     {
         var success = Base32.Crockford.TryDecode("test", [], out int numBytesWritten);
-        Assert.That(success, Is.False);
-        Assert.That(numBytesWritten, Is.EqualTo(0));
+        Assert.Multiple(() =>
+        {
+            Assert.That(success, Is.False);
+            Assert.That(numBytesWritten, Is.EqualTo(0));
+        });
     }
 
     [Test]
