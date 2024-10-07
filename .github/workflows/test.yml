@@ -14,20 +14,11 @@ jobs:
       with:
         dotnet-version: 8.0.x
 
-    - name: Restore dependencies
-      run: |
-          dotnet restore src
-          dotnet restore test
-          dotnet restore benchmark
-
     - name: Build
-      run: |
-          dotnet build --no-restore --configuration Release src
-          dotnet build --no-restore --configuration Release test
-          dotnet build --no-restore --configuration Release benchmark
+      run: dotnet build --configuration Release 
 
     - name: Run tests
-      run: dotnet test --no-build --configuration Release test
+      run: dotnet test --no-build --configuration Release 
 
     - name: Pack
       run: dotnet pack src --no-build --configuration Release --output ./nupkg
