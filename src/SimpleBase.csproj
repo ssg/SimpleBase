@@ -21,6 +21,7 @@
 		<LangVersion>latest</LangVersion>
 		<Nullable>enable</Nullable>
 		<PlatformTarget>AnyCPU</PlatformTarget>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
 		<PackageReleaseNotes>
 			<![CDATA[
 ## Fixes
@@ -28,6 +29,10 @@
 ]]>
 		</PackageReleaseNotes>
 	</PropertyGroup>
+
+    <ItemGroup>
+        <None Include="../README.md" Pack="true" PackagePath="/" />
+    </ItemGroup>
 
 	<ItemGroup>
 		<None Remove="SimpleBase.net45.v3.ncrunchproject" />
