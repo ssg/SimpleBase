@@ -1,3 +1,8 @@
+# 4.1.0
+
+## Improvements
+- Reduce heap allocations (by @Henr1k80)
+
 # 4.0.2
 
 ## Fixes

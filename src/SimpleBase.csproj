@@ -12,7 +12,7 @@
 		<AssemblyOriginatorKeyFile>..\SimpleBase.snk</AssemblyOriginatorKeyFile>
 		<DelaySign>false</DelaySign>
 
-		<PackageVersion>4.0.2</PackageVersion>
+		<PackageVersion>4.1.0</PackageVersion>
 		<DocumentationFile>SimpleBase.xml</DocumentationFile>
 		<PackageProjectUrl>https://github.com/ssg/SimpleBase</PackageProjectUrl>
 		<PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
@@ -24,8 +24,8 @@
         <PackageReadmeFile>README.md</PackageReadmeFile>
 		<PackageReleaseNotes>
 			<![CDATA[
-## Fixes
-- Fixes #59 - Base32's `Encode(ulong)` and `DecodeUInt64()` works consistently among platforms with different endianness
+## Improvements
+- Reduce heap allocations (by @Henr1k80)
 ]]>
 		</PackageReleaseNotes>
 	</PropertyGroup>
