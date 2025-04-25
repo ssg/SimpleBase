@@ -224,7 +224,7 @@ public sealed class Base58(Base58Alphabet alphabet) : IBaseCoder, INonAllocating
 
         int numZeroes = getZeroCount(bytes);
         int outputLen = getSafeCharCountForEncoding(bytes.Length, numZeroes);
-        Span<char> output = new char[outputLen];
+        Span<char> output = outputLen < 1024 ? stackalloc char[outputLen] : new char[outputLen];
 
         return internalEncode(bytes, output, numZeroes, out int numCharsWritten)
             ? new string(output[..numCharsWritten])

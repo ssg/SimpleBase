@@ -76,7 +76,7 @@ public class Base85(Base85Alphabet alphabet) : IBaseCoder, IBaseStreamCoder, INo
         }
 
         int outputLen = GetSafeCharCountForEncoding(bytes);
-        char[] output = new char[outputLen];
+        Span<char> output = outputLen < 1024 ? stackalloc char[outputLen] : new char[outputLen];
 
         return internalEncode(bytes, output, out int numCharsWritten)
             ? new string(output[..numCharsWritten])
