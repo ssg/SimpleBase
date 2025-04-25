@@ -214,7 +214,7 @@ public sealed class Base16(Base16Alphabet alphabet) : IBaseCoder, IBaseStreamCod
         }
 
         int outputLen = GetSafeCharCountForEncoding(bytes);
-        Span<char> output = outputLen < 1024 ? stackalloc char[outputLen] : new char[outputLen];
+        Span<char> output = outputLen < Bits.SafeStackMaxAllocSize ? stackalloc char[outputLen] : new char[outputLen];
         internalEncode(bytes, output, Alphabet.Value);
         return new string(output);
     }

@@ -211,7 +211,7 @@ public sealed class Base32 : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCod
         // we are ok with slightly larger buffer since the output string will always
         // have the exact length of the output produced.
         int outputLen = GetSafeCharCountForEncoding(bytes);
-        Span<char> output = outputLen < 1024 ? stackalloc char[outputLen] : new char[outputLen];
+        Span<char> output = outputLen < Bits.SafeStackMaxAllocSize ? stackalloc char[outputLen] : new char[outputLen];
         if (!internalEncode(
             bytes,
             output,
