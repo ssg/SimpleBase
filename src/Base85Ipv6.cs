@@ -51,7 +51,7 @@ public class Base85Ipv6(Base85Alphabet alphabet) : Base85(alphabet)
         }
 
         var num = new BigInteger(buffer, isUnsigned: true, isBigEndian: true);
-        Span<char> str = new char[Base85Ipv6.ipv6chars];
+        Span<char> str = stackalloc char[Base85Ipv6.ipv6chars];
         for (int n = 0, o = ipv6chars - 1; n < ipv6chars; n++, o--)
         {
             num = BigInteger.DivRem(num, divisor, out var remainder);

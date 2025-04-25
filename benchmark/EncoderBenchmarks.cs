@@ -5,6 +5,7 @@ using SimpleBase;
 namespace benchmark;
 
 [MarkdownExporterAttribute.GitHub]
+[MemoryDiagnoser]
 public class EncoderBenchmarks
 {
     private readonly byte[] buffer = new byte[64];
