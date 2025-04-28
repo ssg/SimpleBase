@@ -6,6 +6,7 @@ namespace benchmark;
 
 [MarkdownExporterAttribute.GitHub]
 [MarkdownExporter()]
+[MemoryDiagnoser]
 public class DecoderBenchmarks
 {
     readonly string s = new('a', 80);
@@ -24,4 +25,7 @@ public class DecoderBenchmarks
 
     [Benchmark]
     public byte[] SimpleBase_Base58_Bitcoin() => Base58.Bitcoin.Decode(s);
+
+    [Benchmark]
+    public byte[] SimpleBase_Base58_Monero() => Base58.Monero.Decode(s);
 }

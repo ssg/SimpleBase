@@ -23,14 +23,15 @@ namespace SimpleBase;
 /// <param name="alphabet">Alphabet to use.</param>
 public sealed class Base58(Base58Alphabet alphabet) : IBaseCoder, INonAllocatingBaseCoder
 {
-    private const int reductionFactor = 733; // https://github.com/bitcoin/bitcoin/blob/master/src/base58.cpp#L48
-    private const int divisor = 58;
-    private const int maxCheckPayloadLength = 256;
-    private const int sha256Bytes = 32;
-    private const int sha256DigestBytes = 4;
-    private static readonly Lazy<Base58> bitcoin = new(() => new Base58(Base58Alphabet.Bitcoin));
-    private static readonly Lazy<Base58> ripple = new(() => new Base58(Base58Alphabet.Ripple));
-    private static readonly Lazy<Base58> flickr = new(() => new Base58(Base58Alphabet.Flickr));
+    const int reductionFactor = 733; // https://github.com/bitcoin/bitcoin/blob/master/src/base58.cpp#L48
+    const int divisor = 58;
+    const int maxCheckPayloadLength = 256;
+    const int sha256Bytes = 32;
+    const int sha256DigestBytes = 4;
+    static readonly Lazy<Base58> bitcoin = new(() => new Base58(Base58Alphabet.Bitcoin));
+    static readonly Lazy<Base58> ripple = new(() => new Base58(Base58Alphabet.Ripple));
+    static readonly Lazy<Base58> flickr = new(() => new Base58(Base58Alphabet.Flickr));
+    static readonly Lazy<MoneroBase58> monero = new(() => new MoneroBase58());
 
     /// <summary>
     /// Gets Bitcoin flavor.
@@ -46,6 +47,12 @@ public sealed class Base58(Base58Alphabet alphabet) : IBaseCoder, INonAllocating
     /// Gets Flickr flavor.
     /// </summary>
     public static Base58 Flickr => flickr.Value;
+
+    /// <summary>
+    /// Gets Monero flavor.
+    /// </summary>
+    /// <remarks>This uses a different algorithm for Base58 encoding. See <see cref="MoneroBase58"/> for details.</remarks>
+    public static MoneroBase58 Monero => monero.Value;
 
     /// <summary>
     /// Gets the encoding alphabet.
@@ -283,7 +290,7 @@ public sealed class Base58(Base58Alphabet alphabet) : IBaseCoder, INonAllocating
             out numBytesWritten);
     }
 
-    private static void computeDoubleSha256(ReadOnlySpan<byte> buffer, Span<byte> output)
+    static void computeDoubleSha256(ReadOnlySpan<byte> buffer, Span<byte> output)
     {
         Span<byte> tempResult = stackalloc byte[sha256Bytes];
         using var sha256 = SHA256.Create();
@@ -291,7 +298,7 @@ public sealed class Base58(Base58Alphabet alphabet) : IBaseCoder, INonAllocating
         computeSha256(sha256, tempResult, output);
     }
 
-    private static void computeSha256(SHA256 sha256, ReadOnlySpan<byte> buffer, Span<byte> output)
+    static void computeSha256(SHA256 sha256, ReadOnlySpan<byte> buffer, Span<byte> output)
     {
         if (!sha256.TryComputeHash(buffer, output, out int bytesWritten))
         {
@@ -304,7 +311,7 @@ public sealed class Base58(Base58Alphabet alphabet) : IBaseCoder, INonAllocating
         }
     }
 
-    private static bool decodeZeroes(Span<byte> output, int length, out int numBytesWritten)
+    static bool decodeZeroes(Span<byte> output, int length, out int numBytesWritten)
     {
         if (length > output.Length)
         {
@@ -317,7 +324,7 @@ public sealed class Base58(Base58Alphabet alphabet) : IBaseCoder, INonAllocating
         return true;
     }
 
-    private static void translatedCopy(
+    static void translatedCopy(
         ReadOnlySpan<char> source,
         Span<char> destination,
         ReadOnlySpan<char> alphabet)
@@ -329,7 +336,7 @@ public sealed class Base58(Base58Alphabet alphabet) : IBaseCoder, INonAllocating
         }
     }
 
-    private static bool encodeAllZeroes(
+    static bool encodeAllZeroes(
         Span<char> output,
         int numZeroes,
         out int numCharsWritten,
@@ -347,7 +354,7 @@ public sealed class Base58(Base58Alphabet alphabet) : IBaseCoder, INonAllocating
         return true;
     }
 
-    private static int getZeroCount(ReadOnlySpan<byte> bytes)
+    static int getZeroCount(ReadOnlySpan<byte> bytes)
     {
         int count = 0;
         for (; count < bytes.Length && bytes[count] == 0; count++)
@@ -359,7 +366,7 @@ public sealed class Base58(Base58Alphabet alphabet) : IBaseCoder, INonAllocating
 
     // we can't make this a generic method and reuse it with getZeroCount()
     // because IEquatable<T> is way slower than equality operator.
-    private static int getPrefixCount(ReadOnlySpan<char> input, char value)
+    static int getPrefixCount(ReadOnlySpan<char> input, char value)
     {
         int count = 0;
         for (; count < input.Length && input[count] == value; count++)
@@ -369,14 +376,14 @@ public sealed class Base58(Base58Alphabet alphabet) : IBaseCoder, INonAllocating
         return count;
     }
 
-    private static int getSafeCharCountForEncoding(int bytesLen, int numZeroes)
+    static int getSafeCharCountForEncoding(int bytesLen, int numZeroes)
     {
         const int growthPercentage = 138;
 
         return numZeroes + ((bytesLen - numZeroes) * growthPercentage / 100) + 1;
     }
 
-    private bool internalEncode(
+    bool internalEncode(
         ReadOnlySpan<byte> input,
         Span<char> output,
         int numZeroes,
@@ -421,7 +428,7 @@ public sealed class Base58(Base58Alphabet alphabet) : IBaseCoder, INonAllocating
         return true;
     }
 
-    private bool internalDecode(
+    bool internalDecode(
         ReadOnlySpan<char> input,
         Span<byte> output,
         int numZeroes,

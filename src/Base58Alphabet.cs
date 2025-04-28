@@ -17,17 +17,17 @@ namespace SimpleBase;
 /// <param name="alphabet">Alphabet to use.</param>
 public sealed class Base58Alphabet(string alphabet) : CodingAlphabet(58, alphabet)
 {
-    private static readonly Lazy<Base58Alphabet> bitcoinAlphabet = new(()
+    static readonly Lazy<Base58Alphabet> bitcoinAlphabet = new(()
         => new Base58Alphabet("123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz"));
 
-    private static readonly Lazy<Base58Alphabet> rippleAlphabet = new(()
+    static readonly Lazy<Base58Alphabet> rippleAlphabet = new(()
         => new Base58Alphabet("rpshnaf39wBUDNEGHJKLM4PQRST7VWXYZ2bcdeCg65jkm8oFqi1tuvAxyz"));
 
-    private static readonly Lazy<Base58Alphabet> flickrAlphabet = new(()
+    static readonly Lazy<Base58Alphabet> flickrAlphabet = new(()
         => new Base58Alphabet("123456789abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ"));
 
     /// <summary>
-    /// Gets Bitcoin alphabet.
+    /// Gets Bitcoin alphabet. Monero also uses this alphabet but only works with MoneroBase58 encoding.
     /// </summary>
     public static Base58Alphabet Bitcoin => bitcoinAlphabet.Value;
 

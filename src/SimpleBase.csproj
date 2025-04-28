@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
 	<PropertyGroup>
-		<TargetFramework>netstandard2.1</TargetFramework>
+		<TargetFramework>net8.0</TargetFramework>
 		<RootNamespace>SimpleBase</RootNamespace>
 		<AssemblyName>SimpleBase</AssemblyName>
 		<Copyright>Copyright 2014-2022 Sedat Kapanoglu</Copyright>
@@ -13,6 +13,7 @@
 		<DelaySign>false</DelaySign>
 
 		<PackageVersion>4.1.0</PackageVersion>
+		<PackageVersion>5.0.0</PackageVersion>
 		<DocumentationFile>SimpleBase.xml</DocumentationFile>
 		<PackageProjectUrl>https://github.com/ssg/SimpleBase</PackageProjectUrl>
 		<PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
@@ -26,6 +27,12 @@
 			<![CDATA[
 ## Improvements
 - Reduce heap allocations (by @Henr1k80)
+## Breaking changes
+- SimpleBase targets .NET 8.0 instead of .NET Standard 2.1 now. 
+
+## New features
+- Monero Base58 support using `MoneroBase58` class
+
 ]]>
 		</PackageReleaseNotes>
 	</PropertyGroup>

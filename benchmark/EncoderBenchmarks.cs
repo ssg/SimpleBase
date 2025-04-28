@@ -24,4 +24,8 @@ public class EncoderBenchmarks
 
     [Benchmark]
     public string SimpleBase_Base58_Bitcoin() => Base58.Bitcoin.Encode(buffer);
+
+    [Benchmark]
+    public string SimpleBase_Base58_Monero() => Base58.Monero.Encode(buffer);
+
 }

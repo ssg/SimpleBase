@@ -1,1 +1,12 @@
-﻿
+﻿SimpleBase.MoneroBase58
+SimpleBase.MoneroBase58.Alphabet.get -> SimpleBase.Base58Alphabet!
+SimpleBase.MoneroBase58.Decode(System.ReadOnlySpan<char> text) -> byte[]!
+SimpleBase.MoneroBase58.Encode(System.ReadOnlySpan<byte> bytes) -> string!
+SimpleBase.MoneroBase58.GetSafeByteCountForDecoding(System.ReadOnlySpan<char> text) -> int
+SimpleBase.MoneroBase58.GetSafeCharCountForEncoding(System.ReadOnlySpan<byte> bytes) -> int
+SimpleBase.MoneroBase58.MoneroBase58() -> void
+SimpleBase.MoneroBase58.MoneroBase58(SimpleBase.Base58Alphabet! alphabet) -> void
+SimpleBase.MoneroBase58.TryDecode(System.ReadOnlySpan<char> input, System.Span<byte> output, out int numBytesWritten) -> bool
+SimpleBase.MoneroBase58.TryEncode(System.ReadOnlySpan<byte> input, System.Span<char> output, out int numCharsWritten) -> bool
+SimpleBase.MoneroBase58.ZeroChar.get -> char
+static SimpleBase.Base58.Monero.get -> SimpleBase.MoneroBase58!

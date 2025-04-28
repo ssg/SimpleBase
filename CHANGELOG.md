@@ -1,3 +1,11 @@
+# 4.2.0
+
+## New features
+- Monero Base58 algorithm support with `MoneroBase58` class. It can be accessed as `Base58.Monero`
+
+## Fixes
+- Throw `ArgumentOutOfRangeException` with correct parameters in ``Base32.DecodeInt64()``
+
 # 4.1.0
 
 ## Improvements

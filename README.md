@@ -12,13 +12,13 @@ math worked.
 
 Features
 --------
- - Base32: RFC 4648, BECH32, Crockford, z-base-32, Geohash, FileCoin and Extended Hex 
+ - **Base32**: RFC 4648, BECH32, Crockford, z-base-32, Geohash, FileCoin and Extended Hex 
    (BASE32-HEX) flavors with Crockford character substitution, or any other 
    custom flavors.
- - Base58: Bitcoin, Ripple, Flickr, and custom flavors. Also provides 
-   Base58Check and Avalanche CB58 encoding helpers.
- - Base85: Ascii85, Z85 and custom flavors. IPv6 encoding/decoding support.
- - Base16: UpperCase, LowerCase and ModHex flavors. An experimental hexadecimal 
+ - **Base58**: Both the standard encoding (Bitcoin, Ripple, Flickr, and custom alphabets) and Monero 
+   Base58 algorithms are supported. Also provides Base58Check and Avalanche CB58 encoding helpers.
+ - **Base85**: Ascii85, Z85 and custom flavors. IPv6 encoding/decoding support.
+ - **Base16**: UpperCase, LowerCase and ModHex flavors. An experimental hexadecimal 
    encoder/decoder just to see how far I 
    can take the optimizations compared to .NET's  implementations. It's quite 
    fast now. It could also be used as a replacement for `SoapHexBinary.Parse` although
@@ -242,29 +242,33 @@ Small buffer sizes are used (64 characters). They are closer to real life
 applications. Base58 performs really bad in decoding of larger buffer sizes, 
 due to polynomial complexity of numeric base conversions.
 
-BenchmarkDotNet=v0.13.1, OS=Windows 10.0.22000
+BenchmarkDotNet v0.14.0, Windows 11 (10.0.26100.3915)
 AMD Ryzen 9 5950X, 1 CPU, 32 logical and 16 physical cores
-.NET SDK=6.0.200
+.NET SDK 8.0.408
+  [Host]     : .NET 8.0.15 (8.0.1525.16413), X64 RyuJIT AVX2
+  DefaultJob : .NET 8.0.15 (8.0.1525.16413), X64 RyuJIT AVX2
 
 Encoding (64 byte buffer)
 
-|                                 Method |      Mean |    Error |   StdDev | Ratio | RatioSD |
-|--------------------------------------- |----------:|---------:|---------:|------:|--------:|
-|                          DotNet_Base64 |  79.09 ns | 1.505 ns | 1.733 ns |  1.00 |    0.00 |
-|            SimpleBase_Base16_UpperCase | 123.14 ns | 2.523 ns | 6.189 ns |  1.61 |    0.10 |
-| SimpleBase_Base32_CrockfordWithPadding | 188.76 ns | 3.587 ns | 3.179 ns |  2.39 |    0.08 |
-|                  SimpleBase_Base85_Z85 | 212.02 ns | 4.112 ns | 4.222 ns |  2.68 |    0.10 |
-|              SimpleBase_Base58_Bitcoin |  70.11 ns | 1.443 ns | 3.012 ns |  0.91 |    0.05 |
+| Method                                 | Mean      | Error    | StdDev   | Ratio | RatioSD | Gen0   | Allocated | Alloc Ratio |
+|--------------------------------------- |----------:|---------:|---------:|------:|--------:|-------:|----------:|------------:|
+| DotNet_Base64                          |  27.33 ns | 0.211 ns | 0.197 ns |  1.00 |    0.01 | 0.0120 |     200 B |        1.00 |
+| SimpleBase_Base16_UpperCase            |  82.67 ns | 1.642 ns | 1.536 ns |  3.03 |    0.06 | 0.0167 |     280 B |        1.40 |
+| SimpleBase_Base32_CrockfordWithPadding | 153.33 ns | 0.707 ns | 0.627 ns |  5.61 |    0.05 | 0.0138 |     232 B |        1.16 |
+| SimpleBase_Base85_Z85                  | 147.68 ns | 0.805 ns | 0.753 ns |  5.40 |    0.05 | 0.0110 |     184 B |        0.92 |
+| SimpleBase_Base58_Bitcoin              |  44.42 ns | 0.064 ns | 0.053 ns |  1.63 |    0.01 | 0.0091 |     152 B |        0.76 |
+| SimpleBase_Base58_Monero               | 210.36 ns | 0.540 ns | 0.451 ns |  7.70 |    0.06 | 0.0253 |     424 B |        2.12 |
 
 Decoding (80 character string)
 
-|                      Method |        Mean |     Error |    StdDev | Ratio | RatioSD |
-|---------------------------- |------------:|----------:|----------:|------:|--------:|
-|               DotNet_Base64 |   120.86 ns |  1.327 ns |  1.177 ns |  1.00 |    0.00 |
-| SimpleBase_Base16_UpperCase |    65.81 ns |  0.816 ns |  0.723 ns |  0.54 |    0.01 |
-| SimpleBase_Base32_Crockford |   139.15 ns |  1.470 ns |  1.375 ns |  1.15 |    0.01 |
-|       SimpleBase_Base85_Z85 |   362.87 ns |  6.024 ns |  5.340 ns |  3.00 |    0.06 |
-|   SimpleBase_Base58_Bitcoin | 5,118.61 ns | 34.360 ns | 30.459 ns | 42.36 |    0.48 |
+| Method                      | Mean        | Error    | StdDev   | Ratio | RatioSD | Gen0   | Allocated | Alloc Ratio |
+|---------------------------- |------------:|---------:|---------:|------:|--------:|-------:|----------:|------------:|
+| DotNet_Base64               |   104.43 ns | 2.137 ns | 3.199 ns |  1.00 |    0.04 | 0.0052 |      88 B |        1.00 |
+| SimpleBase_Base16_UpperCase |    49.15 ns | 0.166 ns | 0.156 ns |  0.47 |    0.01 | 0.0038 |      64 B |        0.73 |
+| SimpleBase_Base32_Crockford |   126.31 ns | 1.201 ns | 1.123 ns |  1.21 |    0.04 | 0.0048 |      80 B |        0.91 |
+| SimpleBase_Base85_Z85       |   253.69 ns | 0.655 ns | 0.581 ns |  2.43 |    0.07 | 0.0105 |     176 B |        2.00 |
+| SimpleBase_Base58_Bitcoin   | 4,954.73 ns | 6.333 ns | 5.614 ns | 47.49 |    1.41 | 0.0076 |     176 B |        2.00 |
+| SimpleBase_Base58_Monero    |   123.25 ns | 0.362 ns | 0.339 ns |  1.18 |    0.04 | 0.0105 |     176 B |        2.00 |
 
 Notes
 -----
