@@ -312,7 +312,7 @@ public sealed class Base58(Base58Alphabet alphabet) : IBaseCoder, INonAllocating
             return false;
         }
 
-        output[..length].Fill(0);
+        output[..length].Clear();
         numBytesWritten = length;
         return true;
     }
