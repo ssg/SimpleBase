@@ -19,9 +19,9 @@ namespace SimpleBase;
 /// <param name="alphabet">Alphabet to use.</param>
 public sealed class Base16(Base16Alphabet alphabet) : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCoder
 {
-    private static readonly Lazy<Base16> upperCase = new(() => new Base16(Base16Alphabet.UpperCase));
-    private static readonly Lazy<Base16> lowerCase = new(() => new Base16(Base16Alphabet.LowerCase));
-    private static readonly Lazy<Base16> modHex = new(() => new Base16(Base16Alphabet.ModHex));
+    static readonly Lazy<Base16> upperCase = new(() => new Base16(Base16Alphabet.UpperCase));
+    static readonly Lazy<Base16> lowerCase = new(() => new Base16(Base16Alphabet.LowerCase));
+    static readonly Lazy<Base16> modHex = new(() => new Base16(Base16Alphabet.ModHex));
 
     /// <summary>
     /// Gets upper case Base16 encoder. Decoding is case-insensitive.
@@ -241,7 +241,7 @@ public sealed class Base16(Base16Alphabet alphabet) : IBaseCoder, IBaseStreamCod
         return true;
     }
 
-    private static void internalEncode(
+    static void internalEncode(
         ReadOnlySpan<byte> input,
         Span<char> output,
         ReadOnlySpan<char> alphabet)

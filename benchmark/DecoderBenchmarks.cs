@@ -8,7 +8,7 @@ namespace benchmark;
 [MarkdownExporter()]
 public class DecoderBenchmarks
 {
-    private readonly string s = new('a', 80);
+    readonly string s = new('a', 80);
 
     [Benchmark(Baseline = true)]
     public byte[] DotNet_Base64() => Convert.FromBase64String(s);

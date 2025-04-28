@@ -8,7 +8,7 @@ namespace benchmark;
 [MemoryDiagnoser]
 public class EncoderBenchmarks
 {
-    private readonly byte[] buffer = new byte[64];
+    readonly byte[] buffer = new byte[64];
 
     [Benchmark(Baseline = true)]
     public string DotNet_Base64() => Convert.ToBase64String(buffer);

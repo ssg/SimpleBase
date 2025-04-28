@@ -23,7 +23,7 @@ namespace SimpleBaseTest.Base32Test;
 [TestFixture]
 class Rfc4648Test
 {
-    private static readonly string[][] testData =
+    static readonly string[][] testData =
     [
         ["", ""],
         ["f", "MY======"],
@@ -71,7 +71,7 @@ class Rfc4648Test
         _ = Assert.Throws<ArgumentException>(() => Base32.Rfc4648.Decode("[];',m."));
     }
 
-    private static readonly TestCaseData[] ulongTestCases =
+    static readonly TestCaseData[] ulongTestCases =
     [
         new TestCaseData(0UL,                  "AA"),
         new TestCaseData(0x0000000000000011UL, "CE"),
@@ -112,7 +112,7 @@ class Rfc4648Test
         Assert.That(bigEndian.Encode(number), Is.EqualTo(expectedOutput));
     }
 
-    private static ulong reverseBytes(ulong number)
+    static ulong reverseBytes(ulong number)
     {
         var span = BitConverter.GetBytes(number).AsSpan();
         span.Reverse();

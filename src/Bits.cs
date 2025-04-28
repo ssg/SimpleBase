@@ -7,7 +7,7 @@ namespace SimpleBase
     /// <summary>
     /// Helper functions for bit operations.
     /// </summary>
-    internal static class Bits
+    static class Bits
     {
         /// <summary>
         /// Safe one-shot maximum amount to be allocated on stack for temporary buffers and alike.

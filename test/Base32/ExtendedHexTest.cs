@@ -24,7 +24,7 @@ namespace SimpleBaseTest.Base32Test;
 [TestFixture]
 class ExtendedHexTest
 {
-    private static readonly string[][] testData =
+    static readonly string[][] testData =
     [
         ["", ""],
         ["f", "CO======"],

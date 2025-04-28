@@ -28,9 +28,9 @@ namespace SimpleBase;
 /// <param name="alphabet">Coding alphabet.</param>
 public class Base85Ipv6(Base85Alphabet alphabet) : Base85(alphabet)
 {
-    private const int ipv6bytes = 16;
-    private const int ipv6chars = 20;
-    private static readonly BigInteger divisor = new(85);
+    const int ipv6bytes = 16;
+    const int ipv6chars = 20;
+    static readonly BigInteger divisor = new(85);
 
     /// <summary>
     /// Encode IPv6 address into RFC 1924 Base85 text.

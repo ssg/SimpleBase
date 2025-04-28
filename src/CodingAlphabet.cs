@@ -20,7 +20,7 @@ public abstract class CodingAlphabet : ICodingAlphabet
     /// Specifies the highest possible char value in an encoding alphabet
     /// Any char above with would raise an exception.
     /// </summary>
-    private const int maxLength = 127;
+    const int maxLength = 127;
 
     /// <summary>
     /// Holds a mapping from character to an actual byte value
@@ -28,7 +28,7 @@ public abstract class CodingAlphabet : ICodingAlphabet
     /// and would cause an exception.
     /// </summary>
     /// <remarks>byte[] has no discernible perf impact and saves memory.</remarks>
-    private readonly byte[] reverseLookupTable = new byte[maxLength];
+    readonly byte[] reverseLookupTable = new byte[maxLength];
 
     /// <summary>
     /// Initializes a new instance of the <see cref="CodingAlphabet"/> class.

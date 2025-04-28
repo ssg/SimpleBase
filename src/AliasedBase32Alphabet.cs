@@ -7,7 +7,7 @@ using System.Collections.Generic;
 
 namespace SimpleBase;
 
-internal sealed class AliasedBase32Alphabet : Base32Alphabet
+sealed class AliasedBase32Alphabet : Base32Alphabet
 {
     public AliasedBase32Alphabet(string alphabet, IEnumerable<CharMap> map)
         : base(alphabet)
@@ -25,7 +25,7 @@ internal sealed class AliasedBase32Alphabet : Base32Alphabet
         setupMap(map);
     }
 
-    private void setupMap(IEnumerable<CharMap> map)
+    void setupMap(IEnumerable<CharMap> map)
     {
         foreach (var (from, to) in map)
         {
@@ -33,7 +33,7 @@ internal sealed class AliasedBase32Alphabet : Base32Alphabet
         }
     }
 
-    private void mapAlternate(char source, char destination)
+    void mapAlternate(char source, char destination)
     {
         int result = ReverseLookupTable[destination] - 1;
         Map(source, result);

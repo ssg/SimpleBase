@@ -12,25 +12,25 @@ namespace SimpleBase;
 /// </summary>
 public class Base32Alphabet : CodingAlphabet
 {
-    private static readonly Lazy<Base32Alphabet> rfc4648Alphabet = new
+    static readonly Lazy<Base32Alphabet> rfc4648Alphabet = new
         (() => new Base32Alphabet("ABCDEFGHIJKLMNOPQRSTUVWXYZ234567"));
 
-    private static readonly Lazy<Base32Alphabet> extendedHexAlphabet = new
+    static readonly Lazy<Base32Alphabet> extendedHexAlphabet = new
         (() => new Base32Alphabet("0123456789ABCDEFGHIJKLMNOPQRSTUV"));
 
-    private static readonly Lazy<Base32Alphabet> zBase32Alphabet = new
+    static readonly Lazy<Base32Alphabet> zBase32Alphabet = new
         (() => new Base32Alphabet("ybndrfg8ejkmcpqxot1uwisza345h769"));
 
-    private static readonly Lazy<Base32Alphabet> geohashAlphabet = new
+    static readonly Lazy<Base32Alphabet> geohashAlphabet = new
         (() => new Base32Alphabet("0123456789bcdefghjkmnpqrstuvwxyz"));
 
-    private static readonly Lazy<Base32Alphabet> bech32Alphabet = new
+    static readonly Lazy<Base32Alphabet> bech32Alphabet = new
         (() => new Base32Alphabet("qpzry9x8gf2tvdw0s3jn54khce6mua7l"));
 
-    private static readonly Lazy<Base32Alphabet> fileCoinAlphabet = new
+    static readonly Lazy<Base32Alphabet> fileCoinAlphabet = new
         (() => new Base32Alphabet("abcdefghijklmnopqrstuvwxyz234567"));
 
-    private static readonly Lazy<AliasedBase32Alphabet> crockfordAlphabet = new
+    static readonly Lazy<AliasedBase32Alphabet> crockfordAlphabet = new
         (() => new AliasedBase32Alphabet(
             "0123456789ABCDEFGHJKMNPQRSTVWXYZ",
             [
@@ -39,7 +39,7 @@ public class Base32Alphabet : CodingAlphabet
                 new('L', '1'),
             ]));
 
-    private static readonly Lazy<AliasedBase32Alphabet> base32HAlphabet = new(
+    static readonly Lazy<AliasedBase32Alphabet> base32HAlphabet = new(
         () => new AliasedBase32Alphabet(
             "0123456789ABCDEFGHJKLMNPQRTVWXYZ",
             paddingChar: '0',
@@ -124,7 +124,7 @@ public class Base32Alphabet : CodingAlphabet
     /// </summary>
     public PaddingPosition PaddingPosition { get; } = PaddingPosition.End;
 
-    private void mapLowerCaseCounterparts(string alphabet)
+    void mapLowerCaseCounterparts(string alphabet)
     {
         foreach (char c in alphabet)
         {

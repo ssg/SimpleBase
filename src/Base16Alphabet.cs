@@ -12,11 +12,11 @@ namespace SimpleBase;
 /// </summary>
 public class Base16Alphabet : CodingAlphabet
 {
-    private static readonly Lazy<Base16Alphabet> upperCaseAlphabet = new(() => new Base16Alphabet("0123456789ABCDEF"));
+    static readonly Lazy<Base16Alphabet> upperCaseAlphabet = new(() => new Base16Alphabet("0123456789ABCDEF"));
 
-    private static readonly Lazy<Base16Alphabet> lowerCaseAlphabet = new(() => new Base16Alphabet("0123456789abcdef"));
+    static readonly Lazy<Base16Alphabet> lowerCaseAlphabet = new(() => new Base16Alphabet("0123456789abcdef"));
 
-    private static readonly Lazy<Base16Alphabet> modHexAlphabet = new(() => new Base16Alphabet("cbdefghijklnrtuv"));
+    static readonly Lazy<Base16Alphabet> modHexAlphabet = new(() => new Base16Alphabet("cbdefghijklnrtuv"));
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Base16Alphabet"/> class with
@@ -63,7 +63,7 @@ public class Base16Alphabet : CodingAlphabet
     /// </summary>
     public bool CaseSensitive { get; }
 
-    private void mapCounterparts()
+    void mapCounterparts()
     {
         int alphaLen = Value.Length;
         for (int i = 0; i < alphaLen; i++)

@@ -23,7 +23,7 @@ namespace SimpleBaseTest.Base32Test;
 [TestFixture]
 class ZBase32Test
 {
-    private static readonly string[][] testData =
+    static readonly string[][] testData =
     [
         ["", ""],
         ["dCode z-base-32", "ctbs63dfrb7n4aubqp114c31"],

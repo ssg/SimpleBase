@@ -22,15 +22,15 @@ public sealed class Base85Alphabet(
     char? allZeroShortcut = null,
     char? allSpaceShortcut = null) : CodingAlphabet(85, alphabet)
 {
-    private static readonly Lazy<Base85Alphabet> z85 = new(() => new Base85Alphabet(
+    static readonly Lazy<Base85Alphabet> z85 = new(() => new Base85Alphabet(
             "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ.-:+=^!/*?&<>()[]{}@%$#"));
 
-    private static readonly Lazy<Base85Alphabet> ascii85 = new(() => new Base85Alphabet(
+    static readonly Lazy<Base85Alphabet> ascii85 = new(() => new Base85Alphabet(
             "!\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstu",
             allZeroShortcut: 'z',
             allSpaceShortcut: 'y'));
 
-    private static readonly Lazy<Base85Alphabet> rfc1924 = new(() => new Base85Alphabet(
+    static readonly Lazy<Base85Alphabet> rfc1924 = new(() => new Base85Alphabet(
             "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz!#$%&()*+-;<=>?@^_`{|}~"));
 
     /// <summary>

@@ -38,7 +38,7 @@ public class Cb58Test
     //CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
     //OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
     //OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-    private static readonly TestCaseData[] testData =
+    static readonly TestCaseData[] testData =
     [
         new TestCaseData(Array.Empty<byte>(), "45PJLL"),
 		new TestCaseData(new byte[]{ 0}, "1c7hwa"),

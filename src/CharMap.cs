@@ -5,4 +5,4 @@
 
 namespace SimpleBase;
 
-internal record struct CharMap(char From, char To);
+record struct CharMap(char From, char To);

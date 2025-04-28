@@ -9,7 +9,7 @@ namespace SimpleBaseTest.Base32Test;
 [TestFixture]
 class FileCoinTest
 {
-    private static readonly string[][] testData =
+    static readonly string[][] testData =
     [
         ["", ""],
         ["f", "my======"],
@@ -24,7 +24,7 @@ class FileCoinTest
         ["1234567890123456789012345678901234567890", "gezdgnbvgy3tqojqgezdgnbvgy3tqojqgezdgnbvgy3tqojqgezdgnbvgy3tqojq"]
     ];
 
-    private static readonly object[] byteTestData =
+    static readonly object[] byteTestData =
     [
         new object[] { new byte[] { 245, 202, 80, 149, 94, 201, 222, 50, 17, 198, 138, 104, 32, 183, 131, 33, 139, 208, 203, 211, 197, 191, 92, 194 }, "6xffbfk6zhpdeeogrjucbn4degf5bs6tyw7vzqq", false },
     ];

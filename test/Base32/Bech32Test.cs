@@ -9,7 +9,7 @@ namespace SimpleBaseTest.Base32Test;
 class Bech32Test
 {
     // test data was genereated with cryptii.com with a custom alphabet
-    private static readonly string[][] testData =
+    static readonly string[][] testData =
     [
         ["", ""],
         ["f", "vc======"],

@@ -6,7 +6,7 @@ namespace SimpleBaseTest.Base85Test;
 
 class Z85Test
 {
-    private static readonly TestCaseData[] testVectors =
+    static readonly TestCaseData[] testVectors =
     [
         new TestCaseData(Array.Empty<byte>(), ""),
         new TestCaseData(new byte[] { 0x86, 0x4F, 0xD2, 0x6F, 0xB5, 0x59, 0xF7, 0x5B }, "HelloWorld"),

@@ -24,7 +24,7 @@ namespace SimpleBaseTest.Base58Test;
 [Parallelizable]
 class RippleTest
 {
-    private static readonly TestCaseData[] rippleTestData =
+    static readonly TestCaseData[] rippleTestData =
     [
         new TestCaseData("0000010203", "rrLdF"),
         new TestCaseData("009C1CA2CBA6422D3988C735BB82B5C880B0441856B9B0910F", "rENS52thYF4eoY6WsLFf1WrTaWydcWfvcN"),

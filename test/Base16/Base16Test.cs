@@ -10,16 +10,16 @@ namespace SimpleBaseTest.Base16Test;
 
 [TestFixture]
 [Parallelizable]
-internal class Base16Test
+class Base16Test
 {
-    private static readonly Base16[] encoders =
+    static readonly Base16[] encoders =
     [
         Base16.LowerCase,
         Base16.UpperCase,
         Base16.ModHex
     ];
 
-    private static readonly object[][] testCases =
+    static readonly object[][] testCases =
     [                                                                   // LowerCase        // UpperCase        // ModHex
         [Array.Empty<byte>(),                                           "",                 "",                 ""],
         [new byte[] { 0xAB },                                           "ab",               "AB",               "ln"],
@@ -29,7 +29,7 @@ internal class Base16Test
         [new byte[] { 0xAB, 0xCD, 0xEF, 0xBA, 0xAB, 0xCD, 0xEF, 0xBA }, "abcdefbaabcdefba", "ABCDEFBAABCDEFBA", "lnrtuvnllnrtuvnl"],
     ];
 
-    private static IEnumerable<TestCaseData> testData
+    static IEnumerable<TestCaseData> testData
     {
         get
         {

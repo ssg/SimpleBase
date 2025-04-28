@@ -21,14 +21,14 @@ namespace SimpleBase;
 /// <param name="alphabet">Alphabet to use.</param>
 public class Base85(Base85Alphabet alphabet) : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCoder
 {
-    private const int baseLength = 85;
-    private const int byteBlockSize = 4;
-    private const int stringBlockSize = 5;
-    private const long fourSpaceChars = 0x20202020;
-    private const int decodeBufferSize = 5120; // don't remember what was special with this number
-    private static readonly Lazy<Base85> z85 = new(() => new Base85(Base85Alphabet.Z85));
-    private static readonly Lazy<Base85> ascii85 = new(() => new Base85(Base85Alphabet.Ascii85));
-    private static readonly Lazy<Base85Ipv6> rfc1924 = new(() => new Base85Ipv6(Base85Alphabet.Rfc1924));
+    const int baseLength = 85;
+    const int byteBlockSize = 4;
+    const int stringBlockSize = 5;
+    const long fourSpaceChars = 0x20202020;
+    const int decodeBufferSize = 5120; // don't remember what was special with this number
+    static readonly Lazy<Base85> z85 = new(() => new Base85(Base85Alphabet.Z85));
+    static readonly Lazy<Base85> ascii85 = new(() => new Base85(Base85Alphabet.Ascii85));
+    static readonly Lazy<Base85Ipv6> rfc1924 = new(() => new Base85Ipv6(Base85Alphabet.Rfc1924));
 
     /// <summary>
     /// Gets Z85 flavor of Base85.
@@ -167,7 +167,7 @@ public class Base85(Base85Alphabet alphabet) : IBaseCoder, IBaseStreamCoder, INo
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static bool writeEncodedValue(
+static bool writeEncodedValue(
         uint block,
         Span<char> output,
         string table,
@@ -217,7 +217,7 @@ public class Base85(Base85Alphabet alphabet) : IBaseCoder, IBaseStreamCoder, INo
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static bool writeDecodedValue(
+static bool writeDecodedValue(
         Span<byte> output,
         long value,
         int numBytesToWrite,
@@ -242,13 +242,13 @@ public class Base85(Base85Alphabet alphabet) : IBaseCoder, IBaseStreamCoder, INo
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static bool isWhiteSpace(char c)
+static bool isWhiteSpace(char c)
     {
         return c is '\x20' or '\x85' or '\xA0' or (>= '\x09' and <= '\x0D');
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static bool writeShortcut(
+static bool writeShortcut(
         Span<byte> output,
         ref int blockIndex,
         long value,
@@ -264,7 +264,7 @@ public class Base85(Base85Alphabet alphabet) : IBaseCoder, IBaseStreamCoder, INo
         return writeDecodedValue(output, value, byteBlockSize, out numBytesWritten);
     }
 
-    private static int getSafeCharCountForEncoding(int bytesLength)
+    static int getSafeCharCountForEncoding(int bytesLength)
     {
         ArgumentOutOfRangeException.ThrowIfNegative(bytesLength);
 
@@ -278,7 +278,7 @@ public class Base85(Base85Alphabet alphabet) : IBaseCoder, IBaseStreamCoder, INo
 #pragma warning restore IDE0046 // Convert to conditional expression
     }
 
-    private static int getSafeByteCountForDecoding(int textLength, bool usingShortcuts)
+    static int getSafeByteCountForDecoding(int textLength, bool usingShortcuts)
     {
         if (usingShortcuts)
         {
@@ -289,7 +289,7 @@ public class Base85(Base85Alphabet alphabet) : IBaseCoder, IBaseStreamCoder, INo
         return (((textLength - 1) / stringBlockSize) + 1) * byteBlockSize;
     }
 
-    private bool internalEncode(
+    bool internalEncode(
         ReadOnlySpan<byte> input,
         Span<char> output,
         out int numCharsWritten)
@@ -354,7 +354,7 @@ public class Base85(Base85Alphabet alphabet) : IBaseCoder, IBaseStreamCoder, INo
         return true;
     }
 
-    private bool internalDecode(
+    bool internalDecode(
        ReadOnlySpan<char> input,
        Span<byte> output,
        out int numBytesWritten)

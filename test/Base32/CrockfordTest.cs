@@ -26,7 +26,7 @@ namespace SimpleBaseTest.Base32Test;
 [TestFixture]
 class CrockfordTest
 {
-    private static readonly object[][] testData = [
+    static readonly object[][] testData = [
         ["", "", false],
         ["f", "CR", false],
         ["f", "CR======", true],

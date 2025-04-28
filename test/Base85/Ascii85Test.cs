@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace SimpleBaseTest.Base85Test;
 
-internal class Ascii85Test
+class Ascii85Test
 {
-    private static readonly object[][] testVectors =
+    static readonly object[][] testVectors =
     [
         [Array.Empty<byte>(), ""],
         [new byte[] { 0, 0, 0, 0 }, "z"],

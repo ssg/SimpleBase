@@ -24,7 +24,7 @@ namespace SimpleBaseTest.Base58Test;
 [Parallelizable]
 class BitcoinTest
 {
-    private static readonly TestCaseData[] bitcoinTestData =
+    static readonly TestCaseData[] bitcoinTestData =
     [
         new TestCaseData("0001", "12"),
         new TestCaseData("0000010203", "11Ldp"),

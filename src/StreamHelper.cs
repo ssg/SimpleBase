@@ -12,9 +12,9 @@ namespace SimpleBase;
 /// <summary>
 /// Provides Stream functionality to any buffer-based encoding operation.
 /// </summary>
-internal static class StreamHelper
+static class StreamHelper
 {
-    private const int defaultBufferSize = 4096;
+    const int defaultBufferSize = 4096;
 
     public static void Encode(
         Stream input,

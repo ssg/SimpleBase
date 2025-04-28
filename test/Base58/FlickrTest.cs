@@ -24,7 +24,7 @@ namespace SimpleBaseTest.Base58Test;
 [Parallelizable]
 class FlickrTest
 {
-    private static readonly TestCaseData[] flickrTestData =
+    static readonly TestCaseData[] flickrTestData =
     [
         new TestCaseData("0000010203", "11kCP"),
         new TestCaseData("009C1CA2CBA6422D3988C735BB82B5C880B0441856B9B0910F", "1ferHzT4xPnDNxGv3kP7Sv1s6vYCBv7VBe"),

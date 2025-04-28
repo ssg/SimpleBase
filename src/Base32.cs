@@ -16,19 +16,19 @@ namespace SimpleBase;
 public sealed class Base32 : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCoder,
     INumericBaseCoder
 {
-    private const int bitsPerByte = 8;
-    private const int bitsPerChar = 5;
+    const int bitsPerByte = 8;
+    const int bitsPerChar = 5;
 
     // this is an instance variable to allow unit tests to test this behavior
     internal readonly bool IsBigEndian;
 
-    private static readonly Lazy<Base32> crockford = new(() => new Base32(Base32Alphabet.Crockford));
-    private static readonly Lazy<Base32> rfc4648 = new(() => new Base32(Base32Alphabet.Rfc4648));
-    private static readonly Lazy<Base32> extendedHex = new(() => new Base32(Base32Alphabet.ExtendedHex));
-    private static readonly Lazy<Base32> zBase32 = new(() => new Base32(Base32Alphabet.ZBase32));
-    private static readonly Lazy<Base32> geohash = new(() => new Base32(Base32Alphabet.Geohash));
-    private static readonly Lazy<Base32> bech32 = new(() => new Base32(Base32Alphabet.Bech32));
-    private static readonly Lazy<Base32> filecoin = new(() => new Base32(Base32Alphabet.FileCoin));
+    static readonly Lazy<Base32> crockford = new(() => new Base32(Base32Alphabet.Crockford));
+    static readonly Lazy<Base32> rfc4648 = new(() => new Base32(Base32Alphabet.Rfc4648));
+    static readonly Lazy<Base32> extendedHex = new(() => new Base32(Base32Alphabet.ExtendedHex));
+    static readonly Lazy<Base32> zBase32 = new(() => new Base32(Base32Alphabet.ZBase32));
+    static readonly Lazy<Base32> geohash = new(() => new Base32(Base32Alphabet.Geohash));
+    static readonly Lazy<Base32> bech32 = new(() => new Base32(Base32Alphabet.Bech32));
+    static readonly Lazy<Base32> filecoin = new(() => new Base32(Base32Alphabet.FileCoin));
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Base32"/> class with a
@@ -53,7 +53,7 @@ public sealed class Base32 : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCod
         IsBigEndian = isBigEndian;
     }
 
-    private enum DecodeResult
+    enum DecodeResult
     {
         Success = 0,
         InvalidInput,
@@ -122,7 +122,7 @@ public sealed class Base32 : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCod
             : throw new ArgumentOutOfRangeException(nameof(number), "Number is negative");
     }
 
-    private static readonly byte[] zeroBuffer = [0];
+    static readonly byte[] zeroBuffer = [0];
 
     /// <inheritdoc/>
     public string Encode(ulong number)
@@ -376,12 +376,12 @@ public sealed class Base32 : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCod
         return internalDecode(input[..inputLen], output, out numBytesWritten) == DecodeResult.Success;
     }
 
-    private static int getAllocationByteCountForDecoding(int textLenWithoutPadding)
+    static int getAllocationByteCountForDecoding(int textLenWithoutPadding)
     {
         return textLenWithoutPadding * bitsPerChar / bitsPerByte;
     }
 
-    private bool internalEncode(
+    bool internalEncode(
        ReadOnlySpan<byte> input,
        Span<char> output,
        bool padding,
@@ -442,7 +442,7 @@ public sealed class Base32 : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCod
         return false;
     }
 
-    private int getPaddingCharCount(ReadOnlySpan<char> text)
+    int getPaddingCharCount(ReadOnlySpan<char> text)
     {
         char paddingChar = Alphabet.PaddingChar;
         int result = 0;
@@ -471,7 +471,7 @@ public sealed class Base32 : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCod
         return result;
     }
 
-    private DecodeResult internalDecode(
+    DecodeResult internalDecode(
         ReadOnlySpan<char> input,
         Span<byte> output,
         out int numBytesWritten)
