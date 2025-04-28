@@ -266,10 +266,7 @@ public class Base85(Base85Alphabet alphabet) : IBaseCoder, IBaseStreamCoder, INo
 
     private static int getSafeCharCountForEncoding(int bytesLength)
     {
-        if (bytesLength < 0)
-        {
-            throw new ArgumentOutOfRangeException(nameof(bytesLength));
-        }
+        ArgumentOutOfRangeException.ThrowIfNegative(bytesLength);
 
 #pragma warning disable IDE0046 // Convert to conditional expression - prefer clarity
         if (bytesLength == 0)
