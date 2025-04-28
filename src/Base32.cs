@@ -179,7 +179,7 @@ public sealed class Base32 : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCod
         var result = DecodeUInt64(text);
         if (result > long.MaxValue)
         {
-            throw new ArgumentOutOfRangeException("Decoded buffer is out of Int64 range");
+            throw new ArgumentOutOfRangeException(nameof(text), "Decoded buffer is out of Int64 range");
         }
         return (long)result;
     }
