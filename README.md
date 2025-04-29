@@ -15,7 +15,7 @@ Features
  - **Base32**: RFC 4648, BECH32, Crockford, z-base-32, Geohash, FileCoin and Extended Hex 
    (BASE32-HEX) flavors with Crockford character substitution, or any other 
    custom flavors.
- - **Base58**: Both the standard encoding (Bitcoin, Ripple, Flickr, and custom alphabets) and Monero 
+ - **Base58**: Both the standard encoding (Bitcoin (BTC), Ripple (XRP), Flickr, and custom alphabets) and Monero (XMR)
    Base58 algorithms are supported. Also provides Base58Check and Avalanche CB58 encoding helpers.
  - **Base85**: Ascii85, Z85 and custom flavors. IPv6 encoding/decoding support.
  - **Base16**: UpperCase, LowerCase and ModHex flavors. An experimental hexadecimal 
