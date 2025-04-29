@@ -252,23 +252,23 @@ Encoding (64 byte buffer)
 
 | Method                                 | Mean      | Error    | StdDev   | Ratio | RatioSD | Gen0   | Allocated | Alloc Ratio |
 |--------------------------------------- |----------:|---------:|---------:|------:|--------:|-------:|----------:|------------:|
-| DotNet_Base64                          |  27.33 ns | 0.211 ns | 0.197 ns |  1.00 |    0.01 | 0.0120 |     200 B |        1.00 |
-| SimpleBase_Base16_UpperCase            |  82.67 ns | 1.642 ns | 1.536 ns |  3.03 |    0.06 | 0.0167 |     280 B |        1.40 |
-| SimpleBase_Base32_CrockfordWithPadding | 153.33 ns | 0.707 ns | 0.627 ns |  5.61 |    0.05 | 0.0138 |     232 B |        1.16 |
-| SimpleBase_Base85_Z85                  | 147.68 ns | 0.805 ns | 0.753 ns |  5.40 |    0.05 | 0.0110 |     184 B |        0.92 |
-| SimpleBase_Base58_Bitcoin              |  44.42 ns | 0.064 ns | 0.053 ns |  1.63 |    0.01 | 0.0091 |     152 B |        0.76 |
-| SimpleBase_Base58_Monero               | 210.36 ns | 0.540 ns | 0.451 ns |  7.70 |    0.06 | 0.0253 |     424 B |        2.12 |
+| DotNet_Base64                          |  28.08 ns | 0.377 ns | 0.334 ns |  1.00 |    0.02 | 0.0119 |     200 B |        1.00 |
+| SimpleBase_Base16_UpperCase            |  84.19 ns | 1.715 ns | 2.230 ns |  3.00 |    0.09 | 0.0167 |     280 B |        1.40 |
+| SimpleBase_Base32_CrockfordWithPadding | 155.99 ns | 1.870 ns | 1.749 ns |  5.56 |    0.09 | 0.0138 |     232 B |        1.16 |
+| SimpleBase_Base85_Z85                  | 148.10 ns | 1.071 ns | 1.002 ns |  5.27 |    0.07 | 0.0110 |     184 B |        0.92 |
+| SimpleBase_Base58_Bitcoin              |  45.40 ns | 0.761 ns | 0.594 ns |  1.62 |    0.03 | 0.0091 |     152 B |        0.76 |
+| SimpleBase_Base58_Monero               | 202.59 ns | 0.600 ns | 0.532 ns |  7.22 |    0.08 | 0.0119 |     200 B |        1.00 |
 
 Decoding (80 character string)
 
-| Method                      | Mean        | Error    | StdDev   | Ratio | RatioSD | Gen0   | Allocated | Alloc Ratio |
-|---------------------------- |------------:|---------:|---------:|------:|--------:|-------:|----------:|------------:|
-| DotNet_Base64               |   104.43 ns | 2.137 ns | 3.199 ns |  1.00 |    0.04 | 0.0052 |      88 B |        1.00 |
-| SimpleBase_Base16_UpperCase |    49.15 ns | 0.166 ns | 0.156 ns |  0.47 |    0.01 | 0.0038 |      64 B |        0.73 |
-| SimpleBase_Base32_Crockford |   126.31 ns | 1.201 ns | 1.123 ns |  1.21 |    0.04 | 0.0048 |      80 B |        0.91 |
-| SimpleBase_Base85_Z85       |   253.69 ns | 0.655 ns | 0.581 ns |  2.43 |    0.07 | 0.0105 |     176 B |        2.00 |
-| SimpleBase_Base58_Bitcoin   | 4,954.73 ns | 6.333 ns | 5.614 ns | 47.49 |    1.41 | 0.0076 |     176 B |        2.00 |
-| SimpleBase_Base58_Monero    |   123.25 ns | 0.362 ns | 0.339 ns |  1.18 |    0.04 | 0.0105 |     176 B |        2.00 |
+| Method                      | Mean        | Error     | StdDev    | Ratio | RatioSD | Gen0   | Allocated | Alloc Ratio |
+|---------------------------- |------------:|----------:|----------:|------:|--------:|-------:|----------:|------------:|
+| DotNet_Base64               |   105.74 ns |  2.107 ns |  2.427 ns |  1.00 |    0.03 | 0.0052 |      88 B |        1.00 |
+| SimpleBase_Base16_UpperCase |    49.20 ns |  0.239 ns |  0.212 ns |  0.47 |    0.01 | 0.0038 |      64 B |        0.73 |
+| SimpleBase_Base32_Crockford |   125.15 ns |  0.410 ns |  0.383 ns |  1.18 |    0.03 | 0.0048 |      80 B |        0.91 |
+| SimpleBase_Base85_Z85       |   252.55 ns |  0.938 ns |  0.832 ns |  2.39 |    0.05 | 0.0105 |     176 B |        2.00 |
+| SimpleBase_Base58_Bitcoin   | 5,415.10 ns | 36.000 ns | 33.674 ns | 51.24 |    1.20 | 0.0076 |     176 B |        2.00 |
+| SimpleBase_Base58_Monero    |   127.32 ns |  0.966 ns |  0.903 ns |  1.20 |    0.03 | 0.0105 |     176 B |        2.00 |
 
 Notes
 -----
