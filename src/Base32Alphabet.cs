@@ -18,6 +18,9 @@ public class Base32Alphabet : CodingAlphabet
     static readonly Lazy<Base32Alphabet> extendedHexAlphabet = new
         (() => new Base32Alphabet("0123456789ABCDEFGHIJKLMNOPQRSTUV"));
 
+    static readonly Lazy<Base32Alphabet> extendedHexLowerAlphabet = new
+        (() => new Base32Alphabet("0123456789abcdefghijklmnopqrstuv"));
+
     static readonly Lazy<Base32Alphabet> zBase32Alphabet = new
         (() => new Base32Alphabet("ybndrfg8ejkmcpqxot1uwisza345h769"));
 
@@ -27,6 +30,7 @@ public class Base32Alphabet : CodingAlphabet
     static readonly Lazy<Base32Alphabet> bech32Alphabet = new
         (() => new Base32Alphabet("qpzry9x8gf2tvdw0s3jn54khce6mua7l"));
 
+    // this is the same as RFC4648 but with lowercase letters
     static readonly Lazy<Base32Alphabet> fileCoinAlphabet = new
         (() => new Base32Alphabet("abcdefghijklmnopqrstuvwxyz234567"));
 
@@ -88,6 +92,11 @@ public class Base32Alphabet : CodingAlphabet
     /// Gets Extended Hex alphabet.
     /// </summary>
     public static Base32Alphabet ExtendedHex => extendedHexAlphabet.Value;
+
+    /// <summary>
+    /// Gets Extended Hex alphabet.
+    /// </summary>
+    public static Base32Alphabet ExtendedHexLower => extendedHexLowerAlphabet.Value;
 
     /// <summary>
     /// Gets z-base-32 alphabet.

@@ -25,6 +25,7 @@ public sealed class Base32 : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCod
     static readonly Lazy<Base32> crockford = new(() => new Base32(Base32Alphabet.Crockford));
     static readonly Lazy<Base32> rfc4648 = new(() => new Base32(Base32Alphabet.Rfc4648));
     static readonly Lazy<Base32> extendedHex = new(() => new Base32(Base32Alphabet.ExtendedHex));
+    static readonly Lazy<Base32> extendedHexLower = new(() => new Base32(Base32Alphabet.ExtendedHexLower));
     static readonly Lazy<Base32> zBase32 = new(() => new Base32(Base32Alphabet.ZBase32));
     static readonly Lazy<Base32> geohash = new(() => new Base32(Base32Alphabet.Geohash));
     static readonly Lazy<Base32> bech32 = new(() => new Base32(Base32Alphabet.Bech32));
@@ -75,6 +76,12 @@ public sealed class Base32 : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCod
     /// </summary>
     /// <remarks>Also from RFC 4648.</remarks>
     public static Base32 ExtendedHex => extendedHex.Value;
+
+    /// <summary>
+    /// Gets Extended Hex variant of Base32 coder.
+    /// </summary>
+    /// <remarks>Also from RFC 4648.</remarks>
+    public static Base32 ExtendedHexLower => extendedHexLower.Value;
 
     /// <summary>
     /// Gets z-base-32 variant of Base32 coder.
