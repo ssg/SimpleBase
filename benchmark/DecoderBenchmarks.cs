@@ -10,7 +10,7 @@ public class DecoderBenchmarks
 {
     readonly string s = new('a', 80);
 
-    [Benchmark(Baseline = true)]
+    [Benchmark]
     public byte[] DotNet_Base64() => Convert.FromBase64String(s);
 
     [Benchmark]
