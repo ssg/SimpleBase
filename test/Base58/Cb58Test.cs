@@ -47,7 +47,6 @@ public class Cb58Test
 			"SkB92YpWm4Q2ijQHH34cqbKkCZWszsiQgHVjtNeFF2HdvDQU"),
 	];
 
-
     [Test]
     [TestCaseSource(nameof(testData))]
     public void EncodeCheck_ValidInput_ReturnsExpectedResult(byte[] bytes, string expectedOutput)
