@@ -213,6 +213,8 @@ public sealed class Base16(Base16Alphabet alphabet) : IBaseCoder, IBaseStreamCod
             return string.Empty;
         }
 
+        // we can't use `String.Create` here to reduce allocations because
+        // Spans aren't supported in lambda expressions.
         int outputLen = GetSafeCharCountForEncoding(bytes);
         Span<char> output = outputLen < Bits.SafeStackMaxAllocSize ? stackalloc char[outputLen] : new char[outputLen];
         internalEncode(bytes, output, Alphabet.Value);

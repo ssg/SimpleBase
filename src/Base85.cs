@@ -75,6 +75,8 @@ public class Base85(Base85Alphabet alphabet) : IBaseCoder, IBaseStreamCoder, INo
             return string.Empty;
         }
 
+        // we can't use `String.Create` here to reduce allocations because
+        // Spans aren't supported in lambda expressions.
         int outputLen = GetSafeCharCountForEncoding(bytes);
         Span<char> output = outputLen < Bits.SafeStackMaxAllocSize ? stackalloc char[outputLen] : new char[outputLen];
 
