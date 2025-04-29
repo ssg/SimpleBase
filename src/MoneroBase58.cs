@@ -75,9 +75,7 @@ public sealed class MoneroBase58(Base58Alphabet alphabet) : IBaseCoder, INonAllo
         }
 
         int outputLen = getSafeCharCountForEncoding(bytes.Length);
-        Span<char> output = new char[outputLen];
-
-
+        Span<char> output = outputLen < Bits.SafeStackMaxAllocSize ? stackalloc char[outputLen] : new char[outputLen];
 
         return internalEncode(bytes, output, out int numCharsWritten)
             ? new string(output[..numCharsWritten])
@@ -100,7 +98,7 @@ public sealed class MoneroBase58(Base58Alphabet alphabet) : IBaseCoder, INonAllo
         byte[] output = new byte[outputLen];
         if (!internalDecode(
             text,
-            output.AsSpan()[..outputLen],
+            output,
             out int numBytesWritten))
         {
             throw new InvalidOperationException("Output buffer size was incorrect while decoding MoneroBase58");
