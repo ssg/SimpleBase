@@ -140,14 +140,13 @@ public sealed class MoneroBase58(Base58Alphabet alphabet) : IBaseCoder, INonAllo
         }
 
         char zeroChar = ZeroChar;
-        ReadOnlySpan<char> alphabet = Alphabet.Value.AsSpan();
+        ReadOnlySpan<char> alphabet = Alphabet.Value;
         int offset = 0;
         int outputOffset = 0;
         (int numBlocks, int remainingLength) = Math.DivRem(input.Length, blockSize);
-        ReadOnlySpan<byte> inputBlock;
         for (int i = 0; i < numBlocks; i++)
         {
-            inputBlock = input[offset..(offset + blockSize)];
+            var inputBlock = input[offset..(offset + blockSize)];
             encodeBlock(inputBlock, output[outputOffset..(outputOffset + encodedBlockSize)], alphabet, zeroChar);
             offset += blockSize;
             outputOffset += encodedBlockSize;
