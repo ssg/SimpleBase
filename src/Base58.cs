@@ -107,14 +107,13 @@ public sealed class Base58(Base58Alphabet alphabet) : IBaseCoder, INonAllocating
 
         int versionPlusPayloadLen = payload.Length + 1;
         int outputLen = versionPlusPayloadLen + sha256DigestBytes;
-        byte[] output = new byte[outputLen];
-        var outputSpan = output.AsSpan();
-        outputSpan[0] = version;
-        payload.CopyTo(outputSpan[1..]);
+        Span<byte> output = (outputLen < Bits.SafeStackMaxAllocSize) ? stackalloc byte[outputLen] : new byte[outputLen];
+        output[0] = version;
+        payload.CopyTo(output[1..]);
         Span<byte> sha256 = stackalloc byte[sha256Bytes];
-        computeDoubleSha256(outputSpan[..versionPlusPayloadLen], sha256);
-        sha256[..sha256DigestBytes].CopyTo(outputSpan[versionPlusPayloadLen..]);
-        return Encode(outputSpan);
+        computeDoubleSha256(output[..versionPlusPayloadLen], sha256);
+        sha256[..sha256DigestBytes].CopyTo(output[versionPlusPayloadLen..]);
+        return Encode(output);
     }
 
     /// <summary>
@@ -168,17 +167,16 @@ public sealed class Base58(Base58Alphabet alphabet) : IBaseCoder, INonAllocating
         }
 
         int outputLen = payload.Length + sha256DigestBytes;
-        byte[] output = new byte[outputLen];
-        var outputSpan = output.AsSpan();
-        payload.CopyTo(outputSpan);
+        Span<byte> output = (outputLen < Bits.SafeStackMaxAllocSize) ? stackalloc byte[outputLen] : new byte[outputLen];
+        payload.CopyTo(output);
         Span<byte> sha256 = stackalloc byte[sha256Bytes];
         using (var hasher = SHA256.Create())
         {
-            computeSha256(hasher, outputSpan[..payload.Length], sha256);
+            computeSha256(hasher, output[..payload.Length], sha256);
         }
 
-        sha256[^sha256DigestBytes..].CopyTo(outputSpan[payload.Length..]);
-        return Encode(outputSpan);
+        sha256[^sha256DigestBytes..].CopyTo(output[payload.Length..]);
+        return Encode(output);
     }
 
     /// <summary>
@@ -231,6 +229,9 @@ public sealed class Base58(Base58Alphabet alphabet) : IBaseCoder, INonAllocating
 
         int numZeroes = getZeroCount(bytes);
         int outputLen = getSafeCharCountForEncoding(bytes.Length, numZeroes);
+
+        // we can't use `String.Create` here to reduce allocations because
+        // Spans aren't supported in lambda expressions.
         Span<char> output = outputLen < Bits.SafeStackMaxAllocSize ? stackalloc char[outputLen] : new char[outputLen];
 
         return internalEncode(bytes, output, numZeroes, out int numCharsWritten)
@@ -256,7 +257,7 @@ public sealed class Base58(Base58Alphabet alphabet) : IBaseCoder, INonAllocating
         byte[] output = new byte[outputLen];
         if (!internalDecode(
             text,
-            output.AsSpan()[..outputLen],
+            output,
             numZeroes,
             out int numBytesWritten))
         {
