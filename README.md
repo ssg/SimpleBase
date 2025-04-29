@@ -250,25 +250,25 @@ AMD Ryzen 9 5950X, 1 CPU, 32 logical and 16 physical cores
 
 Encoding (64 byte buffer)
 
-| Method                                 | Mean      | Error    | StdDev   | Ratio | RatioSD | Gen0   | Allocated | Alloc Ratio |
-|--------------------------------------- |----------:|---------:|---------:|------:|--------:|-------:|----------:|------------:|
-| DotNet_Base64                          |  28.08 ns | 0.377 ns | 0.334 ns |  1.00 |    0.02 | 0.0119 |     200 B |        1.00 |
-| SimpleBase_Base16_UpperCase            |  84.19 ns | 1.715 ns | 2.230 ns |  3.00 |    0.09 | 0.0167 |     280 B |        1.40 |
-| SimpleBase_Base32_CrockfordWithPadding | 155.99 ns | 1.870 ns | 1.749 ns |  5.56 |    0.09 | 0.0138 |     232 B |        1.16 |
-| SimpleBase_Base85_Z85                  | 148.10 ns | 1.071 ns | 1.002 ns |  5.27 |    0.07 | 0.0110 |     184 B |        0.92 |
-| SimpleBase_Base58_Bitcoin              |  45.40 ns | 0.761 ns | 0.594 ns |  1.62 |    0.03 | 0.0091 |     152 B |        0.76 |
-| SimpleBase_Base58_Monero               | 202.59 ns | 0.600 ns | 0.532 ns |  7.22 |    0.08 | 0.0119 |     200 B |        1.00 |
+| Method                                 | Mean      | Error    | StdDev   | Gen0   | Allocated |
+|--------------------------------------- |----------:|---------:|---------:|-------:|----------:|
+| DotNet_Base64                          |  26.89 ns | 0.070 ns | 0.062 ns | 0.0120 |     200 B |
+| SimpleBase_Base16_UpperCase            |  84.13 ns | 1.640 ns | 1.534 ns | 0.0167 |     280 B |
+| SimpleBase_Base32_CrockfordWithPadding | 149.34 ns | 0.434 ns | 0.385 ns | 0.0138 |     232 B |
+| SimpleBase_Base85_Z85                  | 148.02 ns | 0.227 ns | 0.212 ns | 0.0110 |     184 B |
+| SimpleBase_Base58_Bitcoin              |  46.38 ns | 0.955 ns | 1.100 ns | 0.0091 |     152 B |
+| SimpleBase_Base58_Monero               | 203.60 ns | 1.622 ns | 1.518 ns | 0.0119 |     200 B |
 
 Decoding (80 character string)
 
-| Method                      | Mean        | Error     | StdDev    | Ratio | RatioSD | Gen0   | Allocated | Alloc Ratio |
-|---------------------------- |------------:|----------:|----------:|------:|--------:|-------:|----------:|------------:|
-| DotNet_Base64               |   105.74 ns |  2.107 ns |  2.427 ns |  1.00 |    0.03 | 0.0052 |      88 B |        1.00 |
-| SimpleBase_Base16_UpperCase |    49.20 ns |  0.239 ns |  0.212 ns |  0.47 |    0.01 | 0.0038 |      64 B |        0.73 |
-| SimpleBase_Base32_Crockford |   125.15 ns |  0.410 ns |  0.383 ns |  1.18 |    0.03 | 0.0048 |      80 B |        0.91 |
-| SimpleBase_Base85_Z85       |   252.55 ns |  0.938 ns |  0.832 ns |  2.39 |    0.05 | 0.0105 |     176 B |        2.00 |
-| SimpleBase_Base58_Bitcoin   | 5,415.10 ns | 36.000 ns | 33.674 ns | 51.24 |    1.20 | 0.0076 |     176 B |        2.00 |
-| SimpleBase_Base58_Monero    |   127.32 ns |  0.966 ns |  0.903 ns |  1.20 |    0.03 | 0.0105 |     176 B |        2.00 |
+| Method                      | Mean        | Error     | StdDev    | Gen0   | Allocated |
+|---------------------------- |------------:|----------:|----------:|-------:|----------:|
+| DotNet_Base64               |   106.07 ns |  2.056 ns |  2.448 ns | 0.0052 |      88 B |
+| SimpleBase_Base16_UpperCase |    49.17 ns |  0.491 ns |  0.459 ns | 0.0038 |      64 B |
+| SimpleBase_Base32_Crockford |   123.07 ns |  0.272 ns |  0.254 ns | 0.0048 |      80 B |
+| SimpleBase_Base85_Z85       |   251.30 ns |  1.106 ns |  0.923 ns | 0.0105 |     176 B |
+| SimpleBase_Base58_Bitcoin   | 5,430.37 ns | 34.332 ns | 32.114 ns | 0.0076 |     176 B |
+| SimpleBase_Base58_Monero    |   128.24 ns |  0.947 ns |  0.885 ns | 0.0105 |     176 B |
 
 Notes
 -----
