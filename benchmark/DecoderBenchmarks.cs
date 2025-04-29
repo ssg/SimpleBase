@@ -5,7 +5,6 @@ using SimpleBase;
 namespace benchmark;
 
 [MarkdownExporterAttribute.GitHub]
-[MarkdownExporter()]
 [MemoryDiagnoser]
 public class DecoderBenchmarks
 {
