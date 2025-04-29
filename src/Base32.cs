@@ -163,7 +163,7 @@ public sealed class Base32 : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCod
         }
 
         var span = buffer.AsSpan();
-        var newSpan = new byte[sizeof(ulong)].AsSpan();
+        Span<byte> newSpan = stackalloc byte[sizeof(ulong)];
         span.CopyTo(newSpan);
         if (IsBigEndian)
         {
@@ -221,6 +221,8 @@ public sealed class Base32 : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCod
             throw new InvalidOperationException("Internal error: couldn't calculate proper output buffer size for input");
         }
 
+        // we can't use `String.Create` here to reduce allocations because
+        // Spans aren't supported in lambda expressions.
         return new string(output[..numCharsWritten]);
     }
 
