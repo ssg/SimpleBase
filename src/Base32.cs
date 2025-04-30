@@ -100,7 +100,7 @@ public sealed class Base32 : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCod
     public static Base32 Bech32 => bech32.Value;
 
     /// <summary>
-    /// Gets FileCoin variant of Base32 coder.
+    /// Gets FileCoin variant of Base32 coder Also known as RFC 4648 lowercase.
     /// </summary>
     public static Base32 FileCoin => filecoin.Value;
 
