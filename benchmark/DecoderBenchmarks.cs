@@ -9,8 +9,8 @@ namespace benchmark;
 [MemoryDiagnoser]
 public class DecoderBenchmarks
 {
-    static readonly string s = new('a', 80);
-    static readonly MemoryStream memoryStream = new();
+    readonly string s = new('a', 80);
+    readonly MemoryStream memoryStream = new();
 
     [Benchmark]
     public byte[] DotNet_Base64() => Convert.FromBase64String(s);
