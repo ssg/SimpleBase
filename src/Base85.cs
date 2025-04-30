@@ -156,9 +156,9 @@ public class Base85(Base85Alphabet alphabet) : IBaseCoder, IBaseStreamCoder, INo
 
         // allocate a larger buffer if we're using shortcuts
         int decodeBufferLen = getSafeByteCountForDecoding(text.Length, Alphabet.HasShortcut);
-        byte[] decodeBuffer = new byte[decodeBufferLen];
+        Span<byte> decodeBuffer = decodeBufferLen < Bits.SafeStackMaxAllocSize ? stackalloc byte[decodeBufferLen] : new byte[decodeBufferLen];
         return internalDecode(text, decodeBuffer, out int numBytesWritten)
-            ? decodeBuffer[..numBytesWritten]
+            ? decodeBuffer[..numBytesWritten].ToArray()
             : throw new InvalidOperationException("Internal error: pre-allocated insufficient output buffer size");
     }
 

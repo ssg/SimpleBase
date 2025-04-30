@@ -27,7 +27,7 @@ public sealed class MoneroBase58(Base58Alphabet alphabet) : IBaseCoder, INonAllo
     /// </summary>
     public MoneroBase58()
         : this(Base58Alphabet.Bitcoin)
-    {            
+    {
     }
 
     /// <summary>
@@ -95,7 +95,7 @@ public sealed class MoneroBase58(Base58Alphabet alphabet) : IBaseCoder, INonAllo
         }
 
         int outputLen = getSafeByteCountForDecoding(text.Length);
-        byte[] output = new byte[outputLen];
+        Span<byte> output = outputLen < Bits.SafeStackMaxAllocSize ? stackalloc byte[outputLen] : new byte[outputLen];
         if (!internalDecode(
             text,
             output,
@@ -104,7 +104,7 @@ public sealed class MoneroBase58(Base58Alphabet alphabet) : IBaseCoder, INonAllo
             throw new InvalidOperationException("Output buffer size was incorrect while decoding MoneroBase58");
         }
 
-        return output[..numBytesWritten];
+        return output[..numBytesWritten].ToArray();
     }
 
     /// <inheritdoc/>
@@ -247,7 +247,7 @@ public sealed class MoneroBase58(Base58Alphabet alphabet) : IBaseCoder, INonAllo
             int tempSize = encodedBlockSizes.AsSpan().IndexOf(remainingBuffer.Length);
             if (tempSize < 0)
             {
-                // invalid length for encoded remaining buffer 
+                // invalid length for encoded remaining buffer
                 return false;
             }
             temp[(blockSize - tempSize)..].CopyTo(output[numBytesWritten..]);
