@@ -254,7 +254,7 @@ public sealed class Base58(Base58Alphabet alphabet) : IBaseCoder, INonAllocating
         char zeroChar = ZeroChar;
         int numZeroes = getPrefixCount(text, zeroChar);
         int outputLen = GetSafeByteCountForDecoding(text.Length, numZeroes);
-        byte[] output = new byte[outputLen];
+        Span<byte> output = outputLen < Bits.SafeStackMaxAllocSize ? stackalloc byte[outputLen] : new byte[outputLen];
         if (!internalDecode(
             text,
             output,
@@ -264,7 +264,7 @@ public sealed class Base58(Base58Alphabet alphabet) : IBaseCoder, INonAllocating
             throw new InvalidOperationException("Output buffer was too small while decoding Base58");
         }
 
-        return output[..numBytesWritten];
+        return output[..numBytesWritten].ToArray();
     }
 
     /// <inheritdoc/>
