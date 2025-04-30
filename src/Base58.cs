@@ -170,10 +170,7 @@ public sealed class Base58(Base58Alphabet alphabet) : IBaseCoder, INonAllocating
         Span<byte> output = (outputLen < Bits.SafeStackMaxAllocSize) ? stackalloc byte[outputLen] : new byte[outputLen];
         payload.CopyTo(output);
         Span<byte> sha256 = stackalloc byte[sha256Bytes];
-        using (var hasher = SHA256.Create())
-        {
-            computeSha256(hasher, output[..payload.Length], sha256);
-        }
+        computeSha256(output[..payload.Length], sha256);
 
         sha256[^sha256DigestBytes..].CopyTo(output[payload.Length..]);
         return Encode(output);
@@ -199,10 +196,7 @@ public sealed class Base58(Base58Alphabet alphabet) : IBaseCoder, INonAllocating
 
         buffer = buffer[..numBytesWritten];
         Span<byte> sha256 = stackalloc byte[sha256Bytes];
-        using (var hasher = SHA256.Create())
-        {
-            computeSha256(hasher, buffer[..^sha256DigestBytes], sha256);
-        }
+        computeSha256(buffer[..^sha256DigestBytes], sha256);
 
         if (!sha256[^sha256DigestBytes..].SequenceEqual(buffer[^sha256DigestBytes..]))
         {
@@ -259,12 +253,13 @@ public sealed class Base58(Base58Alphabet alphabet) : IBaseCoder, INonAllocating
             text,
             output,
             numZeroes,
-            out int numBytesWritten))
+            out int bytesWrittenRangeStart,
+            out int bytesWrittenRangeEnd))
         {
             throw new InvalidOperationException("Output buffer was too small while decoding Base58");
         }
 
-        return output[..numBytesWritten].ToArray();
+        return output[bytesWrittenRangeStart..bytesWrittenRangeEnd].ToArray();
     }
 
     /// <inheritdoc/>
@@ -284,24 +279,28 @@ public sealed class Base58(Base58Alphabet alphabet) : IBaseCoder, INonAllocating
         }
 
         int zeroCount = getPrefixCount(input, ZeroChar);
-        return internalDecode(
+        bool result = internalDecode(
             input,
             output,
             zeroCount,
-            out numBytesWritten);
+            out int bytesWrittenRangeStart,
+            out int bytesWrittenRangeEnd);
+
+        output[bytesWrittenRangeStart..bytesWrittenRangeEnd].CopyTo(output);
+        numBytesWritten = bytesWrittenRangeEnd - bytesWrittenRangeStart;
+        return result;
     }
 
     static void computeDoubleSha256(ReadOnlySpan<byte> buffer, Span<byte> output)
     {
         Span<byte> tempResult = stackalloc byte[sha256Bytes];
-        using var sha256 = SHA256.Create();
-        computeSha256(sha256, buffer, tempResult);
-        computeSha256(sha256, tempResult, output);
+        computeSha256(buffer, tempResult);
+        computeSha256(tempResult, output);
     }
 
-    static void computeSha256(SHA256 sha256, ReadOnlySpan<byte> buffer, Span<byte> output)
+    static void computeSha256(ReadOnlySpan<byte> buffer, Span<byte> output)
     {
-        if (!sha256.TryComputeHash(buffer, output, out int bytesWritten))
+        if (!SHA256.TryHashData(buffer, output, out int bytesWritten))
         {
             throw new InvalidOperationException("Couldn't compute SHA256");
         }
@@ -433,11 +432,13 @@ public sealed class Base58(Base58Alphabet alphabet) : IBaseCoder, INonAllocating
         ReadOnlySpan<char> input,
         Span<byte> output,
         int numZeroes,
-        out int numBytesWritten)
+        out int bytesWrittenRangeStart,
+        out int bytesWrittenRangeEnd)
     {
         if (numZeroes == input.Length)
         {
-            return decodeZeroes(output, numZeroes, out numBytesWritten);
+            bytesWrittenRangeStart = 0;
+            return decodeZeroes(output, numZeroes, out bytesWrittenRangeEnd);
         }
 
         var table = Alphabet.ReverseLookupTable;
@@ -464,9 +465,8 @@ public sealed class Base58(Base58Alphabet alphabet) : IBaseCoder, INonAllocating
             }
         }
 
-        int startIndex = min - numZeroes;
-        numBytesWritten = output.Length - startIndex;
-        output[startIndex..].CopyTo(output[..numBytesWritten]);
+        bytesWrittenRangeStart = min - numZeroes;
+        bytesWrittenRangeEnd  = output.Length;
         return true;
     }
 }
