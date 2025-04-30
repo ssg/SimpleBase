@@ -72,7 +72,7 @@ static class StreamHelper
             }
 
             var result = decodeBufferFunc(buffer.AsMemory(0, bytesRead));
-            output.Write(result.ToArray(), 0, result.Length);
+            output.Write(result.Span);
         }
     }
 
