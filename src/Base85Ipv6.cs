@@ -1,5 +1,5 @@
 ﻿// <copyright file="Base85Ipv6.cs" company="Sedat Kapanoglu">
-// Copyright (c) 2014-2019 Sedat Kapanoglu
+// Copyright (c) 2014-2025 Sedat Kapanoglu
 // Licensed under Apache-2.0 License (see LICENSE.txt file for details)
 // </copyright>
 

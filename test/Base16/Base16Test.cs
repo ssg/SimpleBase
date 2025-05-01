@@ -124,7 +124,7 @@ class Base16Test
     public void Decode(Base16 encoder, byte[] expectedOutput, string input)
     {
         var result = encoder.Decode(input);
-        Assert.That(result.ToArray(), Is.EqualTo(expectedOutput));
+        Assert.That(result, Is.EqualTo(expectedOutput));
     }
 
     [Test]
@@ -182,7 +182,7 @@ class Base16Test
     public void Decode_OtherCase_StillPasses(Base16 encoder, byte[] expectedOutput, string input)
     {
         var result = encoder.Decode(input.ToUpperInvariant());
-        Assert.That(result.ToArray(), Is.EqualTo(expectedOutput));
+        Assert.That(result, Is.EqualTo(expectedOutput));
     }
 
     [Test]
