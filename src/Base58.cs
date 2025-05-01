@@ -253,13 +253,12 @@ public sealed class Base58(Base58Alphabet alphabet) : IBaseCoder, INonAllocating
             text,
             output,
             numZeroes,
-            out int bytesWrittenRangeStart,
-            out int bytesWrittenRangeEnd))
+            out Range bytesWritten))
         {
             throw new InvalidOperationException("Output buffer was too small while decoding Base58");
         }
 
-        return output[bytesWrittenRangeStart..bytesWrittenRangeEnd].ToArray();
+        return output[bytesWritten].ToArray();
     }
 
     /// <inheritdoc/>
@@ -283,11 +282,10 @@ public sealed class Base58(Base58Alphabet alphabet) : IBaseCoder, INonAllocating
             input,
             output,
             zeroCount,
-            out int bytesWrittenRangeStart,
-            out int bytesWrittenRangeEnd);
+            out Range bytesWritten);
 
-        output[bytesWrittenRangeStart..bytesWrittenRangeEnd].CopyTo(output);
-        numBytesWritten = bytesWrittenRangeEnd - bytesWrittenRangeStart;
+        output[bytesWritten].CopyTo(output);
+        numBytesWritten = bytesWritten.End.Value - bytesWritten.Start.Value;
         return result;
     }
 
@@ -432,13 +430,13 @@ public sealed class Base58(Base58Alphabet alphabet) : IBaseCoder, INonAllocating
         ReadOnlySpan<char> input,
         Span<byte> output,
         int numZeroes,
-        out int bytesWrittenRangeStart,
-        out int bytesWrittenRangeEnd)
+        out Range bytesWritten)
     {
         if (numZeroes == input.Length)
         {
-            bytesWrittenRangeStart = 0;
-            return decodeZeroes(output, numZeroes, out bytesWrittenRangeEnd);
+            bool result = decodeZeroes(output, numZeroes, out int numBytesWritten);
+            bytesWritten = Range.EndAt(numBytesWritten);
+            return result;
         }
 
         var table = Alphabet.ReverseLookupTable;
@@ -465,8 +463,7 @@ public sealed class Base58(Base58Alphabet alphabet) : IBaseCoder, INonAllocating
             }
         }
 
-        bytesWrittenRangeStart = min - numZeroes;
-        bytesWrittenRangeEnd  = output.Length;
+        bytesWritten = new Range(min - numZeroes, output.Length);
         return true;
     }
 }
