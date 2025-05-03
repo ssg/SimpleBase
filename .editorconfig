@@ -7,6 +7,9 @@ indent_style = space
 dotnet_style_operator_placement_when_wrapping = beginning_of_line
 tab_width = 4
 end_of_line = crlf
+trim_trailing_whitespace = true
+
+[*.cs]
 dotnet_style_coalesce_expression = true:suggestion
 dotnet_style_null_propagation = true:suggestion
 dotnet_style_prefer_is_null_check_over_reference_equality_method = true:suggestion
@@ -23,10 +26,6 @@ dotnet_style_prefer_compound_assignment = true:suggestion
 dotnet_style_prefer_simplified_interpolation = true:suggestion
 dotnet_style_namespace_match_folder = true:suggestion
 guidelines = 110
-
-[*.cs]
-trim_trailing_whitespace = true
-
 dotnet_naming_rule.private_members_are_camelcase.symbols = private_members
 dotnet_naming_rule.private_members_are_camelcase.style = camelcase
 
@@ -131,6 +130,7 @@ csharp_style_allow_blank_lines_between_consecutive_braces_experimental = true:si
 csharp_style_allow_blank_line_after_colon_in_constructor_initializer_experimental = true:silent
 csharp_style_allow_blank_line_after_token_in_conditional_expression_experimental = true:silent
 csharp_style_allow_blank_line_after_token_in_arrow_expression_clause_experimental = true:silent
+csharp_style_prefer_extended_property_pattern = true:suggestion
 
 [*.vb]
 #### Naming styles ####
