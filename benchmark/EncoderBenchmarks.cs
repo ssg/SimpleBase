@@ -2,7 +2,7 @@
 using BenchmarkDotNet.Attributes;
 using SimpleBase;
 
-namespace benchmark;
+namespace Benchmark;
 
 [MarkdownExporterAttribute.GitHub]
 [MemoryDiagnoser]
