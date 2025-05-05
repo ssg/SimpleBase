@@ -15,11 +15,8 @@
         <EnableNUnitRunner>true</EnableNUnitRunner>
         <OutputType>Exe</OutputType>
     </PropertyGroup>
-    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-      <NoWarn>1701;1702;IDE0130</NoWarn>
-    </PropertyGroup>
-    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-      <NoWarn>1701;1702;IDE0130</NoWarn>
+    <PropertyGroup>
+      <NoWarn>1701;1702;CA1016</NoWarn>
     </PropertyGroup>
     <ItemGroup>
         <ProjectReference Include="..\src\SimpleBase.csproj" />
@@ -37,11 +34,15 @@
     <ItemGroup>
         <None Include="..\SimpleBase.snk" Link="SimpleBase.snk" />
         <None Include="..\SimpleBase.snk" Link="SimpleBase.snk" />
+        <None Include="S:\src\SimpleBase\test\.editorconfig" />
     </ItemGroup>
     <ItemGroup>
         <None Remove="SimpleBaseTest.v3.ncrunchproject" />
     </ItemGroup>
     <ItemGroup>
         <Service Include="{82a7f48d-3b50-4b1e-b82e-3ada8210c358}" />
+    </ItemGroup>
+    <ItemGroup>
+      <EditorConfigFiles Remove="S:\src\SimpleBase\test\.editorconfig" />
     </ItemGroup>
 </Project>

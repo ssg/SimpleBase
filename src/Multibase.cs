@@ -89,24 +89,21 @@ public static class Multibase
     /// <exception cref="NotImplementedException"></exception>
     public static string Encode(ReadOnlySpan<byte> bytes, MultibaseEncoding encoding)
     {
-        var builder = new StringBuilder()
-            .Append((char)encoding)
-            .Append(encoding switch
-            {
-                MultibaseEncoding.Base16Lower => Base16.LowerCase.Encode(bytes),
-                MultibaseEncoding.Base16Upper => Base16.UpperCase.Encode(bytes),
-                MultibaseEncoding.Base32Lower => Base32.FileCoin.Encode(bytes),
-                MultibaseEncoding.Base32Upper => Base32.Rfc4648.Encode(bytes),
-                MultibaseEncoding.Base32HexLower => Base32.ExtendedHexLower.Encode(bytes),
-                MultibaseEncoding.Base32HexUpper => Base32.ExtendedHex.Encode(bytes),
-                MultibaseEncoding.Base32Z => Base32.ZBase32.Encode(bytes),
-                MultibaseEncoding.Base58Bitcoin => Base58.Bitcoin.Encode(bytes),
-                MultibaseEncoding.Base58Flickr => Base58.Flickr.Encode(bytes),
-                MultibaseEncoding.Base64 => Convert.ToBase64String(bytes),
-                MultibaseEncoding.Base64Url => Base64.EncodeUrl(bytes),
-                MultibaseEncoding.Base64UrlPad => Base64.EncodeUrlPadded(bytes),
-                _ => throw new ArgumentException($"Unsupported encoding type: {encoding}", nameof(encoding)),
-            });
-        return builder.ToString();
+        return (char)encoding + encoding switch
+        {
+            MultibaseEncoding.Base16Lower => Base16.LowerCase.Encode(bytes),
+            MultibaseEncoding.Base16Upper => Base16.UpperCase.Encode(bytes),
+            MultibaseEncoding.Base32Lower => Base32.FileCoin.Encode(bytes),
+            MultibaseEncoding.Base32Upper => Base32.Rfc4648.Encode(bytes),
+            MultibaseEncoding.Base32HexLower => Base32.ExtendedHexLower.Encode(bytes),
+            MultibaseEncoding.Base32HexUpper => Base32.ExtendedHex.Encode(bytes),
+            MultibaseEncoding.Base32Z => Base32.ZBase32.Encode(bytes),
+            MultibaseEncoding.Base58Bitcoin => Base58.Bitcoin.Encode(bytes),
+            MultibaseEncoding.Base58Flickr => Base58.Flickr.Encode(bytes),
+            MultibaseEncoding.Base64 => Convert.ToBase64String(bytes),
+            MultibaseEncoding.Base64Url => Base64.EncodeUrl(bytes),
+            MultibaseEncoding.Base64UrlPad => Base64.EncodeUrlPadded(bytes),
+            _ => throw new ArgumentException($"Unsupported encoding type: {encoding}", nameof(encoding)),
+        };
     }
 }

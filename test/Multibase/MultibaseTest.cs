@@ -39,7 +39,7 @@ class MultibaseTest
     [Test]
     public void Encode_InvalidEncoding_ThrowsArgumentException()
     {
-        Assert.Throws<ArgumentException>(() => Multibase.Encode(testBuffer, (MultibaseEncoding)0));
+        Assert.Throws<ArgumentException>(() => Multibase.Encode(testBuffer, 0));
     }
 
     static readonly byte[] encodingInput = Encoding.UTF8.GetBytes("SSG WAS HERE !!\xAB\xCD\xDE\xFF");
@@ -79,10 +79,10 @@ class MultibaseTest
 
     [Test]
     [TestCaseSource(nameof(encodedData))]
-    public void TryDecode_DecodesCorrectly(MultibaseEncoding encoding, string encoded)
+    public void TryDecode_DecodesCorrectly(MultibaseEncoding _, string encoded)
     {
         byte[] bytes = new byte[1024]; // big enough for decoding
-        Assert.That(Multibase.TryDecode(encoded, bytes, out int bytesWritten), Is.True);
+        Assert.That(Multibase.TryDecode(encoded, bytes, out int _), Is.True);
     }
 
     [Test]
