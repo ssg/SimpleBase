@@ -9,32 +9,6 @@ using System.Text;
 namespace SimpleBase;
 
 /// <summary>
-/// Currently supported Multibase encodings.
-/// </summary>
-#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
-public enum MultibaseEncoding
-{
-    // marked as "final" in the spec at https://github.com/multiformats/multibase/blob/master/multibase.csv
-    Base16          = 'f',
-    Base16Upper     = 'F',
-    Base32          = 'b',
-    Base32Upper     = 'B',
-    Base58Bitcoin   = 'z',
-    Base64          = 'm',
-    Base64Url       = 'u',
-    Base64UrlPad    = 'U',
-
-    // marked as "draft"
-    Base32Z         = 'h',
-
-    // marked as "experimental"
-    Base58Flickr    = 'Z',
-    Base32Hex       = 'v',
-    Base32HexUpper  = 'V',
-}
-#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
-
-/// <summary>
 /// Multibase encoding and decoding.
 /// </summary>
 public static class Multibase
@@ -57,11 +31,11 @@ public static class Multibase
         var rest = text[1..];
         return encoding switch
         {
-            MultibaseEncoding.Base16 => Base16.LowerCase.Decode(rest),
+            MultibaseEncoding.Base16Lower => Base16.LowerCase.Decode(rest),
             MultibaseEncoding.Base16Upper => Base16.UpperCase.Decode(rest),
-            MultibaseEncoding.Base32 => Base32.FileCoin.Decode(rest),
+            MultibaseEncoding.Base32Lower => Base32.FileCoin.Decode(rest),
             MultibaseEncoding.Base32Upper => Base32.Rfc4648.Decode(rest),
-            MultibaseEncoding.Base32Hex => Base32.ExtendedHexLower.Decode(rest),
+            MultibaseEncoding.Base32HexLower => Base32.ExtendedHexLower.Decode(rest),
             MultibaseEncoding.Base32HexUpper => Base32.ExtendedHex.Decode(rest),
             MultibaseEncoding.Base32Z => Base32.ZBase32.Decode(rest),
             MultibaseEncoding.Base58Bitcoin => Base58.Bitcoin.Decode(rest),
@@ -69,6 +43,40 @@ public static class Multibase
             MultibaseEncoding.Base64 => Convert.FromBase64String(rest.ToString()),
             MultibaseEncoding.Base64Url or MultibaseEncoding.Base64UrlPad => Base64.DecodeUrl(rest),
             _ => throw new InvalidOperationException($"Unsupported multibase prefix: {c}"),
+        };
+    }
+
+    /// <summary>
+    /// Tries to decode a multibase encoded string into a span of bytes.
+    /// </summary>
+    /// <param name="text">Input text.</param>
+    /// <param name="bytes">Output span.</param>
+    /// <param name="bytesWritten">Number of bytes written to the output span.</param>
+    /// <returns>True if successful, false otherwise.</returns>
+    public static bool TryDecode(ReadOnlySpan<char> text, Span<byte> bytes, out int bytesWritten)
+    {
+        bytesWritten = 0;
+        if (text.Length == 0)
+        {
+            return false;
+        }
+        char c = text[0];
+        var encoding = (MultibaseEncoding)c;
+        var rest = text[1..];
+        return encoding switch
+        {
+            MultibaseEncoding.Base16Lower => Base16.LowerCase.TryDecode(rest, bytes, out bytesWritten),
+            MultibaseEncoding.Base16Upper => Base16.UpperCase.TryDecode(rest, bytes, out bytesWritten),
+            MultibaseEncoding.Base32Lower => Base32.FileCoin.TryDecode(rest, bytes, out bytesWritten),
+            MultibaseEncoding.Base32Upper => Base32.Rfc4648.TryDecode(rest, bytes, out bytesWritten),
+            MultibaseEncoding.Base32HexLower => Base32.ExtendedHexLower.TryDecode(rest, bytes, out bytesWritten),
+            MultibaseEncoding.Base32HexUpper => Base32.ExtendedHex.TryDecode(rest, bytes, out bytesWritten),
+            MultibaseEncoding.Base32Z => Base32.ZBase32.TryDecode(rest, bytes, out bytesWritten),
+            MultibaseEncoding.Base58Bitcoin => Base58.Bitcoin.TryDecode(rest, bytes, out bytesWritten),
+            MultibaseEncoding.Base58Flickr => Base58.Flickr.TryDecode(rest, bytes, out bytesWritten),
+            MultibaseEncoding.Base64 => Convert.TryFromBase64Chars(rest, bytes, out bytesWritten),
+            MultibaseEncoding.Base64Url or MultibaseEncoding.Base64UrlPad => Base64.TryDecodeUrl(rest, bytes, out bytesWritten),
+            _ => false,
         };
     }
 
@@ -85,11 +93,11 @@ public static class Multibase
             .Append((char)encoding)
             .Append(encoding switch
             {
-                MultibaseEncoding.Base16 => Base16.LowerCase.Encode(bytes),
+                MultibaseEncoding.Base16Lower => Base16.LowerCase.Encode(bytes),
                 MultibaseEncoding.Base16Upper => Base16.UpperCase.Encode(bytes),
-                MultibaseEncoding.Base32 => Base32.FileCoin.Encode(bytes),
+                MultibaseEncoding.Base32Lower => Base32.FileCoin.Encode(bytes),
                 MultibaseEncoding.Base32Upper => Base32.Rfc4648.Encode(bytes),
-                MultibaseEncoding.Base32Hex => Base32.ExtendedHexLower.Encode(bytes),
+                MultibaseEncoding.Base32HexLower => Base32.ExtendedHexLower.Encode(bytes),
                 MultibaseEncoding.Base32HexUpper => Base32.ExtendedHex.Encode(bytes),
                 MultibaseEncoding.Base32Z => Base32.ZBase32.Encode(bytes),
                 MultibaseEncoding.Base58Bitcoin => Base58.Bitcoin.Encode(bytes),

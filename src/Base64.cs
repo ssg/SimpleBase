@@ -4,7 +4,6 @@
 // </copyright>
 
 using System;
-using System.Xml.Serialization;
 
 namespace SimpleBase;
 
@@ -14,53 +13,57 @@ namespace SimpleBase;
 static class Base64
 {
     const char paddingChar = '=';
-    static readonly char[] urlSource = ['+', '/'];
-    static readonly char[] urlTarget = ['-', '_'];
 
     internal static byte[] DecodeUrl(ReadOnlySpan<char> text)
     {
-        var base64url = convertBase64UrlToBase64(text.ToString());
-        return Convert.FromBase64String(base64url);
+        string base64 = convertBase64UrlToBase64(text);
+        return Convert.FromBase64String(base64);
     }
 
-    static string convertBase64UrlToBase64(string text)
+    static string convertBase64UrlToBase64(ReadOnlySpan<char> text)
     {
-        return replaceMultiple(text, urlTarget, urlSource);
-    }
-
-    static string replaceMultiple(string text, char[] src, char[] dst)
-    {
-        if (text.Length == 0)
+        int len = text.Length;
+        if (len == 0)
         {
-            return text;
+            return string.Empty;
         }
-        return string.Create(text.Length, (text, src, dst), static (span, state) =>
-        {            
-            var text = state.text;
-            var src = state.src;
-            var dst = state.dst;
 
-            int lastPos = 0;
-            int i;
-            while (true)
+        // .NET's Base64 decoder requires padding to be present
+        int padLen = 0;
+        if (text[len - 1] != paddingChar)
+        {
+            padLen = 4 - (len % 4);
+        }
+        len += padLen;
+        Span<char> result = len < Bits.SafeStackMaxAllocSize ? stackalloc char[len] : new char[len];
+        for (int i = 0; i < text.Length; i++)
+        {
+            result[i] = text[i] switch
             {
-                i = text.IndexOfAny(src);
-                if (i < 0)
-                {
-                    text.AsSpan(lastPos).CopyTo(span[lastPos..]);
-                    break;
-                }
-                else
-                {
+                '-' => '+',
+                '_' => '/',
+                _ => text[i]
+            };
+        }
+        if (padLen > 0)
+        {
+            result[text.Length..].Fill(paddingChar);
+        }
+        return result.ToString();
+    }
 
-                }
-            }
-        });
+    internal static bool TryDecodeUrl(ReadOnlySpan<char> text, Span<byte> bytes, out int bytesWritten)
+    {
+        string base64 = convertBase64UrlToBase64(text);
+        return Convert.TryFromBase64Chars(base64.AsSpan(), bytes, out bytesWritten);
     }
 
     static string convertBase64ToBase64Url(string text)
     {
-        return replaceMultiple(text, urlSource, urlTarget);
+        // i tried writing custom code to perform this replacement faster
+        // but it turned out slower despite having half the allocation.
+        // NOTE: padding char is the same between base64 and base64url
+        return text.Replace('+', '-').Replace('/', '_');
     }
 
     static string stripBase64Padding(string base64Text)

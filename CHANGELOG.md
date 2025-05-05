@@ -1,3 +1,11 @@
+# 4.3.0
+
+## New features
+- Added Multibase support that supports several Base16, Base32, Base58, and Base64 variants.
+
+## Improvements
+- Eliminated more memory allocations (by @Henr1k80))
+
 # 4.2.0
 
 ## New features

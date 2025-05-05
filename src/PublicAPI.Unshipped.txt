@@ -1,11 +1,10 @@
 ﻿SimpleBase.Multibase
-SimpleBase.Multibase.Multibase() -> void
 SimpleBase.MultibaseEncoding
-SimpleBase.MultibaseEncoding.Base16 = 102 -> SimpleBase.MultibaseEncoding
+SimpleBase.MultibaseEncoding.Base16Lower = 102 -> SimpleBase.MultibaseEncoding
 SimpleBase.MultibaseEncoding.Base16Upper = 70 -> SimpleBase.MultibaseEncoding
-SimpleBase.MultibaseEncoding.Base32 = 98 -> SimpleBase.MultibaseEncoding
-SimpleBase.MultibaseEncoding.Base32Hex = 118 -> SimpleBase.MultibaseEncoding
+SimpleBase.MultibaseEncoding.Base32HexLower = 118 -> SimpleBase.MultibaseEncoding
 SimpleBase.MultibaseEncoding.Base32HexUpper = 86 -> SimpleBase.MultibaseEncoding
+SimpleBase.MultibaseEncoding.Base32Lower = 98 -> SimpleBase.MultibaseEncoding
 SimpleBase.MultibaseEncoding.Base32Upper = 66 -> SimpleBase.MultibaseEncoding
 SimpleBase.MultibaseEncoding.Base32Z = 104 -> SimpleBase.MultibaseEncoding
 SimpleBase.MultibaseEncoding.Base58Bitcoin = 122 -> SimpleBase.MultibaseEncoding
@@ -17,3 +16,4 @@ static SimpleBase.Base32.ExtendedHexLower.get -> SimpleBase.Base32!
 static SimpleBase.Base32Alphabet.ExtendedHexLower.get -> SimpleBase.Base32Alphabet!
 static SimpleBase.Multibase.Decode(System.ReadOnlySpan<char> text) -> byte[]!
 static SimpleBase.Multibase.Encode(System.ReadOnlySpan<byte> bytes, SimpleBase.MultibaseEncoding encoding) -> string!
+static SimpleBase.Multibase.TryDecode(System.ReadOnlySpan<char> text, System.Span<byte> bytes, out int bytesWritten) -> bool

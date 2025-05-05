@@ -23,6 +23,8 @@ Features
    can take the optimizations compared to .NET's  implementations. It's quite 
    fast now. It could also be used as a replacement for `SoapHexBinary.Parse` although
    .NET has [`Convert.FromHexString()`](https://learn.microsoft.com/en-us/dotnet/api/system.convert.fromhexstring?view=net-5.0) method since .NET 5.
+ - [Multibase](https://github.com/multiformats/multibase) support. All formats
+   covered by SimpleBase including a few Base64 variants are supported.
  - One-shot memory buffer based APIs for simple use cases.
  - Stream-based async APIs for more advanced scenarios.
  - Lightweight: No dependencies.
@@ -212,7 +214,7 @@ methods which receive input, output buffers as parameters.
 Encoding is like this:
 
 ```csharp
-byte[] input = new byte[] { 1, 2, 3, 4, 5 };
+byte[] input = [1, 2, 3, 4, 5];
 int outputBufferSize = Base58.Bitcoin.GetSafeCharCountForEncoding(input);
 var output = new char[outputBufferSize];
 
@@ -235,6 +237,32 @@ if (Base58.Bitcoin.TryDecode(input, output, out int numBytesWritten))
 }
 ```
 
+### Multibase encoding/decoding
+In order to encode a Multibase string just specify the encoding
+you want to use:
+
+```csharp
+byte[] input = [1, 2, 3, 4, 5];
+string result = Multibase.Encode(input, MultibaseEncoding.Base32);
+```
+
+When decoding a multibase string, the encoding is automatically detected:
+
+```csharp
+string input = "... some encoded multibase string ...";
+byte[] result = Multibase.Decode(input);
+```
+
+If you don't want decoding to raise an exception, use TryDecode() method instead:
+
+```csharp
+string input = "... some encoded multibase string ...";
+byte[] output = new byte[outputBufferSize]; // enough the fit the decoded buffer
+if (Multibase.TryDecode(input, output, out int numBytesWritten))
+{
+    // et voila!
+}
+```
 
 Benchmark Results
 -----------------

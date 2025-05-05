@@ -12,7 +12,7 @@
 		<AssemblyOriginatorKeyFile>..\SimpleBase.snk</AssemblyOriginatorKeyFile>
 		<DelaySign>false</DelaySign>
 
-		<PackageVersion>4.2.0</PackageVersion>
+		<PackageVersion>4.3.0</PackageVersion>
 		<DocumentationFile>SimpleBase.xml</DocumentationFile>
 		<PackageProjectUrl>https://github.com/ssg/SimpleBase</PackageProjectUrl>
 		<PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
@@ -25,13 +25,10 @@
 		<PackageReleaseNotes>
 			<![CDATA[
 ## New features
-- Monero Base58 algorithm support with `MoneroBase58` class. It can be accessed as `Base58.Monero`
+- Added Multibase support that supports several Base16, Base32, Base58, and Base64 variants.
 
 ## Improvements
-- Eliminate some memory allocations
-
-## Fixes
-- Throw `ArgumentOutOfRangeException` with correct parameters in `Base32.DecodeInt64()`
+- Eliminated more memory allocations (by @Henr1k80))
 ]]>
 		</PackageReleaseNotes>
 	</PropertyGroup>
