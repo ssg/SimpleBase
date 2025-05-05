@@ -10,6 +10,7 @@
         <Nullable>enable</Nullable>
         <PlatformTarget>AnyCPU</PlatformTarget>
         <OutputType>Exe</OutputType>
+        <NoWarn>IDE0079</NoWarn>
     </PropertyGroup>
     <ItemGroup>
         <None Include="..\SimpleBase.snk" Link="SimpleBase.snk" />

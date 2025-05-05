@@ -10,6 +10,7 @@ namespace Benchmark;
 public class DecoderBenchmarks
 {
     readonly string s = new('a', 80);
+    readonly string ms = 'F' + new string('a', 80);
     readonly MemoryStream memoryStream = new();
 
     [Benchmark]
@@ -46,4 +47,7 @@ public class DecoderBenchmarks
 
     [Benchmark]
     public byte[] SimpleBase_Base58_Monero() => Base58.Monero.Decode(s);
+
+    [Benchmark]
+    public byte[] SimpleBase_Multibase_Base16_UpperCase() => Multibase.Decode(ms);
 }
