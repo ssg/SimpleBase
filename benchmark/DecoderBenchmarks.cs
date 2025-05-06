@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using BenchmarkDotNet.Attributes;
 using SimpleBase;
@@ -12,6 +13,7 @@ public class DecoderBenchmarks
     readonly string s = new('a', 80);
     readonly string ms = 'F' + new string('a', 80);
     readonly MemoryStream memoryStream = new();
+    readonly static byte[] buffer = new byte[80];
 
     [Benchmark]
     public byte[] DotNet_Base64() => Convert.FromBase64String(s);
@@ -50,4 +52,16 @@ public class DecoderBenchmarks
 
     [Benchmark]
     public byte[] SimpleBase_Multibase_Base16_UpperCase() => Multibase.Decode(ms);
+
+    [Benchmark]
+    public byte[] SimpleBase_Multibase_TryDecode_Base16_UpperCase()
+    {
+        bool result = Multibase.TryDecode(ms, buffer, out _);
+        if (!result)
+        {
+            throw new InvalidOperationException("Failed to decode");
+        }
+        return buffer;
+    }
+
 }
