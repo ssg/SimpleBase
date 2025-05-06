@@ -28,7 +28,7 @@ namespace SimpleBase
         {
             if (bytes.Length > sizeof(ulong))
             {
-                throw new ArgumentOutOfRangeException(nameof(bytes), "Byte array too long to convert to UInt64");
+                throw new ArgumentOutOfRangeException(nameof(bytes), "Span too long to convert to UInt64");
             }
 
             ulong result = 0;
