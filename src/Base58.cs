@@ -253,7 +253,7 @@ public sealed class Base58(Base58Alphabet alphabet) : IBaseCoder, INonAllocating
 
         return result switch
         {
-            (DecodeResult.InvalidCharacter, var c) => throw new ArgumentException($"Invalid character in Base58 string: {c}"),
+            (DecodeResult.InvalidCharacter, char c) => throw CodingAlphabet.InvalidCharacter(c),
             (DecodeResult.InsufficientOutputBuffer, _) => throw new InvalidOperationException("Output buffer was too small while decoding Base58"),
             (DecodeResult.Success, _) => output[bytesWritten].ToArray(),
             _ => throw new InvalidOperationException("This should be never hit - probably a bug"),
