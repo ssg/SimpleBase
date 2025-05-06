@@ -144,4 +144,10 @@ class Ascii85Test
             Assert.That(buffer[..numBytesWritten], Is.EqualTo(expectedOutput));
         });
     }
+
+    [Test]
+    public void TryDecode_InvalidCharacter_ShouldReturnFalse()
+    {
+        Assert.That(Base85.Ascii85.TryDecode("{{{{{{{", new byte[50], out _), Is.False);
+    }
 }
