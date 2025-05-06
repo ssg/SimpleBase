@@ -39,6 +39,12 @@ namespace SimpleBase
             return result;
         }
 
+        /// <summary>
+        /// Converts a UInt64 to a byte array in big-endian order.
+        /// </summary>
+        /// <param name="value">Value to convert.</param>
+        /// <param name="output">Output buffer.</param>
+        /// <exception cref="ArgumentException">If the buffer is too small.</exception>
         internal static void UInt64ToBigEndianBytes(ulong value, Span<byte> output)
         {
             if (output.Length < sizeof(ulong))
