@@ -161,3 +161,22 @@ SimpleBase.MoneroBase58.TryDecode(System.ReadOnlySpan<char> input, System.Span<b
 SimpleBase.MoneroBase58.TryEncode(System.ReadOnlySpan<byte> input, System.Span<char> output, out int numCharsWritten) -> bool
 SimpleBase.MoneroBase58.ZeroChar.get -> char
 static SimpleBase.Base58.Monero.get -> SimpleBase.MoneroBase58!
+SimpleBase.Multibase
+SimpleBase.MultibaseEncoding
+SimpleBase.MultibaseEncoding.Base16Lower = 102 -> SimpleBase.MultibaseEncoding
+SimpleBase.MultibaseEncoding.Base16Upper = 70 -> SimpleBase.MultibaseEncoding
+SimpleBase.MultibaseEncoding.Base32HexLower = 118 -> SimpleBase.MultibaseEncoding
+SimpleBase.MultibaseEncoding.Base32HexUpper = 86 -> SimpleBase.MultibaseEncoding
+SimpleBase.MultibaseEncoding.Base32Lower = 98 -> SimpleBase.MultibaseEncoding
+SimpleBase.MultibaseEncoding.Base32Upper = 66 -> SimpleBase.MultibaseEncoding
+SimpleBase.MultibaseEncoding.Base32Z = 104 -> SimpleBase.MultibaseEncoding
+SimpleBase.MultibaseEncoding.Base58Bitcoin = 122 -> SimpleBase.MultibaseEncoding
+SimpleBase.MultibaseEncoding.Base58Flickr = 90 -> SimpleBase.MultibaseEncoding
+SimpleBase.MultibaseEncoding.Base64 = 109 -> SimpleBase.MultibaseEncoding
+SimpleBase.MultibaseEncoding.Base64Url = 117 -> SimpleBase.MultibaseEncoding
+SimpleBase.MultibaseEncoding.Base64UrlPad = 85 -> SimpleBase.MultibaseEncoding
+static SimpleBase.Base32.ExtendedHexLower.get -> SimpleBase.Base32!
+static SimpleBase.Base32Alphabet.ExtendedHexLower.get -> SimpleBase.Base32Alphabet!
+static SimpleBase.Multibase.Decode(System.ReadOnlySpan<char> text) -> byte[]!
+static SimpleBase.Multibase.Encode(System.ReadOnlySpan<byte> bytes, SimpleBase.MultibaseEncoding encoding) -> string!
+static SimpleBase.Multibase.TryDecode(System.ReadOnlySpan<char> text, System.Span<byte> bytes, out int bytesWritten) -> bool
