@@ -170,7 +170,7 @@ public class Base85(Base85Alphabet alphabet) : IBaseCoder, IBaseStreamCoder, INo
     /// <inheritdoc/>
     public bool TryDecode(ReadOnlySpan<char> input, Span<byte> output, out int numBytesWritten)
     {
-        return internalDecode(input, output, out numBytesWritten).Item1 == DecodeResult.Success;
+        return internalDecode(input, output, out numBytesWritten) is (DecodeResult.Success, _);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]

@@ -285,7 +285,7 @@ public sealed class Base58(Base58Alphabet alphabet) : IBaseCoder, INonAllocating
 
         output[bytesWritten].CopyTo(output);
         numBytesWritten = bytesWritten.End.Value - bytesWritten.Start.Value;
-        return result.Item1 == DecodeResult.Success;
+        return result is (DecodeResult.Success, _);
     }
 
     static void computeDoubleSha256(ReadOnlySpan<byte> buffer, Span<byte> output)
