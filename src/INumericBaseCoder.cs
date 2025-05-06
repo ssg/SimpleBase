@@ -47,4 +47,12 @@ public interface INumericBaseCoder
     /// If the decoded number is larger to fit in a variable.
     /// </exception>
     ulong DecodeUInt64(string text);
+
+    /// <summary>
+    /// Try to decode text into a number without throwing an exception.
+    /// </summary>
+    /// <param name="text">Input text.</param>
+    /// <param name="number">Output number.</param>
+    /// <returns>True if successful, false otherwise.</returns>
+    bool TryDecodeUInt64(string text, out ulong number);
 }

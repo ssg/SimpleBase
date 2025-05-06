@@ -128,6 +128,22 @@ class Rfc4648Test
 
     [Test]
     [TestCaseSource(nameof(ulongTestCases))]
+    public void TryDecodeUInt64_ReturnsExpectedValues(ulong expectedNumber, string input)
+    {
+        bool result = Base32.Rfc4648.TryDecodeUInt64(input, out ulong number);
+        Assert.That(result, Is.True);
+        Assert.That(number, Is.EqualTo(expectedNumber));
+    }
+
+    [Test]
+    public void TryDecodeUInt64_InvalidInput_ReturnsFalse()
+    {
+        Assert.That(Base32.Rfc4648.TryDecodeUInt64("GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ", out _), Is.False);
+        Assert.That(Base32.Rfc4648.TryDecodeUInt64("!@#!@#invalid alphabet!@#!@#", out _), Is.False);
+    }
+
+    [Test]
+    [TestCaseSource(nameof(ulongTestCases))]
     public void DecodeUInt64_BigEndian_ReturnsExpectedValues(ulong expectedNumber, string input)
     {
         if (!BitConverter.IsLittleEndian)

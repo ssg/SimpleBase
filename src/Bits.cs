@@ -15,6 +15,11 @@ namespace SimpleBase
         internal const int SafeStackMaxAllocSize = 1024;
 
         /// <summary>
+        /// Max decimal digits possible in an unsigned long (64-bit) number.
+        /// </summary>
+        internal const int MaxUInt64Digits = 20;
+
+        /// <summary>
         /// Converts a byte array to a hexadecimal string.
         /// </summary>
         /// <param name="bytes"></param>

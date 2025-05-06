@@ -146,6 +146,7 @@ public sealed class Base32 : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCod
         int i;
         if (IsBigEndian)
         {
+            // skip leading zeroes
             for (i = 0; buffer[i] == 0 && i < numBytes; i++)
             {
             }
@@ -154,6 +155,7 @@ public sealed class Base32 : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCod
             return Encode(span);
         }
 
+        // skip trailing zeroes
         for (i = numBytes - 1; buffer[i] == 0 && i > 0; i--)
         {
         }
@@ -178,6 +180,25 @@ public sealed class Base32 : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCod
         }
 
         return BitConverter.ToUInt64(newSpan);
+    }
+
+    /// <inheritdoc/>
+    public bool TryDecodeUInt64(string text, out ulong number)
+    {
+        Span<byte> output = stackalloc byte[sizeof(ulong)];
+        if (!TryDecode(text, output, out int numBytesWritten))
+        {
+            number = 0;
+            return false;
+        }
+
+        if (IsBigEndian)
+        {
+            output.Reverse();
+        }
+
+        number = BitConverter.ToUInt64(output);
+        return true;
     }
 
     /// <inheritdoc/>

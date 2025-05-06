@@ -1,1 +1,2 @@
-﻿
+﻿SimpleBase.Base32.TryDecodeUInt64(string! text, out ulong number) -> bool
+SimpleBase.INumericBaseCoder.TryDecodeUInt64(string! text, out ulong number) -> bool
