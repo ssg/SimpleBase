@@ -278,7 +278,7 @@ public sealed class Base32 : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCod
             DecodeResult.Success when numBytesWritten != outputLen => throw
                 new InvalidOperationException("Actual written bytes are different"),
             DecodeResult.Success => outputBuffer,
-            var x => throw new InvalidOperationException($"Unhandled decode result: {x}"),
+            _ => throw new InvalidOperationException($"Unhandled decode result: {result}"),
         };
     }
 
