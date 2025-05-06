@@ -249,16 +249,15 @@ public sealed class Base58(Base58Alphabet alphabet) : IBaseCoder, INonAllocating
         int numZeroes = getPrefixCount(text, zeroChar);
         int outputLen = GetSafeByteCountForDecoding(text.Length, numZeroes);
         Span<byte> output = outputLen < Bits.SafeStackMaxAllocSize ? stackalloc byte[outputLen] : new byte[outputLen];
-        if (!internalDecode(
-            text,
-            output,
-            numZeroes,
-            out Range bytesWritten))
-        {
-            throw new InvalidOperationException("Output buffer was too small while decoding Base58");
-        }
+        var result = internalDecode(text, output, numZeroes, out Range bytesWritten);
 
-        return output[bytesWritten].ToArray();
+        return result switch
+        {
+            (DecodeResult.InvalidCharacter, var c) => throw new ArgumentException($"Invalid character in Base58 string: {c}"),
+            (DecodeResult.InsufficientOutputBuffer, _) => throw new InvalidOperationException("Output buffer was too small while decoding Base58"),
+            (DecodeResult.Success, _) => output[bytesWritten].ToArray(),
+            _ => throw new InvalidOperationException("This should be never hit - probably a bug"),
+        };
     }
 
     /// <inheritdoc/>
@@ -278,7 +277,7 @@ public sealed class Base58(Base58Alphabet alphabet) : IBaseCoder, INonAllocating
         }
 
         int zeroCount = getPrefixCount(input, ZeroChar);
-        bool result = internalDecode(
+        var result = internalDecode(
             input,
             output,
             zeroCount,
@@ -286,7 +285,7 @@ public sealed class Base58(Base58Alphabet alphabet) : IBaseCoder, INonAllocating
 
         output[bytesWritten].CopyTo(output);
         numBytesWritten = bytesWritten.End.Value - bytesWritten.Start.Value;
-        return result;
+        return result.Item1 == DecodeResult.Success;
     }
 
     static void computeDoubleSha256(ReadOnlySpan<byte> buffer, Span<byte> output)
@@ -309,17 +308,17 @@ public sealed class Base58(Base58Alphabet alphabet) : IBaseCoder, INonAllocating
         }
     }
 
-    static bool decodeZeroes(Span<byte> output, int length, out int numBytesWritten)
+    static DecodeResult decodeZeroes(Span<byte> output, int length, out int numBytesWritten)
     {
         if (length > output.Length)
         {
             numBytesWritten = 0;
-            return false;
+            return DecodeResult.InsufficientOutputBuffer;
         }
 
         output[..length].Clear();
         numBytesWritten = length;
-        return true;
+        return DecodeResult.Success;
     }
 
     static void translatedCopy(
@@ -426,7 +425,14 @@ public sealed class Base58(Base58Alphabet alphabet) : IBaseCoder, INonAllocating
         return true;
     }
 
-    bool internalDecode(
+    enum DecodeResult
+    {
+        Success,
+        InvalidCharacter,
+        InsufficientOutputBuffer,
+    }
+
+    (DecodeResult, char?) internalDecode(
         ReadOnlySpan<char> input,
         Span<byte> output,
         int numZeroes,
@@ -434,9 +440,9 @@ public sealed class Base58(Base58Alphabet alphabet) : IBaseCoder, INonAllocating
     {
         if (numZeroes == input.Length)
         {
-            bool result = decodeZeroes(output, numZeroes, out int numBytesWritten);
+            var result = decodeZeroes(output, numZeroes, out int numBytesWritten);
             bytesWritten = Range.EndAt(numBytesWritten);
-            return result;
+            return (result, null);
         }
 
         var table = Alphabet.ReverseLookupTable;
@@ -447,7 +453,8 @@ public sealed class Base58(Base58Alphabet alphabet) : IBaseCoder, INonAllocating
             int carry = table[c] - 1;
             if (carry < 0)
             {
-                throw CodingAlphabet.InvalidCharacter(c);
+                bytesWritten = Range.EndAt(0);
+                return (DecodeResult.InvalidCharacter, c);
             }
 
             for (int o = output.Length - 1; o >= 0; o--)
@@ -464,6 +471,6 @@ public sealed class Base58(Base58Alphabet alphabet) : IBaseCoder, INonAllocating
         }
 
         bytesWritten = new Range(min - numZeroes, output.Length);
-        return true;
+        return (DecodeResult.Success, null);
     }
 }
