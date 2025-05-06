@@ -138,9 +138,9 @@ class MoneroBase58Test
     }
 
     [Test]
-    public void TryDecode_InvalidCharacter_Throws()
+    public void TryDecode_InvalidCharacter_ReturnsFalse()
     {
-        _ = Assert.Throws<ArgumentException>(() => Base58.Monero.TryDecode("?", new byte[10], out _));
+        Assert.That(Base58.Monero.TryDecode("?", new byte[10], out _), Is.False);
     }
 
     [Test]

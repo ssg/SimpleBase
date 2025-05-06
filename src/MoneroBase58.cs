@@ -20,7 +20,6 @@ public sealed class MoneroBase58(Base58Alphabet alphabet) : IBaseCoder, INonAllo
     const int blockSize = 8;
     static readonly int encodedBlockSize = encodedBlockSizes[blockSize];
     static readonly int[] invalidEncodedBlockSizes = [1, 4, 8];
-    const int checksumSize = 4;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="MoneroBase58"/> class
@@ -96,15 +95,17 @@ public sealed class MoneroBase58(Base58Alphabet alphabet) : IBaseCoder, INonAllo
 
         int outputLen = getSafeByteCountForDecoding(text.Length);
         Span<byte> output = outputLen < Bits.SafeStackMaxAllocSize ? stackalloc byte[outputLen] : new byte[outputLen];
-        if (!internalDecode(
+
+        return internalDecode(
             text,
             output,
-            out int numBytesWritten))
+            out int numBytesWritten) switch
         {
-            throw new InvalidOperationException("Output buffer size was incorrect while decoding MoneroBase58");
-        }
-
-        return output[..numBytesWritten].ToArray();
+            (DecodeResult.Success, _) => output[..numBytesWritten].ToArray(),
+            (DecodeResult.InvalidCharacter, char c) => throw CodingAlphabet.InvalidCharacter(c),
+            (DecodeResult.InsufficientOutputBuffer, _) => throw new InvalidOperationException("Output buffer with insufficient size generated - likely a bug"),
+            _ => throw new InvalidOperationException("This should never be hit - likely a bug"),
+        };
     }
 
     /// <inheritdoc/>
@@ -125,7 +126,7 @@ public sealed class MoneroBase58(Base58Alphabet alphabet) : IBaseCoder, INonAllo
         return internalDecode(
             input,
             output,
-            out numBytesWritten);
+            out numBytesWritten) is (DecodeResult.Success, _);
     }
 
     bool internalEncode(
@@ -191,16 +192,15 @@ public sealed class MoneroBase58(Base58Alphabet alphabet) : IBaseCoder, INonAllo
         output[lastPos..].Fill(zeroChar);
     }
 
-    static void decodeBlock(ReadOnlySpan<char> input, Span<byte> output, ReadOnlySpan<byte> reverseLookupTable)
+    enum DecodeResult
     {
-        if (input.Length > encodedBlockSize)
-        {
-            throw new ArgumentException("Invalid block size", nameof(input));
-        }
-        if (output.Length != blockSize)
-        {
-            throw new ArgumentException("Invalid block size", nameof(output));
-        }
+        Success,
+        InsufficientOutputBuffer,
+        InvalidCharacter,
+    }
+
+    static (DecodeResult, char?) decodeBlock(ReadOnlySpan<char> input, Span<byte> output, ReadOnlySpan<byte> reverseLookupTable)
+    {
         ulong pad = 0;
         for (int i = 0; i < input.Length; i++)
         {
@@ -209,14 +209,15 @@ public sealed class MoneroBase58(Base58Alphabet alphabet) : IBaseCoder, INonAllo
             int value = reverseLookupTable[c] - 1;
             if (value < 0)
             {
-                throw CodingAlphabet.InvalidCharacter(c);
+                return (DecodeResult.InvalidCharacter, c);
             }
             pad += (uint)value;
         }
         Bits.UInt64ToBigEndianBytes(pad, output);
+        return (DecodeResult.Success, null);
     }
 
-    bool internalDecode(
+    (DecodeResult, char?) internalDecode(
         ReadOnlySpan<char> input,
         Span<byte> output,
         out int numBytesWritten)
@@ -232,7 +233,11 @@ public sealed class MoneroBase58(Base58Alphabet alphabet) : IBaseCoder, INonAllo
         {
             var inputPad = input[inputOffset..(inputOffset + encodedBlockSize)];
             var outputPad = output[numBytesWritten..(numBytesWritten + blockSize)];
-            decodeBlock(inputPad, outputPad, table);
+            var result = decodeBlock(inputPad, outputPad, table);
+            if (result is not (DecodeResult.Success, _))
+            {
+                return result;
+            }
             inputOffset += encodedBlockSize;
             numBytesWritten += blockSize;
         }
@@ -243,16 +248,20 @@ public sealed class MoneroBase58(Base58Alphabet alphabet) : IBaseCoder, INonAllo
         {
             Span<byte> temp = stackalloc byte[blockSize];
             var remainingBuffer = input[wholeEndOffset..];
-            decodeBlock(remainingBuffer, temp, table);
+            var result = decodeBlock(remainingBuffer, temp, table);
+            if (result is not (DecodeResult.Success, _))
+            {
+                return result;
+            }
             int tempSize = encodedBlockSizes.AsSpan().IndexOf(remainingBuffer.Length);
             if (tempSize < 0)
             {
                 // invalid length for encoded remaining buffer
-                return false;
+                return (DecodeResult.InsufficientOutputBuffer, null);
             }
             temp[(blockSize - tempSize)..].CopyTo(output[numBytesWritten..]);
             numBytesWritten += tempSize;
         }
-        return true;
+        return (DecodeResult.Success, null);
     }
 }
