@@ -102,7 +102,7 @@ public sealed class Base58(Base58Alphabet alphabet) : IBaseCoder, INonAllocating
     {
         if (payload.Length > maxCheckPayloadLength)
         {
-            throw new ArgumentException("Invalid payload", nameof(payload));
+            throw new ArgumentException($"Payload length {payload.Length} is greater than {maxCheckPayloadLength}", nameof(payload));
         }
 
         int versionPlusPayloadLen = payload.Length + 1;
@@ -163,7 +163,7 @@ public sealed class Base58(Base58Alphabet alphabet) : IBaseCoder, INonAllocating
     {
         if (payload.Length > maxCheckPayloadLength)
         {
-            throw new ArgumentException("Invalid payload", nameof(payload));
+            throw new ArgumentException($"Payload length {payload.Length} is greater than {maxCheckPayloadLength}", nameof(payload));
         }
 
         int outputLen = payload.Length + sha256DigestBytes;
