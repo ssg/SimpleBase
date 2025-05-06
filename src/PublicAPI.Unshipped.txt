@@ -1,2 +1,3 @@
 ﻿SimpleBase.Base32.TryDecodeUInt64(string! text, out ulong number) -> bool
+SimpleBase.Base85Ipv6.TryDecodeIpv6(string! text, out System.Net.IPAddress! ip) -> bool
 SimpleBase.INumericBaseCoder.TryDecodeUInt64(string! text, out ulong number) -> bool

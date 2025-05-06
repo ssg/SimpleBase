@@ -91,4 +91,44 @@ public class Base85Ipv6(Base85Alphabet alphabet) : Base85(alphabet)
             ? new IPAddress(buffer)
             : throw new InvalidOperationException("Destination buffer is too small");
     }
+
+    /// <summary>
+    /// Try decoding an RFC 1924 encoded text into an IPv6 address.
+    /// </summary>
+    /// <param name="text">Encoded text.</param>
+    /// <param name="ip">Resulting IPv6 address.</param>
+    /// <returns>True if successful, false otherwise.</returns>
+    public bool TryDecodeIpv6(string text, out IPAddress ip)
+    {
+        if (text.Length != ipv6chars)
+        {
+            ip = IPAddress.IPv6None;
+            return false;
+        }
+
+        BigInteger num = 0;
+        for (int n = 0; n < ipv6chars; n++)
+        {
+            char c = text[n];
+            int value = Alphabet.ReverseLookupTable[c] - 1;
+            if (value < 0)
+            {
+                ip = IPAddress.IPv6None;
+                return false;
+            }
+
+            num = (num * divisor) + value;
+        }
+
+        Span<byte> buffer = stackalloc byte[ipv6bytes];
+        if (!num.TryWriteBytes(buffer, out int bytesWritten, isUnsigned: false, isBigEndian: true))
+        {
+            ip = IPAddress.IPv6None;
+            return false;
+        }
+
+        ip = new IPAddress(buffer);
+        return true;
+    }
+
 }
