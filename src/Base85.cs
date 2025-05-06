@@ -169,7 +169,7 @@ public class Base85(Base85Alphabet alphabet) : IBaseCoder, IBaseStreamCoder, INo
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-static bool writeEncodedValue(
+    static bool writeEncodedValue(
         uint block,
         Span<char> output,
         string table,
@@ -219,7 +219,7 @@ static bool writeEncodedValue(
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-static bool writeDecodedValue(
+    static bool writeDecodedValue(
         Span<byte> output,
         long value,
         int numBytesToWrite,
@@ -244,13 +244,13 @@ static bool writeDecodedValue(
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-static bool isWhiteSpace(char c)
+    static bool isWhiteSpace(char c)
     {
         return c is '\x20' or '\x85' or '\xA0' or (>= '\x09' and <= '\x0D');
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-static bool writeShortcut(
+    static bool writeShortcut(
         Span<byte> output,
         ref int blockIndex,
         long value,
