@@ -47,7 +47,7 @@ public class Base85Ipv6(Base85Alphabet alphabet) : Base85(alphabet)
         Span<byte> buffer = stackalloc byte[ipv6bytes];
         if (!ip.TryWriteBytes(buffer, out int bytesWritten))
         {
-            throw new InvalidOperationException($"Buffer is too small for this IP address: {ip}");
+            throw new InvalidOperationException($"IPAddress.TryWriteBytes() failed, this should never happen: {ip}");
         }
 
         var num = new BigInteger(buffer, isUnsigned: true, isBigEndian: true);
