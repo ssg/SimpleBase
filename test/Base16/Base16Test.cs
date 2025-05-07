@@ -1,7 +1,21 @@
-﻿using NUnit.Framework;
+﻿/*
+     Copyright 2014-2025 Sedat Kapanoglu
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+*/
+using NUnit.Framework;
 using SimpleBase;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -9,7 +23,7 @@ using System.Threading.Tasks;
 namespace SimpleBaseTest.Base16Test;
 
 [TestFixture]
-[Parallelizable]
+[Parallelizable(ParallelScope.All)]
 class Base16Test
 {
     static readonly Base16[] encoders =
@@ -29,21 +43,13 @@ class Base16Test
         [new byte[] { 0xAB, 0xCD, 0xEF, 0xBA, 0xAB, 0xCD, 0xEF, 0xBA }, "abcdefbaabcdefba", "ABCDEFBAABCDEFBA", "lnrtuvnllnrtuvnl"],
     ];
 
-    static IEnumerable<TestCaseData> testData
-    {
-        get
-        {
-            foreach (var pair in encoders.Select((encoder, index) => (encoder, index)))
-            {
-                foreach (var testRow in testCases)
-                {
-                    var testValue = testRow[pair.index + 1];
-                    yield return new TestCaseData(pair.encoder, testRow[0], testValue)
-                        .SetName($"{pair.encoder.Alphabet}_{testValue}");
-                }
-            }
-        }
-    }
+    // this line must be the last among other static members as they run in declaration order
+    static readonly TestCaseData[] testData = encoders
+        .Select((encoder, index) => (encoder, index))
+        .SelectMany(pair => testCases
+            .Select(testRow => new TestCaseData(pair.encoder, testRow[0], testRow[pair.index + 1])
+            .SetName($"{pair.encoder.Alphabet}_{testRow[0]}_{testRow[pair.index + 1]}")))
+        .ToArray();
 
     [Test]
     [TestCaseSource(nameof(testData))]
@@ -141,6 +147,14 @@ class Base16Test
     }
 
     [Test]
+    [TestCaseSource(nameof(testData))]
+    public void Decode_OtherCase_StillPasses(Base16 encoder, byte[] expectedOutput, string input)
+    {
+        var result = encoder.Decode(input.ToUpperInvariant());
+        Assert.That(result, Is.EqualTo(expectedOutput));
+    }
+
+    [Test]
     public void TryDecode_InvalidChar_ReturnsFalse()
     {
         var output = new byte[3];
@@ -178,25 +192,17 @@ class Base16Test
     }
 
     [Test]
-    [TestCaseSource(nameof(testData))]
-    public void Decode_OtherCase_StillPasses(Base16 encoder, byte[] expectedOutput, string input)
-    {
-        var result = encoder.Decode(input.ToUpperInvariant());
-        Assert.That(result, Is.EqualTo(expectedOutput));
-    }
-
-    [Test]
     public void Decode_InvalidChar_Throws(
-        [ValueSource(nameof(encoders))]Base16 encoder,
-        [Values("AZ12", "ZAAA", "!AAA", "=AAA")]string input)
+        [ValueSource(nameof(encoders))] Base16 encoder,
+        [Values("AZ12", "ZAAA", "!AAA", "=AAA")] string input)
     {
         _ = Assert.Throws<ArgumentException>(() => encoder.Decode(input));
     }
 
     [Test]
     public void Decode_InvalidLength_Throws(
-        [ValueSource(nameof(encoders))]Base16 encoder,
-        [Values("123", "12345")]string input)
+        [ValueSource(nameof(encoders))] Base16 encoder,
+        [Values("123", "12345")] string input)
     {
         _ = Assert.Throws<ArgumentException>(() => encoder.Decode(input));
     }
@@ -234,13 +240,13 @@ class Base16Test
     }
 
     [Test]
-    public void ToString_ReturnsNameWithAlphabet([ValueSource(nameof(encoders))]Base16 encoder)
+    public void ToString_ReturnsNameWithAlphabet([ValueSource(nameof(encoders))] Base16 encoder)
     {
         Assert.That(encoder.ToString(), Is.EqualTo($"Base16_{encoder.Alphabet}"));
     }
 
     [Test]
-    public void GetHashCode_ReturnsAlphabetHashCode([ValueSource(nameof(encoders))]Base16 encoder)
+    public void GetHashCode_ReturnsAlphabetHashCode([ValueSource(nameof(encoders))] Base16 encoder)
     {
         Assert.That(encoder.GetHashCode(), Is.EqualTo(encoder.Alphabet.GetHashCode()));
     }
