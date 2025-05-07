@@ -3,17 +3,16 @@
         <TargetFramework>net8.0</TargetFramework>
         <RootNamespace>SimpleBaseTest</RootNamespace>
         <AssemblyName>SimpleBaseTest</AssemblyName>
-        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
         <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-        <TestRunner>nunit</TestRunner>
         <SignAssembly>true</SignAssembly>
         <AssemblyOriginatorKeyFile>..\SimpleBase.snk</AssemblyOriginatorKeyFile>
         <DelaySign>false</DelaySign>
         <LangVersion>latest</LangVersion>
         <Nullable>enable</Nullable>
         <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-        <EnableNUnitRunner>true</EnableNUnitRunner>
-        <OutputType>Exe</OutputType>
+		
+		<IsPackable>false</IsPackable>
+		<IsTestProject>true</IsTestProject>
     </PropertyGroup>
     <PropertyGroup>
       <NoWarn>1701;1702;CA1016</NoWarn>
@@ -25,14 +24,9 @@
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.13.0" />
         <PackageReference Include="Microsoft.TestPlatform.TestHost" Version="17.13.0" />
         <PackageReference Include="NUnit" Version="4.3.2" />
-        <PackageReference Include="NUnit.Analyzers" Version="4.7.0">
-          <PrivateAssets>all</PrivateAssets>
-          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-        </PackageReference>
-        <PackageReference Include="NUnit3TestAdapter" Version="4.6.0" />
+        <PackageReference Include="NUnit3TestAdapter" Version="5.0.0" />
     </ItemGroup>
     <ItemGroup>
-        <None Include="..\SimpleBase.snk" Link="SimpleBase.snk" />
         <None Include="..\SimpleBase.snk" Link="SimpleBase.snk" />
         <None Include="S:\src\SimpleBase\test\.editorconfig" />
     </ItemGroup>
