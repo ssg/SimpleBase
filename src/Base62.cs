@@ -15,18 +15,18 @@ namespace SimpleBase;
 /// on large buffers.
 /// </remarks>
 /// <remarks>
-/// Initializes a new instance of the <see cref="Base62"/> class using a custom alphabet.
+/// Initializes a new instance of the <see cref="Base45"/> class using a custom alphabet.
 /// </remarks>
 /// <param name="alphabet">Alphabet to use.</param>
 public sealed class Base62(Base62Alphabet alphabet) : DividingCoder<Base62Alphabet>(alphabet, 62, 750)
 {
-    static readonly Lazy<Base62> @default = new(() => new Base62(Base62Alphabet.Standard));
+    static readonly Lazy<Base62> defaultAlphabet = new(() => new Base62(Base62Alphabet.Default));
     static readonly Lazy<Base62> lowerFirst= new(() => new Base62(Base62Alphabet.Alternative));
 
     /// <summary>
     /// Gets the default flavor.
     /// </summary>
-    public static Base62 Default => @default.Value;
+    public static Base62 Default => defaultAlphabet.Value;
 
     /// <summary>
     /// Gets the alphabet with the lowercase letters first.

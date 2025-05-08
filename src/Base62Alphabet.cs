@@ -17,16 +17,16 @@ namespace SimpleBase;
 /// <param name="alphabet">Alphabet to use.</param>
 public sealed class Base62Alphabet(string alphabet) : CodingAlphabet(62, alphabet)
 {
-    static readonly Lazy<Base62Alphabet> standardAlphabet = new(()
+    static readonly Lazy<Base62Alphabet> defaultAlphabet = new(()
         => new Base62Alphabet("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"));
 
     static readonly Lazy<Base62Alphabet> alternativeAlphabet = new(()
         => new Base62Alphabet("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"));
 
     /// <summary>
-    /// Gets Standard alphabet.
+    /// Gets the standard, most common alphabet.
     /// </summary>
-    public static Base62Alphabet Standard => standardAlphabet.Value;
+    public static Base62Alphabet Default => defaultAlphabet.Value;
 
     /// <summary>
     /// Gets Alternative alphabet.

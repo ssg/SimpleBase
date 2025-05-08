@@ -1,4 +1,7 @@
 ﻿SimpleBase.Base32.TryDecodeUInt64(string! text, out ulong number) -> bool
+SimpleBase.Base45Alphabet
+SimpleBase.Base45Alphabet.Base45Alphabet(string! alphabet) -> void
+SimpleBase.Base45Alphabet.Default.get -> SimpleBase.Base45Alphabet!
 SimpleBase.Base62
 SimpleBase.Base62.Base62(SimpleBase.Base62Alphabet! alphabet) -> void
 SimpleBase.Base62Alphabet
