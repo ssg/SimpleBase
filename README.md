@@ -280,27 +280,29 @@ Encoding (64 byte buffer)
 
 | Method                                 | Mean      | Error    | StdDev   | Gen0   | Allocated |
 |--------------------------------------- |----------:|---------:|---------:|-------:|----------:|
-| DotNet_Base64                          |  35.09 ns | 0.756 ns | 0.870 ns | 0.0119 |     200 B |
-| SimpleBase_Base16_UpperCase            |  84.53 ns | 1.608 ns | 1.504 ns | 0.0167 |     280 B |
-| SimpleBase_Base32_CrockfordWithPadding | 150.97 ns | 2.071 ns | 1.730 ns | 0.0138 |     232 B |
-| SimpleBase_Base85_Z85                  | 149.03 ns | 0.835 ns | 0.741 ns | 0.0110 |     184 B |
-| SimpleBase_Base58_Bitcoin              |  44.61 ns | 0.449 ns | 0.350 ns | 0.0091 |     152 B |
-| SimpleBase_Base58_Monero               | 206.80 ns | 3.761 ns | 3.518 ns | 0.0119 |     200 B |
-| SimpleBase_Multibase_Base16_UpperCase  | 104.93 ns | 2.153 ns | 4.096 ns | 0.0334 |     560 B |
+| DotNet_Base64                          |  27.22 ns | 0.170 ns | 0.142 ns | 0.0120 |     200 B |
+| SimpleBase_Base16_UpperCase            |  82.46 ns | 1.501 ns | 2.292 ns | 0.0167 |     280 B |
+| SimpleBase_Base32_CrockfordWithPadding | 152.97 ns | 2.349 ns | 3.215 ns | 0.0138 |     232 B |
+| SimpleBase_Base85_Z85                  | 151.73 ns | 1.860 ns | 1.740 ns | 0.0110 |     184 B |
+| SimpleBase_Base58_Bitcoin              |  47.44 ns | 0.849 ns | 0.752 ns | 0.0091 |     152 B |
+| SimpleBase_Base58_Monero               | 208.51 ns | 1.038 ns | 0.920 ns | 0.0119 |     200 B |
+| SimpleBase_Base62_Default              |  45.76 ns | 0.927 ns | 0.867 ns |      - |         - |
+| SimpleBase_Multibase_Base16_UpperCase  | 105.84 ns | 2.121 ns | 3.485 ns | 0.0334 |     560 B |
 
 Decoding (80 character string)
 
-| Method                                          | Mean        | Error     | StdDev    | Gen0   | Gen1   | Allocated |
-|------------------------------------------------ |------------:|----------:|----------:|-------:|-------:|----------:|
-| DotNet_Base64                                   |   104.13 ns |  1.826 ns |  1.708 ns | 0.0052 |      - |      88 B |
-| SimpleBase_Base16_UpperCase                     |    51.17 ns |  0.919 ns |  0.815 ns | 0.0038 |      - |      64 B |
-| SimpleBase_Base16_UpperCase_TextReader          |   294.32 ns |  8.969 ns | 25.445 ns | 0.5007 | 0.0153 |    8376 B |
-| SimpleBase_Base32_Crockford                     |   142.50 ns |  1.277 ns |  1.132 ns | 0.0048 |      - |      80 B |
-| SimpleBase_Base85_Z85                           |   250.56 ns |  2.123 ns |  1.985 ns | 0.0052 |      - |      88 B |
-| SimpleBase_Base58_Bitcoin                       | 3,652.25 ns | 13.163 ns | 11.669 ns | 0.0038 |      - |      88 B |
-| SimpleBase_Base58_Monero                        |   128.16 ns |  1.155 ns |  0.965 ns | 0.0052 |      - |      88 B |
-| SimpleBase_Multibase_Base16_UpperCase           |    51.27 ns |  0.891 ns |  0.834 ns | 0.0038 |      - |      64 B |
-| SimpleBase_Multibase_TryDecode_Base16_UpperCase |    49.32 ns |  0.377 ns |  0.334 ns |      - |      - |         - |
+| Method                                          | Mean        | Error    | StdDev   | Gen0   | Gen1   | Allocated |
+|------------------------------------------------ |------------:|---------:|---------:|-------:|-------:|----------:|
+| DotNet_Base64                                   |   102.42 ns | 0.171 ns | 0.133 ns | 0.0052 |      - |      88 B |
+| SimpleBase_Base16_UpperCase                     |    49.69 ns | 0.398 ns | 0.353 ns | 0.0038 |      - |      64 B |
+| SimpleBase_Base16_UpperCase_TextReader          |   272.67 ns | 3.573 ns | 2.983 ns | 0.5007 | 0.0153 |    8376 B |
+| SimpleBase_Base32_Crockford                     |   140.96 ns | 0.315 ns | 0.279 ns | 0.0048 |      - |      80 B |
+| SimpleBase_Base85_Z85                           |   248.57 ns | 0.282 ns | 0.264 ns | 0.0052 |      - |      88 B |
+| SimpleBase_Base58_Bitcoin                       | 3,600.06 ns | 8.349 ns | 6.972 ns | 0.0038 |      - |      88 B |
+| SimpleBase_Base58_Monero                        |   108.87 ns | 0.446 ns | 0.417 ns | 0.0052 |      - |      88 B |
+| SimpleBase_Base62_Default                       | 4,617.44 ns | 8.223 ns | 7.692 ns |      - |      - |      88 B |
+| SimpleBase_Multibase_Base16_UpperCase           |    50.91 ns | 0.375 ns | 0.332 ns | 0.0038 |      - |      64 B |
+| SimpleBase_Multibase_TryDecode_Base16_UpperCase |    47.71 ns | 0.188 ns | 0.176 ns |      - |      - |         - |
 
 Notes
 -----
