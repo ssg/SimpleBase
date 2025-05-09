@@ -393,24 +393,24 @@ public class Base85(Base85Alphabet alphabet) : IBaseCoder, IBaseStreamCoder, INo
             // handle shortcut characters
             if (c == allZeroChar && allZeroChar is not null)
             {
-                var result = writeShortcut(output[bytesWritten..], ref blockIndex, 0, out int bytesWritten);
+                var result = writeShortcut(output[bytesWritten..], ref blockIndex, 0, out int bytesWrittenNow);
                 if (result != DecodeResult.Success)
                 {
                     return (result, c);
                 }
 
-                bytesWritten += bytesWritten;
+                bytesWritten += bytesWrittenNow;
                 continue;
             }
             else if (c == allSpaceChar && allSpaceChar is not null)
             {
-                var result = writeShortcut(output[bytesWritten..], ref blockIndex, fourSpaceChars, out int bytesWritten);
+                var result = writeShortcut(output[bytesWritten..], ref blockIndex, fourSpaceChars, out int bytesWrittenNow);
                 if (result != DecodeResult.Success)
                 {
                     return (result, c);
                 }
 
-                bytesWritten += bytesWritten;
+                bytesWritten += bytesWrittenNow;
                 continue;
             }
 
@@ -425,13 +425,13 @@ public class Base85(Base85Alphabet alphabet) : IBaseCoder, IBaseStreamCoder, INo
             blockIndex += 1;
             if (blockIndex == stringBlockSize)
             {
-                var result = writeDecodedValue(output[bytesWritten..], value, byteBlockSize, out int bytesWritten);
+                var result = writeDecodedValue(output[bytesWritten..], value, byteBlockSize, out int bytesWrittenNow);
                 if (result != DecodeResult.Success)
                 {
                     return (result, null);
                 }
 
-                bytesWritten += bytesWritten;
+                bytesWritten += bytesWrittenNow;
                 blockIndex = 0;
                 value = 0;
             }
@@ -446,13 +446,13 @@ public class Base85(Base85Alphabet alphabet) : IBaseCoder, IBaseStreamCoder, INo
                 value = (value * baseLength) + (baseLength - 1);
             }
 
-            var result = writeDecodedValue(output[bytesWritten..], value, blockIndex - 1, out int bytesWritten);
+            var result = writeDecodedValue(output[bytesWritten..], value, blockIndex - 1, out int bytesWrittenNow);
             if (result != DecodeResult.Success)
             {
                 return (result, null);
             }
 
-            bytesWritten += bytesWritten;
+            bytesWritten += bytesWrittenNow;
         }
 
         return (DecodeResult.Success, null);

@@ -55,7 +55,7 @@ public sealed class Base45(Base45Alphabet alphabet) : INonAllocatingBaseCoder, I
     /// <inheritdoc/>
     public int GetSafeByteCountForDecoding(ReadOnlySpan<char> text) => getDecodingBufferSize(text.Length);
 
-    private static int getDecodingBufferSize(int len)
+    static int getDecodingBufferSize(int len)
     {
         (int a, int b) = Math.DivRem(len, 3);
 

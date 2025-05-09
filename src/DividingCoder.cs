@@ -116,10 +116,10 @@ public abstract class DividingCoder<TAlphabet>(TAlphabet alphabet, int divisor, 
         var result = internalDecode(
             input,
             output,
-            out Range bytesWritten);
+            out Range rangeWritten);
 
-        output[bytesWritten].CopyTo(output);
-        bytesWritten = bytesWritten.End.Value - bytesWritten.Start.Value;
+        output[rangeWritten].CopyTo(output);
+        bytesWritten = rangeWritten.End.Value - rangeWritten.Start.Value;
         return result is (DecodeResult.Success, _);
     }
 
@@ -193,7 +193,7 @@ public abstract class DividingCoder<TAlphabet>(TAlphabet alphabet, int divisor, 
     (DecodeResult, char?) internalDecode(
         ReadOnlySpan<char> input,
         Span<byte> output,
-        out Range bytesWritten)
+        out Range rangeWritten)
     {
         var table = Alphabet.ReverseLookupTable;
         int min = output.Length - 1;
@@ -203,7 +203,7 @@ public abstract class DividingCoder<TAlphabet>(TAlphabet alphabet, int divisor, 
             int carry = table[c] - 1;
             if (carry < 0)
             {
-                bytesWritten = Range.EndAt(0);
+                rangeWritten = Range.EndAt(0);
                 return (DecodeResult.InvalidCharacter, c);
             }
 
@@ -220,7 +220,7 @@ public abstract class DividingCoder<TAlphabet>(TAlphabet alphabet, int divisor, 
             }
         }
 
-        bytesWritten = min..output.Length;
+        rangeWritten = min..output.Length;
         return (DecodeResult.Success, null);
     }
 }

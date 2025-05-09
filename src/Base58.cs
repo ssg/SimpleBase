@@ -281,10 +281,10 @@ public sealed class Base58(Base58Alphabet alphabet) : IBaseCoder, INonAllocating
             input,
             output,
             zeroCount,
-            out Range bytesWritten);
+            out Range rangeWritten);
 
-        output[bytesWritten].CopyTo(output);
-        bytesWritten = bytesWritten.End.Value - bytesWritten.Start.Value;
+        output[rangeWritten].CopyTo(output);
+        bytesWritten = rangeWritten.End.Value - rangeWritten.Start.Value;
         return result is (DecodeResult.Success, _);
     }
 
@@ -436,12 +436,12 @@ public sealed class Base58(Base58Alphabet alphabet) : IBaseCoder, INonAllocating
         ReadOnlySpan<char> input,
         Span<byte> output,
         int numZeroes,
-        out Range bytesWritten)
+        out Range rangeWritten)
     {
         if (numZeroes == input.Length)
         {
             var result = decodeZeroes(output, numZeroes, out int bytesWritten);
-            bytesWritten = Range.EndAt(bytesWritten);
+            rangeWritten = Range.EndAt(bytesWritten);
             return (result, null);
         }
 
@@ -453,7 +453,7 @@ public sealed class Base58(Base58Alphabet alphabet) : IBaseCoder, INonAllocating
             int carry = table[c] - 1;
             if (carry < 0)
             {
-                bytesWritten = Range.EndAt(0);
+                rangeWritten = Range.EndAt(0);
                 return (DecodeResult.InvalidCharacter, c);
             }
 
@@ -470,7 +470,7 @@ public sealed class Base58(Base58Alphabet alphabet) : IBaseCoder, INonAllocating
             }
         }
 
-        bytesWritten = new Range(min - numZeroes, output.Length);
+        rangeWritten = new Range(min - numZeroes, output.Length);
         return (DecodeResult.Success, null);
     }
 }
