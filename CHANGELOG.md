@@ -4,6 +4,8 @@
 - TryDecode/TryEncode methods no longer throw
 - Base85 methods with `Ipv6` in them renamed to `IPv6` to match with .NET
 - `numBytesWritten` parameters have all been renamed to `bytesWritten` to match with .NET
+- The target framework was changed to .NET 8.0 around 4.2.0, but the version change did not
+  reflect that breaking change, although in practice it shouldn't cause many issues.
 
 ## New features
 - Base62
