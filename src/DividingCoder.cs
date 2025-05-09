@@ -87,13 +87,13 @@ public abstract class DividingCoder<TAlphabet>(TAlphabet alphabet, int divisor, 
 
         int outputLen = getSafeByteCountForDecoding(text.Length);
         Span<byte> output = outputLen < Bits.SafeStackMaxAllocSize ? stackalloc byte[outputLen] : new byte[outputLen];
-        var result = internalDecode(text, output, out Range bytesWritten);
+        var result = internalDecode(text, output, out Range rangeWritten);
 
         return result switch
         {
             (DecodeResult.InvalidCharacter, char c) => throw CodingAlphabet.InvalidCharacter(c),
             (DecodeResult.InsufficientOutputBuffer, _) => throw new InvalidOperationException("Output buffer was too small while decoding"),
-            (DecodeResult.Success, _) => output[bytesWritten].ToArray(),
+            (DecodeResult.Success, _) => output[rangeWritten].ToArray(),
             _ => throw new InvalidOperationException("This should be never hit - probably a bug"),
         };
     }
@@ -203,7 +203,7 @@ public abstract class DividingCoder<TAlphabet>(TAlphabet alphabet, int divisor, 
             int carry = table[c] - 1;
             if (carry < 0)
             {
-                rangeWritten = Range.EndAt(0);
+                rangeWritten = ..0;
                 return (DecodeResult.InvalidCharacter, c);
             }
 

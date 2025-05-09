@@ -249,13 +249,13 @@ public sealed class Base58(Base58Alphabet alphabet) : IBaseCoder, INonAllocating
         int numZeroes = getPrefixCount(text, zeroChar);
         int outputLen = GetSafeByteCountForDecoding(text.Length, numZeroes);
         Span<byte> output = outputLen < Bits.SafeStackMaxAllocSize ? stackalloc byte[outputLen] : new byte[outputLen];
-        var result = internalDecode(text, output, numZeroes, out Range bytesWritten);
+        var result = internalDecode(text, output, numZeroes, out Range rangeWritten);
 
         return result switch
         {
             (DecodeResult.InvalidCharacter, char c) => throw CodingAlphabet.InvalidCharacter(c),
             (DecodeResult.InsufficientOutputBuffer, _) => throw new InvalidOperationException("Output buffer was too small while decoding Base58"),
-            (DecodeResult.Success, _) => output[bytesWritten].ToArray(),
+            (DecodeResult.Success, _) => output[rangeWritten].ToArray(),
             _ => throw new InvalidOperationException("This should be never hit - probably a bug"),
         };
     }
@@ -440,8 +440,8 @@ public sealed class Base58(Base58Alphabet alphabet) : IBaseCoder, INonAllocating
     {
         if (numZeroes == input.Length)
         {
-            var result = decodeZeroes(output, numZeroes, out int bytesWritten);
-            rangeWritten = Range.EndAt(bytesWritten);
+            var result = decodeZeroes(output, numZeroes, out int numBytesWritten);
+            rangeWritten = ..numBytesWritten;
             return (result, null);
         }
 
@@ -453,7 +453,7 @@ public sealed class Base58(Base58Alphabet alphabet) : IBaseCoder, INonAllocating
             int carry = table[c] - 1;
             if (carry < 0)
             {
-                rangeWritten = Range.EndAt(0);
+                rangeWritten = ..0;
                 return (DecodeResult.InvalidCharacter, c);
             }
 
@@ -470,7 +470,7 @@ public sealed class Base58(Base58Alphabet alphabet) : IBaseCoder, INonAllocating
             }
         }
 
-        rangeWritten = new Range(min - numZeroes, output.Length);
+        rangeWritten = (min - numZeroes)..output.Length;
         return (DecodeResult.Success, null);
     }
 }
