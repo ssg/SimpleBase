@@ -180,3 +180,40 @@ static SimpleBase.Base32Alphabet.ExtendedHexLower.get -> SimpleBase.Base32Alphab
 static SimpleBase.Multibase.Decode(System.ReadOnlySpan<char> text) -> byte[]!
 static SimpleBase.Multibase.Encode(System.ReadOnlySpan<byte> bytes, SimpleBase.MultibaseEncoding encoding) -> string!
 static SimpleBase.Multibase.TryDecode(System.ReadOnlySpan<char> text, System.Span<byte> bytes, out int bytesWritten) -> bool
+SimpleBase.Base32.TryDecodeUInt64(string! text, out ulong number) -> bool
+SimpleBase.Base45
+SimpleBase.Base45.Base45(SimpleBase.Base45Alphabet! alphabet) -> void
+SimpleBase.Base45.Decode(System.IO.TextReader! input, System.IO.Stream! output) -> void
+SimpleBase.Base45.Decode(System.ReadOnlySpan<char> text) -> byte[]!
+SimpleBase.Base45.DecodeAsync(System.IO.TextReader! input, System.IO.Stream! output) -> System.Threading.Tasks.Task!
+SimpleBase.Base45.Encode(System.IO.Stream! input, System.IO.TextWriter! output) -> void
+SimpleBase.Base45.Encode(System.ReadOnlySpan<byte> bytes) -> string!
+SimpleBase.Base45.EncodeAsync(System.IO.Stream! input, System.IO.TextWriter! output) -> System.Threading.Tasks.Task!
+SimpleBase.Base45.GetSafeByteCountForDecoding(System.ReadOnlySpan<char> text) -> int
+SimpleBase.Base45.GetSafeCharCountForEncoding(System.ReadOnlySpan<byte> buffer) -> int
+SimpleBase.Base45.TryDecode(System.ReadOnlySpan<char> input, System.Span<byte> output, out int bytesWritten) -> bool
+SimpleBase.Base45.TryEncode(System.ReadOnlySpan<byte> input, System.Span<char> output, out int numCharsWritten) -> bool
+SimpleBase.Base45Alphabet
+SimpleBase.Base45Alphabet.Base45Alphabet(string! alphabet) -> void
+SimpleBase.Base62
+SimpleBase.Base62.Base62(SimpleBase.Base62Alphabet! alphabet) -> void
+SimpleBase.Base62Alphabet
+SimpleBase.Base62Alphabet.Base62Alphabet(string! alphabet) -> void
+SimpleBase.Base85IPv6.TryDecodeIPv6(string! text, out System.Net.IPAddress! ip) -> bool
+SimpleBase.DividingCoder<TAlphabet>
+SimpleBase.DividingCoder<TAlphabet>.Alphabet.get -> TAlphabet!
+SimpleBase.DividingCoder<TAlphabet>.Decode(System.ReadOnlySpan<char> text) -> byte[]!
+SimpleBase.DividingCoder<TAlphabet>.DividingCoder(TAlphabet! alphabet, int divisor, int reductionFactor) -> void
+SimpleBase.DividingCoder<TAlphabet>.Encode(System.ReadOnlySpan<byte> bytes) -> string!
+SimpleBase.DividingCoder<TAlphabet>.TryDecode(System.ReadOnlySpan<char> input, System.Span<byte> output, out int bytesWritten) -> bool
+SimpleBase.DividingCoder<TAlphabet>.TryEncode(System.ReadOnlySpan<byte> input, System.Span<char> output, out int numCharsWritten) -> bool
+SimpleBase.INumericBaseCoder.TryDecodeUInt64(string! text, out ulong number) -> bool
+SimpleBase.MultibaseEncoding.Base45 = 82 -> SimpleBase.MultibaseEncoding
+static SimpleBase.Base45.Default.get -> SimpleBase.Base45!
+static SimpleBase.Base45Alphabet.Default.get -> SimpleBase.Base45Alphabet!
+static SimpleBase.Base62.Default.get -> SimpleBase.Base62!
+static SimpleBase.Base62.LowerFirst.get -> SimpleBase.Base62!
+static SimpleBase.Base62Alphabet.Alternative.get -> SimpleBase.Base62Alphabet!
+static SimpleBase.Base62Alphabet.Default.get -> SimpleBase.Base62Alphabet!
+virtual SimpleBase.DividingCoder<TAlphabet>.GetSafeByteCountForDecoding(System.ReadOnlySpan<char> text) -> int
+virtual SimpleBase.DividingCoder<TAlphabet>.GetSafeCharCountForEncoding(System.ReadOnlySpan<byte> bytes) -> int
