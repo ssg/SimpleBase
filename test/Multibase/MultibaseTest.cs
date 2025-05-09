@@ -53,6 +53,7 @@ class MultibaseTest
         [MultibaseEncoding.Base32HexLower, "vad9ke82n859i0i25a92i0891oals73e3jr1ru"],
         [MultibaseEncoding.Base32HexUpper, "VAD9KE82N859I0I25A92I0891OALS73E3JR1RU"],
         [MultibaseEncoding.Base32Z, "hkpjwqenzefj1y1nfkjn1yejbakih8dqdu5b56"],
+        [MultibaseEncoding.Base45, "R1OAS:8H1B+MA6691IAZ242C46WLL-H83KB4"],
         [MultibaseEncoding.Base58Flickr, "Z2HPxwKnQi8s2ugkrzPrrR6nyDEpMhoe6"],
         [MultibaseEncoding.Base58Bitcoin, "z2ipYXkNqJ8T2VGLSapSSr6NZefQnHPE6"],
         [MultibaseEncoding.Base64, "mU1NHIFdBUyBIRVJFICEhwqvDjcOew78="],
