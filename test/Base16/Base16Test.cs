@@ -23,7 +23,6 @@ using System.Threading.Tasks;
 namespace SimpleBaseTest.Base16Test;
 
 [TestFixture]
-[Parallelizable(ParallelScope.All)]
 class Base16Test
 {
     static readonly Base16[] encoders =
@@ -47,8 +46,7 @@ class Base16Test
     static readonly TestCaseData[] testData = encoders
         .Select((encoder, index) => (encoder, index))
         .SelectMany(pair => testCases
-            .Select(testRow => new TestCaseData(pair.encoder, testRow[0], testRow[pair.index + 1])
-            .SetName($"{pair.encoder.Alphabet}_{testRow[0]}_{testRow[pair.index + 1]}")))
+            .Select(testRow => new TestCaseData(pair.encoder, testRow[0], testRow[pair.index + 1])))
         .ToArray();
 
     [Test]
@@ -113,19 +111,6 @@ class Base16Test
     }
 
     [Test]
-    [TestCaseSource(nameof(encoders))]
-    public void TryEncode_SmallerOutput_Fails(Base16 encoder)
-    {
-        var input = new byte[4];
-        var output = Array.Empty<char>();
-        Assert.Multiple(() =>
-        {
-            Assert.That(encoder.TryEncode(input, output, out int numCharsWritten), Is.False);
-            Assert.That(numCharsWritten, Is.EqualTo(0));
-        });
-    }
-
-    [Test]
     [TestCaseSource(nameof(testData))]
     public void Decode(Base16 encoder, byte[] expectedOutput, string input)
     {
@@ -152,6 +137,19 @@ class Base16Test
     {
         var result = encoder.Decode(input.ToUpperInvariant());
         Assert.That(result, Is.EqualTo(expectedOutput));
+    }
+
+    [Test]
+    [TestCaseSource(nameof(encoders))]
+    public void TryEncode_SmallerOutput_Fails(Base16 encoder)
+    {
+        var input = new byte[4];
+        var output = Array.Empty<char>();
+        Assert.Multiple(() =>
+        {
+            Assert.That(encoder.TryEncode(input, output, out int numCharsWritten), Is.False);
+            Assert.That(numCharsWritten, Is.EqualTo(0));
+        });
     }
 
     [Test]
