@@ -87,13 +87,13 @@ public abstract class DividingCoder<TAlphabet>(TAlphabet alphabet, int divisor, 
 
         int outputLen = getSafeByteCountForDecoding(text.Length);
         Span<byte> output = outputLen < Bits.SafeStackMaxAllocSize ? stackalloc byte[outputLen] : new byte[outputLen];
-        var result = internalDecode(text, output, out Range bytesWritten);
+        var result = internalDecode(text, output, out Range rangeWritten);
 
         return result switch
         {
             (DecodeResult.InvalidCharacter, char c) => throw CodingAlphabet.InvalidCharacter(c),
             (DecodeResult.InsufficientOutputBuffer, _) => throw new InvalidOperationException("Output buffer was too small while decoding"),
-            (DecodeResult.Success, _) => output[bytesWritten].ToArray(),
+            (DecodeResult.Success, _) => output[rangeWritten].ToArray(),
             _ => throw new InvalidOperationException("This should be never hit - probably a bug"),
         };
     }
@@ -116,10 +116,10 @@ public abstract class DividingCoder<TAlphabet>(TAlphabet alphabet, int divisor, 
         var result = internalDecode(
             input,
             output,
-            out Range bytesWritten);
+            out Range rangeWritten);
 
-        output[bytesWritten].CopyTo(output);
-        numBytesWritten = bytesWritten.End.Value - bytesWritten.Start.Value;
+        output[rangeWritten].CopyTo(output);
+        numBytesWritten = rangeWritten.End.Value - rangeWritten.Start.Value;
         return result is (DecodeResult.Success, _);
     }
 
@@ -193,7 +193,7 @@ public abstract class DividingCoder<TAlphabet>(TAlphabet alphabet, int divisor, 
     (DecodeResult, char?) internalDecode(
         ReadOnlySpan<char> input,
         Span<byte> output,
-        out Range bytesWritten)
+        out Range rangeWritten)
     {
         var table = Alphabet.ReverseLookupTable;
         int min = output.Length - 1;
@@ -203,7 +203,7 @@ public abstract class DividingCoder<TAlphabet>(TAlphabet alphabet, int divisor, 
             int carry = table[c] - 1;
             if (carry < 0)
             {
-                bytesWritten = Range.EndAt(0);
+                rangeWritten = ..0;
                 return (DecodeResult.InvalidCharacter, c);
             }
 
@@ -220,7 +220,7 @@ public abstract class DividingCoder<TAlphabet>(TAlphabet alphabet, int divisor, 
             }
         }
 
-        bytesWritten = min..output.Length;
+        rangeWritten = min..output.Length;
         return (DecodeResult.Success, null);
     }
 }
