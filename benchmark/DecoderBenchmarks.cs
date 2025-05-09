@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using BenchmarkDotNet.Attributes;
 using SimpleBase;
 
@@ -12,6 +13,7 @@ public class DecoderBenchmarks
     readonly string s = new('a', 80);
     readonly string ms = 'F' + new string('a', 80);
     readonly string base45str = new('A', 81);
+    readonly string emojiStr = string.Join("", Enumerable.Range(0, 80).Select(i => "🚀").ToArray());
     readonly MemoryStream memoryStream = new();
     readonly static byte[] buffer = new byte[80];
 
@@ -39,24 +41,6 @@ public class DecoderBenchmarks
     }
 
     [Benchmark]
-    public byte[] Base32_Crockford() => Base32.Crockford.Decode(s);
-
-    [Benchmark]
-    public byte[] Base85_Z85() => Base85.Z85.Decode(s);
-
-    [Benchmark]
-    public byte[] Base58_Bitcoin() => Base58.Bitcoin.Decode(s);
-
-    [Benchmark]
-    public byte[] Base58_Monero() => Base58.Monero.Decode(s);
-
-    [Benchmark]
-    public byte[] Base62_Default() => Base62.Default.Decode(s);
-
-    [Benchmark]
-    public byte[] Base45_Default() => Base45.Default.Decode(base45str);
-
-    [Benchmark]
     public byte[] Multibase_Base16_UpperCase() => Multibase.Decode(ms);
 
     [Benchmark]
@@ -70,4 +54,24 @@ public class DecoderBenchmarks
         return buffer;
     }
 
+    [Benchmark]
+    public byte[] Base32_Crockford() => Base32.Crockford.Decode(s);
+
+    [Benchmark]
+    public byte[] Base45_Default() => Base45.Default.Decode(base45str);
+
+    [Benchmark]
+    public byte[] Base58_Bitcoin() => Base58.Bitcoin.Decode(s);
+
+    [Benchmark]
+    public byte[] Base58_Monero() => Base58.Monero.Decode(s);
+
+    [Benchmark]
+    public byte[] Base62_Default() => Base62.Default.Decode(s);
+
+    [Benchmark]
+    public byte[] Base85_Z85() => Base85.Z85.Decode(s);
+
+    [Benchmark]
+    public byte[] Base256Emoji_Default() => Base256Emoji.Default.Decode(emojiStr);
 }

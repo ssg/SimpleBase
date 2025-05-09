@@ -18,6 +18,7 @@ public enum MultibaseEncoding
     Base32Upper     = 'B',
     Base58Bitcoin   = 'z',
     Base64          = 'm',
+    Base64Pad       = 'M',
     Base64Url       = 'u',
     Base64UrlPad    = 'U',
 
@@ -29,5 +30,7 @@ public enum MultibaseEncoding
     Base58Flickr    = 'Z',
     Base32HexLower  = 'v',
     Base32HexUpper  = 'V',
+
+    Base256Emoji    = 0xD83D, // high surrogate of '🚀' UTF-16 pair - ends with low surrogate 0xDE80
 }
 #pragma warning restore CS1591 // Missing XML comment for publicly visible type or member

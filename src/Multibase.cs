@@ -4,7 +4,6 @@
 // </copyright>
 
 using System;
-using System.Text;
 
 namespace SimpleBase;
 
@@ -13,6 +12,9 @@ namespace SimpleBase;
 /// </summary>
 public static class Multibase
 {
+    const char base256EmojiLowSurrogate = '\ud83d';
+    const string base256EmojiPrefix = "🚀";
+
     /// <summary>
     /// Decodes a multibase encoded string.
     /// </summary>
@@ -41,8 +43,12 @@ public static class Multibase
             MultibaseEncoding.Base45 => Base45.Default.Decode(rest),
             MultibaseEncoding.Base58Bitcoin => Base58.Bitcoin.Decode(rest),
             MultibaseEncoding.Base58Flickr => Base58.Flickr.Decode(rest),
-            MultibaseEncoding.Base64 => Convert.FromBase64String(rest.ToString()),
+            MultibaseEncoding.Base64Pad => Convert.FromBase64String(rest.ToString()),
+            MultibaseEncoding.Base64 => Base64.DecodeWithoutPadding(rest),
             MultibaseEncoding.Base64Url or MultibaseEncoding.Base64UrlPad => Base64.DecodeUrl(rest),
+            MultibaseEncoding.Base256Emoji
+                when rest.Length > 0
+                    && rest[0] == base256EmojiLowSurrogate => Base256Emoji.Default.Decode(text[1..]),
             _ => throw new InvalidOperationException($"Unsupported multibase prefix: {c}"),
         };
     }
@@ -76,8 +82,12 @@ public static class Multibase
             MultibaseEncoding.Base45 => Base45.Default.TryDecode(rest, bytes, out bytesWritten),
             MultibaseEncoding.Base58Bitcoin => Base58.Bitcoin.TryDecode(rest, bytes, out bytesWritten),
             MultibaseEncoding.Base58Flickr => Base58.Flickr.TryDecode(rest, bytes, out bytesWritten),
-            MultibaseEncoding.Base64 => Convert.TryFromBase64Chars(rest, bytes, out bytesWritten),
+            MultibaseEncoding.Base64 => Base64.TryDecodeWithoutPadding(rest, bytes, out bytesWritten),
+            MultibaseEncoding.Base64Pad => Convert.TryFromBase64Chars(rest, bytes, out bytesWritten),
             MultibaseEncoding.Base64Url or MultibaseEncoding.Base64UrlPad => Base64.TryDecodeUrl(rest, bytes, out bytesWritten),
+            MultibaseEncoding.Base256Emoji
+                when rest.Length > 0
+                    && rest[0] == base256EmojiLowSurrogate => Base256Emoji.Default.TryDecode(text[1..], bytes, out bytesWritten),
             _ => false,
         };
     }
@@ -91,22 +101,27 @@ public static class Multibase
     /// <exception cref="NotImplementedException"></exception>
     public static string Encode(ReadOnlySpan<byte> bytes, MultibaseEncoding encoding)
     {
-        return (char)encoding + encoding switch
+        return encoding switch
         {
-            MultibaseEncoding.Base16Lower => Base16.LowerCase.Encode(bytes),
-            MultibaseEncoding.Base16Upper => Base16.UpperCase.Encode(bytes),
-            MultibaseEncoding.Base32Lower => Base32.FileCoin.Encode(bytes),
-            MultibaseEncoding.Base32Upper => Base32.Rfc4648.Encode(bytes),
-            MultibaseEncoding.Base32HexLower => Base32.ExtendedHexLower.Encode(bytes),
-            MultibaseEncoding.Base32HexUpper => Base32.ExtendedHex.Encode(bytes),
-            MultibaseEncoding.Base32Z => Base32.ZBase32.Encode(bytes),
-            MultibaseEncoding.Base45 => Base45.Default.Encode(bytes),
-            MultibaseEncoding.Base58Bitcoin => Base58.Bitcoin.Encode(bytes),
-            MultibaseEncoding.Base58Flickr => Base58.Flickr.Encode(bytes),
-            MultibaseEncoding.Base64 => Convert.ToBase64String(bytes),
-            MultibaseEncoding.Base64Url => Base64.EncodeUrl(bytes),
-            MultibaseEncoding.Base64UrlPad => Base64.EncodeUrlPadded(bytes),
-            _ => throw new ArgumentException($"Unsupported encoding type: {encoding}", nameof(encoding)),
+            MultibaseEncoding.Base256Emoji => base256EmojiPrefix + Base256Emoji.Default.Encode(bytes),
+            _ => (char)encoding + encoding switch
+            {
+                MultibaseEncoding.Base16Lower => Base16.LowerCase.Encode(bytes),
+                MultibaseEncoding.Base16Upper => Base16.UpperCase.Encode(bytes),
+                MultibaseEncoding.Base32Lower => Base32.FileCoin.Encode(bytes),
+                MultibaseEncoding.Base32Upper => Base32.Rfc4648.Encode(bytes),
+                MultibaseEncoding.Base32HexLower => Base32.ExtendedHexLower.Encode(bytes),
+                MultibaseEncoding.Base32HexUpper => Base32.ExtendedHex.Encode(bytes),
+                MultibaseEncoding.Base32Z => Base32.ZBase32.Encode(bytes),
+                MultibaseEncoding.Base45 => Base45.Default.Encode(bytes),
+                MultibaseEncoding.Base58Bitcoin => Base58.Bitcoin.Encode(bytes),
+                MultibaseEncoding.Base58Flickr => Base58.Flickr.Encode(bytes),
+                MultibaseEncoding.Base64 => Base64.EncodeWithoutPadding(bytes),
+                MultibaseEncoding.Base64Pad => Convert.ToBase64String(bytes),
+                MultibaseEncoding.Base64Url => Base64.EncodeUrl(bytes),
+                MultibaseEncoding.Base64UrlPad => Base64.EncodeUrlPadded(bytes),
+                _ => throw new ArgumentException($"Unsupported encoding type: {encoding}", nameof(encoding)),
+            }
         };
     }
 }

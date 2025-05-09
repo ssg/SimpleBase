@@ -23,8 +23,9 @@ Features
    encoder/decoder just to see how far I can take the optimizations compared to .NET's
    implementations. It's quite fast now. It could also be used as a replacement for `SoapHexBinary.Parse` although
    .NET has [`Convert.FromHexString()`](https://learn.microsoft.com/en-us/dotnet/api/system.convert.fromhexstring?view=net-5.0) method since .NET 5.
+ - **Base256 Emoji🚀**: Supported by Multibase, and can be used individually. 
  - [Multibase](https://github.com/multiformats/multibase) support. All formats
-   covered by SimpleBase including a few Base64 variants are supported.
+   covered by SimpleBase including a few Base64 variants are supported. 
  - One-shot memory buffer based APIs for simple use cases.
  - Stream-based async APIs for more advanced scenarios.
  - Lightweight: No dependencies.
@@ -278,33 +279,35 @@ AMD Ryzen 9 5950X, 1 CPU, 32 logical and 16 physical cores
 
 Encoding (64 byte buffer)
 
-| Method                      | Mean      | Error    | StdDev   | Median    | Gen0   | Allocated |
-|---------------------------- |----------:|---------:|---------:|----------:|-------:|----------:|
-| DotNet_Base64               |  29.63 ns | 0.644 ns | 1.581 ns |  29.13 ns | 0.0119 |     200 B |
-| Base16_UpperCase            |  83.54 ns | 1.494 ns | 1.397 ns |  83.57 ns | 0.0167 |     280 B |
-| Base32_CrockfordWithPadding | 149.95 ns | 1.259 ns | 1.177 ns | 149.57 ns | 0.0138 |     232 B |
-| Base85_Z85                  | 152.70 ns | 3.035 ns | 3.248 ns | 151.08 ns | 0.0110 |     184 B |
-| Base58_Bitcoin              |  47.21 ns | 0.947 ns | 1.232 ns |  46.87 ns | 0.0091 |     152 B |
-| Base58_Monero               | 209.26 ns | 3.021 ns | 2.825 ns | 209.16 ns | 0.0119 |     200 B |
-| Base62_Default              |  45.59 ns | 0.555 ns | 0.492 ns |  45.67 ns |      - |         - |
-| Base45_Default              | 122.90 ns | 2.272 ns | 2.125 ns | 122.55 ns | 0.0129 |     216 B |
-| Multibase_Base16_UpperCase  | 101.46 ns | 1.602 ns | 1.499 ns | 101.19 ns | 0.0334 |     560 B |
+| Method                      | Mean      | Error    | StdDev   | Gen0   | Allocated |
+|---------------------------- |----------:|---------:|---------:|-------:|----------:|
+| DotNet_Base64               |  29.30 ns | 0.601 ns | 0.617 ns | 0.0119 |     200 B |
+| Base16_UpperCase            |  82.85 ns | 1.098 ns | 1.027 ns | 0.0167 |     280 B |
+| Multibase_Base16_UpperCase  | 101.81 ns | 1.648 ns | 1.461 ns | 0.0334 |     560 B |
+| Base32_CrockfordWithPadding | 151.38 ns | 1.149 ns | 1.018 ns | 0.0138 |     232 B |
+| Base45_Default              | 120.40 ns | 0.211 ns | 0.187 ns | 0.0129 |     216 B |
+| Base58_Bitcoin              |  44.99 ns | 0.308 ns | 0.273 ns | 0.0091 |     152 B |
+| Base58_Monero               | 203.76 ns | 0.898 ns | 0.796 ns | 0.0119 |     200 B |
+| Base62_Default              |  45.42 ns | 0.307 ns | 0.287 ns |      - |         - |
+| Base85_Z85                  | 149.90 ns | 1.439 ns | 1.346 ns | 0.0110 |     184 B |
+| Base256Emoji_Default        | 214.03 ns | 4.332 ns | 4.988 ns | 0.0167 |     280 B |
 
 Decoding (80 character string, except Base45 which must use an 81 character string)
 
 | Method                               | Mean        | Error     | StdDev    | Gen0   | Gen1   | Allocated |
 |------------------------------------- |------------:|----------:|----------:|-------:|-------:|----------:|
-| DotNet_Base64                        |   102.68 ns |  0.750 ns |  0.665 ns | 0.0052 |      - |      88 B |
-| Base16_UpperCase                     |    49.18 ns |  0.156 ns |  0.138 ns | 0.0038 |      - |      64 B |
-| Base16_UpperCase_TextReader          |   296.97 ns |  2.632 ns |  2.333 ns | 0.5007 | 0.0153 |    8376 B |
-| Base32_Crockford                     |   125.25 ns |  0.479 ns |  0.424 ns | 0.0048 |      - |      80 B |
-| Base85_Z85                           |   252.70 ns |  0.497 ns |  0.465 ns | 0.0052 |      - |      88 B |
-| Base58_Bitcoin                       | 4,500.25 ns |  5.755 ns |  5.383 ns |      - |      - |      88 B |
-| Base58_Monero                        |    97.77 ns |  0.165 ns |  0.146 ns | 0.0052 |      - |      88 B |
-| Base62_Default                       | 4,827.61 ns | 90.603 ns | 88.984 ns |      - |      - |      88 B |
-| Base45_Default                       |    87.91 ns |  0.374 ns |  0.292 ns | 0.0048 |      - |      80 B |
-| Multibase_Base16_UpperCase           |    51.15 ns |  0.326 ns |  0.289 ns | 0.0038 |      - |      64 B |
-| Multibase_TryDecode_Base16_UpperCase |    56.68 ns |  0.259 ns |  0.243 ns |      - |      - |         - |
+| DotNet_Base64                        |   103.24 ns |  0.697 ns |  0.582 ns | 0.0052 |      - |      88 B |
+| Base16_UpperCase                     |    50.52 ns |  0.855 ns |  0.714 ns | 0.0038 |      - |      64 B |
+| Base16_UpperCase_TextReader          |   282.54 ns |  5.880 ns | 17.337 ns | 0.5007 | 0.0153 |    8376 B |
+| Multibase_Base16_UpperCase           |    54.19 ns |  1.117 ns |  2.306 ns | 0.0038 |      - |      64 B |
+| Multibase_TryDecode_Base16_UpperCase |    48.05 ns |  0.111 ns |  0.093 ns |      - |      - |         - |
+| Base32_Crockford                     |   144.39 ns |  2.182 ns |  1.822 ns | 0.0048 |      - |      80 B |
+| Base45_Default                       |    89.39 ns |  1.322 ns |  1.172 ns | 0.0048 |      - |      80 B |
+| Base58_Bitcoin                       | 3,640.52 ns | 20.298 ns | 16.950 ns | 0.0038 |      - |      88 B |
+| Base58_Monero                        |   107.42 ns |  0.604 ns |  0.535 ns | 0.0052 |      - |      88 B |
+| Base62_Default                       | 4,628.38 ns | 54.144 ns | 47.997 ns |      - |      - |      88 B |
+| Base85_Z85                           |   249.86 ns |  1.421 ns |  1.259 ns | 0.0052 |      - |      88 B |
+| Base256Emoji_Default                 |   283.80 ns |  1.359 ns |  1.135 ns | 0.0062 |      - |     104 B |
 
 Notes
 -----

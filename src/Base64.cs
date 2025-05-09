@@ -82,4 +82,31 @@ static class Base64
         var base64 = Convert.ToBase64String(bytes);
         return convertBase64ToBase64Url(base64);
     }
+
+    internal static string EncodeWithoutPadding(ReadOnlySpan<byte> bytes)
+    {
+        return stripBase64Padding(Convert.ToBase64String(bytes));
+    }
+
+    internal static byte[] DecodeWithoutPadding(ReadOnlySpan<char> rest)
+    {
+        return (rest.Length % 4) switch
+        {
+            0 => Convert.FromBase64String(rest.ToString()),
+            2 => Convert.FromBase64String(rest.ToString() + "=="),
+            3 => Convert.FromBase64String(rest.ToString() + "="),
+            _ => throw new ArgumentException("Invalid Base64 string length", nameof(rest))
+        };
+    }
+
+    internal static bool TryDecodeWithoutPadding(ReadOnlySpan<char> rest, Span<byte> bytes, out int bytesWritten)
+    {
+        return (rest.Length % 4) switch
+        {
+            0 => Convert.TryFromBase64Chars(rest, bytes, out bytesWritten),
+            2 => Convert.TryFromBase64Chars(rest.ToString() + "==", bytes, out bytesWritten),
+            3 => Convert.TryFromBase64Chars(rest.ToString() + "=", bytes, out bytesWritten),
+            _ => throw new ArgumentException("Invalid Base64 string length", nameof(rest))
+        };
+    }
 }

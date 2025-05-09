@@ -17,10 +17,13 @@ public class EncoderBenchmarks
     public string Base16_UpperCase() => Base16.UpperCase.Encode(buffer);
 
     [Benchmark]
+    public string Multibase_Base16_UpperCase() => Multibase.Encode(buffer, MultibaseEncoding.Base16Upper);
+
+    [Benchmark]
     public string Base32_CrockfordWithPadding() => Base32.Crockford.Encode(buffer, padding: true);
 
     [Benchmark]
-    public string Base85_Z85() => Base85.Z85.Encode(buffer);
+    public string Base45_Default() => Base45.Default.Encode(buffer);
 
     [Benchmark]
     public string Base58_Bitcoin() => Base58.Bitcoin.Encode(buffer);
@@ -32,8 +35,8 @@ public class EncoderBenchmarks
     public string Base62_Default() => Base62.Default.Encode(buffer);
 
     [Benchmark]
-    public string Base45_Default() => Base45.Default.Encode(buffer);
+    public string Base85_Z85() => Base85.Z85.Encode(buffer);
 
     [Benchmark]
-    public string Multibase_Base16_UpperCase() => Multibase.Encode(buffer, MultibaseEncoding.Base16Upper);
+    public string Base256Emoji_Default() => Base256Emoji.Default.Encode(buffer);
 }

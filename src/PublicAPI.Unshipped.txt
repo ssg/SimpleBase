@@ -1,1 +1,11 @@
-﻿
+﻿SimpleBase.Base256Emoji
+SimpleBase.Base256Emoji.Base256Emoji(string![]! alphabet) -> void
+SimpleBase.Base256Emoji.Decode(System.ReadOnlySpan<char> text) -> byte[]!
+SimpleBase.Base256Emoji.Encode(System.ReadOnlySpan<byte> bytes) -> string!
+SimpleBase.Base256Emoji.GetSafeByteCountForDecoding(System.ReadOnlySpan<char> text) -> int
+SimpleBase.Base256Emoji.GetSafeCharCountForEncoding(System.ReadOnlySpan<byte> buffer) -> int
+SimpleBase.Base256Emoji.TryDecode(System.ReadOnlySpan<char> input, System.Span<byte> output, out int bytesWritten) -> bool
+SimpleBase.Base256Emoji.TryEncode(System.ReadOnlySpan<byte> input, System.Span<char> output, out int numCharsWritten) -> bool
+SimpleBase.MultibaseEncoding.Base256Emoji = 55357 -> SimpleBase.MultibaseEncoding
+SimpleBase.MultibaseEncoding.Base64Pad = 77 -> SimpleBase.MultibaseEncoding
+static SimpleBase.Base256Emoji.Default.get -> SimpleBase.Base256Emoji!

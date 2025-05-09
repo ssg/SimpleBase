@@ -15,6 +15,7 @@
 */
 using System;
 using System.Buffers.Text;
+using System.Runtime.Intrinsics.X86;
 using System.Text;
 using NUnit.Framework;
 using SimpleBase;
@@ -56,9 +57,36 @@ class MultibaseTest
         [MultibaseEncoding.Base45, "R1OAS:8H1B+MA6691IAZ242C46WLL-H83KB4"],
         [MultibaseEncoding.Base58Flickr, "Z2HPxwKnQi8s2ugkrzPrrR6nyDEpMhoe6"],
         [MultibaseEncoding.Base58Bitcoin, "z2ipYXkNqJ8T2VGLSapSSr6NZefQnHPE6"],
-        [MultibaseEncoding.Base64, "mU1NHIFdBUyBIRVJFICEhwqvDjcOew78="],
+        [MultibaseEncoding.Base64, "mU1NHIFdBUyBIRVJFICEhwqvDjcOew78"],
+        [MultibaseEncoding.Base64Pad, "MU1NHIFdBUyBIRVJFICEhwqvDjcOew78="],
         [MultibaseEncoding.Base64Url, "uU1NHIFdBUyBIRVJFICEhwqvDjcOew78"],
         [MultibaseEncoding.Base64UrlPad, "UU1NHIFdBUyBIRVJFICEhwqvDjcOew78="],
+    ];
+
+    // These vectors are taken from https://github.com/multiformats/multibase/tree/master/tests 
+    static readonly byte[] officialEncodingInput = Encoding.UTF8.GetBytes("yes mani !");
+
+    static readonly object[][] officialEncodingData =
+    [
+        //[base2, "001111001011001010111001100100000011011010110000101101110011010010010000000100001"],
+        //[base8, "7362625631006654133464440102"],
+        //[base10, "9573277761329450583662625"],
+        [MultibaseEncoding.Base16Lower, "f796573206d616e692021"],
+        [MultibaseEncoding.Base16Upper, "F796573206D616E692021"],
+        [MultibaseEncoding.Base32Lower, "bpfsxgidnmfxgsibb"],
+        [MultibaseEncoding.Base32Upper, "BPFSXGIDNMFXGSIBB"],
+        [MultibaseEncoding.Base32HexLower, "vf5in683dc5n6i811"],
+        [MultibaseEncoding.Base32HexUpper, "VF5IN683DC5N6I811"],
+        [MultibaseEncoding.Base32Z, "hxf1zgedpcfzg1ebb"],
+        //[base36, "k2lcpzo5yikidynfl"],
+        //[base36upper, "K2LCPZO5YIKIDYNFL"],
+        [MultibaseEncoding.Base58Flickr, "Z7Pznk19XTTzBtx"],
+        [MultibaseEncoding.Base58Bitcoin, "z7paNL19xttacUY"],
+        [MultibaseEncoding.Base64, "meWVzIG1hbmkgIQ"],
+        [MultibaseEncoding.Base64Pad, "MeWVzIG1hbmkgIQ=="],
+        [MultibaseEncoding.Base64Url, "ueWVzIG1hbmkgIQ"],
+        [MultibaseEncoding.Base64UrlPad, "UeWVzIG1hbmkgIQ=="],
+        [MultibaseEncoding.Base256Emoji, "🚀🏃✋🌈😅🌷🤤😻🌟😅👏"],
     ];
 
     [Test]
@@ -66,6 +94,14 @@ class MultibaseTest
     public void Encode_EncodesDataCorrectly(MultibaseEncoding encoding, string expected)
     {
         string encoded = Multibase.Encode(encodingInput, encoding);
+        Assert.That(encoded, Is.EqualTo(expected));
+    }
+
+    [Test]
+    [TestCaseSource(nameof(officialEncodingData))]
+    public void Encode_OfficialEncodingData_EncodesDataCorrectly(MultibaseEncoding encoding, string expected)
+    {
+        string encoded = Multibase.Encode(officialEncodingInput, encoding);
         Assert.That(encoded, Is.EqualTo(expected));
     }
 
