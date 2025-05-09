@@ -16,8 +16,7 @@ Features
    (BASE32-HEX) flavors with Crockford character substitution, or any other 
    custom flavors.
  - **Base45**: The standard Base45 encoding/decoding in RFC 9285 is supported.
- - **Base58**: Both the standard encoding (Bitcoin (BTC), Ripple (XRP), Flickr, and custom alphabets) and Monero (XMR)
-   Base58 algorithms are supported. Also provides Base58Check and Avalanche CB58 encoding helpers.
+ - **Base58**: Both the standard (Bitcoin (BTC), Ripple (XRP), Monero (XMR)) and custom Base58 encoding methods are supported. Also provides Base58Check and Avalanche (AVAX) CB58 encoding helpers.
  - **Base62**: The standard Base62 encoding/decoding supported along with a custom alphabet.
  - **Base85**: Ascii85, Z85 and custom flavors. IPv6 encoding/decoding support.
  - **Base16**: UpperCase, LowerCase and ModHex flavors. An experimental hexadecimal 
@@ -279,33 +278,33 @@ AMD Ryzen 9 5950X, 1 CPU, 32 logical and 16 physical cores
 
 Encoding (64 byte buffer)
 
-| Method                                 | Mean      | Error    | StdDev   | Gen0   | Allocated |
-|--------------------------------------- |----------:|---------:|---------:|-------:|----------:|
-| DotNet_Base64                          |  28.04 ns | 0.592 ns | 0.810 ns | 0.0120 |     200 B |
-| SimpleBase_Base16_UpperCase            |  85.42 ns | 1.732 ns | 1.779 ns | 0.0167 |     280 B |
-| SimpleBase_Base32_CrockfordWithPadding | 153.34 ns | 2.456 ns | 2.297 ns | 0.0138 |     232 B |
-| SimpleBase_Base85_Z85                  | 149.08 ns | 1.747 ns | 1.548 ns | 0.0110 |     184 B |
-| SimpleBase_Base58_Bitcoin              |  46.40 ns | 0.975 ns | 1.302 ns | 0.0091 |     152 B |
-| SimpleBase_Base58_Monero               | 207.05 ns | 1.854 ns | 1.644 ns | 0.0119 |     200 B |
-| SimpleBase_Base62_Default              |  43.44 ns | 0.041 ns | 0.032 ns |      - |         - |
-| SimpleBase_Base45_Default              | 119.97 ns | 0.585 ns | 0.519 ns | 0.0129 |     216 B |
-| SimpleBase_Multibase_Base16_UpperCase  | 108.30 ns | 2.170 ns | 3.685 ns | 0.0334 |     560 B |
+| Method                      | Mean      | Error    | StdDev   | Median    | Gen0   | Allocated |
+|---------------------------- |----------:|---------:|---------:|----------:|-------:|----------:|
+| DotNet_Base64               |  29.63 ns | 0.644 ns | 1.581 ns |  29.13 ns | 0.0119 |     200 B |
+| Base16_UpperCase            |  83.54 ns | 1.494 ns | 1.397 ns |  83.57 ns | 0.0167 |     280 B |
+| Base32_CrockfordWithPadding | 149.95 ns | 1.259 ns | 1.177 ns | 149.57 ns | 0.0138 |     232 B |
+| Base85_Z85                  | 152.70 ns | 3.035 ns | 3.248 ns | 151.08 ns | 0.0110 |     184 B |
+| Base58_Bitcoin              |  47.21 ns | 0.947 ns | 1.232 ns |  46.87 ns | 0.0091 |     152 B |
+| Base58_Monero               | 209.26 ns | 3.021 ns | 2.825 ns | 209.16 ns | 0.0119 |     200 B |
+| Base62_Default              |  45.59 ns | 0.555 ns | 0.492 ns |  45.67 ns |      - |         - |
+| Base45_Default              | 122.90 ns | 2.272 ns | 2.125 ns | 122.55 ns | 0.0129 |     216 B |
+| Multibase_Base16_UpperCase  | 101.46 ns | 1.602 ns | 1.499 ns | 101.19 ns | 0.0334 |     560 B |
 
 Decoding (80 character string, except Base45 which must use an 81 character string)
 
-| Method                                          | Mean        | Error    | StdDev    | Gen0   | Gen1   | Allocated |
-|------------------------------------------------ |------------:|---------:|----------:|-------:|-------:|----------:|
-| DotNet_Base64                                   |   103.61 ns | 0.225 ns |  0.188 ns | 0.0052 |      - |      88 B |
-| SimpleBase_Base16_UpperCase                     |    49.80 ns | 0.564 ns |  0.527 ns | 0.0038 |      - |      64 B |
-| SimpleBase_Base16_UpperCase_TextReader          |   269.54 ns | 5.402 ns | 12.081 ns | 0.5007 | 0.0153 |    8376 B |
-| SimpleBase_Base32_Crockford                     |   126.17 ns | 0.489 ns |  0.433 ns | 0.0048 |      - |      80 B |
-| SimpleBase_Base85_Z85                           |   253.58 ns | 0.982 ns |  0.871 ns | 0.0052 |      - |      88 B |
-| SimpleBase_Base58_Bitcoin                       | 4,499.65 ns | 2.306 ns |  2.044 ns |      - |      - |      88 B |
-| SimpleBase_Base58_Monero                        |    99.93 ns | 0.444 ns |  0.415 ns | 0.0052 |      - |      88 B |
-| SimpleBase_Base62_Default                       | 4,672.89 ns | 6.044 ns |  5.358 ns |      - |      - |      88 B |
-| SimpleBase_Base45_Default                       |    87.79 ns | 0.935 ns |  0.874 ns | 0.0048 |      - |      80 B |
-| SimpleBase_Multibase_Base16_UpperCase           |    51.84 ns | 0.764 ns |  0.677 ns | 0.0038 |      - |      64 B |
-| SimpleBase_Multibase_TryDecode_Base16_UpperCase |    55.87 ns | 0.111 ns |  0.099 ns |      - |      - |         - |
+| Method                               | Mean        | Error     | StdDev    | Gen0   | Gen1   | Allocated |
+|------------------------------------- |------------:|----------:|----------:|-------:|-------:|----------:|
+| DotNet_Base64                        |   102.68 ns |  0.750 ns |  0.665 ns | 0.0052 |      - |      88 B |
+| Base16_UpperCase                     |    49.18 ns |  0.156 ns |  0.138 ns | 0.0038 |      - |      64 B |
+| Base16_UpperCase_TextReader          |   296.97 ns |  2.632 ns |  2.333 ns | 0.5007 | 0.0153 |    8376 B |
+| Base32_Crockford                     |   125.25 ns |  0.479 ns |  0.424 ns | 0.0048 |      - |      80 B |
+| Base85_Z85                           |   252.70 ns |  0.497 ns |  0.465 ns | 0.0052 |      - |      88 B |
+| Base58_Bitcoin                       | 4,500.25 ns |  5.755 ns |  5.383 ns |      - |      - |      88 B |
+| Base58_Monero                        |    97.77 ns |  0.165 ns |  0.146 ns | 0.0052 |      - |      88 B |
+| Base62_Default                       | 4,827.61 ns | 90.603 ns | 88.984 ns |      - |      - |      88 B |
+| Base45_Default                       |    87.91 ns |  0.374 ns |  0.292 ns | 0.0048 |      - |      80 B |
+| Multibase_Base16_UpperCase           |    51.15 ns |  0.326 ns |  0.289 ns | 0.0038 |      - |      64 B |
+| Multibase_TryDecode_Base16_UpperCase |    56.68 ns |  0.259 ns |  0.243 ns |      - |      - |         - |
 
 Notes
 -----

@@ -19,7 +19,7 @@ public class DecoderBenchmarks
     public byte[] DotNet_Base64() => Convert.FromBase64String(s);
 
     [Benchmark]
-    public byte[] SimpleBase_Base16_UpperCase() => Base16.UpperCase.Decode(s);
+    public byte[] Base16_UpperCase() => Base16.UpperCase.Decode(s);
 
     /// <summary>
     /// Created to be able to bench <c>StreamHelper</c>
@@ -31,7 +31,7 @@ public class DecoderBenchmarks
     /// https://benchmarkdotnet.org/articles/features/setup-and-cleanup.html#sample-introsetupcleanupiteration
     /// </remarks>
     [Benchmark]
-    public void SimpleBase_Base16_UpperCase_TextReader()
+    public void Base16_UpperCase_TextReader()
     {
         StringReader reader = new(s); // No need to dispose, less overhead, StringReader does not leak anything
         Base16.UpperCase.Decode(reader, memoryStream);
@@ -39,28 +39,28 @@ public class DecoderBenchmarks
     }
 
     [Benchmark]
-    public byte[] SimpleBase_Base32_Crockford() => Base32.Crockford.Decode(s);
+    public byte[] Base32_Crockford() => Base32.Crockford.Decode(s);
 
     [Benchmark]
-    public byte[] SimpleBase_Base85_Z85() => Base85.Z85.Decode(s);
+    public byte[] Base85_Z85() => Base85.Z85.Decode(s);
 
     [Benchmark]
-    public byte[] SimpleBase_Base58_Bitcoin() => Base58.Bitcoin.Decode(s);
+    public byte[] Base58_Bitcoin() => Base58.Bitcoin.Decode(s);
 
     [Benchmark]
-    public byte[] SimpleBase_Base58_Monero() => Base58.Monero.Decode(s);
+    public byte[] Base58_Monero() => Base58.Monero.Decode(s);
 
     [Benchmark]
-    public byte[] SimpleBase_Base62_Default() => Base62.Default.Decode(s);
+    public byte[] Base62_Default() => Base62.Default.Decode(s);
 
     [Benchmark]
-    public byte[] SimpleBase_Base45_Default() => Base45.Default.Decode(base45str);
+    public byte[] Base45_Default() => Base45.Default.Decode(base45str);
 
     [Benchmark]
-    public byte[] SimpleBase_Multibase_Base16_UpperCase() => Multibase.Decode(ms);
+    public byte[] Multibase_Base16_UpperCase() => Multibase.Decode(ms);
 
     [Benchmark]
-    public byte[] SimpleBase_Multibase_TryDecode_Base16_UpperCase()
+    public byte[] Multibase_TryDecode_Base16_UpperCase()
     {
         bool result = Multibase.TryDecode(ms, buffer, out _);
         if (!result)
