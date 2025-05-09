@@ -11,6 +11,7 @@ public class DecoderBenchmarks
 {
     readonly string s = new('a', 80);
     readonly string ms = 'F' + new string('a', 80);
+    readonly string base45str = new('A', 81);
     readonly MemoryStream memoryStream = new();
     readonly static byte[] buffer = new byte[80];
 
@@ -50,7 +51,10 @@ public class DecoderBenchmarks
     public byte[] SimpleBase_Base58_Monero() => Base58.Monero.Decode(s);
 
     [Benchmark]
-    public byte[] SimpleBase_Base62_Default() => Base45.Default.Decode(s);
+    public byte[] SimpleBase_Base62_Default() => Base62.Default.Decode(s);
+
+    [Benchmark]
+    public byte[] SimpleBase_Base45_Default() => Base45.Default.Decode(base45str);
 
     [Benchmark]
     public byte[] SimpleBase_Multibase_Base16_UpperCase() => Multibase.Decode(ms);

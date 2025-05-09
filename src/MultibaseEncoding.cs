@@ -23,6 +23,7 @@ public enum MultibaseEncoding
 
     // marked as "draft"
     Base32Z         = 'h',
+    Base45          = 'R',
 
     // marked as "experimental"
     Base58Flickr    = 'Z',

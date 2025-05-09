@@ -29,7 +29,10 @@ public class EncoderBenchmarks
     public string SimpleBase_Base58_Monero() => Base58.Monero.Encode(buffer);
 
     [Benchmark]
-    public string SimpleBase_Base62_Default() => Base45.Default.Encode(buffer);
+    public string SimpleBase_Base62_Default() => Base62.Default.Encode(buffer);
+
+    [Benchmark]
+    public string SimpleBase_Base45_Default() => Base45.Default.Encode(buffer);
 
     [Benchmark]
     public string SimpleBase_Multibase_Base16_UpperCase() => Multibase.Encode(buffer, MultibaseEncoding.Base16Upper);
