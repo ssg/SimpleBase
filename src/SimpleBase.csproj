@@ -5,7 +5,7 @@
 		<AssemblyName>SimpleBase</AssemblyName>
 		<Copyright>Copyright 2014-2022 Sedat Kapanoglu</Copyright>
 		<Authors>Sedat Kapanoglu</Authors>
-		<Description>Base16, Base32, Base58, Base85 encoding/decoding library</Description>
+		<Description>Base16, Base32, Base45, Base58, Base62, Base85 encoding/decoding library</Description>
 		<AllowUnsafeBlocks>false</AllowUnsafeBlocks>
 		<GenerateAssemblyInfo>true</GenerateAssemblyInfo>
 		<SignAssembly>true</SignAssembly>
@@ -17,7 +17,7 @@
 		<PackageProjectUrl>https://github.com/ssg/SimpleBase</PackageProjectUrl>
 		<PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
 		<PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-		<PackageTags>base16 base32 base58 base85 ascii85 z85 hexadecimal bitcoin ripple flickr crockford extended hex rfc4648 z-base-32 geohash bech32 rfc1924</PackageTags>
+		<PackageTags>base16 base32 base45 base58 base62 base85 ascii85 z85 hexadecimal bitcoin ripple flickr crockford extended hex rfc4648 z-base-32 geohash bech32 rfc1924</PackageTags>
 		<LangVersion>latest</LangVersion>
 		<Nullable>enable</Nullable>
 		<PlatformTarget>AnyCPU</PlatformTarget>

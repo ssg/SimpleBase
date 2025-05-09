@@ -14,7 +14,9 @@
    limitations under the License.
 */
 using System;
+using System.IO;
 using System.Text;
+using System.Threading.Tasks;
 using NUnit.Framework;
 using SimpleBase;
 
@@ -68,5 +70,51 @@ class DefaultTest
     public void Decode_ThrowsOnInvalidEncoding(string invalidInput)
     {
         Assert.Throws<ArgumentException>(() => Base45.Default.Decode(invalidInput));
+    }
+
+    [Test]
+    [TestCaseSource(nameof(testData))]
+    public void Encode_Stream_EncodesCorrectly(string decoded, string encoded)
+    {
+        var bytes = Encoding.UTF8.GetBytes(decoded);
+        using var input = new MemoryStream(bytes);
+        using var output = new StringWriter();
+        Base45.Default.Encode(input, output);
+        string result = output.ToString();
+        Assert.That(result, Is.EqualTo(encoded));
+    }
+
+    [Test]
+    [TestCaseSource(nameof(testData))]
+    public void Decode_Stream_DecodesCorrectly(string decoded, string encoded)
+    {
+        using var input = new StringReader(encoded);
+        using var output = new MemoryStream();
+        Base45.Default.Decode(input, output);
+        string result = Encoding.UTF8.GetString(output.ToArray());
+        Assert.That(result, Is.EqualTo(decoded));
+    }
+
+    [Test]
+    [TestCaseSource(nameof(testData))]
+    public async Task EncodeAsync_EncodesCorrectly(string decoded, string encoded)
+    {
+        var bytes = Encoding.UTF8.GetBytes(decoded);
+        using var input = new MemoryStream(bytes);
+        using var output = new StringWriter();
+        await Base45.Default.EncodeAsync(input, output);
+        string result = output.ToString();
+        Assert.That(result, Is.EqualTo(encoded));
+    }
+
+    [Test]
+    [TestCaseSource(nameof(testData))]
+    public async Task DecodeAsync_DecodesCorrectly(string decoded, string encoded)
+    {
+        using var input = new StringReader(encoded);
+        using var output = new MemoryStream();
+        await Base45.Default.DecodeAsync(input, output);
+        string result = Encoding.UTF8.GetString(output.ToArray());
+        Assert.That(result, Is.EqualTo(decoded));
     }
 }

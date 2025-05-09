@@ -1,8 +1,12 @@
 ﻿SimpleBase.Base32.TryDecodeUInt64(string! text, out ulong number) -> bool
 SimpleBase.Base45
 SimpleBase.Base45.Base45(SimpleBase.Base45Alphabet! alphabet) -> void
+SimpleBase.Base45.Decode(System.IO.TextReader! input, System.IO.Stream! output) -> void
 SimpleBase.Base45.Decode(System.ReadOnlySpan<char> text) -> byte[]!
+SimpleBase.Base45.DecodeAsync(System.IO.TextReader! input, System.IO.Stream! output) -> System.Threading.Tasks.Task!
+SimpleBase.Base45.Encode(System.IO.Stream! input, System.IO.TextWriter! output) -> void
 SimpleBase.Base45.Encode(System.ReadOnlySpan<byte> bytes) -> string!
+SimpleBase.Base45.EncodeAsync(System.IO.Stream! input, System.IO.TextWriter! output) -> System.Threading.Tasks.Task!
 SimpleBase.Base45.GetSafeByteCountForDecoding(System.ReadOnlySpan<char> text) -> int
 SimpleBase.Base45.GetSafeCharCountForEncoding(System.ReadOnlySpan<byte> buffer) -> int
 SimpleBase.Base45.TryDecode(System.ReadOnlySpan<char> input, System.Span<byte> output, out int bytesWritten) -> bool

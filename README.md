@@ -15,15 +15,16 @@ Features
  - **Base32**: RFC 4648, BECH32, Crockford, z-base-32, Geohash, FileCoin and Extended Hex 
    (BASE32-HEX) flavors with Crockford character substitution, or any other 
    custom flavors.
+ - **Base45**: The standard Base45 encoding/decoding in RFC 9285 is supported.
  - **Base58**: Both the standard encoding (Bitcoin (BTC), Ripple (XRP), Flickr, and custom alphabets) and Monero (XMR)
    Base58 algorithms are supported. Also provides Base58Check and Avalanche CB58 encoding helpers.
+ - **Base62**: The standard Base62 encoding/decoding supported along with a custom alphabet.
  - **Base85**: Ascii85, Z85 and custom flavors. IPv6 encoding/decoding support.
  - **Base16**: UpperCase, LowerCase and ModHex flavors. An experimental hexadecimal 
    encoder/decoder just to see how far I 
    can take the optimizations compared to .NET's  implementations. It's quite 
    fast now. It could also be used as a replacement for `SoapHexBinary.Parse` although
    .NET has [`Convert.FromHexString()`](https://learn.microsoft.com/en-us/dotnet/api/system.convert.fromhexstring?view=net-5.0) method since .NET 5.
- - **Base45**: The standard Base45 encoding/decoding in RFC 9285 is supported.
  - [Multibase](https://github.com/multiformats/multibase) support. All formats
    covered by SimpleBase including a few Base64 variants are supported.
  - One-shot memory buffer based APIs for simple use cases.

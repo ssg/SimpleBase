@@ -4,6 +4,8 @@
 // </copyright>
 
 using System;
+using System.IO;
+using System.Threading.Tasks;
 
 namespace SimpleBase;
 
@@ -11,7 +13,7 @@ namespace SimpleBase;
 /// Base45 encoding/decoding implementation.
 /// </summary>
 /// <param name="alphabet">Alphabet to use.</param>
-public sealed class Base45(Base45Alphabet alphabet) : INonAllocatingBaseCoder, IBaseCoder
+public sealed class Base45(Base45Alphabet alphabet) : INonAllocatingBaseCoder, IBaseCoder, IBaseStreamCoder
 {
     static readonly Lazy<Base45> @default = new(() => new(Base45Alphabet.Default));
 
@@ -206,5 +208,31 @@ public sealed class Base45(Base45Alphabet alphabet) : INonAllocatingBaseCoder, I
             output[numCharsWritten++] = alphabet.Value[d];
         }
         return true;
+    }
+
+    /// <inheritdoc/>
+    public void Encode(Stream input, TextWriter output)
+    {
+        StreamHelper.Encode(input, output, (buffer, lastBlock) => Encode(buffer.Span));
+    }
+
+    /// <inheritdoc/>
+    public async Task EncodeAsync(Stream input, TextWriter output)
+    {
+        await StreamHelper.EncodeAsync(input, output, (buffer, lastBlock) => Encode(buffer.Span))
+            .ConfigureAwait(false);
+    }
+
+    /// <inheritdoc/>
+    public void Decode(TextReader input, Stream output)
+    {
+        StreamHelper.Decode(input, output, buffer => Decode(buffer.Span));
+    }
+
+    /// <inheritdoc/>
+    public async Task DecodeAsync(TextReader input, Stream output)
+    {
+        await StreamHelper.DecodeAsync(input, output, buffer => Decode(buffer.Span))
+            .ConfigureAwait(false);
     }
 }
