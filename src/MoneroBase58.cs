@@ -99,9 +99,9 @@ public sealed class MoneroBase58(Base58Alphabet alphabet) : IBaseCoder, INonAllo
         return internalDecode(
             text,
             output,
-            out int numBytesWritten) switch
+            out int bytesWritten) switch
         {
-            (DecodeResult.Success, _) => output[..numBytesWritten].ToArray(),
+            (DecodeResult.Success, _) => output[..bytesWritten].ToArray(),
             (DecodeResult.InvalidCharacter, char c) => throw CodingAlphabet.InvalidCharacter(c),
             (DecodeResult.InsufficientOutputBuffer, _) => throw new InvalidOperationException("Output buffer with insufficient size generated - likely a bug"),
             _ => throw new InvalidOperationException("This should never be hit - likely a bug"),
@@ -115,18 +115,18 @@ public sealed class MoneroBase58(Base58Alphabet alphabet) : IBaseCoder, INonAllo
     }
 
     /// <inheritdoc/>
-    public bool TryDecode(ReadOnlySpan<char> input, Span<byte> output, out int numBytesWritten)
+    public bool TryDecode(ReadOnlySpan<char> input, Span<byte> output, out int bytesWritten)
     {
         if (input.Length == 0)
         {
-            numBytesWritten = 0;
+            bytesWritten = 0;
             return true;
         }
 
         return internalDecode(
             input,
             output,
-            out numBytesWritten) is (DecodeResult.Success, _);
+            out bytesWritten) is (DecodeResult.Success, _);
     }
 
     bool internalEncode(
@@ -220,26 +220,26 @@ public sealed class MoneroBase58(Base58Alphabet alphabet) : IBaseCoder, INonAllo
     (DecodeResult, char?) internalDecode(
         ReadOnlySpan<char> input,
         Span<byte> output,
-        out int numBytesWritten)
+        out int bytesWritten)
     {
         var table = Alphabet.ReverseLookupTable;
 
         // read 11 char blocks from the input and decode them into 8-byte blocks
         int numBlocks = input.Length / encodedBlockSize;
         int wholeEndOffset = numBlocks * encodedBlockSize;
-        numBytesWritten = 0;
+        bytesWritten = 0;
         int inputOffset = 0;
         while (inputOffset < wholeEndOffset)
         {
             var inputPad = input[inputOffset..(inputOffset + encodedBlockSize)];
-            var outputPad = output[numBytesWritten..(numBytesWritten + blockSize)];
+            var outputPad = output[bytesWritten..(bytesWritten + blockSize)];
             var result = decodeBlock(inputPad, outputPad, table);
             if (result is not (DecodeResult.Success, _))
             {
                 return result;
             }
             inputOffset += encodedBlockSize;
-            numBytesWritten += blockSize;
+            bytesWritten += blockSize;
         }
 
         // decode the remainder block in a temporary buffer, and copy it back to the output
@@ -259,8 +259,8 @@ public sealed class MoneroBase58(Base58Alphabet alphabet) : IBaseCoder, INonAllo
                 // invalid length for encoded remaining buffer
                 return (DecodeResult.InsufficientOutputBuffer, null);
             }
-            temp[(blockSize - tempSize)..].CopyTo(output[numBytesWritten..]);
-            numBytesWritten += tempSize;
+            temp[(blockSize - tempSize)..].CopyTo(output[bytesWritten..]);
+            bytesWritten += tempSize;
         }
         return (DecodeResult.Success, null);
     }

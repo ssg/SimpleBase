@@ -84,11 +84,11 @@ class BitcoinTest
     [Test]
     public void TryDecode_EmptyString_ReturnsEmptyBuffer()
     {
-        var result = Base58.Bitcoin.TryDecode(String.Empty, new byte[1], out int numBytesWritten);
+        var result = Base58.Bitcoin.TryDecode(String.Empty, new byte[1], out int bytesWritten);
         Assert.Multiple(() =>
         {
             Assert.That(result, Is.True);
-            Assert.That(numBytesWritten, Is.EqualTo(0));
+            Assert.That(bytesWritten, Is.EqualTo(0));
         });
     }
 
@@ -119,9 +119,9 @@ class BitcoinTest
     public void TryDecode_Bitcoin_ReturnsExpectedResults(string expectedOutput, string input)
     {
         var output = new byte[Base58.Bitcoin.GetSafeByteCountForDecoding(input)];
-        var success = Base58.Bitcoin.TryDecode(input, output, out int numBytesWritten);
+        var success = Base58.Bitcoin.TryDecode(input, output, out int bytesWritten);
         Assert.That(success, Is.True);
-        string result = BitConverter.ToString(output[..numBytesWritten]).Replace("-", "",
+        string result = BitConverter.ToString(output[..bytesWritten]).Replace("-", "",
             StringComparison.Ordinal);
         Assert.That(result, Is.EqualTo(expectedOutput));
     }

@@ -54,13 +54,13 @@ public class Base58CheckTest
     public void TryDecodeCheck_ValidInput_ReturnsExpectedResult(int expectedVersion, string expectedOutput, string input)
     {
         Span<byte> outputBuffer = new byte[256];
-        bool result = Base58.Bitcoin.TryDecodeCheck(input, outputBuffer, out byte actualVersion, out int numBytesWritten);
+        bool result = Base58.Bitcoin.TryDecodeCheck(input, outputBuffer, out byte actualVersion, out int bytesWritten);
         Assert.Multiple(() =>
         {
             Assert.That(result, Is.True);
             Assert.That(actualVersion, Is.EqualTo(expectedVersion));
         });
-        string output = Encoding.ASCII.GetString(outputBuffer[..numBytesWritten]);
+        string output = Encoding.ASCII.GetString(outputBuffer[..bytesWritten]);
         Assert.That(output, Is.EqualTo(expectedOutput));
     }
 

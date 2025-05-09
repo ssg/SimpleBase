@@ -140,8 +140,8 @@ class Base16Test
         var output = new byte[expectedOutput.Length];
         Assert.Multiple(() =>
         {
-            Assert.That(encoder.TryDecode(input, output, out int numBytesWritten), Is.True);
-            Assert.That(numBytesWritten, Is.EqualTo(output.Length));
+            Assert.That(encoder.TryDecode(input, output, out int bytesWritten), Is.True);
+            Assert.That(bytesWritten, Is.EqualTo(output.Length));
             Assert.That(output, Is.EqualTo(expectedOutput));
         });
     }
@@ -173,8 +173,8 @@ class Base16Test
         var output = new byte[1];
         Assert.Multiple(() =>
         {
-            Assert.That(encoder.TryDecode(input, output, out int numBytesWritten), Is.False);
-            Assert.That(numBytesWritten, Is.EqualTo(0));
+            Assert.That(encoder.TryDecode(input, output, out int bytesWritten), Is.False);
+            Assert.That(bytesWritten, Is.EqualTo(0));
         });
     }
 
@@ -186,8 +186,8 @@ class Base16Test
         var output = new byte[1];
         Assert.Multiple(() =>
         {
-            Assert.That(encoder.TryDecode(input, output, out int numBytesWritten), Is.False);
-            Assert.That(numBytesWritten, Is.EqualTo(0));
+            Assert.That(encoder.TryDecode(input, output, out int bytesWritten), Is.False);
+            Assert.That(bytesWritten, Is.EqualTo(0));
         });
     }
 

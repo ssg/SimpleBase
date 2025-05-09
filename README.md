@@ -93,8 +93,8 @@ Decode a Base58Check address:
 ```csharp
 string address = ...
 Span<byte> buffer = new byte[maxAddressLength];
-if (Base58.Bitcoin.TryDecodeCheck(address, buffer, out byte version, out int numBytesWritten));
-buffer = buffer[..numBytesWritten]; // use only the written portion of the buffer
+if (Base58.Bitcoin.TryDecodeCheck(address, buffer, out byte version, out int bytesWritten));
+buffer = buffer[..bytesWritten]; // use only the written portion of the buffer
 ```
 
 Avalanche CB58 usage is pretty much the same except it doesn't have a separate
@@ -112,8 +112,8 @@ For decoding:
 ```csharp
 string address = ...
 Span<byte> buffer = new byte[maxAddressLength];
-if (Base58.Bitcoin.TryDecodeCb58(address, buffer, out int numBytesWritten));
-buffer = buffer[..numBytesWritten]; // use only the written portion of the buffer
+if (Base58.Bitcoin.TryDecodeCb58(address, buffer, out int bytesWritten));
+buffer = buffer[..bytesWritten]; // use only the written portion of the buffer
 ```
 
 ### Base85
@@ -232,7 +232,7 @@ string input = "... some bitcoin address ...";
 int outputBufferSize = Base58.Bitcoin.GetSafeByteCountForDecoding(output);
 var output = new byte[outputBufferSize];
 
-if (Base58.Bitcoin.TryDecode(input, output, out int numBytesWritten))
+if (Base58.Bitcoin.TryDecode(input, output, out int bytesWritten))
 {
     // et voila!
 }
@@ -259,7 +259,7 @@ If you don't want decoding to raise an exception, use TryDecode() method instead
 ```csharp
 string input = "... some encoded multibase string ...";
 byte[] output = new byte[outputBufferSize]; // enough the fit the decoded buffer
-if (Multibase.TryDecode(input, output, out int numBytesWritten))
+if (Multibase.TryDecode(input, output, out int bytesWritten))
 {
     // et voila!
 }

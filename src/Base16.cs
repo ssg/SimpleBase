@@ -152,18 +152,18 @@ public sealed class Base16(Base16Alphabet alphabet) : IBaseCoder, IBaseStreamCod
     }
 
     /// <inheritdoc/>
-    public bool TryDecode(ReadOnlySpan<char> text, Span<byte> output, out int numBytesWritten)
+    public bool TryDecode(ReadOnlySpan<char> text, Span<byte> output, out int bytesWritten)
     {
         int textLen = text.Length;
         if (textLen == 0)
         {
-            numBytesWritten = 0;
+            bytesWritten = 0;
             return true;
         }
 
         if ((textLen & 1) != 0)
         {
-            numBytesWritten = 0;
+            bytesWritten = 0;
             Debug.WriteLine("Invalid input buffer length for Base16 decoding");
             return false;
         }
@@ -171,7 +171,7 @@ public sealed class Base16(Base16Alphabet alphabet) : IBaseCoder, IBaseStreamCod
         int outputLen = textLen / 2;
         if (output.Length < outputLen)
         {
-            numBytesWritten = 0;
+            bytesWritten = 0;
             Debug.WriteLine("Insufficient output buffer length for Base16 decoding");
             return false;
         }
@@ -190,7 +190,7 @@ public sealed class Base16(Base16Alphabet alphabet) : IBaseCoder, IBaseStreamCod
                 if (b1 < 0 || b2 < 0)
                 {
                     Debug.WriteLine($"Invalid hex character: {(b1 < 0 ? c1 : c2)}");
-                    numBytesWritten = o;
+                    bytesWritten = o;
                     return false;
                 }
 
@@ -198,7 +198,7 @@ public sealed class Base16(Base16Alphabet alphabet) : IBaseCoder, IBaseStreamCod
             }
         }
 
-        numBytesWritten = o;
+        bytesWritten = o;
         return true;
     }
 

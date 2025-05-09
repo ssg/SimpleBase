@@ -27,10 +27,10 @@ public interface INonAllocatingBaseCoder
     /// </summary>
     /// <param name="input">Encoded text.</param>
     /// <param name="output">Output buffer.</param>
-    /// <param name="numBytesWritten">Actual number of bytes written to the output.</param>
-    /// <returns>Whether decoding was successful. If false, the value of <paramref name="numBytesWritten"/>
+    /// <param name="bytesWritten">Actual number of bytes written to the output.</param>
+    /// <returns>Whether decoding was successful. If false, the value of <paramref name="bytesWritten"/>
     /// will be zero and the content of <paramref name="output"/> will be undefined.</returns>
-    bool TryDecode(ReadOnlySpan<char> input, Span<byte> output, out int numBytesWritten);
+    bool TryDecode(ReadOnlySpan<char> input, Span<byte> output, out int bytesWritten);
 
     /// <summary>
     /// Gets a safe estimation about how many bytes decoding will take without performing

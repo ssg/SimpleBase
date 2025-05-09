@@ -157,9 +157,9 @@ public class Base85(Base85Alphabet alphabet) : IBaseCoder, IBaseStreamCoder, INo
         // allocate a larger buffer if we're using shortcuts
         int decodeBufferLen = getSafeByteCountForDecoding(text.Length, Alphabet.HasShortcut);
         Span<byte> decodeBuffer = decodeBufferLen < Bits.SafeStackMaxAllocSize ? stackalloc byte[decodeBufferLen] : new byte[decodeBufferLen];
-        return internalDecode(text, decodeBuffer, out int numBytesWritten) switch
+        return internalDecode(text, decodeBuffer, out int bytesWritten) switch
         {
-            (DecodeResult.Success, _) => decodeBuffer[..numBytesWritten].ToArray(),
+            (DecodeResult.Success, _) => decodeBuffer[..bytesWritten].ToArray(),
             (DecodeResult.InvalidCharacter, char c) => throw CodingAlphabet.InvalidCharacter(c),
             (DecodeResult.InvalidShortcut, char c) => throw new ArgumentException($"Invalid location for a shortcut character: {c}", nameof(text)),
             (DecodeResult.InsufficientOutputBuffer, _) => throw new InvalidOperationException("Internal error: pre-allocated insufficient output buffer size"),
@@ -168,9 +168,9 @@ public class Base85(Base85Alphabet alphabet) : IBaseCoder, IBaseStreamCoder, INo
     }
 
     /// <inheritdoc/>
-    public bool TryDecode(ReadOnlySpan<char> input, Span<byte> output, out int numBytesWritten)
+    public bool TryDecode(ReadOnlySpan<char> input, Span<byte> output, out int bytesWritten)
     {
-        return internalDecode(input, output, out numBytesWritten) is (DecodeResult.Success, _);
+        return internalDecode(input, output, out bytesWritten) is (DecodeResult.Success, _);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -181,31 +181,31 @@ public class Base85(Base85Alphabet alphabet) : IBaseCoder, IBaseStreamCoder, INo
         int blockLength,
         char? zeroShortcutChar,
         char? spaceShortcutChar,
-        out int numBytesWritten)
+        out int bytesWritten)
     {
         if (output.Length == 0)
         {
-            numBytesWritten = 0;
+            bytesWritten = 0;
             return false;
         }
 
         if (block == 0 && zeroShortcutChar is not null)
         {
             output[0] = zeroShortcutChar.Value; // guaranteed to be non-null
-            numBytesWritten = 1;
+            bytesWritten = 1;
             return true;
         }
 
         if (block == fourSpaceChars && spaceShortcutChar is not null)
         {
             output[0] = spaceShortcutChar.Value; // guaranteed to be non-null
-            numBytesWritten = 1;
+            bytesWritten = 1;
             return true;
         }
 
         if (blockLength > output.Length)
         {
-            numBytesWritten = 0;
+            bytesWritten = 0;
             return false;
         }
 
@@ -219,7 +219,7 @@ public class Base85(Base85Alphabet alphabet) : IBaseCoder, IBaseStreamCoder, INo
             }
         }
 
-        numBytesWritten = blockLength;
+        bytesWritten = blockLength;
         return true;
     }
 
@@ -228,11 +228,11 @@ public class Base85(Base85Alphabet alphabet) : IBaseCoder, IBaseStreamCoder, INo
         Span<byte> output,
         long value,
         int numBytesToWrite,
-        out int numBytesWritten)
+        out int bytesWritten)
     {
         if (numBytesToWrite > output.Length)
         {
-            numBytesWritten = 0;
+            bytesWritten = 0;
             return DecodeResult.InsufficientOutputBuffer;
         }
 
@@ -243,7 +243,7 @@ public class Base85(Base85Alphabet alphabet) : IBaseCoder, IBaseStreamCoder, INo
             output[o++] = b;
         }
 
-        numBytesWritten = o;
+        bytesWritten = o;
         return DecodeResult.Success;
     }
 
@@ -258,16 +258,16 @@ public class Base85(Base85Alphabet alphabet) : IBaseCoder, IBaseStreamCoder, INo
         Span<byte> output,
         ref int blockIndex,
         long value,
-        out int numBytesWritten)
+        out int bytesWritten)
     {
         if (blockIndex != 0)
         {
-            numBytesWritten = 0;
+            bytesWritten = 0;
             return DecodeResult.InvalidShortcut;
         }
 
         blockIndex = 0; // restart block after the shortcut character
-        return writeDecodedValue(output, value, byteBlockSize, out numBytesWritten);
+        return writeDecodedValue(output, value, byteBlockSize, out bytesWritten);
     }
 
     static int getSafeCharCountForEncoding(int bytesLength)
@@ -371,7 +371,7 @@ public class Base85(Base85Alphabet alphabet) : IBaseCoder, IBaseStreamCoder, INo
     (DecodeResult, char?) internalDecode(
        ReadOnlySpan<char> input,
        Span<byte> output,
-       out int numBytesWritten)
+       out int bytesWritten)
     {
         char? allZeroChar = Alphabet.AllZeroShortcut;
         char? allSpaceChar = Alphabet.AllSpaceShortcut;
@@ -381,7 +381,7 @@ public class Base85(Base85Alphabet alphabet) : IBaseCoder, IBaseStreamCoder, INo
         int blockIndex = 0;
         long value = 0;
         int i = 0;
-        numBytesWritten = 0;
+        bytesWritten = 0;
         while (i < input.Length)
         {
             char c = input[i++];
@@ -393,24 +393,24 @@ public class Base85(Base85Alphabet alphabet) : IBaseCoder, IBaseStreamCoder, INo
             // handle shortcut characters
             if (c == allZeroChar && allZeroChar is not null)
             {
-                var result = writeShortcut(output[numBytesWritten..], ref blockIndex, 0, out int bytesWritten);
+                var result = writeShortcut(output[bytesWritten..], ref blockIndex, 0, out int bytesWritten);
                 if (result != DecodeResult.Success)
                 {
                     return (result, c);
                 }
 
-                numBytesWritten += bytesWritten;
+                bytesWritten += bytesWritten;
                 continue;
             }
             else if (c == allSpaceChar && allSpaceChar is not null)
             {
-                var result = writeShortcut(output[numBytesWritten..], ref blockIndex, fourSpaceChars, out int bytesWritten);
+                var result = writeShortcut(output[bytesWritten..], ref blockIndex, fourSpaceChars, out int bytesWritten);
                 if (result != DecodeResult.Success)
                 {
                     return (result, c);
                 }
 
-                numBytesWritten += bytesWritten;
+                bytesWritten += bytesWritten;
                 continue;
             }
 
@@ -425,13 +425,13 @@ public class Base85(Base85Alphabet alphabet) : IBaseCoder, IBaseStreamCoder, INo
             blockIndex += 1;
             if (blockIndex == stringBlockSize)
             {
-                var result = writeDecodedValue(output[numBytesWritten..], value, byteBlockSize, out int bytesWritten);
+                var result = writeDecodedValue(output[bytesWritten..], value, byteBlockSize, out int bytesWritten);
                 if (result != DecodeResult.Success)
                 {
                     return (result, null);
                 }
 
-                numBytesWritten += bytesWritten;
+                bytesWritten += bytesWritten;
                 blockIndex = 0;
                 value = 0;
             }
@@ -446,13 +446,13 @@ public class Base85(Base85Alphabet alphabet) : IBaseCoder, IBaseStreamCoder, INo
                 value = (value * baseLength) + (baseLength - 1);
             }
 
-            var result = writeDecodedValue(output[numBytesWritten..], value, blockIndex - 1, out int bytesWritten);
+            var result = writeDecodedValue(output[bytesWritten..], value, blockIndex - 1, out int bytesWritten);
             if (result != DecodeResult.Success)
             {
                 return (result, null);
             }
 
-            numBytesWritten += bytesWritten;
+            bytesWritten += bytesWritten;
         }
 
         return (DecodeResult.Success, null);

@@ -27,9 +27,9 @@ public sealed class Base45(Base45Alphabet alphabet) : INonAllocatingBaseCoder, I
 
         // since we can calculate exact length of the output, we don't need 
         byte[] output = new byte[outputLen];
-        return internalDecode(text, output, out int numBytesWritten) switch
+        return internalDecode(text, output, out int bytesWritten) switch
         {
-            (DecodeResult.Success, _)  => numBytesWritten == output.Length ? output : throw new InvalidOperationException("Inconsistent buffer size returned -- probably a bug"),
+            (DecodeResult.Success, _)  => bytesWritten == output.Length ? output : throw new InvalidOperationException("Inconsistent buffer size returned -- probably a bug"),
             (DecodeResult.InvalidOutputLength, _) => throw new InvalidOperationException("Failed to allocate sufficient buffer -- likely a bug"),
             (DecodeResult.InvalidCharacter, char c) => throw CodingAlphabet.InvalidCharacter(c),
             (DecodeResult.InvalidInput, _) => throw new ArgumentException("Input buffer is incorrectly encoded or corrupt", nameof(text)),
@@ -80,9 +80,9 @@ public sealed class Base45(Base45Alphabet alphabet) : INonAllocatingBaseCoder, I
     }
 
     /// <inheritdoc/>
-    public bool TryDecode(ReadOnlySpan<char> input, Span<byte> output, out int numBytesWritten)
+    public bool TryDecode(ReadOnlySpan<char> input, Span<byte> output, out int bytesWritten)
     {
-        (var result, _) = internalDecode(input, output, out numBytesWritten);
+        (var result, _) = internalDecode(input, output, out bytesWritten);
         return result == DecodeResult.Success;
     }
 
@@ -95,11 +95,11 @@ public sealed class Base45(Base45Alphabet alphabet) : INonAllocatingBaseCoder, I
         InvalidInputLength,
     }
 
-    (DecodeResult, char?) internalDecode(ReadOnlySpan<char> input, Span<byte> output, out int numBytesWritten)
+    (DecodeResult, char?) internalDecode(ReadOnlySpan<char> input, Span<byte> output, out int bytesWritten)
     {
         // we replicate the length calculation here to reduce the number of calculations
         (int wholeBlocks, int remainder) = Math.DivRem(input.Length, 3);
-        numBytesWritten = 0;
+        bytesWritten = 0;
         if (remainder == 1)
         {
             return (DecodeResult.InvalidInputLength, null);
@@ -140,8 +140,8 @@ public sealed class Base45(Base45Alphabet alphabet) : INonAllocatingBaseCoder, I
                 return (DecodeResult.InvalidInput, null);
             }
 
-            output[numBytesWritten++] = (byte)(value >> 8);
-            output[numBytesWritten++] = (byte)(value & 0xFF);
+            output[bytesWritten++] = (byte)(value >> 8);
+            output[bytesWritten++] = (byte)(value & 0xFF);
         }
 
         // process remainder block
@@ -164,7 +164,7 @@ public sealed class Base45(Base45Alphabet alphabet) : INonAllocatingBaseCoder, I
             {
                 return (DecodeResult.InvalidInput, null);
             }
-            output[numBytesWritten++] = (byte)value;
+            output[bytesWritten++] = (byte)value;
         }
 
         return (DecodeResult.Success, null);

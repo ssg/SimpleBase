@@ -186,7 +186,7 @@ public sealed class Base32 : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCod
     public bool TryDecodeUInt64(string text, out ulong number)
     {
         Span<byte> output = stackalloc byte[sizeof(ulong)];
-        if (!TryDecode(text, output, out int numBytesWritten))
+        if (!TryDecode(text, output, out int bytesWritten))
         {
             number = 0;
             return false;
@@ -270,12 +270,12 @@ public sealed class Base32 : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCod
         }
 
         var outputBuffer = new byte[outputLen];
-        var result = internalDecode(text[..textLen], outputBuffer, out int numBytesWritten);
+        var result = internalDecode(text[..textLen], outputBuffer, out int bytesWritten);
         return result switch
         {
             DecodeResult.InvalidInput => throw new ArgumentException("Invalid character in input", nameof(text)),
             DecodeResult.OutputOverflow => throw new InvalidOperationException("Output buffer is too small"),
-            DecodeResult.Success when numBytesWritten != outputLen => throw
+            DecodeResult.Success when bytesWritten != outputLen => throw
                 new InvalidOperationException("Actual written bytes are different"),
             DecodeResult.Success => outputBuffer,
             _ => throw new InvalidOperationException($"Unhandled decode result: {result}"),
@@ -387,23 +387,23 @@ public sealed class Base32 : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCod
     }
 
     /// <inheritdoc/>
-    public bool TryDecode(ReadOnlySpan<char> input, Span<byte> output, out int numBytesWritten)
+    public bool TryDecode(ReadOnlySpan<char> input, Span<byte> output, out int bytesWritten)
     {
         int inputLen = input.Length - getPaddingCharCount(input);
         if (inputLen == 0)
         {
-            numBytesWritten = 0;
+            bytesWritten = 0;
             return true;
         }
 
         int outputLen = output.Length;
         if (outputLen == 0)
         {
-            numBytesWritten = 0;
+            bytesWritten = 0;
             return false;
         }
 
-        return internalDecode(input[..inputLen], output, out numBytesWritten) == DecodeResult.Success;
+        return internalDecode(input[..inputLen], output, out bytesWritten) == DecodeResult.Success;
     }
 
     static int getAllocationByteCountForDecoding(int textLenWithoutPadding)
@@ -504,13 +504,13 @@ public sealed class Base32 : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCod
     DecodeResult internalDecode(
         ReadOnlySpan<char> input,
         Span<byte> output,
-        out int numBytesWritten)
+        out int bytesWritten)
     {
         var table = Alphabet.ReverseLookupTable;
         int outputPad = 0;
         int bitsLeft = bitsPerByte;
 
-        numBytesWritten = 0;
+        bytesWritten = 0;
         int o = 0;
         for (int i = 0; i < input.Length; i++)
         {
@@ -518,7 +518,7 @@ public sealed class Base32 : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCod
             int b = table[c] - 1;
             if (b < 0)
             {
-                numBytesWritten = o;
+                bytesWritten = o;
                 return DecodeResult.InvalidInput;
             }
 
@@ -542,7 +542,7 @@ public sealed class Base32 : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCod
             outputPad = b << bitsLeft;
         }
 
-        numBytesWritten = o;
+        bytesWritten = o;
         return DecodeResult.Success;
     }
 }

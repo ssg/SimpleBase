@@ -14,7 +14,7 @@ SimpleBase.Base16.Encode(System.ReadOnlySpan<byte> bytes) -> string!
 SimpleBase.Base16.EncodeAsync(System.IO.Stream! input, System.IO.TextWriter! output) -> System.Threading.Tasks.Task!
 SimpleBase.Base16.GetSafeByteCountForDecoding(System.ReadOnlySpan<char> text) -> int
 SimpleBase.Base16.GetSafeCharCountForEncoding(System.ReadOnlySpan<byte> buffer) -> int
-SimpleBase.Base16.TryDecode(System.ReadOnlySpan<char> text, System.Span<byte> output, out int numBytesWritten) -> bool
+SimpleBase.Base16.TryDecode(System.ReadOnlySpan<char> text, System.Span<byte> output, out int bytesWritten) -> bool
 SimpleBase.Base16.TryEncode(System.ReadOnlySpan<byte> bytes, System.Span<char> output, out int numCharsWritten) -> bool
 SimpleBase.Base16Alphabet
 SimpleBase.Base16Alphabet.Base16Alphabet(string! alphabet) -> void
@@ -38,7 +38,7 @@ SimpleBase.Base32.EncodeAsync(System.IO.Stream! input, System.IO.TextWriter! out
 SimpleBase.Base32.EncodeAsync(System.IO.Stream! input, System.IO.TextWriter! output, bool padding) -> System.Threading.Tasks.Task!
 SimpleBase.Base32.GetSafeByteCountForDecoding(System.ReadOnlySpan<char> text) -> int
 SimpleBase.Base32.GetSafeCharCountForEncoding(System.ReadOnlySpan<byte> buffer) -> int
-SimpleBase.Base32.TryDecode(System.ReadOnlySpan<char> input, System.Span<byte> output, out int numBytesWritten) -> bool
+SimpleBase.Base32.TryDecode(System.ReadOnlySpan<char> input, System.Span<byte> output, out int bytesWritten) -> bool
 SimpleBase.Base32.TryEncode(System.ReadOnlySpan<byte> bytes, System.Span<char> output, bool padding, out int numCharsWritten) -> bool
 SimpleBase.Base32.TryEncode(System.ReadOnlySpan<byte> bytes, System.Span<char> output, out int numCharsWritten) -> bool
 SimpleBase.Base32Alphabet
@@ -55,9 +55,9 @@ SimpleBase.Base58.EncodeCb58(System.ReadOnlySpan<byte> payload) -> string!
 SimpleBase.Base58.EncodeCheck(System.ReadOnlySpan<byte> payload, byte version) -> string!
 SimpleBase.Base58.GetSafeByteCountForDecoding(System.ReadOnlySpan<char> text) -> int
 SimpleBase.Base58.GetSafeCharCountForEncoding(System.ReadOnlySpan<byte> bytes) -> int
-SimpleBase.Base58.TryDecode(System.ReadOnlySpan<char> input, System.Span<byte> output, out int numBytesWritten) -> bool
-SimpleBase.Base58.TryDecodeCb58(System.ReadOnlySpan<char> address, System.Span<byte> payload, out int numBytesWritten) -> bool
-SimpleBase.Base58.TryDecodeCheck(System.ReadOnlySpan<char> address, System.Span<byte> payload, out byte version, out int numBytesWritten) -> bool
+SimpleBase.Base58.TryDecode(System.ReadOnlySpan<char> input, System.Span<byte> output, out int bytesWritten) -> bool
+SimpleBase.Base58.TryDecodeCb58(System.ReadOnlySpan<char> address, System.Span<byte> payload, out int bytesWritten) -> bool
+SimpleBase.Base58.TryDecodeCheck(System.ReadOnlySpan<char> address, System.Span<byte> payload, out byte version, out int bytesWritten) -> bool
 SimpleBase.Base58.TryEncode(System.ReadOnlySpan<byte> input, System.Span<char> output, out int numCharsWritten) -> bool
 SimpleBase.Base58.ZeroChar.get -> char
 SimpleBase.Base58Alphabet
@@ -73,7 +73,7 @@ SimpleBase.Base85.Encode(System.ReadOnlySpan<byte> bytes) -> string!
 SimpleBase.Base85.EncodeAsync(System.IO.Stream! input, System.IO.TextWriter! output) -> System.Threading.Tasks.Task!
 SimpleBase.Base85.GetSafeByteCountForDecoding(System.ReadOnlySpan<char> text) -> int
 SimpleBase.Base85.GetSafeCharCountForEncoding(System.ReadOnlySpan<byte> bytes) -> int
-SimpleBase.Base85.TryDecode(System.ReadOnlySpan<char> input, System.Span<byte> output, out int numBytesWritten) -> bool
+SimpleBase.Base85.TryDecode(System.ReadOnlySpan<char> input, System.Span<byte> output, out int bytesWritten) -> bool
 SimpleBase.Base85.TryEncode(System.ReadOnlySpan<byte> input, System.Span<char> output, out int numCharsWritten) -> bool
 SimpleBase.Base85Alphabet
 SimpleBase.Base85Alphabet.AllSpaceShortcut.get -> char?
@@ -103,7 +103,7 @@ SimpleBase.ICodingAlphabet.Value.get -> string!
 SimpleBase.INonAllocatingBaseCoder
 SimpleBase.INonAllocatingBaseCoder.GetSafeByteCountForDecoding(System.ReadOnlySpan<char> text) -> int
 SimpleBase.INonAllocatingBaseCoder.GetSafeCharCountForEncoding(System.ReadOnlySpan<byte> buffer) -> int
-SimpleBase.INonAllocatingBaseCoder.TryDecode(System.ReadOnlySpan<char> input, System.Span<byte> output, out int numBytesWritten) -> bool
+SimpleBase.INonAllocatingBaseCoder.TryDecode(System.ReadOnlySpan<char> input, System.Span<byte> output, out int bytesWritten) -> bool
 SimpleBase.INonAllocatingBaseCoder.TryEncode(System.ReadOnlySpan<byte> input, System.Span<char> output, out int numCharsWritten) -> bool
 SimpleBase.INumericBaseCoder
 SimpleBase.INumericBaseCoder.DecodeInt64(string! text) -> long
@@ -157,7 +157,7 @@ SimpleBase.MoneroBase58.GetSafeByteCountForDecoding(System.ReadOnlySpan<char> te
 SimpleBase.MoneroBase58.GetSafeCharCountForEncoding(System.ReadOnlySpan<byte> bytes) -> int
 SimpleBase.MoneroBase58.MoneroBase58() -> void
 SimpleBase.MoneroBase58.MoneroBase58(SimpleBase.Base58Alphabet! alphabet) -> void
-SimpleBase.MoneroBase58.TryDecode(System.ReadOnlySpan<char> input, System.Span<byte> output, out int numBytesWritten) -> bool
+SimpleBase.MoneroBase58.TryDecode(System.ReadOnlySpan<char> input, System.Span<byte> output, out int bytesWritten) -> bool
 SimpleBase.MoneroBase58.TryEncode(System.ReadOnlySpan<byte> input, System.Span<char> output, out int numCharsWritten) -> bool
 SimpleBase.MoneroBase58.ZeroChar.get -> char
 static SimpleBase.Base58.Monero.get -> SimpleBase.MoneroBase58!

@@ -140,8 +140,8 @@ class Ascii85Test
         var buffer = new byte[Base85.Ascii85.GetSafeByteCountForDecoding(input)];
         Assert.Multiple(() =>
         {
-            Assert.That(Base85.Ascii85.TryDecode(input, buffer, out int numBytesWritten), Is.True);
-            Assert.That(buffer[..numBytesWritten], Is.EqualTo(expectedOutput));
+            Assert.That(Base85.Ascii85.TryDecode(input, buffer, out int bytesWritten), Is.True);
+            Assert.That(buffer[..bytesWritten], Is.EqualTo(expectedOutput));
         });
     }
 

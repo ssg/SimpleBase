@@ -5,7 +5,7 @@ SimpleBase.Base45.Decode(System.ReadOnlySpan<char> text) -> byte[]!
 SimpleBase.Base45.Encode(System.ReadOnlySpan<byte> bytes) -> string!
 SimpleBase.Base45.GetSafeByteCountForDecoding(System.ReadOnlySpan<char> text) -> int
 SimpleBase.Base45.GetSafeCharCountForEncoding(System.ReadOnlySpan<byte> buffer) -> int
-SimpleBase.Base45.TryDecode(System.ReadOnlySpan<char> input, System.Span<byte> output, out int numBytesWritten) -> bool
+SimpleBase.Base45.TryDecode(System.ReadOnlySpan<char> input, System.Span<byte> output, out int bytesWritten) -> bool
 SimpleBase.Base45.TryEncode(System.ReadOnlySpan<byte> input, System.Span<char> output, out int numCharsWritten) -> bool
 SimpleBase.Base45Alphabet
 SimpleBase.Base45Alphabet.Base45Alphabet(string! alphabet) -> void
@@ -19,7 +19,7 @@ SimpleBase.DividingCoder<TAlphabet>.Alphabet.get -> TAlphabet!
 SimpleBase.DividingCoder<TAlphabet>.Decode(System.ReadOnlySpan<char> text) -> byte[]!
 SimpleBase.DividingCoder<TAlphabet>.DividingCoder(TAlphabet! alphabet, int divisor, int reductionFactor) -> void
 SimpleBase.DividingCoder<TAlphabet>.Encode(System.ReadOnlySpan<byte> bytes) -> string!
-SimpleBase.DividingCoder<TAlphabet>.TryDecode(System.ReadOnlySpan<char> input, System.Span<byte> output, out int numBytesWritten) -> bool
+SimpleBase.DividingCoder<TAlphabet>.TryDecode(System.ReadOnlySpan<char> input, System.Span<byte> output, out int bytesWritten) -> bool
 SimpleBase.DividingCoder<TAlphabet>.TryEncode(System.ReadOnlySpan<byte> input, System.Span<char> output, out int numCharsWritten) -> bool
 SimpleBase.INumericBaseCoder.TryDecodeUInt64(string! text, out ulong number) -> bool
 SimpleBase.MultibaseEncoding.Base45 = 82 -> SimpleBase.MultibaseEncoding

@@ -192,25 +192,25 @@ class CrockfordTest
     public void TryDecode_ReturnsExpectedValues(string expectedOutput, string input, bool _)
     {
         var output = new byte[Base32.Crockford.GetSafeByteCountForDecoding(input)];
-        var success = Base32.Crockford.TryDecode(input, output, out int numBytesWritten);
+        var success = Base32.Crockford.TryDecode(input, output, out int bytesWritten);
         Assert.That(success, Is.True);
-        string result = Encoding.ASCII.GetString(output[..numBytesWritten]);
+        string result = Encoding.ASCII.GetString(output[..bytesWritten]);
         Assert.That(result, Is.EqualTo(expectedOutput));
 
-        success = Base32.Crockford.TryDecode(input.ToLowerInvariant(), output, out numBytesWritten);
+        success = Base32.Crockford.TryDecode(input.ToLowerInvariant(), output, out bytesWritten);
         Assert.That(success, Is.True);
-        result = Encoding.ASCII.GetString(output[..numBytesWritten]);
+        result = Encoding.ASCII.GetString(output[..bytesWritten]);
         Assert.That(result, Is.EqualTo(expectedOutput));
     }
 
     [Test]
     public void TryDecode_ZeroBuffer_ReturnsFalse()
     {
-        var success = Base32.Crockford.TryDecode("test", [], out int numBytesWritten);
+        var success = Base32.Crockford.TryDecode("test", [], out int bytesWritten);
         Assert.Multiple(() =>
         {
             Assert.That(success, Is.False);
-            Assert.That(numBytesWritten, Is.EqualTo(0));
+            Assert.That(bytesWritten, Is.EqualTo(0));
         });
     }
 

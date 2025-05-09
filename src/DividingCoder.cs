@@ -105,11 +105,11 @@ public abstract class DividingCoder<TAlphabet>(TAlphabet alphabet, int divisor, 
     }
 
     /// <inheritdoc/>
-    public bool TryDecode(ReadOnlySpan<char> input, Span<byte> output, out int numBytesWritten)
+    public bool TryDecode(ReadOnlySpan<char> input, Span<byte> output, out int bytesWritten)
     {
         if (input.Length == 0)
         {
-            numBytesWritten = 0;
+            bytesWritten = 0;
             return true;
         }
 
@@ -119,20 +119,20 @@ public abstract class DividingCoder<TAlphabet>(TAlphabet alphabet, int divisor, 
             out Range bytesWritten);
 
         output[bytesWritten].CopyTo(output);
-        numBytesWritten = bytesWritten.End.Value - bytesWritten.Start.Value;
+        bytesWritten = bytesWritten.End.Value - bytesWritten.Start.Value;
         return result is (DecodeResult.Success, _);
     }
 
-    static DecodeResult decodeZeroes(Span<byte> output, int length, out int numBytesWritten)
+    static DecodeResult decodeZeroes(Span<byte> output, int length, out int bytesWritten)
     {
         if (length > output.Length)
         {
-            numBytesWritten = 0;
+            bytesWritten = 0;
             return DecodeResult.InsufficientOutputBuffer;
         }
 
         output[..length].Clear();
-        numBytesWritten = length;
+        bytesWritten = length;
         return DecodeResult.Success;
     }
 

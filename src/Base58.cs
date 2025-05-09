@@ -122,22 +122,22 @@ public sealed class Base58(Base58Alphabet alphabet) : IBaseCoder, INonAllocating
     /// <param name="address">Address string.</param>
     /// <param name="payload">Output address buffer.</param>
     /// <param name="version">Address version.</param>
-    /// <param name="numBytesWritten">Number of bytes written in the output payload.</param>
+    /// <param name="bytesWritten">Number of bytes written in the output payload.</param>
     /// <returns>True if address was decoded successfully and passed validation. False, otherwise.</returns>
     public bool TryDecodeCheck(
         ReadOnlySpan<char> address,
         Span<byte> payload,
         out byte version,
-        out int numBytesWritten)
+        out int bytesWritten)
     {
         Span<byte> buffer = stackalloc byte[maxCheckPayloadLength + sha256DigestBytes + 1];
-        if (!TryDecode(address, buffer, out numBytesWritten) || numBytesWritten < 5)
+        if (!TryDecode(address, buffer, out bytesWritten) || bytesWritten < 5)
         {
             version = 0;
             return false;
         }
 
-        buffer = buffer[..numBytesWritten];
+        buffer = buffer[..bytesWritten];
         version = buffer[0];
         Span<byte> sha256 = stackalloc byte[sha256Bytes];
         computeDoubleSha256(buffer[..^sha256DigestBytes], sha256);
@@ -150,7 +150,7 @@ public sealed class Base58(Base58Alphabet alphabet) : IBaseCoder, INonAllocating
         var finalBuffer = buffer[1..^sha256DigestBytes];
         version = buffer[0];
         finalBuffer.CopyTo(payload);
-        numBytesWritten = finalBuffer.Length;
+        bytesWritten = finalBuffer.Length;
         return true;
     }
 
@@ -181,20 +181,20 @@ public sealed class Base58(Base58Alphabet alphabet) : IBaseCoder, INonAllocating
     /// </summary>
     /// <param name="address">Address string.</param>
     /// <param name="payload">Output address buffer.</param>
-    /// <param name="numBytesWritten">Number of bytes written in the output payload.</param>
+    /// <param name="bytesWritten">Number of bytes written in the output payload.</param>
     /// <returns>True if address was decoded successfully and passed validation. False, otherwise.</returns>
     public bool TryDecodeCb58(
         ReadOnlySpan<char> address,
         Span<byte> payload,
-        out int numBytesWritten)
+        out int bytesWritten)
     {
         Span<byte> buffer = stackalloc byte[maxCheckPayloadLength + sha256DigestBytes];
-        if (!TryDecode(address, buffer, out numBytesWritten) || numBytesWritten < 4)
+        if (!TryDecode(address, buffer, out bytesWritten) || bytesWritten < 4)
         {
             return false;
         }
 
-        buffer = buffer[..numBytesWritten];
+        buffer = buffer[..bytesWritten];
         Span<byte> sha256 = stackalloc byte[sha256Bytes];
         computeSha256(buffer[..^sha256DigestBytes], sha256);
 
@@ -205,7 +205,7 @@ public sealed class Base58(Base58Alphabet alphabet) : IBaseCoder, INonAllocating
 
         var finalBuffer = buffer[..^sha256DigestBytes];
         finalBuffer.CopyTo(payload);
-        numBytesWritten = finalBuffer.Length;
+        bytesWritten = finalBuffer.Length;
         return true;
     }
 
@@ -268,11 +268,11 @@ public sealed class Base58(Base58Alphabet alphabet) : IBaseCoder, INonAllocating
     }
 
     /// <inheritdoc/>
-    public bool TryDecode(ReadOnlySpan<char> input, Span<byte> output, out int numBytesWritten)
+    public bool TryDecode(ReadOnlySpan<char> input, Span<byte> output, out int bytesWritten)
     {
         if (input.Length == 0)
         {
-            numBytesWritten = 0;
+            bytesWritten = 0;
             return true;
         }
 
@@ -284,7 +284,7 @@ public sealed class Base58(Base58Alphabet alphabet) : IBaseCoder, INonAllocating
             out Range bytesWritten);
 
         output[bytesWritten].CopyTo(output);
-        numBytesWritten = bytesWritten.End.Value - bytesWritten.Start.Value;
+        bytesWritten = bytesWritten.End.Value - bytesWritten.Start.Value;
         return result is (DecodeResult.Success, _);
     }
 
@@ -308,16 +308,16 @@ public sealed class Base58(Base58Alphabet alphabet) : IBaseCoder, INonAllocating
         }
     }
 
-    static DecodeResult decodeZeroes(Span<byte> output, int length, out int numBytesWritten)
+    static DecodeResult decodeZeroes(Span<byte> output, int length, out int bytesWritten)
     {
         if (length > output.Length)
         {
-            numBytesWritten = 0;
+            bytesWritten = 0;
             return DecodeResult.InsufficientOutputBuffer;
         }
 
         output[..length].Clear();
-        numBytesWritten = length;
+        bytesWritten = length;
         return DecodeResult.Success;
     }
 
@@ -440,8 +440,8 @@ public sealed class Base58(Base58Alphabet alphabet) : IBaseCoder, INonAllocating
     {
         if (numZeroes == input.Length)
         {
-            var result = decodeZeroes(output, numZeroes, out int numBytesWritten);
-            bytesWritten = Range.EndAt(numBytesWritten);
+            var result = decodeZeroes(output, numZeroes, out int bytesWritten);
+            bytesWritten = Range.EndAt(bytesWritten);
             return (result, null);
         }
 
