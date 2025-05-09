@@ -21,9 +21,8 @@ Features
  - **Base62**: The standard Base62 encoding/decoding supported along with a custom alphabet.
  - **Base85**: Ascii85, Z85 and custom flavors. IPv6 encoding/decoding support.
  - **Base16**: UpperCase, LowerCase and ModHex flavors. An experimental hexadecimal 
-   encoder/decoder just to see how far I 
-   can take the optimizations compared to .NET's  implementations. It's quite 
-   fast now. It could also be used as a replacement for `SoapHexBinary.Parse` although
+   encoder/decoder just to see how far I can take the optimizations compared to .NET's
+   implementations. It's quite fast now. It could also be used as a replacement for `SoapHexBinary.Parse` although
    .NET has [`Convert.FromHexString()`](https://learn.microsoft.com/en-us/dotnet/api/system.convert.fromhexstring?view=net-5.0) method since .NET 5.
  - [Multibase](https://github.com/multiformats/multibase) support. All formats
    covered by SimpleBase including a few Base64 variants are supported.
@@ -292,7 +291,7 @@ Encoding (64 byte buffer)
 | SimpleBase_Base45_Default              | 119.97 ns | 0.585 ns | 0.519 ns | 0.0129 |     216 B |
 | SimpleBase_Multibase_Base16_UpperCase  | 108.30 ns | 2.170 ns | 3.685 ns | 0.0334 |     560 B |
 
-Decoding (80 character string)
+Decoding (80 character string, except Base45 which must use an 81 character string)
 
 | Method                                          | Mean        | Error    | StdDev    | Gen0   | Gen1   | Allocated |
 |------------------------------------------------ |------------:|---------:|----------:|-------:|-------:|----------:|
