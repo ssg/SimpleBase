@@ -1,3 +1,19 @@
+# 5.0.0
+
+## Breaking changes
+- TryDecode/TryEncode methods no longer throw
+- Base85 methods with `IPv6` in them renamed to `IPv6` to match with .NET
+- `numBytesWritten` parameters have all been renamed to `bytesWritten`
+
+## New features
+- Base62
+- Base45
+- Multibase now supports Base45
+- Base32 now has a non-throwing `TryDecodeUInt64()` method
+
+## Improvements
+- `Multibase.Encode()` now allocates less memory
+
 # 4.3.0
 
 ## New features
@@ -48,7 +64,7 @@
 ## New features
 - Added [Bech32](https://en.bitcoin.it/wiki/Bech32) flavor to Base32 
 - Added RFC 1924 (IPv6) flavor to Base85 along with 
-  EncodeIpv6 and DecodeIpv6 functions https://tools.ietf.org/html/rfc1924
+  EncodeIPv6 and DecodeIPv6 functions https://tools.ietf.org/html/rfc1924
 - Added `Base58.Bitcoin.EncodeCheck()` and `Base58.Bitcoin.TryDecodeCheck()` methods.
 - Added `Base58.Bitcoin.EncodeCb58()` and `Base58.Bitcoin.TryDecodeCb58()` methods.
 

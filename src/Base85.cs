@@ -28,7 +28,7 @@ public class Base85(Base85Alphabet alphabet) : IBaseCoder, IBaseStreamCoder, INo
     const int decodeBufferSize = 5120; // don't remember what was special with this number
     static readonly Lazy<Base85> z85 = new(() => new Base85(Base85Alphabet.Z85));
     static readonly Lazy<Base85> ascii85 = new(() => new Base85(Base85Alphabet.Ascii85));
-    static readonly Lazy<Base85Ipv6> rfc1924 = new(() => new Base85Ipv6(Base85Alphabet.Rfc1924));
+    static readonly Lazy<Base85IPv6> rfc1924 = new(() => new Base85IPv6(Base85Alphabet.Rfc1924));
 
     /// <summary>
     /// Gets Z85 flavor of Base85.
@@ -43,7 +43,7 @@ public class Base85(Base85Alphabet alphabet) : IBaseCoder, IBaseStreamCoder, INo
     /// <summary>
     /// Gets RFC 1924 IPv6 flavor of Base85.
     /// </summary>
-    public static Base85Ipv6 Rfc1924 => rfc1924.Value;
+    public static Base85IPv6 Rfc1924 => rfc1924.Value;
 
     /// <summary>
     /// Gets the encoding alphabet.

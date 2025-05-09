@@ -12,7 +12,7 @@
 		<AssemblyOriginatorKeyFile>..\SimpleBase.snk</AssemblyOriginatorKeyFile>
 		<DelaySign>false</DelaySign>
 
-		<PackageVersion>4.3.0</PackageVersion>
+		<PackageVersion>5.0.0</PackageVersion>
 		<DocumentationFile>SimpleBase.xml</DocumentationFile>
 		<PackageProjectUrl>https://github.com/ssg/SimpleBase</PackageProjectUrl>
 		<PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
@@ -24,11 +24,7 @@
         <PackageReadmeFile>README.md</PackageReadmeFile>
 		<PackageReleaseNotes>
 			<![CDATA[
-## New features
-- Added Multibase support that supports several Base16, Base32, Base58, and Base64 variants.
-
-## Improvements
-- Eliminated more memory allocations (by @Henr1k80))
+            
 ]]>
 		</PackageReleaseNotes>
 	</PropertyGroup>

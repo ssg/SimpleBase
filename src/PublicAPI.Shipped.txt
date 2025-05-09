@@ -80,10 +80,10 @@ SimpleBase.Base85Alphabet.AllSpaceShortcut.get -> char?
 SimpleBase.Base85Alphabet.AllZeroShortcut.get -> char?
 SimpleBase.Base85Alphabet.Base85Alphabet(string! alphabet, char? allZeroShortcut = null, char? allSpaceShortcut = null) -> void
 SimpleBase.Base85Alphabet.HasShortcut.get -> bool
-SimpleBase.Base85Ipv6
-SimpleBase.Base85Ipv6.Base85Ipv6(SimpleBase.Base85Alphabet! alphabet) -> void
-SimpleBase.Base85Ipv6.DecodeIpv6(string! text) -> System.Net.IPAddress!
-SimpleBase.Base85Ipv6.EncodeIpv6(System.Net.IPAddress! ip) -> string!
+SimpleBase.Base85IPv6
+SimpleBase.Base85IPv6.Base85IPv6(SimpleBase.Base85Alphabet! alphabet) -> void
+SimpleBase.Base85IPv6.DecodeIPv6(string! text) -> System.Net.IPAddress!
+SimpleBase.Base85IPv6.EncodeIPv6(System.Net.IPAddress! ip) -> string!
 SimpleBase.CodingAlphabet
 SimpleBase.CodingAlphabet.CodingAlphabet(int length, string! alphabet) -> void
 SimpleBase.CodingAlphabet.Length.get -> int
@@ -143,7 +143,7 @@ static SimpleBase.Base58Alphabet.Bitcoin.get -> SimpleBase.Base58Alphabet!
 static SimpleBase.Base58Alphabet.Flickr.get -> SimpleBase.Base58Alphabet!
 static SimpleBase.Base58Alphabet.Ripple.get -> SimpleBase.Base58Alphabet!
 static SimpleBase.Base85.Ascii85.get -> SimpleBase.Base85!
-static SimpleBase.Base85.Rfc1924.get -> SimpleBase.Base85Ipv6!
+static SimpleBase.Base85.Rfc1924.get -> SimpleBase.Base85IPv6!
 static SimpleBase.Base85.Z85.get -> SimpleBase.Base85!
 static SimpleBase.Base85Alphabet.Ascii85.get -> SimpleBase.Base85Alphabet!
 static SimpleBase.Base85Alphabet.Rfc1924.get -> SimpleBase.Base85Alphabet!

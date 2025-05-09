@@ -13,7 +13,7 @@ SimpleBase.Base62
 SimpleBase.Base62.Base62(SimpleBase.Base62Alphabet! alphabet) -> void
 SimpleBase.Base62Alphabet
 SimpleBase.Base62Alphabet.Base62Alphabet(string! alphabet) -> void
-SimpleBase.Base85Ipv6.TryDecodeIpv6(string! text, out System.Net.IPAddress! ip) -> bool
+SimpleBase.Base85IPv6.TryDecodeIPv6(string! text, out System.Net.IPAddress! ip) -> bool
 SimpleBase.DividingCoder<TAlphabet>
 SimpleBase.DividingCoder<TAlphabet>.Alphabet.get -> TAlphabet!
 SimpleBase.DividingCoder<TAlphabet>.Decode(System.ReadOnlySpan<char> text) -> byte[]!

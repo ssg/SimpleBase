@@ -1,4 +1,4 @@
-﻿// <copyright file="Base85Ipv6.cs" company="Sedat Kapanoglu">
+﻿// <copyright file="Base85IPv6.cs" company="Sedat Kapanoglu">
 // Copyright (c) 2014-2025 Sedat Kapanoglu
 // Licensed under Apache-2.0 License (see LICENSE.txt file for details)
 // </copyright>
@@ -23,10 +23,10 @@ namespace SimpleBase;
 /// RFC 1924 should die, and this code should only be used to support some obscure standard or code somewhere.
 /// </remarks>
 /// <remarks>
-/// Initializes a new instance of the <see cref="Base85Ipv6"/> class.
+/// Initializes a new instance of the <see cref="Base85IPv6"/> class.
 /// </remarks>
 /// <param name="alphabet">Coding alphabet.</param>
-public class Base85Ipv6(Base85Alphabet alphabet) : Base85(alphabet)
+public class Base85IPv6(Base85Alphabet alphabet) : Base85(alphabet)
 {
     const int ipv6bytes = 16;
     const int ipv6chars = 20;
@@ -37,7 +37,7 @@ public class Base85Ipv6(Base85Alphabet alphabet) : Base85(alphabet)
     /// </summary>
     /// <param name="ip">IPv6 address.</param>
     /// <returns>Encoded text.</returns>
-    public string EncodeIpv6(IPAddress ip)
+    public string EncodeIPv6(IPAddress ip)
     {
         if (ip.AddressFamily != AddressFamily.InterNetworkV6)
         {
@@ -51,7 +51,7 @@ public class Base85Ipv6(Base85Alphabet alphabet) : Base85(alphabet)
         }
 
         var num = new BigInteger(buffer, isUnsigned: true, isBigEndian: true);
-        Span<char> str = stackalloc char[Base85Ipv6.ipv6chars];
+        Span<char> str = stackalloc char[Base85IPv6.ipv6chars];
         for (int n = 0, o = ipv6chars - 1; n < ipv6chars; n++, o--)
         {
             num = BigInteger.DivRem(num, divisor, out var remainder);
@@ -66,7 +66,7 @@ public class Base85Ipv6(Base85Alphabet alphabet) : Base85(alphabet)
     /// </summary>
     /// <param name="text">Encoded text.</param>
     /// <returns>Decoded IPv6 address.</returns>
-    public IPAddress DecodeIpv6(string text)
+    public IPAddress DecodeIPv6(string text)
     {
         if (text.Length != ipv6chars)
         {
@@ -98,7 +98,7 @@ public class Base85Ipv6(Base85Alphabet alphabet) : Base85(alphabet)
     /// <param name="text">Encoded text.</param>
     /// <param name="ip">Resulting IPv6 address.</param>
     /// <returns>True if successful, false otherwise.</returns>
-    public bool TryDecodeIpv6(string text, out IPAddress ip)
+    public bool TryDecodeIPv6(string text, out IPAddress ip)
     {
         if (text.Length != ipv6chars)
         {
