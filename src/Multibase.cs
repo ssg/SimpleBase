@@ -12,7 +12,7 @@ namespace SimpleBase;
 /// </summary>
 public static class Multibase
 {
-    const char base256EmojiLowSurrogate = '\ud83d';
+    const char base256EmojiLowSurrogate = '\uDE80';
     const string base256EmojiPrefix = "🚀";
 
     /// <summary>
@@ -47,8 +47,8 @@ public static class Multibase
             MultibaseEncoding.Base64 => Base64.DecodeWithoutPadding(rest),
             MultibaseEncoding.Base64Url or MultibaseEncoding.Base64UrlPad => Base64.DecodeUrl(rest),
             MultibaseEncoding.Base256Emoji
-                when rest.Length > 0
-                    && rest[0] == base256EmojiLowSurrogate => Base256Emoji.Default.Decode(text[1..]),
+                when rest.Length == 0
+                    || rest[0] == base256EmojiLowSurrogate => Base256Emoji.Default.Decode(rest[1..]),
             _ => throw new InvalidOperationException($"Unsupported multibase prefix: {c}"),
         };
     }
@@ -86,8 +86,8 @@ public static class Multibase
             MultibaseEncoding.Base64Pad => Convert.TryFromBase64Chars(rest, bytes, out bytesWritten),
             MultibaseEncoding.Base64Url or MultibaseEncoding.Base64UrlPad => Base64.TryDecodeUrl(rest, bytes, out bytesWritten),
             MultibaseEncoding.Base256Emoji
-                when rest.Length > 0
-                    && rest[0] == base256EmojiLowSurrogate => Base256Emoji.Default.TryDecode(text[1..], bytes, out bytesWritten),
+                when rest.Length == 0
+                    || rest[0] == base256EmojiLowSurrogate => Base256Emoji.Default.TryDecode(rest[1..], bytes, out bytesWritten),
             _ => false,
         };
     }

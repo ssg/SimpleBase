@@ -34,7 +34,7 @@ class MultibaseTest
     public void Encode_PrependsBufferWithCorrectCharacter(MultibaseEncoding encoding)
     {
         string result = Multibase.Encode(testBuffer, encoding);
-        Assert.That(result, Does.StartWith(((char)encoding).ToString()));
+        Assert.That(result[0], Is.EqualTo((char)encoding));
     }
 
     [Test]
