@@ -65,6 +65,11 @@ public class Base256Emoji : IBaseCoder, INonAllocatingBaseCoder
     /// <inheritdoc/>
     public byte[] Decode(ReadOnlySpan<char> text)
     {
+        if (text.Length == 0)
+        {
+            return [];
+        }
+
         int outputLen = GetSafeByteCountForDecoding(text);
         Span<byte> output = outputLen < Bits.SafeStackMaxAllocSize ? stackalloc byte[outputLen] : new byte[outputLen];
         return internalDecode(text, output, out int bytesWritten) switch
@@ -81,6 +86,11 @@ public class Base256Emoji : IBaseCoder, INonAllocatingBaseCoder
     /// <inheritdoc/>
     public string Encode(ReadOnlySpan<byte> bytes)
     {
+        if (bytes.Length == 0)
+        {
+            return string.Empty;
+        }
+
         int outputLen = GetSafeCharCountForEncoding(bytes);
         Span<char> output = outputLen < Bits.SafeStackMaxAllocSize ? stackalloc char[outputLen] : new char[outputLen];
         if (!TryEncode(bytes, output, out int charsWritten))
