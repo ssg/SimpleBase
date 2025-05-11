@@ -203,7 +203,6 @@ SimpleBase.Base85IPv6.TryDecodeIPv6(string! text, out System.Net.IPAddress! ip) 
 SimpleBase.DividingCoder<TAlphabet>
 SimpleBase.DividingCoder<TAlphabet>.Alphabet.get -> TAlphabet!
 SimpleBase.DividingCoder<TAlphabet>.Decode(System.ReadOnlySpan<char> text) -> byte[]!
-SimpleBase.DividingCoder<TAlphabet>.DividingCoder(TAlphabet! alphabet, int divisor, int reductionFactor) -> void
 SimpleBase.DividingCoder<TAlphabet>.Encode(System.ReadOnlySpan<byte> bytes) -> string!
 SimpleBase.DividingCoder<TAlphabet>.TryDecode(System.ReadOnlySpan<char> input, System.Span<byte> output, out int bytesWritten) -> bool
 SimpleBase.DividingCoder<TAlphabet>.TryEncode(System.ReadOnlySpan<byte> input, System.Span<char> output, out int numCharsWritten) -> bool

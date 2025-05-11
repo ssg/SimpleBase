@@ -14,17 +14,27 @@ namespace SimpleBase;
 /// <remarks>
 /// This isn't used by Base58 because it handles zero-prefixes differently than other encodings.
 /// </remarks>
-/// <param name="alphabet">Alphabet to use.</param>
-/// <param name="divisor">The divisor to be used in the encoding.</param>
-/// <param name="reductionFactor">Factor to calculate buffer size reduction after decoding multiplied by 1000 (e.g. 733 for base58, 750 for base62)</param>
-public abstract class DividingCoder<TAlphabet>(TAlphabet alphabet, int divisor, int reductionFactor)
-    : IBaseCoder, INonAllocatingBaseCoder
+public abstract class DividingCoder<TAlphabet> : IBaseCoder, INonAllocatingBaseCoder
     where TAlphabet: CodingAlphabet
 {
+    readonly int divisor;
+    readonly int reductionFactor;
+
     /// <summary>
     /// Gets the encoding alphabet.
     /// </summary>
-    public TAlphabet Alphabet { get; } = alphabet;
+    public TAlphabet Alphabet { get; }
+
+    /// <summary>
+    /// Creates a new instance of DividingCoder with a given alphabet.
+    /// </summary>
+    /// <param name="alphabet">Alphabet to use. The length of alphabet is used as a divisor.</param>
+    public DividingCoder(TAlphabet alphabet)
+    {
+        Alphabet = alphabet;
+        divisor = alphabet.Length;
+        reductionFactor = Convert.ToInt32(1000 * Math.Log2(divisor) / 8);
+    }
 
     /// <summary>
     /// Retrieve safe byte count while avoiding multiple counting operations.

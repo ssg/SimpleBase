@@ -23,6 +23,9 @@ public class EncoderBenchmarks
     public string Base32_CrockfordWithPadding() => Base32.Crockford.Encode(buffer, padding: true);
 
     [Benchmark]
+    public string Base36_LowerCase() => Base36.LowerCase.Encode(buffer);
+
+    [Benchmark]
     public string Base45_Default() => Base45.Default.Encode(buffer);
 
     [Benchmark]

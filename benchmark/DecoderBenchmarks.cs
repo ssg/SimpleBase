@@ -58,6 +58,9 @@ public class DecoderBenchmarks
     public byte[] Base32_Crockford() => Base32.Crockford.Decode(s);
 
     [Benchmark]
+    public byte[] Base36_LowerCase() => Base36.LowerCase.Decode(s);
+
+    [Benchmark]
     public byte[] Base45_Default() => Base45.Default.Decode(base45str);
 
     [Benchmark]

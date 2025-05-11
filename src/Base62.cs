@@ -18,7 +18,7 @@ namespace SimpleBase;
 /// Initializes a new instance of the <see cref="Base45"/> class using a custom alphabet.
 /// </remarks>
 /// <param name="alphabet">Alphabet to use.</param>
-public sealed class Base62(Base62Alphabet alphabet) : DividingCoder<Base62Alphabet>(alphabet, 62, 750)
+public sealed class Base62(Base62Alphabet alphabet) : DividingCoder<Base62Alphabet>(alphabet)
 {
     static readonly Lazy<Base62> defaultAlphabet = new(() => new Base62(Base62Alphabet.Default));
     static readonly Lazy<Base62> lowerFirst= new(() => new Base62(Base62Alphabet.Alternative));
