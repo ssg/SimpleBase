@@ -1,3 +1,9 @@
+# 5.1.0
+
+## New features
+- Base36
+- Base256Emoji
+
 # 5.0.0
 
 ## Breaking changes
