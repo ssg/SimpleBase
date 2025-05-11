@@ -1,3 +1,8 @@
+# 5.2.0
+
+## New features
+- Multibase support for Base36 (upper and lower)
+
 # 5.1.0
 
 ## New features

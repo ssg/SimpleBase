@@ -12,12 +12,12 @@
 		<AssemblyOriginatorKeyFile>..\SimpleBase.snk</AssemblyOriginatorKeyFile>
 		<DelaySign>false</DelaySign>
 
-		<PackageVersion>5.1.0</PackageVersion>
+		<PackageVersion>5.2.0</PackageVersion>
 		<DocumentationFile>SimpleBase.xml</DocumentationFile>
 		<PackageProjectUrl>https://github.com/ssg/SimpleBase</PackageProjectUrl>
 		<PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
 		<PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-		<PackageTags>base16 base32 base45 base58 base62 base85 ascii85 z85 hexadecimal bitcoin ripple flickr crockford extended hex rfc4648 z-base-32 geohash bech32 rfc1924</PackageTags>
+		<PackageTags>base16 base32 base36 base45 base58 base62 base85 ascii85 z85 hexadecimal bitcoin ripple flickr crockford extended hex rfc4648 z-base-32 geohash bech32 rfc1924</PackageTags>
 		<LangVersion>latest</LangVersion>
 		<Nullable>enable</Nullable>
 		<PlatformTarget>AnyCPU</PlatformTarget>
@@ -25,8 +25,7 @@
 		<PackageReleaseNotes>
 			<![CDATA[
 ## New features
-- Base36
-- Base256Emoji            
+- Multibase support for Base36 (upper and lower)
 ]]>
 		</PackageReleaseNotes>
 	</PropertyGroup>

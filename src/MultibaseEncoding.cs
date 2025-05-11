@@ -24,6 +24,8 @@ public enum MultibaseEncoding
 
     // marked as "draft"
     Base32Z         = 'h',
+    Base36Lower     = 'k',
+    Base36Upper     = 'K',
     Base45          = 'R',
 
     // marked as "experimental"

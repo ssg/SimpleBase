@@ -14,8 +14,6 @@
    limitations under the License.
 */
 using System;
-using System.Buffers.Text;
-using System.Runtime.Intrinsics.X86;
 using System.Text;
 using NUnit.Framework;
 using SimpleBase;
@@ -53,6 +51,8 @@ class MultibaseTest
         [MultibaseEncoding.Base32Upper, "BKNJUOICXIFJSASCFKJCSAIJBYKV4HDODT3B36"],
         [MultibaseEncoding.Base32HexLower, "vad9ke82n859i0i25a92i0891oals73e3jr1ru"],
         [MultibaseEncoding.Base32HexUpper, "VAD9KE82N859I0I25A92I0891OALS73E3JR1RU"],
+        [MultibaseEncoding.Base36Lower, "k2p81m7y66k71a7teel1hfa4ldp6bneq0hj9b"],
+        [MultibaseEncoding.Base36Upper, "K2P81M7Y66K71A7TEEL1HFA4LDP6BNEQ0HJ9B"],
         [MultibaseEncoding.Base32Z, "hkpjwqenzefj1y1nfkjn1yejbakih8dqdu5b56"],
         [MultibaseEncoding.Base45, "R1OAS:8H1B+MA6691IAZ242C46WLL-H83KB4"],
         [MultibaseEncoding.Base58Flickr, "Z2HPxwKnQi8s2ugkrzPrrR6nyDEpMhoe6"],
@@ -78,8 +78,8 @@ class MultibaseTest
         [MultibaseEncoding.Base32HexLower, "vf5in683dc5n6i811"],
         [MultibaseEncoding.Base32HexUpper, "VF5IN683DC5N6I811"],
         [MultibaseEncoding.Base32Z, "hxf1zgedpcfzg1ebb"],
-        //[base36, "k2lcpzo5yikidynfl"],
-        //[base36upper, "K2LCPZO5YIKIDYNFL"],
+        [MultibaseEncoding.Base36Lower, "k2lcpzo5yikidynfl"],
+        [MultibaseEncoding.Base36Upper, "K2LCPZO5YIKIDYNFL"],
         [MultibaseEncoding.Base58Flickr, "Z7Pznk19XTTzBtx"],
         [MultibaseEncoding.Base58Bitcoin, "z7paNL19xttacUY"],
         [MultibaseEncoding.Base64, "meWVzIG1hbmkgIQ"],
