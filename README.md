@@ -42,6 +42,7 @@ To install it from [NuGet](https://www.nuget.org/packages/SimpleBase/):
 
 Usage
 ------
+See [full API documentation](docs/index.md) for details. Here are a few simple usage scenarios:
 
 ### Base32
 
