@@ -14,6 +14,7 @@
    limitations under the License.
 */
 using System;
+using System.Buffers.Text;
 using System.Text;
 using NUnit.Framework;
 using SimpleBase;
@@ -89,6 +90,35 @@ class MultibaseTest
         [MultibaseEncoding.Base256Emoji, "🚀🏃✋🌈😅🌷🤤😻🌟😅👏"],
     ];
 
+    static readonly byte[] officialZeroPrefixedEncodingInput = Encoding.UTF8.GetBytes("\x00yes mani !");
+
+    static readonly object[][] officialZeroPrefixedEncodingData =
+    [
+        //[MultibaseEncoding.Base2, "00000000001111001011001010111001100100000011011010110000101101110011010010010000000100001",
+        //[MultibaseEncoding.Base8, "7000745453462015530267151100204",
+        //[MultibaseEncoding.Base10, "90573277761329450583662625",
+        [MultibaseEncoding.Base16Lower, "f00796573206d616e692021"],
+        [MultibaseEncoding.Base16Upper, "F00796573206D616E692021"],
+        [MultibaseEncoding.Base32Lower, "bab4wk4zanvqw42jaee"],
+        [MultibaseEncoding.Base32Upper, "BAB4WK4ZANVQW42JAEE"],
+        [MultibaseEncoding.Base32HexLower, "v01smasp0dlgmsq9044"],
+        [MultibaseEncoding.Base32HexUpper, "V01SMASP0DLGMSQ9044"],
+        //[MultibaseEncoding.Base32pad, "cab4wk4zanvqw42jaee======"],
+        //[MultibaseEncoding.Base32padupper, "CAB4WK4ZANVQW42JAEE======"],
+        //[MultibaseEncoding.Base32hexpad, "t01smasp0dlgmsq9044======"],
+        //[MultibaseEncoding.Base32hexpadupper, "T01SMASP0DLGMSQ9044======"],
+        [MultibaseEncoding.Base32Z, "hybhskh3ypiosh4jyrr"],
+        [MultibaseEncoding.Base36Lower, "k02lcpzo5yikidynfl"],
+        [MultibaseEncoding.Base36Upper, "K02LCPZO5YIKIDYNFL"],
+        [MultibaseEncoding.Base58Flickr, "Z17Pznk19XTTzBtx"],
+        [MultibaseEncoding.Base58Bitcoin, "z17paNL19xttacUY"],
+        [MultibaseEncoding.Base64, "mAHllcyBtYW5pICE"],
+        [MultibaseEncoding.Base64Pad, "MAHllcyBtYW5pICE="],
+        [MultibaseEncoding.Base64Url, "uAHllcyBtYW5pICE"],
+        [MultibaseEncoding.Base64UrlPad, "UAHllcyBtYW5pICE="],
+        [MultibaseEncoding.Base256Emoji, "🚀🚀🏃✋🌈😅🌷🤤😻🌟😅👏"],
+    ];
+
     [Test]
     [TestCaseSource(nameof(encodedData))]
     public void Encode_EncodesDataCorrectly(MultibaseEncoding encoding, string expected)
@@ -102,6 +132,14 @@ class MultibaseTest
     public void Encode_OfficialEncodingData_EncodesDataCorrectly(MultibaseEncoding encoding, string expected)
     {
         string encoded = Multibase.Encode(officialEncodingInput, encoding);
+        Assert.That(encoded, Is.EqualTo(expected));
+    }
+
+    [Test]
+    [TestCaseSource(nameof(officialZeroPrefixedEncodingData))]
+    public void Encode_OfficialZeroPrefixedEncodingData_EncodesDataCorrectly(MultibaseEncoding encoding, string expected)
+    {
+        string encoded = Multibase.Encode(officialZeroPrefixedEncodingInput, encoding);
         Assert.That(encoded, Is.EqualTo(expected));
     }
 
