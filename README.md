@@ -131,7 +131,7 @@ Still not satisfied though. Is .NET's Base64 implementation native? Perhaps.
 
 Thanks
 ------
-Thanks to all contributors (most up to date is on the GitHub sidebar) who
+Thanks to all [contributors](https://github.com/ssg/SimpleBase/graphs/contributors) who
 provided patches, and reported bugs.
 
 Chatting about this pet project with my friends 
