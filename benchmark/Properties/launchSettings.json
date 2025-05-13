@@ -3,6 +3,10 @@
     "Benchmark": {
       "commandName": "Project",
       "hotReloadEnabled": false
+    },
+    "Benchmark --job short": {
+      "commandName": "Project",
+      "commandLineArgs": "--job short"
     }
   }
 }
