@@ -4,7 +4,7 @@
 // </copyright>
 
 using System;
-using System.Diagnostics;
+using System.Runtime.CompilerServices;
 
 namespace SimpleBase;
 
@@ -15,29 +15,21 @@ namespace SimpleBase;
 /// Dividing encoding schemes can't encode prefixing zeroes due to mathematical insignificance
 /// of them. So they're always encoded as hardcoded zero characters at the beginning.
 /// </remarks>
-public abstract class DividingCoder<TAlphabet> : IBaseCoder, INonAllocatingBaseCoder
+/// <remarks>
+/// Creates a new instance of DividingCoder with a given alphabet.
+/// </remarks>
+/// <param name="alphabet">Alphabet to use. The length of alphabet is used as a divisor.</param>
+public abstract class DividingCoder<TAlphabet>(TAlphabet alphabet)
+    : IBaseCoder, INonAllocatingBaseCoder
     where TAlphabet: CodingAlphabet
 {
-    readonly int divisor;
-    readonly int reductionFactor;
-    readonly char zeroChar;
+    readonly int reductionFactor = Convert.ToInt32(1000 * Math.Log2(alphabet.Length) / 8);
+    readonly char zeroChar = alphabet.Value[0];
 
     /// <summary>
     /// Gets the encoding alphabet.
     /// </summary>
-    public TAlphabet Alphabet { get; }
-
-    /// <summary>
-    /// Creates a new instance of DividingCoder with a given alphabet.
-    /// </summary>
-    /// <param name="alphabet">Alphabet to use. The length of alphabet is used as a divisor.</param>
-    public DividingCoder(TAlphabet alphabet)
-    {
-        Alphabet = alphabet;
-        zeroChar = alphabet.Value[0];
-        divisor = alphabet.Length;
-        reductionFactor = Convert.ToInt32(1000 * Math.Log2(divisor) / 8);
-    }
+    public TAlphabet Alphabet { get; } = alphabet;
 
     /// <inheritdoc/>
     public virtual int GetSafeByteCountForDecoding(ReadOnlySpan<char> text)
@@ -45,11 +37,13 @@ public abstract class DividingCoder<TAlphabet> : IBaseCoder, INonAllocatingBaseC
         return getSafeByteCountForDecoding(text.Length, countPrefixChars(text, zeroChar));
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     int getSafeByteCountForDecoding(int textLen, int zeroPrefixLen)
     {
         return zeroPrefixLen + ((textLen - zeroPrefixLen) * reductionFactor / 1000) + 1;
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     static int countPrefixChars(ReadOnlySpan<char> text, char zeroChar)
     {
         int count = 0;
@@ -60,6 +54,7 @@ public abstract class DividingCoder<TAlphabet> : IBaseCoder, INonAllocatingBaseC
         return count;
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     static int countPrefixZeroes(ReadOnlySpan<byte> bytes)
     {
         int count = 0;
@@ -76,6 +71,7 @@ public abstract class DividingCoder<TAlphabet> : IBaseCoder, INonAllocatingBaseC
         return getSafeCharCountForEncoding(bytes.Length, countPrefixZeroes(bytes));
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     int getSafeCharCountForEncoding(int bytesLen, int zeroPrefixLen)
     {
         return zeroPrefixLen + ((bytesLen - zeroPrefixLen) * 1000 / reductionFactor) + 1;
@@ -158,6 +154,7 @@ public abstract class DividingCoder<TAlphabet> : IBaseCoder, INonAllocatingBaseC
         return result is (DecodeResult.Success, _);
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     static DecodeResult decodeZeroes(Span<byte> output, int length, out int bytesWritten)
     {
         if (length > output.Length)
@@ -171,12 +168,12 @@ public abstract class DividingCoder<TAlphabet> : IBaseCoder, INonAllocatingBaseC
         return DecodeResult.Success;
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     static void translatedCopy(
         ReadOnlySpan<char> source,
         Span<char> destination,
         ReadOnlySpan<char> alphabet)
     {
-        Debug.Assert(source.Length <= destination.Length, "source is too big");
         for (int n = 0; n < source.Length; n++)
         {
             destination[n] = alphabet[source[n]];
@@ -212,6 +209,7 @@ public abstract class DividingCoder<TAlphabet> : IBaseCoder, INonAllocatingBaseC
 
         int numDigits = 0;
         int index = zeroPrefixLen;
+        int divisor = alphabet.Length;
         while (index < input.Length)
         {
             int carry = input[index++];
@@ -221,6 +219,9 @@ public abstract class DividingCoder<TAlphabet> : IBaseCoder, INonAllocatingBaseC
             {
                 carry += output[j] << 8;
                 carry = Math.DivRem(carry, divisor, out int remainder);
+
+                // we can't translate on the fly here, because we reuse the
+                // output characters for calculating division results.
                 output[j] = (char)remainder;
             }
             numDigits = i;
@@ -246,6 +247,7 @@ public abstract class DividingCoder<TAlphabet> : IBaseCoder, INonAllocatingBaseC
     {
         var table = Alphabet.ReverseLookupTable;
         int min = output.Length;
+        int divisor = Alphabet.Length;
         for (int i = zeroPrefixLen; i < input.Length; i++)
         {
             char c = input[i];

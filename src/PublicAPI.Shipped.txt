@@ -47,18 +47,11 @@ SimpleBase.Base32Alphabet.Base32Alphabet(string! alphabet, char paddingChar, Sim
 SimpleBase.Base32Alphabet.PaddingChar.get -> char
 SimpleBase.Base32Alphabet.PaddingPosition.get -> SimpleBase.PaddingPosition
 SimpleBase.Base58
-SimpleBase.Base58.Alphabet.get -> SimpleBase.Base58Alphabet!
 SimpleBase.Base58.Base58(SimpleBase.Base58Alphabet! alphabet) -> void
-SimpleBase.Base58.Decode(System.ReadOnlySpan<char> text) -> byte[]!
-SimpleBase.Base58.Encode(System.ReadOnlySpan<byte> bytes) -> string!
 SimpleBase.Base58.EncodeCb58(System.ReadOnlySpan<byte> payload) -> string!
 SimpleBase.Base58.EncodeCheck(System.ReadOnlySpan<byte> payload, byte version) -> string!
-SimpleBase.Base58.GetSafeByteCountForDecoding(System.ReadOnlySpan<char> text) -> int
-SimpleBase.Base58.GetSafeCharCountForEncoding(System.ReadOnlySpan<byte> bytes) -> int
-SimpleBase.Base58.TryDecode(System.ReadOnlySpan<char> input, System.Span<byte> output, out int bytesWritten) -> bool
 SimpleBase.Base58.TryDecodeCb58(System.ReadOnlySpan<char> address, System.Span<byte> payload, out int bytesWritten) -> bool
 SimpleBase.Base58.TryDecodeCheck(System.ReadOnlySpan<char> address, System.Span<byte> payload, out byte version, out int bytesWritten) -> bool
-SimpleBase.Base58.TryEncode(System.ReadOnlySpan<byte> input, System.Span<char> output, out int numCharsWritten) -> bool
 SimpleBase.Base58.ZeroChar.get -> char
 SimpleBase.Base58Alphabet
 SimpleBase.Base58Alphabet.Base58Alphabet(string! alphabet) -> void
