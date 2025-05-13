@@ -12,13 +12,15 @@ namespace SimpleBase;
 /// Generic dividing Encoding/Decoding implementation to be used by other dividing encoders. 
 /// </summary>
 /// <remarks>
-/// This isn't used by Base58 because it handles zero-prefixes differently than other encodings.
+/// Dividing encoding schemes can't encode prefixing zeroes due to mathematical insignificance
+/// of them. So they're always encoded as hardcoded zero characters at the beginning.
 /// </remarks>
 public abstract class DividingCoder<TAlphabet> : IBaseCoder, INonAllocatingBaseCoder
     where TAlphabet: CodingAlphabet
 {
     readonly int divisor;
     readonly int reductionFactor;
+    readonly char zeroChar;
 
     /// <summary>
     /// Gets the encoding alphabet.
@@ -32,32 +34,51 @@ public abstract class DividingCoder<TAlphabet> : IBaseCoder, INonAllocatingBaseC
     public DividingCoder(TAlphabet alphabet)
     {
         Alphabet = alphabet;
+        zeroChar = alphabet.Value[0];
         divisor = alphabet.Length;
         reductionFactor = Convert.ToInt32(1000 * Math.Log2(divisor) / 8);
-    }
-
-    /// <summary>
-    /// Retrieve safe byte count while avoiding multiple counting operations.
-    /// </summary>
-    /// <param name="textLen">Length of text.</param>
-    /// <returns>Length of safe allocation.</returns>
-    int getSafeByteCountForDecoding(int textLen)
-    {
-        return (textLen * reductionFactor / 1000) + 1;
     }
 
     /// <inheritdoc/>
     public virtual int GetSafeByteCountForDecoding(ReadOnlySpan<char> text)
     {
-        return getSafeByteCountForDecoding(text.Length);
+        return getSafeByteCountForDecoding(text.Length, countPrefixChars(text, zeroChar));
+    }
+
+    int getSafeByteCountForDecoding(int textLen, int zeroPrefixLen)
+    {
+        return zeroPrefixLen + ((textLen - zeroPrefixLen) * reductionFactor / 1000) + 1;
+    }
+
+    static int countPrefixChars(ReadOnlySpan<char> text, char zeroChar)
+    {
+        int count = 0;
+        while (count < text.Length && text[count] == zeroChar)
+        {
+            count += 1;
+        }
+        return count;
+    }
+
+    static int countPrefixZeroes(ReadOnlySpan<byte> bytes)
+    {
+        int count = 0;
+        while (count < bytes.Length && bytes[count] == 0)
+        {
+            count += 1;
+        }
+        return count;
     }
 
     /// <inheritdoc/>
     public virtual int GetSafeCharCountForEncoding(ReadOnlySpan<byte> bytes)
     {
-        int bytesLen = bytes.Length;
+        return getSafeCharCountForEncoding(bytes.Length, countPrefixZeroes(bytes));
+    }
 
-        return (bytesLen * 1000 / reductionFactor) + 1;
+    int getSafeCharCountForEncoding(int bytesLen, int zeroPrefixLen)
+    {
+        return zeroPrefixLen + ((bytesLen - zeroPrefixLen) * 1000 / reductionFactor) + 1;
     }
 
     /// <summary>
@@ -72,13 +93,14 @@ public abstract class DividingCoder<TAlphabet> : IBaseCoder, INonAllocatingBaseC
             return string.Empty;
         }
 
-        int outputLen = GetSafeCharCountForEncoding(bytes);
+        int zeroPrefixLen = countPrefixZeroes(bytes);
+        int outputLen = getSafeCharCountForEncoding(bytes.Length, zeroPrefixLen);
 
         // we can't use `String.Create` here to reduce allocations because
         // Spans aren't supported in lambda expressions.
         Span<char> output = outputLen < Bits.SafeStackMaxAllocSize ? stackalloc char[outputLen] : new char[outputLen];
 
-        return internalEncode(bytes, output, out int numCharsWritten)
+        return internalEncode(bytes, output, zeroPrefixLen, out int numCharsWritten)
             ? new string(output[..numCharsWritten])
             : throw new InvalidOperationException("Output buffer with insufficient size generated");
     }
@@ -95,9 +117,10 @@ public abstract class DividingCoder<TAlphabet> : IBaseCoder, INonAllocatingBaseC
             return [];
         }
 
-        int outputLen = getSafeByteCountForDecoding(text.Length);
+        int zeroPrefixLen = countPrefixChars(text, zeroChar);
+        int outputLen = getSafeByteCountForDecoding(text.Length, zeroPrefixLen);
         Span<byte> output = outputLen < Bits.SafeStackMaxAllocSize ? stackalloc byte[outputLen] : new byte[outputLen];
-        var result = internalDecode(text, output, out Range rangeWritten);
+        var result = internalDecode(text, output, zeroPrefixLen, out Range rangeWritten);
 
         return result switch
         {
@@ -111,7 +134,7 @@ public abstract class DividingCoder<TAlphabet> : IBaseCoder, INonAllocatingBaseC
     /// <inheritdoc/>
     public bool TryEncode(ReadOnlySpan<byte> input, Span<char> output, out int numCharsWritten)
     {
-        return internalEncode(input, output, out numCharsWritten);
+        return internalEncode(input, output, zeroPrefixLen: -1, out numCharsWritten);
     }
 
     /// <inheritdoc/>
@@ -123,9 +146,11 @@ public abstract class DividingCoder<TAlphabet> : IBaseCoder, INonAllocatingBaseC
             return true;
         }
 
+        int zeroPrefixLen = countPrefixChars(input, zeroChar);
         var result = internalDecode(
             input,
             output,
+            zeroPrefixLen,
             out Range rangeWritten);
 
         output[rangeWritten].CopyTo(output);
@@ -161,6 +186,7 @@ public abstract class DividingCoder<TAlphabet> : IBaseCoder, INonAllocatingBaseC
     bool internalEncode(
         ReadOnlySpan<byte> input,
         Span<char> output,
+        int zeroPrefixLen,
         out int numCharsWritten)
     {
         if (input.Length == 0)
@@ -170,9 +196,22 @@ public abstract class DividingCoder<TAlphabet> : IBaseCoder, INonAllocatingBaseC
         }
 
         ReadOnlySpan<char> alphabet = Alphabet.Value;
+        if (zeroPrefixLen < 0)
+        {
+            // zero prefix isn't already calculated - so we do zero encoding while counting
+            for (zeroPrefixLen = 0; zeroPrefixLen < input.Length && input[zeroPrefixLen] == 0; zeroPrefixLen++)
+            {
+                output[zeroPrefixLen] = zeroChar;
+            }
+        }
+        else if (zeroPrefixLen > 0)
+        {
+            // fast fill because we already know prefix count beforehand
+            output[..zeroPrefixLen].Fill(zeroChar);
+        }
 
         int numDigits = 0;
-        int index = 0;
+        int index = zeroPrefixLen;
         while (index < input.Length)
         {
             int carry = input[index++];
@@ -184,12 +223,11 @@ public abstract class DividingCoder<TAlphabet> : IBaseCoder, INonAllocatingBaseC
                 carry = Math.DivRem(carry, divisor, out int remainder);
                 output[j] = (char)remainder;
             }
-
             numDigits = i;
         }
 
-        translatedCopy(output[^numDigits..], output, alphabet);
-        numCharsWritten = numDigits;
+        translatedCopy(output[^numDigits..], output[zeroPrefixLen..], alphabet);
+        numCharsWritten = zeroPrefixLen + numDigits;
         return true;
     }
 
@@ -203,11 +241,12 @@ public abstract class DividingCoder<TAlphabet> : IBaseCoder, INonAllocatingBaseC
     (DecodeResult, char?) internalDecode(
         ReadOnlySpan<char> input,
         Span<byte> output,
+        int zeroPrefixLen,
         out Range rangeWritten)
     {
         var table = Alphabet.ReverseLookupTable;
-        int min = output.Length - 1;
-        for (int i = 0; i < input.Length; i++)
+        int min = output.Length;
+        for (int i = zeroPrefixLen; i < input.Length; i++)
         {
             char c = input[i];
             int carry = table[c] - 1;
@@ -228,6 +267,12 @@ public abstract class DividingCoder<TAlphabet> : IBaseCoder, INonAllocatingBaseC
 
                 carry >>= 8;
             }
+        }
+
+        if (zeroPrefixLen > 0)
+        {
+            output[(min - zeroPrefixLen)..min].Clear();
+            min -= zeroPrefixLen;
         }
 
         rangeWritten = min..output.Length;

@@ -26,6 +26,8 @@ class DefaultTest
     static readonly string[][] testData = [
         ["", ""],
         ["SSG WAS HERE!", "2ETo47rrJdrFdqI4CP"],
+        ["\x00\x00SSG WAS HERE!", "002ETo47rrJdrFdqI4CP"],
+        ["\x00\x00\x00", "000"],
         ["A quick brown fox jumps over the lazy dog", "MbW36N4wUwiF8w630WywYtgnrGqMKAxpYKQRT90ZlD5pv9LLGP4wHgd"],
         ["A", "13"],
         ["AA", "4LR"],

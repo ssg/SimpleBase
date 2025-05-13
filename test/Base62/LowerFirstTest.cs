@@ -26,6 +26,8 @@ class LowerFirstTest
     static readonly string[][] testData = [
         ["", ""],
         ["SSG WAS HERE!", "2etO47RRjDRfDQi4cp"],
+        ["\x00\x00SSG WAS HERE!", "002etO47RRjDRfDQi4cp"],
+        ["\x00\x00\x00", "000"],
         ["A quick brown fox jumps over the lazy dog", "mBw36n4WuWIf8W630wYWyTGNRgQmkaXPykqrt90zLd5PV9llgp4WhGD"],
         ["A", "13"],
         ["AA", "4lr"],
