@@ -9,7 +9,7 @@ using System.Runtime.CompilerServices;
 namespace SimpleBase;
 
 /// <summary>
-/// Generic dividing Encoding/Decoding implementation to be used by other dividing encoders. 
+/// Generic dividing Encoding/Decoding implementation to be used by other dividing encoders.
 /// </summary>
 /// <remarks>
 /// Dividing encoding schemes can't encode prefixing zeroes due to mathematical insignificance
@@ -155,20 +155,6 @@ public abstract class DividingCoder<TAlphabet>(TAlphabet alphabet)
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    static DecodeResult decodeZeroes(Span<byte> output, int length, out int bytesWritten)
-    {
-        if (length > output.Length)
-        {
-            bytesWritten = 0;
-            return DecodeResult.InsufficientOutputBuffer;
-        }
-
-        output[..length].Clear();
-        bytesWritten = length;
-        return DecodeResult.Success;
-    }
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     static void translatedCopy(
         ReadOnlySpan<char> source,
         Span<char> destination,
@@ -221,7 +207,8 @@ public abstract class DividingCoder<TAlphabet>(TAlphabet alphabet)
                 carry = Math.DivRem(carry, divisor, out int remainder);
 
                 // we can't translate on the fly here, because we reuse the
-                // output characters for calculating division results.
+                // characters in the output buffer for calculating division
+                // results in this loop.
                 output[j] = (char)remainder;
             }
             numDigits = i;
@@ -248,6 +235,7 @@ public abstract class DividingCoder<TAlphabet>(TAlphabet alphabet)
         var table = Alphabet.ReverseLookupTable;
         int min = output.Length;
         int divisor = Alphabet.Length;
+
         for (int i = zeroPrefixLen; i < input.Length; i++)
         {
             char c = input[i];
@@ -260,6 +248,9 @@ public abstract class DividingCoder<TAlphabet>(TAlphabet alphabet)
 
             for (int o = output.Length - 1; o >= 0; o--)
             {
+                // we need to have this conversion to allow
+                // JIT to eliminate bounds checking in element
+                // accesses
                 carry += divisor * output[o];
                 output[o] = (byte)carry;
                 if (min > o && carry != 0)
