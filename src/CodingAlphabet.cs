@@ -54,12 +54,12 @@ public abstract class CodingAlphabet : ICodingAlphabet
     /// <summary>
     /// Gets the length of the alphabet.
     /// </summary>
-    public int Length { get; private set; }
+    public int Length { get; }
 
     /// <summary>
     /// Gets the characters of the alphabet.
     /// </summary>
-    public string Value { get; private set; }
+    public string Value { get; }
 
     internal ReadOnlySpan<byte> ReverseLookupTable => reverseLookupTable;
 
