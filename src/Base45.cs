@@ -27,7 +27,7 @@ public sealed class Base45(Base45Alphabet alphabet) : INonAllocatingBaseCoder, I
     {
         int outputLen = getDecodingBufferSize(text.Length);
 
-        // since we can calculate exact length of the output, we don't need 
+        // since we can calculate exact length of the output, we don't need
         byte[] output = new byte[outputLen];
         return internalDecode(text, output, out int bytesWritten) switch
         {
@@ -155,7 +155,7 @@ public sealed class Base45(Base45Alphabet alphabet) : INonAllocatingBaseCoder, I
             {
                 return (DecodeResult.InvalidCharacter, chr);
             }
-            chr = input[i++];
+            chr = input[i];
             int d = table[chr] - 1;
             if (d < 0)
             {
@@ -188,7 +188,7 @@ public sealed class Base45(Base45Alphabet alphabet) : INonAllocatingBaseCoder, I
         // process whole blocks first
         int i = 0;
         while (i < wholeLen)
-        {            
+        {
             ushort a = input[i++];
             ushort b = input[i++];
             ushort value = (ushort)((a << 8) | b); // big-endian per spec
