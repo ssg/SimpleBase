@@ -185,7 +185,7 @@ public sealed class Base32 : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCod
     public bool TryDecodeUInt64(string text, out ulong number)
     {
         Span<byte> output = stackalloc byte[sizeof(ulong)];
-        if (!TryDecode(text, output, out int bytesWritten))
+        if (!TryDecode(text, output, out _))
         {
             number = 0;
             return false;
@@ -196,7 +196,11 @@ public sealed class Base32 : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCod
             output.Reverse();
         }
 
-        number = BitConverter.ToUInt64(output[..bytesWritten]);
+        // BitConverter.ToUInt64() specifically requires
+        // the span to be 8 bytes long, so we can't just
+        // use bytesWritten in the decoding here, we
+        // need to pass the whole thing.
+        number = BitConverter.ToUInt64(output);
         return true;
     }
 

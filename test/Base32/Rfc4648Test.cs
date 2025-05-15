@@ -114,7 +114,7 @@ class Rfc4648Test
 
     static ulong reverseBytes(ulong number)
     {
-        var span = BitConverter.GetBytes(number).AsSpan();
+        Span<byte> span = BitConverter.GetBytes(number);
         span.Reverse();
         return BitConverter.ToUInt64(span);
     }
