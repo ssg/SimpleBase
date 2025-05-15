@@ -5,7 +5,6 @@
 
 using System;
 using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace SimpleBase;
@@ -197,7 +196,7 @@ public sealed class Base32 : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCod
             output.Reverse();
         }
 
-        number = BitConverter.ToUInt64(output);
+        number = BitConverter.ToUInt64(output[..bytesWritten]);
         return true;
     }
 
