@@ -13,9 +13,9 @@ public class DecoderBenchmarks
     readonly string s = new('a', 80);
     readonly string ms = 'F' + new string('a', 80);
     readonly string base45str = new('A', 81);
-    readonly string emojiStr = string.Join("", Enumerable.Range(0, 80).Select(i => "🚀").ToArray());
+    readonly string emojiStr = string.Concat(Enumerable.Repeat("🚀", 80));
     readonly MemoryStream memoryStream = new();
-    readonly static byte[] buffer = new byte[80];
+    static readonly byte[] buffer = new byte[80];
 
     [Benchmark]
     public byte[] DotNet_Base64() => Convert.FromBase64String(s);
