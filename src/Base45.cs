@@ -51,7 +51,7 @@ public sealed class Base45(Base45Alphabet alphabet) : INonAllocatingBaseCoder, I
         {
             throw new InvalidOperationException("Failed to allocate large enough buffer -- likely a bug");
         }
-        return output.ToString();
+        return output[..numCharsWritten].ToString();
     }
 
     /// <inheritdoc/>
