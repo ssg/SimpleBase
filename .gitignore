@@ -11,3 +11,5 @@ packages/
 .vs/
 *.userprefs
 SimpleBase.xml
+.idea/
+BenchmarkDotNet.Artifacts/
