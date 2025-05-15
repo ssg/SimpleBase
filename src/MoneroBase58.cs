@@ -19,7 +19,6 @@ public sealed class MoneroBase58(Base58Alphabet alphabet) : IBaseCoder, INonAllo
     static readonly int[] encodedBlockSizes = [0, 2, 3, 5, 6, 7, 9, 10, 11];
     const int blockSize = 8;
     static readonly int encodedBlockSize = encodedBlockSizes[blockSize];
-    static readonly int[] invalidEncodedBlockSizes = [1, 4, 8];
 
     /// <summary>
     /// Initializes a new instance of the <see cref="MoneroBase58"/> class
