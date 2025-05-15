@@ -50,7 +50,7 @@ public class Base85IPv6(Base85Alphabet alphabet) : Base85(alphabet)
             throw new InvalidOperationException($"IPAddress.TryWriteBytes() failed, this should never happen: {ip}");
         }
 
-        var num = new BigInteger(buffer, isUnsigned: true, isBigEndian: true);
+        var num = new BigInteger(buffer[..bytesWritten], isUnsigned: true, isBigEndian: true);
         Span<char> str = stackalloc char[Base85IPv6.ipv6chars];
         for (int n = 0, o = ipv6chars - 1; n < ipv6chars; n++, o--)
         {
@@ -88,7 +88,7 @@ public class Base85IPv6(Base85Alphabet alphabet) : Base85(alphabet)
 
         Span<byte> buffer = stackalloc byte[ipv6bytes];
         return num.TryWriteBytes(buffer, out int bytesWritten, isUnsigned: false, isBigEndian: true)
-            ? new IPAddress(buffer)
+            ? new IPAddress(buffer[..bytesWritten])
             : throw new InvalidOperationException("Destination buffer is too small");
     }
 
@@ -127,7 +127,7 @@ public class Base85IPv6(Base85Alphabet alphabet) : Base85(alphabet)
             return false;
         }
 
-        ip = new IPAddress(buffer);
+        ip = new IPAddress(buffer[..bytesWritten]);
         return true;
     }
 
