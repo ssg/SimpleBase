@@ -14,11 +14,15 @@ public class DecoderBenchmarks
     readonly string ms = 'F' + new string('a', 80);
     readonly string base45str = new('A', 81);
     readonly string emojiStr = string.Concat(Enumerable.Repeat("🚀", 80));
+    readonly string binaryEncoded = new('0', 80);
     readonly MemoryStream memoryStream = new();
     static readonly byte[] buffer = new byte[80];
 
     [Benchmark]
     public byte[] DotNet_Base64() => Convert.FromBase64String(s);
+
+    [Benchmark]
+    public byte[] Base2_Default() => Base2.Default.Decode(binaryEncoded);
 
     [Benchmark]
     public byte[] Base16_UpperCase() => Base16.UpperCase.Decode(s);

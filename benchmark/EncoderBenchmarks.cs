@@ -14,6 +14,9 @@ public class EncoderBenchmarks
     public string DotNet_Base64() => Convert.ToBase64String(buffer);
 
     [Benchmark]
+    public string Base2_Default() => Base2.Default.Encode(buffer);
+
+    [Benchmark]
     public string Base16_UpperCase() => Base16.UpperCase.Encode(buffer);
 
     [Benchmark]

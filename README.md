@@ -69,45 +69,47 @@ Small buffer sizes are used (64 characters). They are closer to real life
 applications. Base58 performs really bad in decoding of larger buffer sizes, 
 due to polynomial complexity of numeric base conversions.
 
-BenchmarkDotNet v0.14.0, Windows 11 (10.0.26100.3915)
+BenchmarkDotNet v0.14.0, Windows 11 (10.0.26100.4061)
 AMD Ryzen 9 5950X, 1 CPU, 32 logical and 16 physical cores
-.NET SDK 9.0.203
-  [Host]     : .NET 8.0.15 (8.0.1525.16413), X64 RyuJIT AVX2
-  DefaultJob : .NET 8.0.15 (8.0.1525.16413), X64 RyuJIT AVX2
+.NET SDK 9.0.300
+  [Host]     : .NET 8.0.16 (8.0.1625.21506), X64 RyuJIT AVX2
+  DefaultJob : .NET 8.0.16 (8.0.1625.21506), X64 RyuJIT AVX2
 
 Encoding (64 byte buffer)
 
-| Method                      | Mean      | Error    | StdDev   | Gen0   | Allocated |
-|---------------------------- |----------:|---------:|---------:|-------:|----------:|
-| DotNet_Base64               |  28.52 ns | 0.501 ns | 0.469 ns | 0.0119 |     200 B |
-| Base16_UpperCase            |  83.05 ns | 1.432 ns | 1.340 ns | 0.0167 |     280 B |
-| Multibase_Base16_UpperCase  | 100.51 ns | 1.671 ns | 1.563 ns | 0.0334 |     560 B |
-| Base32_CrockfordWithPadding | 148.46 ns | 0.715 ns | 0.634 ns | 0.0138 |     232 B |
-| Base36_LowerCase            |  44.05 ns | 0.039 ns | 0.037 ns |      - |         - |
-| Base45_Default              | 121.33 ns | 0.702 ns | 0.657 ns | 0.0129 |     216 B |
-| Base58_Bitcoin              |  44.62 ns | 0.297 ns | 0.232 ns | 0.0091 |     152 B |
-| Base58_Monero               | 208.37 ns | 3.417 ns | 3.656 ns | 0.0119 |     200 B |
-| Base62_Default              |  43.61 ns | 0.141 ns | 0.132 ns |      - |         - |
-| Base85_Z85                  | 148.95 ns | 1.231 ns | 1.151 ns | 0.0110 |     184 B |
-| Base256Emoji_Default        | 224.16 ns | 1.189 ns | 1.112 ns | 0.0167 |     280 B |
+| Method                      | Mean      | Error    | StdDev   | Median    | Gen0   | Allocated |
+|---------------------------- |----------:|---------:|---------:|----------:|-------:|----------:|
+| DotNet_Base64               |  28.48 ns | 0.417 ns | 0.326 ns |  28.40 ns | 0.0119 |     200 B |
+| Base2_Default               | 231.01 ns | 4.585 ns | 5.458 ns | 228.47 ns | 0.0625 |    1048 B |
+| Base16_UpperCase            |  81.93 ns | 1.590 ns | 1.487 ns |  81.48 ns | 0.0167 |     280 B |
+| Multibase_Base16_UpperCase  | 102.39 ns | 2.000 ns | 1.964 ns | 102.61 ns | 0.0334 |     560 B |
+| Base32_CrockfordWithPadding | 154.63 ns | 0.956 ns | 0.847 ns | 154.46 ns | 0.0138 |     232 B |
+| Base36_LowerCase            |  46.77 ns | 0.983 ns | 1.346 ns |  46.80 ns | 0.0091 |     152 B |
+| Base45_Default              | 125.77 ns | 1.949 ns | 1.823 ns | 126.01 ns | 0.0129 |     216 B |
+| Base58_Bitcoin              |  46.75 ns | 0.961 ns | 1.106 ns |  46.46 ns | 0.0091 |     152 B |
+| Base58_Monero               | 206.48 ns | 2.797 ns | 2.616 ns | 205.31 ns | 0.0119 |     200 B |
+| Base62_Default              |  46.56 ns | 0.981 ns | 1.499 ns |  45.71 ns | 0.0091 |     152 B |
+| Base85_Z85                  | 162.14 ns | 0.424 ns | 0.376 ns | 162.24 ns | 0.0110 |     184 B |
+| Base256Emoji_Default        | 227.15 ns | 2.671 ns | 2.499 ns | 226.80 ns | 0.0167 |     280 B |
 
 Decoding (80 character string, except Base45 which must use an 81 character string)
 
 | Method                               | Mean        | Error     | StdDev    | Gen0   | Gen1   | Allocated |
 |------------------------------------- |------------:|----------:|----------:|-------:|-------:|----------:|
-| DotNet_Base64                        |   105.76 ns |  1.258 ns |  1.177 ns | 0.0052 |      - |      88 B |
-| Base16_UpperCase                     |    49.91 ns |  0.494 ns |  0.462 ns | 0.0038 |      - |      64 B |
-| Base16_UpperCase_TextReader          |   308.32 ns |  6.134 ns |  5.438 ns | 0.5007 | 0.0153 |    8376 B |
-| Multibase_Base16_UpperCase           |    51.04 ns |  0.417 ns |  0.390 ns | 0.0038 |      - |      64 B |
-| Multibase_TryDecode_Base16_UpperCase |    46.19 ns |  0.162 ns |  0.151 ns |      - |      - |         - |
-| Base32_Crockford                     |   141.81 ns |  1.785 ns |  1.669 ns | 0.0048 |      - |      80 B |
-| Base36_LowerCase                     | 4,039.85 ns |  7.350 ns |  6.875 ns |      - |      - |      80 B |
-| Base45_Default                       |    89.65 ns |  0.513 ns |  0.479 ns | 0.0048 |      - |      80 B |
-| Base58_Bitcoin                       | 3,688.39 ns | 28.256 ns | 23.595 ns | 0.0038 |      - |      88 B |
-| Base58_Monero                        |   109.46 ns |  1.426 ns |  1.334 ns | 0.0052 |      - |      88 B |
-| Base62_Default                       | 4,563.37 ns | 39.847 ns | 37.273 ns |      - |      - |      88 B |
-| Base85_Z85                           |   253.36 ns |  1.720 ns |  1.525 ns | 0.0052 |      - |      88 B |
-| Base256Emoji_Default                 |   291.45 ns |  2.437 ns |  2.280 ns | 0.0062 |      - |     104 B |
+| DotNet_Base64                        |   103.55 ns |  1.500 ns |  1.403 ns | 0.0052 |      - |      88 B |
+| Base2_Default                        |   103.01 ns |  0.395 ns |  0.369 ns | 0.0024 |      - |      40 B |
+| Base16_UpperCase                     |    49.13 ns |  0.113 ns |  0.094 ns | 0.0038 |      - |      64 B |
+| Base16_UpperCase_TextReader          |   250.19 ns |  1.761 ns |  1.561 ns | 0.5007 | 0.0153 |    8376 B |
+| Multibase_Base16_UpperCase           |    50.54 ns |  0.197 ns |  0.164 ns | 0.0038 |      - |      64 B |
+| Multibase_TryDecode_Base16_UpperCase |    47.81 ns |  0.125 ns |  0.111 ns |      - |      - |         - |
+| Base32_Crockford                     |   127.08 ns |  1.226 ns |  1.087 ns | 0.0048 |      - |      80 B |
+| Base36_LowerCase                     | 4,050.63 ns | 18.155 ns | 16.094 ns |      - |      - |      80 B |
+| Base45_Default                       |    70.74 ns |  0.377 ns |  0.294 ns | 0.0048 |      - |      80 B |
+| Base58_Bitcoin                       | 4,465.86 ns | 22.477 ns | 21.025 ns |      - |      - |      88 B |
+| Base58_Monero                        |   107.15 ns |  0.421 ns |  0.329 ns | 0.0052 |      - |      88 B |
+| Base62_Default                       | 4,503.95 ns | 10.409 ns |  8.692 ns |      - |      - |      88 B |
+| Base85_Z85                           |   257.27 ns |  1.279 ns |  1.196 ns | 0.0052 |      - |      88 B |
+| Base256Emoji_Default                 |   287.07 ns |  1.805 ns |  1.600 ns | 0.0062 |      - |     104 B |
 
 Notes
 -----
