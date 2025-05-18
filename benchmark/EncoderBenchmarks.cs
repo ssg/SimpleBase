@@ -17,6 +17,9 @@ public class EncoderBenchmarks
     public string Base2_Default() => Base2.Default.Encode(buffer);
 
     [Benchmark]
+    public string Base8_Default() => Base8.Default.Encode(buffer);
+
+    [Benchmark]
     public string Base16_UpperCase() => Base16.UpperCase.Encode(buffer);
 
     [Benchmark]

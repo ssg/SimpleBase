@@ -10,4 +10,17 @@ SimpleBase.Base2.GetSafeByteCountForDecoding(System.ReadOnlySpan<char> text) -> 
 SimpleBase.Base2.GetSafeCharCountForEncoding(System.ReadOnlySpan<byte> buffer) -> int
 SimpleBase.Base2.TryDecode(System.ReadOnlySpan<char> input, System.Span<byte> output, out int bytesWritten) -> bool
 SimpleBase.Base2.TryEncode(System.ReadOnlySpan<byte> input, System.Span<char> output, out int numCharsWritten) -> bool
+SimpleBase.Base8
+SimpleBase.Base8.Base8() -> void
+SimpleBase.Base8.Decode(System.IO.TextReader! input, System.IO.Stream! output) -> void
+SimpleBase.Base8.Decode(System.ReadOnlySpan<char> text) -> byte[]!
+SimpleBase.Base8.DecodeAsync(System.IO.TextReader! input, System.IO.Stream! output) -> System.Threading.Tasks.Task!
+SimpleBase.Base8.Encode(System.IO.Stream! input, System.IO.TextWriter! output) -> void
+SimpleBase.Base8.Encode(System.ReadOnlySpan<byte> bytes) -> string!
+SimpleBase.Base8.EncodeAsync(System.IO.Stream! input, System.IO.TextWriter! output) -> System.Threading.Tasks.Task!
+SimpleBase.Base8.GetSafeByteCountForDecoding(System.ReadOnlySpan<char> text) -> int
+SimpleBase.Base8.GetSafeCharCountForEncoding(System.ReadOnlySpan<byte> buffer) -> int
+SimpleBase.Base8.TryDecode(System.ReadOnlySpan<char> input, System.Span<byte> output, out int bytesWritten) -> bool
+SimpleBase.Base8.TryEncode(System.ReadOnlySpan<byte> input, System.Span<char> output, out int numCharsWritten) -> bool
 static SimpleBase.Base2.Default.get -> SimpleBase.Base2!
+static SimpleBase.Base8.Default.get -> SimpleBase.Base8!

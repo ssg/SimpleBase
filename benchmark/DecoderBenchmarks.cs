@@ -10,22 +10,25 @@ namespace Benchmark;
 [MemoryDiagnoser]
 public class DecoderBenchmarks
 {
-    readonly string s = new('a', 80);
-    readonly string ms = 'F' + new string('a', 80);
+    readonly string lowercaseA = new('a', 80);
+    readonly string multibasePrefixed = 'F' + new string('a', 80);
     readonly string base45str = new('A', 81);
     readonly string emojiStr = string.Concat(Enumerable.Repeat("🚀", 80));
-    readonly string binaryEncoded = new('0', 80);
+    readonly string allZeroes = new('0', 80);
     readonly MemoryStream memoryStream = new();
     static readonly byte[] buffer = new byte[80];
 
     [Benchmark]
-    public byte[] DotNet_Base64() => Convert.FromBase64String(s);
+    public byte[] DotNet_Base64() => Convert.FromBase64String(lowercaseA);
 
     [Benchmark]
-    public byte[] Base2_Default() => Base2.Default.Decode(binaryEncoded);
+    public byte[] Base2_Default() => Base2.Default.Decode(allZeroes);
 
     [Benchmark]
-    public byte[] Base16_UpperCase() => Base16.UpperCase.Decode(s);
+    public byte[] Base8_Default() => Base2.Default.Decode(allZeroes);
+
+    [Benchmark]
+    public byte[] Base16_UpperCase() => Base16.UpperCase.Decode(lowercaseA);
 
     /// <summary>
     /// Created to be able to bench <c>StreamHelper</c>
@@ -39,18 +42,18 @@ public class DecoderBenchmarks
     [Benchmark]
     public void Base16_UpperCase_TextReader()
     {
-        StringReader reader = new(s); // No need to dispose, less overhead, StringReader does not leak anything
+        StringReader reader = new(lowercaseA); // No need to dispose, less overhead, StringReader does not leak anything
         Base16.UpperCase.Decode(reader, memoryStream);
         memoryStream.Position = 0; // Reset output stream, so it does not grow forever, we do not need to read it
     }
 
     [Benchmark]
-    public byte[] Multibase_Base16_UpperCase() => Multibase.Decode(ms);
+    public byte[] Multibase_Base16_UpperCase() => Multibase.Decode(multibasePrefixed);
 
     [Benchmark]
     public byte[] Multibase_TryDecode_Base16_UpperCase()
     {
-        bool result = Multibase.TryDecode(ms, buffer, out _);
+        bool result = Multibase.TryDecode(multibasePrefixed, buffer, out _);
         if (!result)
         {
             throw new InvalidOperationException("Failed to decode");
@@ -59,25 +62,25 @@ public class DecoderBenchmarks
     }
 
     [Benchmark]
-    public byte[] Base32_Crockford() => Base32.Crockford.Decode(s);
+    public byte[] Base32_Crockford() => Base32.Crockford.Decode(lowercaseA);
 
     [Benchmark]
-    public byte[] Base36_LowerCase() => Base36.LowerCase.Decode(s);
+    public byte[] Base36_LowerCase() => Base36.LowerCase.Decode(lowercaseA);
 
     [Benchmark]
     public byte[] Base45_Default() => Base45.Default.Decode(base45str);
 
     [Benchmark]
-    public byte[] Base58_Bitcoin() => Base58.Bitcoin.Decode(s);
+    public byte[] Base58_Bitcoin() => Base58.Bitcoin.Decode(lowercaseA);
 
     [Benchmark]
-    public byte[] Base58_Monero() => Base58.Monero.Decode(s);
+    public byte[] Base58_Monero() => Base58.Monero.Decode(lowercaseA);
 
     [Benchmark]
-    public byte[] Base62_Default() => Base62.Default.Decode(s);
+    public byte[] Base62_Default() => Base62.Default.Decode(lowercaseA);
 
     [Benchmark]
-    public byte[] Base85_Z85() => Base85.Z85.Decode(s);
+    public byte[] Base85_Z85() => Base85.Z85.Decode(lowercaseA);
 
     [Benchmark]
     public byte[] Base256Emoji_Default() => Base256Emoji.Default.Decode(emojiStr);
