@@ -32,11 +32,13 @@ public class Base8 : IBaseCoder, INonAllocatingBaseCoder, IBaseStreamCoder
     {
         int outputLen = getSafeByteCountForDecoding(text.Length);
         var output = outputLen < Bits.SafeStackMaxAllocSize ? stackalloc byte[outputLen] : new byte[outputLen];
-        if (!internalDecode(text, output, out int bytesWritten))
+        return internalDecode(text, output, out int bytesWritten) switch
         {
-            throw new ArgumentException("Invalid Base8 character encountered", nameof(text));
-        }
-        return output[..bytesWritten].ToArray();
+            DecodeResult.Success => output[..bytesWritten].ToArray(),
+            DecodeResult.InvalidCharacter => throw new ArgumentException("Invalid Base8 character encountered", nameof(text)),
+            DecodeResult.InvalidInputLength => throw new ArgumentException("Invalid encoded text length", nameof(text)),
+            _ => throw new InvalidOperationException("Unknown error during decoding -- this is a bug"),
+        };
     }
 
     /// <inheritdoc/>
@@ -83,51 +85,80 @@ public class Base8 : IBaseCoder, INonAllocatingBaseCoder, IBaseStreamCoder
             return true;
         }
 
-        return internalDecode(input, output, out bytesWritten);
+        return internalDecode(input, output, out bytesWritten) == DecodeResult.Success;
     }
 
-    static bool internalDecode(ReadOnlySpan<char> input, Span<byte> output, out int bytesWritten)
+    enum DecodeResult
+    {
+        Success,
+        InvalidCharacter,
+        InvalidInputLength,
+    }
+
+    static DecodeResult internalDecode(ReadOnlySpan<char> input, Span<byte> output, out int bytesWritten)
     {
         bytesWritten = 0;
-        if ((input.Length % encodedPadSize) is not 0 and not 6)
+
+        // we should be able to read at least three bytes
+        // six bytes or full eight bytes at the last block
+        if ((input.Length % encodedPadSize) is not 0 and not 3 and not 6)
         {
-            // invalid input length
-            return false;
+            return DecodeResult.InvalidInputLength;
         }
 
-        for (int i = 0; i < input.Length; i += encodedPadSize)
+        for (int i = 0; i < input.Length; )
         {
-            byte b0 = (byte)(input[i] - zeroChar);
-            byte b1 = (byte)(input[i + 1] - zeroChar);
-            byte b2 = (byte)(input[i + 2] - zeroChar);
-            byte b3 = (byte)(input[i + 3] - zeroChar);
-            byte b4 = (byte)(input[i + 4] - zeroChar);
-            byte b5 = (byte)(input[i + 5] - zeroChar);
-            if (b0 > 7 || b1 > 7 || b2 > 7 || b3 > 7 || b4 > 7 || b5 > 7)
+            byte b0 = (byte)(input[i++] - zeroChar);
+            byte b1 = (byte)(input[i++] - zeroChar);
+            byte b2 = (byte)(input[i++] - zeroChar);
+            if (b0 > 7 || b1 > 7 || b2 > 7)
             {
-                // invalid character
-                return false;
+                return DecodeResult.InvalidCharacter;
             }
             output[bytesWritten++] = (byte)((b0 << 5) | (b1 << 2) | (b2 >> 1));
+
+            if (i >= input.Length)
+            {
+                byte b = (byte)((b2 & 1) << 7);
+                if (b > 0)
+                {
+                    output[bytesWritten++] = b;
+                }
+                return DecodeResult.Success;
+            }
+
+            byte b3 = (byte)(input[i++] - zeroChar);
+            byte b4 = (byte)(input[i++] - zeroChar);
+            byte b5 = (byte)(input[i++] - zeroChar);
+            if (b3 > 7 || b4 > 7 || b5 > 7)
+            {
+                return DecodeResult.InvalidCharacter;
+            }
+
             output[bytesWritten++] = (byte)(((b2 & 1) << 7) | (b3 << 4) | (b4 << 1) | (b5 >> 2));
-            if (i + 6 >= input.Length)
+
+            if (i >= input.Length)
             {
                 // per spec:
                 // "If there are not enough bits to complete the last 8-bit word then drop that last incomplete 8-bit word."
                 // https://github.com/multiformats/multibase/blob/master/rfcs/Base8.md
+                byte b = (byte)((b5 & 3) << 6);
+                if (b > 0)
+                {
+                    output[bytesWritten++] = b;
+                }
                 break;
             }
-            byte b6 = (byte)(input[i + 6] - zeroChar);
-            byte b7 = (byte)(input[i + 7] - zeroChar);
+            byte b6 = (byte)(input[i++] - zeroChar);
+            byte b7 = (byte)(input[i++] - zeroChar);
             if (b6 > 7 || b7 > 7)
             {
-                // invalid character
-                return false;
+                return DecodeResult.InvalidCharacter;
             }
             output[bytesWritten++] = (byte)(((b5 & 3) << 6) | (b6 << 3) | (b7 >> 0));
         }
 
-        return true;
+        return DecodeResult.Success;
     }
 
     /// <inheritdoc/>
@@ -146,17 +177,30 @@ public class Base8 : IBaseCoder, INonAllocatingBaseCoder, IBaseStreamCoder
     static int internalEncode(ReadOnlySpan<byte> input, Span<char> output)
     {
         int o = 0;
-        for (int i = 0; i < input.Length; i += decodedPadSize)
+        bool end;
+        for (int i = 0; i < input.Length; )
         {
-            byte b0 = input[i];
-            byte b1 = (i < input.Length - 1) ? input[i + 1] : (byte)0;
-            byte b2 = (i < input.Length - 2) ? input[i + 2] : (byte)0;
+            byte b0 = input[i++];
             output[o++] = (char)((b0 >> 5) + zeroChar);
             output[o++] = (char)(((b0 >> 2) & 0b111) + zeroChar);
+            end = i >= input.Length;
+            byte b1 = !end ? input[i++] : (byte)0;
             output[o++] = (char)(((b0 << 1) & 0b111) + ((b1 >> 7) & 1) + zeroChar);
+            if (end)
+            {
+                break;
+            }
+
             output[o++] = (char)(((b1 >> 4) & 0b111) + zeroChar);
             output[o++] = (char)(((b1 >> 1) & 0b111) + zeroChar);
+            end = i >= input.Length;
+            byte b2 = !end ? input[i++] : (byte)0;
             output[o++] = (char)(((b1 << 2) & 0b111) + ((b2 >> 6) & 3) + zeroChar);
+            if (end)
+            {
+                break;
+            }
+
             output[o++] = (char)(((b2 >> 3) & 0b111) + zeroChar);
             output[o++] = (char)(((b2 << 0) & 0b111) + zeroChar);
         }

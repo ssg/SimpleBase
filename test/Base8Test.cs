@@ -13,6 +13,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 */
+using System.Text;
 using NUnit.Framework;
 using SimpleBase;
 
@@ -22,16 +23,18 @@ namespace SimpleBaseTest;
 class Base8Test
 {
     static readonly object[][] nonCanonicalTestData =
-        [
-        [new byte[] { 0x00 }, "00000000"],
-        [new byte[] { 0x00, 0x00 }, "00000000"],
-        ];
+    [
+        [new byte[] { 0xFF }, "776"],
+        [new byte[] { 0xFF, 0xFF }, "777774"],
+    ];
 
     static readonly object[][] testData =
     [
         [new byte[] { }, ""],
+        [new byte[] { 0xFF, 0xFF, 0xFF }, "77777777"],
         [new byte[] { 0x00, 0x00, 0x00 }, "00000000"],
         [new byte[] { 0xFF, 0xFF, 0xFF }, "77777777"],
+        [Encoding.UTF8.GetBytes("yes mani !"), "362625631006654133464440102"],
     ];
 
     [Test]
