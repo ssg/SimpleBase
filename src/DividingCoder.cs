@@ -248,9 +248,6 @@ public abstract class DividingCoder<TAlphabet>(TAlphabet alphabet)
 
             for (int o = output.Length - 1; o >= 0; o--)
             {
-                // we need to have this conversion to allow
-                // JIT to eliminate bounds checking in element
-                // accesses
                 carry += divisor * output[o];
                 output[o] = (byte)carry;
                 if (min > o && carry != 0)
