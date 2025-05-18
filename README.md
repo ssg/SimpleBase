@@ -13,7 +13,7 @@ math worked.
 Features
 --------
  - [Multibase](https://github.com/multiformats/multibase) support. All formats
-   covered by SimpleBase including a few Base64 variants are supported. 
+   covered by SimpleBase including a few Base64 variants are supported. Base2, Base8, and Base10 are also supported.
  - **Base32**: RFC 4648, BECH32, Crockford, z-base-32, Geohash, FileCoin and Extended Hex 
    (BASE32-HEX) flavors with Crockford character substitution, or any other 
    custom flavors.

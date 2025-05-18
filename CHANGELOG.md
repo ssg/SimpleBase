@@ -1,3 +1,13 @@
+# 5.3.0
+
+## New features
+- AOT and trimming compatibility
+- Base2, Base8, and Base10 support
+
+## Improvements
+- `Base58` now uses `DividingCoder` under the hood for less code duplication
+- Several implementations now take bytesWritten into account when returning buffers, reducing the possibility of returning a buffer larger than necessary.
+
 # 5.2.0
 
 ## New features

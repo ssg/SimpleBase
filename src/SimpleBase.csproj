@@ -12,7 +12,7 @@
 		<AssemblyOriginatorKeyFile>..\SimpleBase.snk</AssemblyOriginatorKeyFile>
 		<DelaySign>false</DelaySign>
 
-		<PackageVersion>5.2.0</PackageVersion>
+		<PackageVersion>5.3.0</PackageVersion>
 		<DocumentationFile>SimpleBase.xml</DocumentationFile>
 		<PackageProjectUrl>https://github.com/ssg/SimpleBase</PackageProjectUrl>
 		<PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
@@ -25,7 +25,12 @@
 		<PackageReleaseNotes>
 			<![CDATA[
 ## New features
-- Multibase support for Base36 (upper and lower)
+- AOT and trimming compatibility
+- Base2, Base8, and Base10 support
+
+## Improvements
+- `Base58` now uses `DividingCoder` under the hood for less code duplication
+- Several implementations now take bytesWritten into account when returning buffers, reducing the possibility of returning a buffer larger than necessary.
 ]]>
 		</PackageReleaseNotes>
 	</PropertyGroup>
