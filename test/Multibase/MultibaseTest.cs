@@ -68,9 +68,9 @@ class MultibaseTest
 
     static readonly object[][] officialEncodingData =
     [
-        //[base2, "001111001011001010111001100100000011011010110000101101110011010010010000000100001"],
-        //[base8, "7362625631006654133464440102"],
-        //[base10, "9573277761329450583662625"],
+        [MultibaseEncoding.Base2, "001111001011001010111001100100000011011010110000101101110011010010010000000100001"],
+        [MultibaseEncoding.Base8, "7362625631006654133464440102"],
+        [MultibaseEncoding.Base10, "9573277761329450583662625"],
         [MultibaseEncoding.Base16Lower, "f796573206d616e692021"],
         [MultibaseEncoding.Base16Upper, "F796573206D616E692021"],
         [MultibaseEncoding.Base32Lower, "bpfsxgidnmfxgsibb"],
@@ -93,9 +93,9 @@ class MultibaseTest
 
     static readonly object[][] officialZeroPrefixedEncodingData =
     [
-        //[MultibaseEncoding.Base2, "00000000001111001011001010111001100100000011011010110000101101110011010010010000000100001",
-        //[MultibaseEncoding.Base8, "7000745453462015530267151100204",
-        //[MultibaseEncoding.Base10, "90573277761329450583662625",
+        [MultibaseEncoding.Base2, "00000000001111001011001010111001100100000011011010110000101101110011010010010000000100001"],
+        [MultibaseEncoding.Base8, "7000745453462015530267151100204"],
+        [MultibaseEncoding.Base10, "90573277761329450583662625"],
         [MultibaseEncoding.Base16Lower, "f00796573206d616e692021"],
         [MultibaseEncoding.Base16Upper, "F00796573206D616E692021"],
         [MultibaseEncoding.Base32Lower, "bab4wk4zanvqw42jaee"],

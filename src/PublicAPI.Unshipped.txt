@@ -26,6 +26,9 @@ SimpleBase.Base8.GetSafeByteCountForDecoding(System.ReadOnlySpan<char> text) -> 
 SimpleBase.Base8.GetSafeCharCountForEncoding(System.ReadOnlySpan<byte> buffer) -> int
 SimpleBase.Base8.TryDecode(System.ReadOnlySpan<char> input, System.Span<byte> output, out int bytesWritten) -> bool
 SimpleBase.Base8.TryEncode(System.ReadOnlySpan<byte> input, System.Span<char> output, out int numCharsWritten) -> bool
+SimpleBase.MultibaseEncoding.Base10 = 57 -> SimpleBase.MultibaseEncoding
+SimpleBase.MultibaseEncoding.Base2 = 48 -> SimpleBase.MultibaseEncoding
+SimpleBase.MultibaseEncoding.Base8 = 55 -> SimpleBase.MultibaseEncoding
 static SimpleBase.Base10.Default.get -> SimpleBase.Base10!
 static SimpleBase.Base10Alphabet.Default.get -> SimpleBase.Base10Alphabet!
 static SimpleBase.Base2.Default.get -> SimpleBase.Base2!

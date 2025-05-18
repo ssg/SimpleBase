@@ -23,12 +23,15 @@ public enum MultibaseEncoding
     Base64UrlPad    = 'U',
 
     // marked as "draft"
+    Base8           = '7',
+    Base10          = '9',
     Base32Z         = 'h',
     Base36Lower     = 'k',
     Base36Upper     = 'K',
     Base45          = 'R',
 
     // marked as "experimental"
+    Base2           = '0',
     Base58Flickr    = 'Z',
     Base32HexLower  = 'v',
     Base32HexUpper  = 'V',

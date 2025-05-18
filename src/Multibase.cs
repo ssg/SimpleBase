@@ -33,6 +33,9 @@ public static class Multibase
         var rest = text[1..];
         return encoding switch
         {
+            MultibaseEncoding.Base2 => Base2.Default.Decode(rest),
+            MultibaseEncoding.Base8 => Base8.Default.Decode(rest),
+            MultibaseEncoding.Base10 => Base10.Default.Decode(rest),
             MultibaseEncoding.Base16Lower => Base16.LowerCase.Decode(rest),
             MultibaseEncoding.Base16Upper => Base16.UpperCase.Decode(rest),
             MultibaseEncoding.Base32Lower => Base32.FileCoin.Decode(rest),
@@ -74,6 +77,9 @@ public static class Multibase
         var rest = text[1..];
         return encoding switch
         {
+            MultibaseEncoding.Base2 => Base2.Default.TryDecode(rest, bytes, out bytesWritten),
+            MultibaseEncoding.Base8 => Base8.Default.TryDecode(rest, bytes, out bytesWritten),
+            MultibaseEncoding.Base10 => Base10.Default.TryDecode(rest, bytes, out bytesWritten),
             MultibaseEncoding.Base16Lower => Base16.LowerCase.TryDecode(rest, bytes, out bytesWritten),
             MultibaseEncoding.Base16Upper => Base16.UpperCase.TryDecode(rest, bytes, out bytesWritten),
             MultibaseEncoding.Base32Lower => Base32.FileCoin.TryDecode(rest, bytes, out bytesWritten),
@@ -110,6 +116,9 @@ public static class Multibase
             MultibaseEncoding.Base256Emoji => base256EmojiPrefix + Base256Emoji.Default.Encode(bytes),
             _ => (char)encoding + encoding switch
             {
+                MultibaseEncoding.Base2 => Base2.Default.Encode(bytes),
+                MultibaseEncoding.Base8 => Base8.Default.Encode(bytes),
+                MultibaseEncoding.Base10 => Base10.Default.Encode(bytes),
                 MultibaseEncoding.Base16Lower => Base16.LowerCase.Encode(bytes),
                 MultibaseEncoding.Base16Upper => Base16.UpperCase.Encode(bytes),
                 MultibaseEncoding.Base32Lower => Base32.FileCoin.Encode(bytes),
