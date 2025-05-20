@@ -10,7 +10,11 @@ namespace SimpleBase;
 /// <summary>
 /// Base32 alphabet flavors.
 /// </summary>
-public class Base32Alphabet : CodingAlphabet
+/// <remarks>
+/// Initializes a new instance of the <see cref="Base32Alphabet"/> class.
+/// </remarks>
+/// <param name="alphabet">Characters.</param>
+public class Base32Alphabet(string alphabet) : CodingAlphabet(32, alphabet, caseInsensitive: true)
 {
     static readonly Lazy<Base32Alphabet> rfc4648Alphabet = new
         (() => new Base32Alphabet("ABCDEFGHIJKLMNOPQRSTUVWXYZ234567"));
@@ -54,16 +58,6 @@ public class Base32Alphabet : CodingAlphabet
                 new('S', '5'),
                 new('U', 'V'),
             ]));
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="Base32Alphabet"/> class.
-    /// </summary>
-    /// <param name="alphabet">Characters.</param>
-    public Base32Alphabet(string alphabet)
-        : base(32, alphabet)
-    {
-        mapLowerCaseCounterparts(alphabet);
-    }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Base32Alphabet"/> class.
@@ -132,15 +126,4 @@ public class Base32Alphabet : CodingAlphabet
     /// Gets the position of the padding characters in the encoder output.
     /// </summary>
     public PaddingPosition PaddingPosition { get; } = PaddingPosition.End;
-
-    void mapLowerCaseCounterparts(string alphabet)
-    {
-        foreach (char c in alphabet)
-        {
-            if (char.IsUpper(c))
-            {
-                Map(char.ToLowerInvariant(c), ReverseLookupTable[c] - 1);
-            }
-        }
-    }
 }

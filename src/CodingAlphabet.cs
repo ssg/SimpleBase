@@ -14,11 +14,14 @@ namespace SimpleBase;
 /// alphabets for different encodings. It's suitable if you want to
 /// implement your own encoding based on the existing base classes.
 /// </summary>
+/// <remarks>
+/// This only supports alphabets with lower ASCII character set (0-127).
+/// </remarks>
 public abstract class CodingAlphabet : ICodingAlphabet
 {
     /// <summary>
-    /// Specifies the highest possible char value in an encoding alphabet
-    /// Any char above with would raise an exception.
+    /// Specifies the highest possible char value in an encoding alphabet.
+    /// Any char above this would raise an exception.
     /// </summary>
     const int maxLength = 127;
 
@@ -35,7 +38,8 @@ public abstract class CodingAlphabet : ICodingAlphabet
     /// </summary>
     /// <param name="length">Length of the alphabe.</param>
     /// <param name="alphabet">Alphabet character.</param>
-    public CodingAlphabet(int length, string alphabet)
+    /// <param name="caseInsensitive">Use case-insensitive matching when decoding.</param>
+    public CodingAlphabet(int length, string alphabet, bool caseInsensitive = false)
     {
         if (alphabet.Length != length)
         {
@@ -47,7 +51,17 @@ public abstract class CodingAlphabet : ICodingAlphabet
         Value = alphabet;
         for (short i = 0; i < length; i++)
         {
-            Map(alphabet[i], i);
+            char c = alphabet[i];
+            if (caseInsensitive && char.IsLetter(c))
+            {
+                char c2 = char.IsUpper(c) ? char.ToLower(c) : char.ToUpper(c);
+                if (alphabet.Contains(c2))
+                {
+                    throw new ArgumentException($"Case-sensitivity can't be selected with an alphabet that contains both cases of the same letter", nameof(caseInsensitive));
+                }
+                Map(c2, i);
+            }
+            Map(c, i);
         }
     }
 
@@ -92,6 +106,15 @@ public abstract class CodingAlphabet : ICodingAlphabet
     public override int GetHashCode()
     {
         return Value.GetHashCode(StringComparison.Ordinal);
+    }
+
+    public void MakeCaseInsensitive()
+    {
+        for (int i = 0; i < Value.Length; i++)
+        {
+            Map(char.ToUpper(Value[i]), i);
+            Map(char.ToLower(Value[i]), i);
+        }
     }
 
     /// <summary>

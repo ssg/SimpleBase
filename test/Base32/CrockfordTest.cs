@@ -189,6 +189,18 @@ class CrockfordTest
 
     [Test]
     [TestCaseSource(nameof(testData))]
+    public void Decode_MixedCaseInput_ReturnsExpectedValues(string expectedOutput, string input, bool _)
+    {
+        var bytes = Base32.Crockford.Decode(input.ToLowerInvariant());
+        string result = Encoding.ASCII.GetString(bytes);
+        Assert.That(result, Is.EqualTo(expectedOutput));
+        bytes = Base32.Crockford.Decode(input.ToLowerInvariant());
+        result = Encoding.ASCII.GetString(bytes);
+        Assert.That(result, Is.EqualTo(expectedOutput));
+    }
+
+    [Test]
+    [TestCaseSource(nameof(testData))]
     public void TryDecode_ReturnsExpectedValues(string expectedOutput, string input, bool _)
     {
         var output = new byte[Base32.Crockford.GetSafeByteCountForDecoding(input)];
