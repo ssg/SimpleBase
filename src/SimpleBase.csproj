@@ -3,7 +3,7 @@
 		<TargetFramework>net8.0</TargetFramework>
 		<RootNamespace>SimpleBase</RootNamespace>
 		<AssemblyName>SimpleBase</AssemblyName>
-		<Copyright>Copyright 2014-2022 Sedat Kapanoglu</Copyright>
+		<Copyright>Copyright 2014-2025 Sedat Kapanoglu</Copyright>
 		<Authors>Sedat Kapanoglu</Authors>
 		<Description>Base16, Base32, Base45, Base58, Base62, Base85 encoding/decoding library</Description>
 		<AllowUnsafeBlocks>false</AllowUnsafeBlocks>
