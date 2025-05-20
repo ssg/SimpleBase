@@ -108,15 +108,6 @@ public abstract class CodingAlphabet : ICodingAlphabet
         return Value.GetHashCode(StringComparison.Ordinal);
     }
 
-    public void MakeCaseInsensitive()
-    {
-        for (int i = 0; i < Value.Length; i++)
-        {
-            Map(char.ToUpper(Value[i]), i);
-            Map(char.ToLower(Value[i]), i);
-        }
-    }
-
     /// <summary>
     /// Map a character to a value.
     /// </summary>
