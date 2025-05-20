@@ -11,7 +11,7 @@ namespace SimpleBase;
 /// Base36 encoding/decoding alphabet.
 /// </summary>
 /// <param name="alphabet">Alphabet to use.</param>
-public class Base36Alphabet(string alphabet) : CodingAlphabet(36, alphabet)
+public class Base36Alphabet(string alphabet) : CodingAlphabet(36, alphabet, caseInsensitive: true)
 {
     static readonly Lazy<Base36Alphabet> upperAlphabet = new(() => new Base36Alphabet("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"));
 
