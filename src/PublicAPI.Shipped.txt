@@ -78,7 +78,6 @@ SimpleBase.Base85IPv6.Base85IPv6(SimpleBase.Base85Alphabet! alphabet) -> void
 SimpleBase.Base85IPv6.DecodeIPv6(string! text) -> System.Net.IPAddress!
 SimpleBase.Base85IPv6.EncodeIPv6(System.Net.IPAddress! ip) -> string!
 SimpleBase.CodingAlphabet
-SimpleBase.CodingAlphabet.CodingAlphabet(int length, string! alphabet) -> void
 SimpleBase.CodingAlphabet.Length.get -> int
 SimpleBase.CodingAlphabet.Map(char c, int value) -> void
 SimpleBase.CodingAlphabet.Value.get -> string!
