@@ -12,12 +12,12 @@
 		<AssemblyOriginatorKeyFile>..\SimpleBase.snk</AssemblyOriginatorKeyFile>
 		<DelaySign>false</DelaySign>
 
-		<PackageVersion>5.3.0</PackageVersion>
+		<PackageVersion>5.4.0</PackageVersion>
 		<DocumentationFile>SimpleBase.xml</DocumentationFile>
 		<PackageProjectUrl>https://github.com/ssg/SimpleBase</PackageProjectUrl>
 		<PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
 		<PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-		<PackageTags>base16 base32 base36 base45 base58 base62 base85 ascii85 z85 hexadecimal bitcoin ripple flickr crockford extended hex rfc4648 z-base-32 geohash bech32 rfc1924</PackageTags>
+		<PackageTags>base16 base32 base36 base45 base58 base62 base85 ascii85 z85 base2 base8 base10 hexadecimal bitcoin ripple flickr crockford extended hex rfc4648 z-base-32 geohash bech32 rfc1924</PackageTags>
 		<LangVersion>latest</LangVersion>
 		<Nullable>enable</Nullable>
 		<PlatformTarget>AnyCPU</PlatformTarget>
@@ -25,12 +25,14 @@
 		<PackageReleaseNotes>
 			<![CDATA[
 ## New features
-- AOT and trimming compatibility
-- Base2, Base8, and Base10 support
+- CodingAlphabet now supports case-insensitivity
 
 ## Improvements
-- `Base58` now uses `DividingCoder` under the hood for less code duplication
-- Several implementations now take bytesWritten into account when returning buffers, reducing the possibility of returning a buffer larger than necessary.
+- Multibase decoding now supports case-insensitive decoding
+- Base36 decoding is now case-insensitive
+
+## Fixes
+- Base32 case-insensitive decoding now works correctly
 ]]>
 		</PackageReleaseNotes>
 	</PropertyGroup>

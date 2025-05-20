@@ -1,3 +1,15 @@
+# 5.4.0
+
+## New features
+- CodingAlphabet now supports case-insensitivity
+
+## Improvements
+- Multibase decoding now supports case-insensitive decoding
+- Base36 decoding is now case-insensitive
+
+## Fixes
+- Base32 case-insensitive decoding now works correctly
+
 # 5.3.0
 
 ## New features
