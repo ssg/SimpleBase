@@ -1,3 +1,8 @@
+# 5.4.1
+
+## Fixes
+- Remove unused function from CodingAlphabet
+
 # 5.4.0
 
 ## New features
