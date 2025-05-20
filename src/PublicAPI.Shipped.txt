@@ -266,3 +266,4 @@ static SimpleBase.Base10.Default.get -> SimpleBase.Base10!
 static SimpleBase.Base10Alphabet.Default.get -> SimpleBase.Base10Alphabet!
 static SimpleBase.Base2.Default.get -> SimpleBase.Base2!
 static SimpleBase.Base8.Default.get -> SimpleBase.Base8!
+SimpleBase.CodingAlphabet.CodingAlphabet(int length, string! alphabet, bool caseInsensitive = false) -> void
