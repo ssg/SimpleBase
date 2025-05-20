@@ -14,6 +14,7 @@
    limitations under the License.
 */
 using System;
+using System.Buffers.Text;
 using System.Text;
 using NUnit.Framework;
 using SimpleBase;
@@ -118,6 +119,24 @@ class MultibaseTest
         [MultibaseEncoding.Base256Emoji, "🚀🚀🏃✋🌈😅🌷🤤😻🌟😅👏"],
     ];
 
+    const string caseInsensitiveInput = "hello world";
+
+    static readonly object[][] caseInsensitiveDecodingData =
+    [
+        [MultibaseEncoding.Base16Lower, "f68656c6c6f20776F726C64"],
+        [MultibaseEncoding.Base16Upper, "F68656c6c6f20776F726C64"],
+        [MultibaseEncoding.Base32Lower, "bnbswy3dpeB3W64TMMQ"],
+        [MultibaseEncoding.Base32Upper, "Bnbswy3dpeB3W64TMMQ"],
+        //MultibaseEncoding.Base32Hex, "vd1imor3f41RMUSJCCG"],
+        [MultibaseEncoding.Base32HexUpper, "Vd1imor3f41RMUSJCCG"],
+        //MultibaseEncoding.Base32Pad, "cnbswy3dpeB3W64TMMQ======"],
+        //MultibaseEncoding.Base32PadUpper, "Cnbswy3dpeB3W64TMMQ======"],
+        //MultibaseEncoding.Base32HexPad, "td1imor3f41RMUSJCCG======"],
+        //MultibaseEncoding.Base32HexPadUpper, "Td1imor3f41RMUSJCCG======"],
+        [MultibaseEncoding.Base36Lower, "kfUvrsIvVnfRbjWaJo"],
+        [MultibaseEncoding.Base36Upper, "KfUVrSIVVnFRbJWAJo"]
+    ];
+
     [Test]
     [TestCaseSource(nameof(encodedData))]
     public void Encode_EncodesDataCorrectly(MultibaseEncoding encoding, string expected)
@@ -169,5 +188,13 @@ class MultibaseTest
     public void TryDecode_EmptyString_ReturnsFalse()
     {
         Assert.That(Multibase.TryDecode(string.Empty, new byte[1], out _), Is.False);
+    }
+
+    [Test]
+    [TestCaseSource(nameof(caseInsensitiveDecodingData))]
+    public void Decode_MixedCaseInput_DecodesCorrectly(MultibaseEncoding _, string encoded)
+    {
+        byte[] decoded = Multibase.Decode(encoded);
+        Assert.That(decoded, Is.EqualTo(Encoding.UTF8.GetBytes(caseInsensitiveInput)));
     }
 }
