@@ -178,7 +178,7 @@ public sealed class MoneroBase58(Base58Alphabet alphabet) : IBaseCoder, INonAllo
             throw new ArgumentException("Invalid block size", nameof(output));
         }
 
-        ulong pad = Bits.BigEndianBytesToUInt64(input);
+        ulong pad = Bits.PartialBigEndianBytesToUInt64(input);
         int lastPos = encodedBlockSizes[input.Length];
         int i = lastPos;
         while (i > 0)

@@ -22,7 +22,7 @@ namespace SimpleBase
         /// </summary>
         /// <param name="bytes"></param>
         /// <returns></returns>
-        internal static ulong BigEndianBytesToUInt64(ReadOnlySpan<byte> bytes)
+        internal static ulong PartialBigEndianBytesToUInt64(ReadOnlySpan<byte> bytes)
         {
             if (bytes.Length > sizeof(ulong))
             {
