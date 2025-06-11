@@ -1,4 +1,9 @@
-﻿using System;
+﻿// <copyright file="Bits.cs" company="Sedat Kapanoglu">
+// Copyright (c) 2014-2025 Sedat Kapanoglu
+// Licensed under Apache-2.0 License (see LICENSE.txt file for details)
+// </copyright>
+
+using System;
 
 namespace SimpleBase
 {
@@ -35,26 +40,6 @@ namespace SimpleBase
                 result = (result << 8) | bytes[i];
             }
             return result;
-        }
-
-        /// <summary>
-        /// Converts a UInt64 to a byte array in big-endian order.
-        /// </summary>
-        /// <param name="value">Value to convert.</param>
-        /// <param name="output">Output buffer.</param>
-        /// <exception cref="ArgumentException">If the buffer is too small.</exception>
-        internal static void UInt64ToBigEndianBytes(ulong value, Span<byte> output)
-        {
-            if (output.Length < sizeof(ulong))
-            {
-                throw new ArgumentException("Output is too small", nameof(output));
-            }
-            int byteCount = sizeof(ulong);
-            for (int i = byteCount - 1; i >= 0; i--)
-            {
-                output[i] = (byte)(value & 0xFF);
-                value >>= 8;
-            }
         }
     }
 }

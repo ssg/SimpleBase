@@ -4,6 +4,7 @@
 // </copyright>
 
 using System;
+using System.Buffers.Binary;
 
 namespace SimpleBase;
 
@@ -212,7 +213,7 @@ public sealed class MoneroBase58(Base58Alphabet alphabet) : IBaseCoder, INonAllo
             }
             pad += (uint)value;
         }
-        Bits.UInt64ToBigEndianBytes(pad, output);
+        BinaryPrimitives.WriteUInt64BigEndian(output, pad);
         return (DecodeResult.Success, null);
     }
 
