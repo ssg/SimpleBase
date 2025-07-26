@@ -36,7 +36,7 @@ public abstract class CodingAlphabet : ICodingAlphabet
     /// <summary>
     /// Initializes a new instance of the <see cref="CodingAlphabet"/> class.
     /// </summary>
-    /// <param name="length">Length of the alphabe.</param>
+    /// <param name="length">Length of the alphabet.</param>
     /// <param name="alphabet">Alphabet character.</param>
     /// <param name="caseInsensitive">Use case-insensitive matching when decoding.</param>
     public CodingAlphabet(int length, string alphabet, bool caseInsensitive = false)
@@ -86,7 +86,7 @@ public abstract class CodingAlphabet : ICodingAlphabet
     /// will end after the method call and can incorrectly assume
     /// reachable code.
     /// </remarks>
-    /// <param name="c">Characters.</param>
+    /// <param name="c">The character.</param>
     /// <returns>Exception to be thrown.</returns>
     public static Exception InvalidCharacter(char c)
     {
@@ -111,7 +111,7 @@ public abstract class CodingAlphabet : ICodingAlphabet
     /// <summary>
     /// Map a character to a value.
     /// </summary>
-    /// <param name="c">Characters.</param>
+    /// <param name="c">The character.</param>
     /// <param name="value">Corresponding value.</param>
     protected void Map(char c, int value)
     {

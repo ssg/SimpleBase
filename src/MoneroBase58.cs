@@ -5,6 +5,7 @@
 
 using System;
 using System.Buffers.Binary;
+using System.Diagnostics;
 
 namespace SimpleBase;
 
@@ -14,7 +15,7 @@ namespace SimpleBase;
 /// This makes Monero a bit less algorihmically complex. If the block size is smaller than 11 bytes, the
 /// rest is padded with encoded zeroes ("1" on Monero Base58 alphabet).
 /// </summary>
-/// <param name="alphabet">An optional custom alphabet to use. By default, monero uses Bitcoin alphabet.</param>
+/// <param name="alphabet">An optional custom alphabet to use. By default, Monero uses Bitcoin alphabet.</param>
 public sealed class MoneroBase58(Base58Alphabet alphabet) : IBaseCoder, INonAllocatingBaseCoder
 {
     static readonly int[] encodedBlockSizes = [0, 2, 3, 5, 6, 7, 9, 10, 11];
@@ -169,15 +170,8 @@ public sealed class MoneroBase58(Base58Alphabet alphabet) : IBaseCoder, INonAllo
 
     static void encodeBlock(ReadOnlySpan<byte> input, Span<char> output, ReadOnlySpan<char> alphabet, char zeroChar)
     {
-        if (input.Length > blockSize)
-        {
-            throw new ArgumentException("Invalid block size", nameof(input));
-        }
-
-        if (output.Length != encodedBlockSize)
-        {
-            throw new ArgumentException("Invalid block size", nameof(output));
-        }
+        Debug.Assert(input.Length <= blockSize, "Input length must be less than or equal to block size");
+        Debug.Assert(output.Length == encodedBlockSize, "Output length must be equal to encoded block size");
 
         ulong pad = Bits.PartialBigEndianBytesToUInt64(input);
         int lastPos = encodedBlockSizes[input.Length];

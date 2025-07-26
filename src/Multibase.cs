@@ -63,8 +63,8 @@ public static class Multibase
     /// </summary>
     /// <param name="text">Input text.</param>
     /// <param name="bytes">Output span.</param>
-    /// <param name="bytesWritten">Number of bytes written to the output span.</param>
-    /// <returns>True if successful, false otherwise.</returns>
+    /// <param name="bytesWritten">Number of bytes written to <paramref name="bytes"/>.</param>
+    /// <returns><see langword="true"/> if successful, <see langword="false"/> otherwise.</returns>
     public static bool TryDecode(ReadOnlySpan<char> text, Span<byte> bytes, out int bytesWritten)
     {
         bytesWritten = 0;
@@ -105,10 +105,10 @@ public static class Multibase
     /// <summary>
     /// Encodes a byte array into a multibase encoded string with given encoding.
     /// </summary>
-    /// <param name="bytes"></param>
-    /// <param name="encoding"></param>
-    /// <returns></returns>
-    /// <exception cref="NotImplementedException"></exception>
+    /// <param name="bytes">Buffer to encode.</param>
+    /// <param name="encoding">Encoding type to use.</param>
+    /// <returns>Encoded text.</returns>
+    /// <exception cref="ArgumentException">Encoding type is unsupported.</exception>
     public static string Encode(ReadOnlySpan<byte> bytes, MultibaseEncoding encoding)
     {
         return encoding switch

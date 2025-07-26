@@ -32,7 +32,10 @@ public class Base16Alphabet : CodingAlphabet
     /// Initializes a new instance of the <see cref="Base16Alphabet"/> class.
     /// </summary>
     /// <param name="alphabet">Encoding alphabet.</param>
-    /// <param name="caseSensitive">If the decoding should be performed case sensitive.</param>
+    /// <param name="caseSensitive">
+    ///     <see langword="true"/> if the decoding should be performed case-sensitive,
+    ///     <see langword="false"/> otherwise.
+    /// </param>
     public Base16Alphabet(string alphabet, bool caseSensitive)
         : base(16, alphabet)
     {

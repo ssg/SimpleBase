@@ -229,7 +229,10 @@ public sealed class Base32 : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCod
     /// Encode a memory span into a Base32 string.
     /// </summary>
     /// <param name="bytes">Buffer to be encoded.</param>
-    /// <param name="padding">Append padding characters in the output.</param>
+    /// <param name="padding">
+    ///     <see langword="true"/> if padding characters should be appended to the return value,
+    ///     <see langword="false"/> otherwise.
+    /// </param>
     /// <returns>Encoded string.</returns>
     public string Encode(ReadOnlySpan<byte> bytes, bool padding)
     {
@@ -300,7 +303,10 @@ public sealed class Base32 : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCod
     /// </summary>
     /// <param name="input">Input bytes.</param>
     /// <param name="output">The writer the output is written to.</param>
-    /// <param name="padding">Whether to use padding at the end of the output.</param>
+    /// <param name="padding">
+    ///     <see langword="true"/> if padding characters should be appended to <paramref name="output"/>,
+    ///     <see langword="false"/> otherwise.
+    /// </param>
     public void Encode(Stream input, TextWriter output, bool padding)
     {
         StreamHelper.Encode(input, output, (buffer, lastBlock) =>
@@ -326,7 +332,10 @@ public sealed class Base32 : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCod
     /// </summary>
     /// <param name="input">Input bytes.</param>
     /// <param name="output">The writer the output is written to.</param>
-    /// <param name="padding">Whether to use padding at the end of the output.</param>
+    /// <param name="padding">
+    ///     <see langword="true"/> if padding characters should be appended to <paramref name="output"/>,
+    ///     <see langword="false"/> otherwise.
+    /// </param>
     /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
     public async Task EncodeAsync(Stream input, TextWriter output, bool padding)
     {
@@ -370,9 +379,12 @@ public sealed class Base32 : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCod
     /// </summary>
     /// <param name="bytes">Input bytes.</param>
     /// <param name="output">Output buffer.</param>
-    /// <param name="padding">Whether to use padding characters at the end.</param>
-    /// <param name="numCharsWritten">Number of characters written to the output.</param>
-    /// <returns>True if encoding is successful, false if the output is invalid.</returns>
+    /// <param name="padding">
+    ///     <see langword="true"/> if padding characters should be appended to <paramref name="output"/>,
+    ///     <see langword="false"/> otherwise.
+    /// </param>
+    /// <param name="numCharsWritten">Number of characters written to <paramref name="output"/>.</param>
+    /// <returns><see langword="true"/> if encoding is successful, <see langword="false"/> if the output is invalid.</returns>
     public bool TryEncode(
         ReadOnlySpan<byte> bytes,
         Span<char> output,
