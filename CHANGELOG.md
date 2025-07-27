@@ -1,3 +1,9 @@
+# 5.5.0
+
+## New features
+- `EncodeCheck` and `TryDecodeCheck` variants with variable length version/prefix buffers
+- `EncodeCheckSkipZeroes` that encodes for address formats like Tezos
+
 # 5.4.1
 
 ## Fixes
