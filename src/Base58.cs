@@ -84,15 +84,55 @@ public sealed class Base58(Base58Alphabet alphabet) : DividingCoder<Base58Alphab
             throw new ArgumentException($"Payload length {payload.Length} is greater than {maxCheckPayloadLength}", nameof(payload));
         }
 
-        int versionPlusPayloadLen = payload.Length + 1;
-        int outputLen = versionPlusPayloadLen + Sha256.DigestBytes;
+        ReadOnlySpan<byte> prefix = [version];
+        return EncodeCheck(payload, prefix);
+    }
+
+    /// <summary>
+    /// Generate a Base58Check string out of a prefix buffer and payload.
+    /// </summary>
+    /// <param name="payload">Address data.</param>
+    /// <param name="prefix">Prefix buffer.</param>
+    /// <returns>Base58Check address.</returns>
+    /// <exception cref="ArgumentException">If <paramref name="payload"/> is empty.</exception>
+    public string EncodeCheck(ReadOnlySpan<byte> payload, ReadOnlySpan<byte> prefix)
+    {
+        int totalLength = prefix.Length + payload.Length;
+        int outputLen = totalLength + Sha256.DigestBytes;
         Span<byte> output = (outputLen < Bits.SafeStackMaxAllocSize) ? stackalloc byte[outputLen] : new byte[outputLen];
-        output[0] = version;
-        payload.CopyTo(output[1..]);
+        prefix.CopyTo(output);
+        payload.CopyTo(output[prefix.Length..]);
         Span<byte> sha256 = stackalloc byte[Sha256.Bytes];
-        Sha256.ComputeTwice(output[..versionPlusPayloadLen], sha256);
-        sha256[..Sha256.DigestBytes].CopyTo(output[versionPlusPayloadLen..]);
+        Sha256.ComputeTwice(output[..totalLength], sha256);
+        sha256[..Sha256.DigestBytes].CopyTo(output[totalLength..]);
         return Encode(output);
+    }
+
+    /// <summary>
+    /// Generate a Base58Check string out of a prefix buffer and payload
+    /// by skipping leading zeroes in <paramref name="payload"/>.
+    /// Platforms like Tezos expects this behavior.
+    /// </summary>
+    /// <param name="payload">Address data.</param>
+    /// <param name="prefix">Prefix buffer.</param>
+    /// <returns>Base58Check address.</returns>
+    /// <exception cref="ArgumentException">
+    ///     If <paramref name="payload"/> is empty or only contains zeroes.
+    /// </exception>
+    public string EncodeCheckSkipZeroes(ReadOnlySpan<byte> payload, ReadOnlySpan<byte> prefix)
+    {
+        int firstNonZeroIndex = payload.IndexOfAnyExcept((byte)0);
+        if (firstNonZeroIndex < 0)
+        {
+            throw new ArgumentException("Payload cannot be empty or all zeroes", nameof(payload));
+        }
+
+        if (firstNonZeroIndex > 0)
+        {
+            payload = payload[firstNonZeroIndex..];
+        }
+
+        return EncodeCheck(payload, prefix);
     }
 
     /// <summary>
@@ -112,27 +152,45 @@ public sealed class Base58(Base58Alphabet alphabet) : DividingCoder<Base58Alphab
         out byte version,
         out int bytesWritten)
     {
+        Span<byte> versionBuffer = stackalloc byte[1];
+        bool result = TryDecodeCheck(address, payload, versionBuffer, out bytesWritten);
+        version = versionBuffer[0];
+        return result;
+    }
+
+    /// <summary>
+    /// Try to decode and verify a Base58Check address.
+    /// </summary>
+    /// <param name="address">Address string.</param>
+    /// <param name="payload">Output address buffer.</param>
+    /// <param name="prefix">Prefix decoded, must have the exact size of the expected prefix.</param>
+    /// <param name="payloadBytesWritten">Number of bytes written in the output payload.</param>
+    /// <returns><see langword="true"/> if address was decoded successfully and passed validation, <see langword="false"/> otherwise.</returns>
+    public bool TryDecodeCheck(
+        ReadOnlySpan<char> address,
+        Span<byte> payload,
+        Span<byte> prefix,
+        out int payloadBytesWritten)
+    {
+        payloadBytesWritten = 0;
         Span<byte> buffer = stackalloc byte[maxCheckPayloadLength + Sha256.DigestBytes + 1];
-        if (!TryDecode(address, buffer, out bytesWritten) || bytesWritten < 5)
+        if (!TryDecode(address, buffer, out int decodedBufferSize))
         {
-            version = 0;
             return false;
         }
 
-        buffer = buffer[..bytesWritten];
-        version = buffer[0];
+        buffer = buffer[..decodedBufferSize];
+        buffer[..prefix.Length].CopyTo(prefix);
         Span<byte> sha256 = stackalloc byte[Sha256.Bytes];
         Sha256.ComputeTwice(buffer[..^Sha256.DigestBytes], sha256);
         if (!sha256[..Sha256.DigestBytes].SequenceEqual(buffer[^Sha256.DigestBytes..]))
         {
-            version = 0;
             return false;
         }
 
         var finalBuffer = buffer[1..^Sha256.DigestBytes];
-        version = buffer[0];
         finalBuffer.CopyTo(payload);
-        bytesWritten = finalBuffer.Length;
+        payloadBytesWritten = finalBuffer.Length;
         return true;
     }
 

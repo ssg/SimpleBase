@@ -1,2 +1,5 @@
-﻿SimpleBase.Base32.EncodeCheck(System.ReadOnlySpan<byte> input, byte version) -> string!
+﻿SimpleBase.Base58.EncodeCheck(System.ReadOnlySpan<byte> payload, System.ReadOnlySpan<byte> prefix) -> string!
+SimpleBase.Base58.EncodeCheckSkipZeroes(System.ReadOnlySpan<byte> payload, System.ReadOnlySpan<byte> prefix) -> string!
+SimpleBase.Base58.TryDecodeCheck(System.ReadOnlySpan<char> address, System.Span<byte> payload, System.Span<byte> prefix, out int payloadBytesWritten) -> bool
+SimpleBase.Base32.EncodeCheck(System.ReadOnlySpan<byte> input, byte version) -> string!
 SimpleBase.Base32.TryDecodeCheck(System.ReadOnlySpan<char> input, System.Span<byte> decodedAddress, out byte version, out int addressLength) -> bool
