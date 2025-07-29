@@ -1,1 +1,2 @@
-﻿
+﻿SimpleBase.Base32.EncodeCheck(System.ReadOnlySpan<byte> input, byte version) -> string!
+SimpleBase.Base32.TryDecodeCheck(System.ReadOnlySpan<char> input, System.Span<byte> decodedAddress, out byte version, out int addressLength) -> bool

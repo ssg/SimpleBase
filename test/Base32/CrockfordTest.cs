@@ -248,4 +248,8 @@ class CrockfordTest
     {
         Assert.That(Base32.Crockford.Encode(null, true), Is.EqualTo(String.Empty));
     }
+
+    // EncodeCheck is used most commonly with Crockford.
+
+
 }

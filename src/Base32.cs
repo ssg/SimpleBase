@@ -421,6 +421,59 @@ public sealed class Base32 : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCod
         return internalDecode(input[..inputLen], output, out bytesWritten) == DecodeResult.Success;
     }
 
+    /// <summary>
+    /// Perform Base32 with Digest and checksum encoding (Stacks Crockford Base32).
+    /// </summary>
+    /// <param name="input">Input buffer.</param>
+    /// <param name="version">Version byte.</param>
+    /// <returns>Encoded address with checksum.</returns>
+    public string EncodeCheck(ReadOnlySpan<byte> input, byte version)
+    {
+        int bufferSize = 1 + input.Length + Sha256.DigestBytes;
+        byte[] output = new byte[bufferSize];
+        output[0] = version;
+        input.CopyTo(output.AsSpan(1));
+        Sha256.ComputeDigestTwice(output.AsSpan(0, input.Length + 1), output.AsSpan(input.Length + 1));
+        return Encode(output);
+    }
+
+    /// <summary>
+    /// Try decoding a Base32 encoded address with checksum.
+    /// </summary>
+    /// <param name="input">Encoded string.</param>
+    /// <param name="decodedAddress">Buffer for the decoded address.</param>
+    /// <param name="version">Version number extracted from <paramref name="input"/>.</param>
+    /// <param name="addressLength">Written number of bytes to <paramref name="decodedAddress"/>.</param>
+    /// <returns>
+    ///     <see langword="true"/> if address is decoded successfully and checksum matches,
+    ///     <see langword="false"/> otherwise.
+    /// </returns>
+    public bool TryDecodeCheck(ReadOnlySpan<char> input, Span<byte> decodedAddress, out byte version, out int addressLength)
+    {
+        int bufferSize = GetSafeByteCountForDecoding(input);
+        var buffer = bufferSize < Bits.SafeStackMaxAllocSize ? stackalloc byte[bufferSize] : new byte[bufferSize];
+        version = 0;
+        addressLength = 0;
+        if (!TryDecode(input, buffer, out int outputLength)
+            || outputLength < Sha256.DigestBytes + 2
+            || decodedAddress.Length < outputLength - Sha256.DigestBytes - 1)
+        {
+            return false;
+        }
+
+        Span<byte> digest = stackalloc byte[Sha256.DigestBytes];
+        Sha256.ComputeDigestTwice(buffer[..^Sha256.DigestBytes], digest);
+        if (!digest.SequenceEqual(buffer[^Sha256.DigestBytes..]))
+        {
+            return false;
+        }
+
+        buffer[1..^Sha256.DigestBytes].CopyTo(decodedAddress);
+        addressLength = outputLength - Sha256.DigestBytes - 1;
+        version = buffer[0];
+        return true;
+    }
+
     static int getAllocationByteCountForDecoding(int textLenWithoutPadding)
     {
         return textLenWithoutPadding * bitsPerChar / bitsPerByte;
