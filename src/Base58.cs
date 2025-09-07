@@ -188,7 +188,7 @@ public sealed class Base58(Base58Alphabet alphabet) : DividingCoder<Base58Alphab
             return false;
         }
 
-        var finalBuffer = buffer[1..^Sha256.DigestBytes];
+        var finalBuffer = buffer[prefix.Length..^Sha256.DigestBytes];
         finalBuffer.CopyTo(payload);
         payloadBytesWritten = finalBuffer.Length;
         return true;
