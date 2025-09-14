@@ -43,5 +43,20 @@ namespace SimpleBase
             }
             return result;
         }
+
+        /// <summary>
+        /// Count the number of consecutive zero bytes at the beginning of the given buffer.
+        /// </summary>
+        /// <param name="bytes">Buffer for prefixing zeroes to be counted.</param>
+        /// <returns>Number of zeroes at the beginning of the buffer.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal static int CountPrefixingZeroes(ReadOnlySpan<byte> bytes)
+        {
+            int i = 0;
+            for (; i < bytes.Length && bytes[i] == 0; i++)               
+            {
+            }
+            return i;
+        }
     }
 }

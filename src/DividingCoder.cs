@@ -54,21 +54,10 @@ public abstract class DividingCoder<TAlphabet>(TAlphabet alphabet)
         return count;
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    static int countPrefixZeroes(ReadOnlySpan<byte> bytes)
-    {
-        int count = 0;
-        while (count < bytes.Length && bytes[count] == 0)
-        {
-            count += 1;
-        }
-        return count;
-    }
-
     /// <inheritdoc/>
     public virtual int GetSafeCharCountForEncoding(ReadOnlySpan<byte> bytes)
     {
-        return getSafeCharCountForEncoding(bytes.Length, countPrefixZeroes(bytes));
+        return getSafeCharCountForEncoding(bytes.Length, Bits.CountPrefixingZeroes(bytes));
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -89,7 +78,7 @@ public abstract class DividingCoder<TAlphabet>(TAlphabet alphabet)
             return string.Empty;
         }
 
-        int zeroPrefixLen = countPrefixZeroes(bytes);
+        int zeroPrefixLen = Bits.CountPrefixingZeroes(bytes);
         int outputLen = getSafeCharCountForEncoding(bytes.Length, zeroPrefixLen);
 
         // we can't use `String.Create` here to reduce allocations because
