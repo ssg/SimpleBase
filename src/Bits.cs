@@ -4,6 +4,7 @@
 // </copyright>
 
 using System;
+using System.Runtime.CompilerServices;
 
 namespace SimpleBase
 {
@@ -23,10 +24,11 @@ namespace SimpleBase
         internal const int MaxUInt64Digits = 20;
 
         /// <summary>
-        /// Converts a byte array to a hexadecimal string.
+        /// Converts a variable length byte array to a 64-bit unsigned integer.
         /// </summary>
         /// <param name="bytes"></param>
-        /// <returns></returns>
+        /// <returns>Unsigned integer representation of the bytes.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static ulong PartialBigEndianBytesToUInt64(ReadOnlySpan<byte> bytes)
         {
             if (bytes.Length > sizeof(ulong))
