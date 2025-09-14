@@ -24,6 +24,9 @@
         <PackageReadmeFile>README.md</PackageReadmeFile>
 		<PackageReleaseNotes>
 			<![CDATA[
+## New features
+- `EncodeCheck` and `TryDecodeCheck` variants with variable length version/prefix buffers
+- `EncodeCheckSkipZeroes` that encodes for address formats like Tezos
             
             ]]>
 		</PackageReleaseNotes>
