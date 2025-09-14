@@ -5,7 +5,9 @@
 
 using System;
 using System.IO;
+using System.Runtime.Intrinsics.X86;
 using System.Threading.Tasks;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace SimpleBase;
 
@@ -115,6 +117,12 @@ public sealed class Base32 : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCod
     }
 
     /// <inheritdoc/>
+    ///<remarks>
+    ///This formula overestimates the required size to the next multiplier of 8 characters
+    ///to leave space for the padding characters at the end. If this kind of generous
+    ///allocation is a problem, a different formula can be used with non-allocating encoding
+    ///functions like <see cref="TryEncode(ReadOnlySpan{byte}, Span{char}, out int)" />.
+    ///</remarks>
     public int GetSafeCharCountForEncoding(ReadOnlySpan<byte> buffer)
     {
         return (((buffer.Length - 1) / bitsPerChar) + 1) * bitsPerByte;
