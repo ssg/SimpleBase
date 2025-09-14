@@ -26,7 +26,8 @@ namespace SimpleBaseTest.Base32Test;
 [TestFixture]
 class CrockfordTest
 {
-    static readonly object[][] testData = [
+    static readonly object[][] testData = 
+    [
         ["", "", false],
         ["f", "CR", false],
         ["f", "CR======", true],
@@ -40,9 +41,34 @@ class CrockfordTest
         ["fooba", "CSQPYRK1", true],
         ["foobar", "CSQPYRK1E8", false],
         ["foobar", "CSQPYRK1E8======", true],
+        ["hello world", "38CNP6RVS0EXQQ4V34", false],
         ["123456789012345678901234567890123456789", "64S36D1N6RVKGE9G64S36D1N6RVKGE9G64S36D1N6RVKGE9G64S36D1N6RVKGE8", false],
         ["123456789012345678901234567890123456789", "64S36D1N6RVKGE9G64S36D1N6RVKGE9G64S36D1N6RVKGE9G64S36D1N6RVKGE8=", true]
-    ];        
+    ];
+
+    static readonly object[][] zeroPrefixData = 
+    [
+        [ new byte[] { 0x00 }, "00" ],
+        [ new byte[] { 0x00, 0x00 }, "0000" ],
+        [ new byte[] { 0x00, 0x01 }, "000G" ],
+        [ new byte[] { 0x00, 0x00, 0x00, 0x00 }, "0000000" ],
+    ];
+
+    [Test]
+    [TestCaseSource(nameof(zeroPrefixData))]
+    public void Encode_ZeroPrefixData_ReturnsExpectedValues(byte[] input, string expectedOutput)
+    {
+        string result = Base32.Crockford.Encode(input, padding: false);
+        Assert.That(result, Is.EqualTo(expectedOutput));
+    }
+
+    [Test]
+    [TestCaseSource(nameof(zeroPrefixData))]
+    public void Decode_ZeroPrefixData_ReturnsExpectedValues(byte[] expectedOutput, string input)
+    {
+        byte[] result = Base32.Crockford.Decode(input);
+        Assert.That(result, Is.EqualTo(expectedOutput));
+    }
 
     [Test]
     public void Encode_SampleInterface_Compiles()
