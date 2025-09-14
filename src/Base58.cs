@@ -111,7 +111,7 @@ public sealed class Base58(Base58Alphabet alphabet) : DividingCoder<Base58Alphab
     /// <summary>
     /// Generate a Base58Check string out of a prefix buffer and payload
     /// by skipping leading zeroes in <paramref name="payload"/>.
-    /// Platforms like Tezos expects this behavior.
+    /// Platforms like Tezos expect this behavior.
     /// </summary>
     /// <param name="payload">Address data.</param>
     /// <param name="prefix">Prefix buffer.</param>
