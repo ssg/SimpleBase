@@ -40,6 +40,10 @@ To install it from [NuGet](https://www.nuget.org/packages/SimpleBase/):
 
   `Install-Package SimpleBase`
 
+If you need .NET Standard 2.0 compatible version for targeting older .NET Framework or .NET Core, use the 2.x release line instead. It's missing newer features, but still supported:
+
+  `Install-Package SimpleBase -MaximumVersion 2.999.0`
+
 Usage
 ------
 The basic usage for encoding a buffer into, say, Base32, is as simple as:
