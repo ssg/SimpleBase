@@ -12,8 +12,8 @@ math worked.
 
 Features
 --------
- - [Multibase](https://github.com/multiformats/multibase) support. All formats
-   covered by SimpleBase including a few Base64 variants are supported. Base2, Base8, and Base10 are also supported.
+ - **[Multibase](https://github.com/multiformats/multibase)**: All formats
+   covered by SimpleBase including a few Base64 variants are supported. **Base2**, **Base8**, and **Base10** are also supported.
  - **Base32**: RFC 4648, BECH32, Crockford, z-base-32, Geohash, FileCoin and Extended Hex 
    (BASE32-HEX) flavors with Crockford character substitution, or any other 
    custom flavors.
@@ -39,6 +39,10 @@ NuGet
 To install it from [NuGet](https://www.nuget.org/packages/SimpleBase/):
 
   `Install-Package SimpleBase`
+
+If you need .NET Standard 2.0 compatible version for targeting older .NET Framework or .NET Core, use the 2.x release line instead. It's missing newer features, but still supported:
+
+  `Install-Package SimpleBase -MaximumVersion 2.999.0`
 
 Usage
 ------
