@@ -47,7 +47,7 @@ public class Base256Emoji : IBaseCoder, INonAllocatingBaseCoder
     /// <summary>
     /// Create a new instance of Base256Emoji.
     /// </summary>
-    /// <param name="alphabet">An array that contains 256 elements with emoji values corresponding to every byte.</param>
+    /// <param name="alphabet">A string that contains 256 emojis corresponding to every byte.</param>
     public Base256Emoji(string[] alphabet)
     {
         if (alphabet.Length != 256)

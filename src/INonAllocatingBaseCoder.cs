@@ -17,9 +17,12 @@ public interface INonAllocatingBaseCoder
     /// </summary>
     /// <param name="input">Bytes to encode.</param>
     /// <param name="output">Output buffer.</param>
-    /// <param name="numCharsWritten">Actual number of characters written to the output.</param>
-    /// <returns>Whether encoding was successful or not. If false, <paramref name="numCharsWritten"/>
-    /// will be zero and the content of <paramref name="output"/> will be undefined.</returns>
+    /// <param name="numCharsWritten">Actual number of characters written to <paramref name="output"/>.</param>
+    /// <returns>
+    ///     Whether encoding was successful or not. If <see langword="false"/>,
+    ///     <paramref name="numCharsWritten"/> will be zero, and the content
+    ///     of <paramref name="output"/> will be undefined.
+    /// </returns>
     bool TryEncode(ReadOnlySpan<byte> input, Span<char> output, out int numCharsWritten);
 
     /// <summary>
@@ -27,9 +30,12 @@ public interface INonAllocatingBaseCoder
     /// </summary>
     /// <param name="input">Encoded text.</param>
     /// <param name="output">Output buffer.</param>
-    /// <param name="bytesWritten">Actual number of bytes written to the output.</param>
-    /// <returns>Whether decoding was successful. If false, the value of <paramref name="bytesWritten"/>
-    /// will be zero and the content of <paramref name="output"/> will be undefined.</returns>
+    /// <param name="bytesWritten">Actual number of bytes written to <paramref name="output"/>.</param>
+    /// <returns>
+    ///     Whether decoding was successful or not. If <see langword="false"/>,
+    ///     <paramref name="bytesWritten"/> will be zero, and the content
+    ///     of <paramref name="output"/> will be undefined.
+    /// </returns>
     bool TryDecode(ReadOnlySpan<char> input, Span<byte> output, out int bytesWritten);
 
     /// <summary>
@@ -38,7 +44,7 @@ public interface INonAllocatingBaseCoder
     /// output size.
     /// </summary>
     /// <param name="text">Text to be decoded.</param>
-    /// <returns>Number of estimated bytes, or zero if the input length is invalid.</returns>
+    /// <returns>Number of estimated bytes, or zero if <paramref name="text"/> length is invalid.</returns>
     int GetSafeByteCountForDecoding(ReadOnlySpan<char> text);
 
     /// <summary>
@@ -47,6 +53,6 @@ public interface INonAllocatingBaseCoder
     /// actual output size.
     /// </summary>
     /// <param name="buffer">Bytes to be encoded.</param>
-    /// <returns>Number of estimated characters, or zero if the input length is invalid.</returns>
+    /// <returns>Number of estimated characters, or zero if <paramref name="buffer"/> length is invalid.</returns>
     int GetSafeCharCountForEncoding(ReadOnlySpan<byte> buffer);
 }

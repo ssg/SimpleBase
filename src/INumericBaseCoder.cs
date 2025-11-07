@@ -53,6 +53,6 @@ public interface INumericBaseCoder
     /// </summary>
     /// <param name="text">Input text.</param>
     /// <param name="number">Output number.</param>
-    /// <returns>True if successful, false otherwise.</returns>
+    /// <returns><see langword="true"/> if successful, <see langword="false"/> otherwise.</returns>
     bool TryDecodeUInt64(string text, out ulong number);
 }

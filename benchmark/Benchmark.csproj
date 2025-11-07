@@ -18,6 +18,7 @@
     </ItemGroup>
     <ItemGroup>
       <PackageReference Include="BenchmarkDotNet" Version="0.15.5" />
+      <PackageReference Include="BenchmarkDotNet" Version="0.15.2" />
     </ItemGroup>
     <ItemGroup>
         <ProjectReference Include="..\src\SimpleBase.csproj" />
