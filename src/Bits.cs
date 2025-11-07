@@ -16,6 +16,7 @@ namespace SimpleBase
         /// <summary>
         /// Safe one-shot maximum amount to be allocated on stack for temporary buffers and alike.
         /// </summary>
+        /// <see href="https://learn.microsoft.com/en-us/dotnet/standard/unsafe-code/best-practices#:~:text=For%20example%2C%201024%20bytes%20could%20be%20considered%20a%20reasonable%20upper%20bound." />
         internal const int SafeStackMaxAllocSize = 1024;
 
         /// <summary>
