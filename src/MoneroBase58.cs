@@ -133,11 +133,11 @@ public sealed class MoneroBase58(Base58Alphabet alphabet) : IBaseCoder, INonAllo
     bool internalEncode(
         ReadOnlySpan<byte> input,
         Span<char> output,
-        out int numCharsWritten)
+        out int charsWritten)
     {
         if (input.Length == 0)
         {
-            numCharsWritten = 0;
+            charsWritten = 0;
             return true;
         }
 
@@ -164,7 +164,7 @@ public sealed class MoneroBase58(Base58Alphabet alphabet) : IBaseCoder, INonAllo
             outputOffset += lastBlockSize;
         }
 
-        numCharsWritten = outputOffset;
+        charsWritten = outputOffset;
         return true;
     }
 

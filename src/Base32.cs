@@ -258,14 +258,14 @@ public sealed class Base32 : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCod
             bytes,
             output,
             padding,
-            out int numCharsWritten))
+            out int charsWritten))
         {
             throw new InvalidOperationException("Internal error: couldn't calculate proper output buffer size for input");
         }
 
         // we can't use `String.Create` here to reduce allocations because
         // Spans aren't supported in lambda expressions.
-        return new string(output[..numCharsWritten]);
+        return new string(output[..charsWritten]);
     }
 
     /// <summary>
@@ -438,7 +438,7 @@ public sealed class Base32 : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCod
        ReadOnlySpan<byte> input,
        Span<char> output,
        bool padding,
-       out int numCharsWritten)
+       out int charsWritten)
     {
         string table = Alphabet.Value;
 
@@ -488,10 +488,10 @@ public sealed class Base32 : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCod
             }
         }
 
-        numCharsWritten = o;
+        charsWritten = o;
         return true;
     Overflow:
-        numCharsWritten = o;
+        charsWritten = o;
         return false;
     }
 

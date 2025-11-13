@@ -159,11 +159,11 @@ public abstract class DividingCoder<TAlphabet>(TAlphabet alphabet)
         ReadOnlySpan<byte> input,
         Span<char> output,
         int zeroPrefixLen,
-        out int numCharsWritten)
+        out int charsWritten)
     {
         if (input.Length == 0)
         {
-            numCharsWritten = 0;
+            charsWritten = 0;
             return true;
         }
 
@@ -204,7 +204,7 @@ public abstract class DividingCoder<TAlphabet>(TAlphabet alphabet)
         }
 
         translatedCopy(output[^numDigits..], output[zeroPrefixLen..], alphabet);
-        numCharsWritten = zeroPrefixLen + numDigits;
+        charsWritten = zeroPrefixLen + numDigits;
         return true;
     }
 

@@ -79,8 +79,8 @@ public class Base85(Base85Alphabet alphabet) : IBaseCoder, IBaseStreamCoder, INo
         int outputLen = GetSafeCharCountForEncoding(bytes);
         Span<char> output = outputLen < Bits.SafeStackMaxAllocSize ? stackalloc char[outputLen] : new char[outputLen];
 
-        return internalEncode(bytes, output, out int numCharsWritten)
-            ? new string(output[..numCharsWritten])
+        return internalEncode(bytes, output, out int charsWritten)
+            ? new string(output[..charsWritten])
             : throw new InvalidOperationException("Insufficient output buffer size while encoding Base85");
     }
 
@@ -297,7 +297,7 @@ public class Base85(Base85Alphabet alphabet) : IBaseCoder, IBaseStreamCoder, INo
     bool internalEncode(
         ReadOnlySpan<byte> input,
         Span<char> output,
-        out int numCharsWritten)
+        out int charsWritten)
     {
         char? usesZeroShortcut = Alphabet.AllZeroShortcut;
         char? usesSpaceShortcut = Alphabet.AllSpaceShortcut;
@@ -305,7 +305,7 @@ public class Base85(Base85Alphabet alphabet) : IBaseCoder, IBaseStreamCoder, INo
         int fullLen = input.Length / byteBlockSize * byteBlockSize; // size of whole 4-byte blocks
 
         int i = 0;
-        numCharsWritten = 0;
+        charsWritten = 0;
         while (i < fullLen)
         {
             // build a 32-bit representation of input
@@ -316,18 +316,18 @@ public class Base85(Base85Alphabet alphabet) : IBaseCoder, IBaseStreamCoder, INo
 
             if (!writeEncodedValue(
                 block,
-                output[numCharsWritten..],
+                output[charsWritten..],
                 table,
                 stringBlockSize,
                 usesZeroShortcut,
                 usesSpaceShortcut,
                 out int numWritten))
             {
-                numCharsWritten += numWritten;
+                charsWritten += numWritten;
                 return false;
             }
 
-            numCharsWritten += numWritten;
+            charsWritten += numWritten;
         }
 
         // check if a part is remaining
@@ -345,7 +345,7 @@ public class Base85(Base85Alphabet alphabet) : IBaseCoder, IBaseStreamCoder, INo
 
         if (!writeEncodedValue(
             lastBlock,
-            output[numCharsWritten..],
+            output[charsWritten..],
             table,
             remainingBytes + 1,
             usesZeroShortcut,
@@ -355,7 +355,7 @@ public class Base85(Base85Alphabet alphabet) : IBaseCoder, IBaseStreamCoder, INo
             return false;
         }
 
-        numCharsWritten += numWrittenFinal;
+        charsWritten += numWrittenFinal;
         return true;
     }
 
