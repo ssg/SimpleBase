@@ -186,7 +186,6 @@ public class Rfc1924Test
     [TestCase("000000000000000000\u00FF0")] // Contains non-ASCII character - exactly 20 chars
     [TestCase("00000000000000000\u00FF00")] // Contains non-ASCII character - exactly 20 chars
     [TestCase("0000000000000\u00FF000000")] // Contains non-ASCII character in middle - exactly 20 chars
-    [Ignore("TryDecodeIPv6 currently doesn't handle IndexOutOfRangeException gracefully - this is a known limitation")]
     public void TryDecodeIPv6_NonAsciiCharacter_ThrowsIndexOutOfRangeException(string invalidText)
     {
         // TryDecodeIPv6 should ideally handle exceptions gracefully, but currently it doesn't
@@ -259,7 +258,6 @@ public class Rfc1924Test
     /// </summary>
 
     [Test]
-    [Ignore("Implementation bug: DecodeIPv6 uses isUnsigned: false when it should use isUnsigned: true, causing failures for many valid IPv6 addresses including ::")]
     public void DecodeIPv6_ZeroAddress_ShouldWork()
     {
         var ip = Base85.Rfc1924.DecodeIPv6("00000000000000000000");
@@ -267,7 +265,6 @@ public class Rfc1924Test
     }
 
     [Test]
-    [Ignore("Implementation bug: TryDecodeIPv6 uses isUnsigned: false and can throw exceptions, causing failures for many valid IPv6 addresses")]
     public void TryDecodeIPv6_ZeroAddress_ShouldWork()
     {
         bool result = Base85.Rfc1924.TryDecodeIPv6("00000000000000000000", out IPAddress ip);
@@ -279,7 +276,6 @@ public class Rfc1924Test
     }
 
     [Test]
-    [Ignore("Implementation bug: Round-trip fails for most IPv6 addresses due to isUnsigned: false in decoding")]
     public void EncodeIPv6_RoundTrip_ShouldWorkForBasicAddresses()
     {
         IPAddress[] addresses =
@@ -299,7 +295,6 @@ public class Rfc1924Test
     }
 
     [Test]
-    [Ignore("Implementation bug: TryDecodeIPv6 round-trip fails due to isUnsigned: false and exception throwing")]
     public void TryDecodeIPv6_RoundTrip_ShouldWorkForBasicAddresses()
     {
         IPAddress[] addresses =
@@ -323,7 +318,6 @@ public class Rfc1924Test
     }
 
     [Test]
-    [Ignore("Implementation bug: Output length test depends on addresses that cannot be decoded due to implementation bugs")]
     public void EncodeIPv6_OutputLength_IsAlwaysCorrect()
     {
         IPAddress[] testAddresses =
@@ -354,32 +348,5 @@ public class Rfc1924Test
             string encoded = Base85.Rfc1924.EncodeIPv6(address);
             Assert.That(encoded.Length, Is.EqualTo(20), $"Encoded length is incorrect for {address}: '{encoded}'");
         }
-    }
-
-    /// <summary>
-    /// Original test cases that don't adhere to RFC 1924 specification
-    /// </summary>
-    [Test]
-    [Ignore("Test case contains invalid data - encoded string '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~' is 31 characters instead of required 20")]
-    public void DecodeIPv6_MaximumIPv6_IgnoredDueToInvalidLength()
-    {
-        var ip = Base85.Rfc1924.DecodeIPv6("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-        Assert.That(ip.ToString(), Is.EqualTo("ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff"));
-    }
-
-    [Test]
-    [Ignore("Test case contains invalid data - causes BigInteger overflow for 16-byte IPv6 buffer")]
-    public void DecodeIPv6_AllBrackets_IgnoredDueToBigIntegerOverflow()
-    {
-        var ip = Base85.Rfc1924.DecodeIPv6("{{{{{{{{{{{{{{{{{{{{");
-        Assert.That(ip.ToString(), Is.EqualTo("ff80::"));
-    }
-
-    [Test]
-    [Ignore("Test case contains invalid data - encoded string length is 21 characters instead of required 20")]
-    public void DecodeIPv6_TooLongString_IgnoredDueToInvalidLength()
-    {
-        var ip = Base85.Rfc1924.DecodeIPv6("9jqo^BlbD-BleB1djH+jH<H");
-        Assert.That(ip.ToString(), Is.EqualTo("2001:db8::ff00:42:8329"));
     }
 }
