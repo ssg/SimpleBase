@@ -249,14 +249,6 @@ public class Rfc1924Test
         // If it fails, that's also acceptable behavior for edge cases
     }
 
-    /// <summary>
-    /// These tests expose bugs in the current Base85IPv6 implementation.
-    /// The implementation has several issues:
-    /// 1. TryWriteBytes called with isUnsigned: false instead of true
-    /// 2. TryDecodeIPv6 can throw exceptions instead of returning false
-    /// 3. Many IPv6 addresses cannot be properly round-tripped due to these bugs
-    /// </summary>
-
     [Test]
     public void DecodeIPv6_ZeroAddress_ShouldWork()
     {

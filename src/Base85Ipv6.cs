@@ -7,6 +7,7 @@ using System;
 using System.Net;
 using System.Net.Sockets;
 using System.Numerics;
+using System.Runtime.InteropServices;
 
 namespace SimpleBase;
 
@@ -32,7 +33,7 @@ public class Base85IPv6(Base85Alphabet alphabet) : Base85(alphabet)
 {
     const int ipv6bytes = 16;
     const int ipv6chars = 20;
-    static readonly BigInteger divisor = new(85);
+    static readonly UInt128 divisor = 85;
 
     /// <summary>
     /// Encode IPv6 address into RFC 1924 Base85 text.
@@ -75,7 +76,7 @@ public class Base85IPv6(Base85Alphabet alphabet) : Base85(alphabet)
             throw new ArgumentException("Invalid encoded IPv6 text length");
         }
 
-        BigInteger num = 0;
+        UInt128 num = 0;
         for (int n = 0; n < ipv6chars; n++)
         {
             char c = text[n];
@@ -85,13 +86,14 @@ public class Base85IPv6(Base85Alphabet alphabet) : Base85(alphabet)
                 throw new InvalidOperationException($"Invalid character: {c}");
             }
 
-            num = (num * divisor) + value;
+            num = (num * divisor) + (UInt128)value;
         }
 
         Span<byte> buffer = stackalloc byte[ipv6bytes];
-        return num.TryWriteBytes(buffer, out int bytesWritten, isUnsigned: false, isBigEndian: true)
-            ? new IPAddress(buffer[..bytesWritten])
-            : throw new InvalidOperationException("Destination buffer is too small");
+        _ = ((IBinaryInteger<UInt128>)num).WriteBigEndian(buffer);
+
+        // IPAddress ctor() expects the buffer always to be 16 bytes
+        return new IPAddress(buffer);            
     }
 
     /// <summary>
@@ -108,7 +110,7 @@ public class Base85IPv6(Base85Alphabet alphabet) : Base85(alphabet)
             return false;
         }
 
-        BigInteger num = 0;
+        UInt128 num = 0;
         for (int n = 0; n < ipv6chars; n++)
         {
             char c = text[n];
@@ -119,17 +121,14 @@ public class Base85IPv6(Base85Alphabet alphabet) : Base85(alphabet)
                 return false;
             }
 
-            num = (num * divisor) + value;
+            num = (num * divisor) + (UInt128)value;
         }
 
         Span<byte> buffer = stackalloc byte[ipv6bytes];
-        if (!num.TryWriteBytes(buffer, out int bytesWritten, isUnsigned: false, isBigEndian: true))
-        {
-            ip = IPAddress.IPv6None;
-            return false;
-        }
+        _ = ((IBinaryInteger<UInt128>)num).WriteBigEndian(buffer);
 
-        ip = new IPAddress(buffer[..bytesWritten]);
+        // IPAddress ctor() expects the buffer always to be 16 bytes
+        ip = new IPAddress(buffer);
         return true;
     }
 
