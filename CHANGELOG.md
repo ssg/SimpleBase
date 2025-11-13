@@ -1,7 +1,14 @@
-# 5.5.1
+# 5.6.0
 
 ## Improvements
-- Remove dependency to System.Memory
+- This release separately targets .NET 9 and .NET 10 along with .NET 8
+- Remove dependency to System.Memory package
+- Improve IPv6 Base85 encoding/decoding performance
+
+## Fixes
+- Base58.TryDecodeCheck() now consistently returns version 0 in its output for failure cases
+- Base32.DecodeUInt64() and Base32.TryDecodeUInt64() will now always decode correctly for smaller inputs
+- Multiple bugs in Base85 IPv6 decoding have been addressed
 
 # 5.5.0
 
