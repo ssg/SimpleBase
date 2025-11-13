@@ -152,7 +152,7 @@ public sealed class Base58(Base58Alphabet alphabet) : DividingCoder<Base58Alphab
         out byte version,
         out int bytesWritten)
     {
-        Span<byte> versionBuffer = stackalloc byte[1];
+        Span<byte> versionBuffer = [0];
         bool result = TryDecodeCheck(address, payload, versionBuffer, out bytesWritten);
         version = versionBuffer[0];
         return result;
@@ -248,5 +248,4 @@ public sealed class Base58(Base58Alphabet alphabet) : DividingCoder<Base58Alphab
         bytesWritten = finalBuffer.Length;
         return true;
     }
-
 }
