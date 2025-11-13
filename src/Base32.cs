@@ -5,9 +5,7 @@
 
 using System;
 using System.IO;
-using System.Runtime.Intrinsics.X86;
 using System.Threading.Tasks;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace SimpleBase;
 
@@ -179,7 +177,9 @@ public sealed class Base32 : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCod
         }
 
         var span = buffer.AsSpan();
-        Span<byte> newSpan = stackalloc byte[sizeof(ulong)];
+#pragma warning disable IDE0302 // Simplify collection initialization -- we want to keep "stackalloc" here for pre-NET 10 targets
+        Span<byte> newSpan = stackalloc byte[sizeof(ulong)] { 0, 0, 0, 0, 0, 0, 0, 0 };
+#pragma warning restore IDE0302 // Simplify collection initialization
         span.CopyTo(newSpan);
         if (IsBigEndian)
         {
@@ -192,7 +192,9 @@ public sealed class Base32 : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCod
     /// <inheritdoc/>
     public bool TryDecodeUInt64(string text, out ulong number)
     {
-        Span<byte> output = stackalloc byte[sizeof(ulong)];
+#pragma warning disable IDE0302 // Simplify collection initialization -- we want to keep "stackalloc" here for pre-NET 10 targets
+        Span<byte> output = stackalloc byte[sizeof(ulong)] { 0, 0, 0, 0, 0, 0, 0, 0 };
+#pragma warning restore IDE0302 // Simplify collection initialization
         if (!TryDecode(text, output, out _))
         {
             number = 0;
