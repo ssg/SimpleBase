@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
     <PropertyGroup>
-        <TargetFrameworks>net8.0;net10.0</TargetFrameworks>
+        <TargetFrameworks>net8.0;net9.0;net10.0</TargetFrameworks>
         <RootNamespace>SimpleBase</RootNamespace>
         <AssemblyName>SimpleBase</AssemblyName>
         <Copyright>Copyright 2014-2025 Sedat Kapanoglu</Copyright>
@@ -12,7 +12,7 @@
         <AssemblyOriginatorKeyFile>..\SimpleBase.snk</AssemblyOriginatorKeyFile>
         <DelaySign>false</DelaySign>
 
-		<PackageVersion>5.5.1</PackageVersion>
+		<PackageVersion>5.6.0</PackageVersion>
 		<DocumentationFile>SimpleBase.xml</DocumentationFile>
 		<PackageProjectUrl>https://github.com/ssg/SimpleBase</PackageProjectUrl>
 		<PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
@@ -21,7 +21,7 @@
 		<LangVersion>latest</LangVersion>
 		<Nullable>enable</Nullable>
 		<PlatformTarget>AnyCPU</PlatformTarget>
-        <PackageVersion>5.5.0</PackageVersion>
+        <PackageVersion>5.6.0</PackageVersion>
         <DocumentationFile>SimpleBase.xml</DocumentationFile>
         <PackageProjectUrl>https://github.com/ssg/SimpleBase</PackageProjectUrl>
         <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
@@ -33,9 +33,6 @@
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageReleaseNotes>
             <![CDATA[
-## New features
-- `EncodeCheck` and `TryDecodeCheck` variants with variable length version/prefix buffers
-- `EncodeCheckSkipZeroes` that encodes for address formats like Tezos
             
             ]]>
         </PackageReleaseNotes>
