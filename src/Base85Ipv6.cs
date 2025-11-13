@@ -14,11 +14,13 @@ namespace SimpleBase;
 /// Base85 implementation with additional IPv6 coding functions.
 /// </summary>
 /// <remarks>
-/// RFC 1924 sucks, arguably because it's a very early proposal in the history of IPv6:
+/// RFC 1924 sucks, arguably because it was a very early proposal in the history of IPv6:
+/// 
 /// - It contains special chars: It's prone to be confused with other syntactical elements.
 ///   It can even cause security issues due to poor escaping, let alone UX problems.
 /// - Length gains are usually marginal: IPv6 uses zero elimination to reduce the address representation.
 /// - Slow. The algorithm is division based, instead of faster bitwise operations.
+/// 
 /// So, that's why I only included a proof of concept implementation instead of working on optimizing it.
 /// RFC 1924 should die, and this code should only be used to support some obscure standard or code somewhere.
 /// </remarks>
@@ -97,7 +99,7 @@ public class Base85IPv6(Base85Alphabet alphabet) : Base85(alphabet)
     /// </summary>
     /// <param name="text">Encoded text.</param>
     /// <param name="ip">Resulting IPv6 address.</param>
-    /// <returns>True if successful, false otherwise.</returns>
+    /// <returns><see langword="true"/> if successful, <see langword="false"/> otherwise.</returns>
     public bool TryDecodeIPv6(string text, out IPAddress ip)
     {
         if (text.Length != ipv6chars)

@@ -38,6 +38,25 @@ class Rfc4648Test
         ["1234567890123456789012345678901234567890", "GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ"],
     ];
 
+    static readonly object[][] binaryTestData = [
+        [ new byte[] { 0x00 }, "AA", false ],
+        [ new byte[] { 0x00 }, "AA======", true ],
+        [ new byte[] { 0x01 }, "AE", false ],
+        [ new byte[] { 0x01 }, "AE======", true ],
+        [ new byte[] { 0x16 }, "CY", false ],
+        [ new byte[] { 0x16 }, "CY======", true ],
+        [ new byte[] { 0x20 }, "EA", false ],
+        [ new byte[] { 0x20 }, "EA======", true ],
+    ];
+
+    [Test]
+    [TestCaseSource(nameof(binaryTestData))]
+    public void Encode_BinaryInput_ReturnsExpectedValues(byte[] bytes, string expectedOutput, bool padded)
+    {
+        string result = Base32.Rfc4648.Encode(bytes, padded);
+        Assert.That(result, Is.EqualTo(expectedOutput));
+    }
+
     [Test]
     [TestCaseSource(nameof(testData))]
     public void Encode_ReturnsExpectedValues(string input, string expectedOutput)

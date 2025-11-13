@@ -13,3 +13,4 @@ packages/
 SimpleBase.xml
 .idea/
 BenchmarkDotNet.Artifacts/
+TestResults/

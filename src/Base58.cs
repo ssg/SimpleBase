@@ -5,8 +5,6 @@
 
 using System;
 using System.Diagnostics;
-using System.Runtime.Serialization;
-using System.Security.Cryptography;
 
 namespace SimpleBase;
 
@@ -29,9 +27,7 @@ public sealed class Base58(Base58Alphabet alphabet) : DividingCoder<Base58Alphab
     const int reductionFactor = 733;
 
     const int maxCheckPayloadLength = 256;
-    const int minCheckDecodedBufferSize = 5;
-    const int sha256Bytes = 32;
-    const int sha256DigestBytes = 4;
+
     static readonly Lazy<Base58> bitcoin = new(() => new Base58(Base58Alphabet.Bitcoin));
     static readonly Lazy<Base58> ripple = new(() => new Base58(Base58Alphabet.Ripple));
     static readonly Lazy<Base58> flickr = new(() => new Base58(Base58Alphabet.Flickr));
@@ -102,20 +98,20 @@ public sealed class Base58(Base58Alphabet alphabet) : DividingCoder<Base58Alphab
     public string EncodeCheck(ReadOnlySpan<byte> payload, ReadOnlySpan<byte> prefix)
     {
         int totalLength = prefix.Length + payload.Length;
-        int outputLen = totalLength + sha256DigestBytes;
+        int outputLen = totalLength + Sha256.DigestBytes;
         Span<byte> output = (outputLen < Bits.SafeStackMaxAllocSize) ? stackalloc byte[outputLen] : new byte[outputLen];
         prefix.CopyTo(output);
         payload.CopyTo(output[prefix.Length..]);
-        Span<byte> sha256 = stackalloc byte[sha256Bytes];
-        computeDoubleSha256(output[..totalLength], sha256);
-        sha256[..sha256DigestBytes].CopyTo(output[totalLength..]);
+        Span<byte> sha256 = stackalloc byte[Sha256.Bytes];
+        Sha256.ComputeTwice(output[..totalLength], sha256);
+        sha256[..Sha256.DigestBytes].CopyTo(output[totalLength..]);
         return Encode(output);
     }
 
     /// <summary>
     /// Generate a Base58Check string out of a prefix buffer and payload
     /// by skipping leading zeroes in <paramref name="payload"/>.
-    /// Platforms like Tezos expects this behavior.
+    /// Platforms like Tezos expect this behavior.
     /// </summary>
     /// <param name="payload">Address data.</param>
     /// <param name="prefix">Prefix buffer.</param>
@@ -145,8 +141,11 @@ public sealed class Base58(Base58Alphabet alphabet) : DividingCoder<Base58Alphab
     /// <param name="address">Address string.</param>
     /// <param name="payload">Output address buffer.</param>
     /// <param name="version">Address version.</param>
-    /// <param name="bytesWritten">Number of bytes written in the output payload.</param>
-    /// <returns>True if address was decoded successfully and passed validation. False, otherwise.</returns>
+    /// <param name="bytesWritten">Number of bytes written to <paramref name="payload"/>.</param>
+    /// <returns>
+    ///     <see langword="true"/> if address was decoded successfully and passed validation.
+    ///     <see langword="false"/> otherwise.
+    /// </returns>
     public bool TryDecodeCheck(
         ReadOnlySpan<char> address,
         Span<byte> payload,
@@ -166,31 +165,30 @@ public sealed class Base58(Base58Alphabet alphabet) : DividingCoder<Base58Alphab
     /// <param name="payload">Output address buffer.</param>
     /// <param name="prefix">Prefix decoded, must have the exact size of the expected prefix.</param>
     /// <param name="payloadBytesWritten">Number of bytes written in the output payload.</param>
-    /// <returns>True if address was decoded successfully and passed validation. False, otherwise.</returns>
+    /// <returns><see langword="true"/> if address was decoded successfully and passed validation, <see langword="false"/> otherwise.</returns>
     public bool TryDecodeCheck(
         ReadOnlySpan<char> address,
         Span<byte> payload,
         Span<byte> prefix,
         out int payloadBytesWritten)
     {
-        Span<byte> buffer = stackalloc byte[maxCheckPayloadLength + sha256DigestBytes + 1];
-        if (!TryDecode(address, buffer, out int decodedBufferSize) || decodedBufferSize < minCheckDecodedBufferSize)
+        payloadBytesWritten = 0;
+        Span<byte> buffer = stackalloc byte[maxCheckPayloadLength + Sha256.DigestBytes + 1];
+        if (!TryDecode(address, buffer, out int decodedBufferSize))
         {
-            payloadBytesWritten = 0;
             return false;
         }
 
         buffer = buffer[..decodedBufferSize];
         buffer[..prefix.Length].CopyTo(prefix);
-        Span<byte> sha256 = stackalloc byte[sha256Bytes];
-        computeDoubleSha256(buffer[..^sha256DigestBytes], sha256);
-        if (!sha256[..sha256DigestBytes].SequenceEqual(buffer[^sha256DigestBytes..]))
+        Span<byte> sha256 = stackalloc byte[Sha256.Bytes];
+        Sha256.ComputeTwice(buffer[..^Sha256.DigestBytes], sha256);
+        if (!sha256[..Sha256.DigestBytes].SequenceEqual(buffer[^Sha256.DigestBytes..]))
         {
-            payloadBytesWritten = 0;
             return false;
         }
 
-        var finalBuffer = buffer[prefix.Length..^sha256DigestBytes];
+        var finalBuffer = buffer[prefix.Length..^Sha256.DigestBytes];
         finalBuffer.CopyTo(payload);
         payloadBytesWritten = finalBuffer.Length;
         return true;
@@ -208,13 +206,13 @@ public sealed class Base58(Base58Alphabet alphabet) : DividingCoder<Base58Alphab
             throw new ArgumentException($"Payload length {payload.Length} is greater than {maxCheckPayloadLength}", nameof(payload));
         }
 
-        int outputLen = payload.Length + sha256DigestBytes;
+        int outputLen = payload.Length + Sha256.DigestBytes;
         Span<byte> output = (outputLen < Bits.SafeStackMaxAllocSize) ? stackalloc byte[outputLen] : new byte[outputLen];
         payload.CopyTo(output);
-        Span<byte> sha256 = stackalloc byte[sha256Bytes];
-        computeSha256(output[..payload.Length], sha256);
+        Span<byte> sha256 = stackalloc byte[Sha256.Bytes];
+        Sha256.Compute(output[..payload.Length], sha256);
 
-        sha256[^sha256DigestBytes..].CopyTo(output[payload.Length..]);
+        sha256[^Sha256.DigestBytes..].CopyTo(output[payload.Length..]);
         return Encode(output);
     }
 
@@ -223,51 +221,32 @@ public sealed class Base58(Base58Alphabet alphabet) : DividingCoder<Base58Alphab
     /// </summary>
     /// <param name="address">Address string.</param>
     /// <param name="payload">Output address buffer.</param>
-    /// <param name="bytesWritten">Number of bytes written in the output payload.</param>
-    /// <returns>True if address was decoded successfully and passed validation. False, otherwise.</returns>
+    /// <param name="bytesWritten">Number of bytes written to <paramref name="payload"/>.</param>
+    /// <returns><see langword="true"/> if address was decoded successfully and passed validation. <see langword="false"/> otherwise.</returns>
     public bool TryDecodeCb58(
         ReadOnlySpan<char> address,
         Span<byte> payload,
         out int bytesWritten)
     {
-        Span<byte> buffer = stackalloc byte[maxCheckPayloadLength + sha256DigestBytes];
+        Span<byte> buffer = stackalloc byte[maxCheckPayloadLength + Sha256.DigestBytes];
         if (!TryDecode(address, buffer, out bytesWritten) || bytesWritten < 4)
         {
             return false;
         }
 
         buffer = buffer[..bytesWritten];
-        Span<byte> sha256 = stackalloc byte[sha256Bytes];
-        computeSha256(buffer[..^sha256DigestBytes], sha256);
+        Span<byte> sha256 = stackalloc byte[Sha256.Bytes];
+        Sha256.Compute(buffer[..^Sha256.DigestBytes], sha256);
 
-        if (!sha256[^sha256DigestBytes..].SequenceEqual(buffer[^sha256DigestBytes..]))
+        if (!sha256[^Sha256.DigestBytes..].SequenceEqual(buffer[^Sha256.DigestBytes..]))
         {
             return false;
         }
 
-        var finalBuffer = buffer[..^sha256DigestBytes];
+        var finalBuffer = buffer[..^Sha256.DigestBytes];
         finalBuffer.CopyTo(payload);
         bytesWritten = finalBuffer.Length;
         return true;
     }
 
-    static void computeDoubleSha256(ReadOnlySpan<byte> buffer, Span<byte> output)
-    {
-        Span<byte> tempResult = stackalloc byte[sha256Bytes];
-        computeSha256(buffer, tempResult);
-        computeSha256(tempResult, output);
-    }
-
-    static void computeSha256(ReadOnlySpan<byte> buffer, Span<byte> output)
-    {
-        if (!SHA256.TryHashData(buffer, output, out int bytesWritten))
-        {
-            throw new InvalidOperationException("Couldn't compute SHA256");
-        }
-
-        if (bytesWritten != sha256Bytes)
-        {
-            throw new InvalidOperationException("Invalid SHA256 length");
-        }
-    }
 }

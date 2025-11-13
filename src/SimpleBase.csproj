@@ -1,16 +1,16 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
-	<PropertyGroup>
-		<TargetFramework>net8.0</TargetFramework>
-		<RootNamespace>SimpleBase</RootNamespace>
-		<AssemblyName>SimpleBase</AssemblyName>
-		<Copyright>Copyright 2014-2025 Sedat Kapanoglu</Copyright>
-		<Authors>Sedat Kapanoglu</Authors>
-		<Description>Base16, Base32, Base45, Base58, Base62, Base85 encoding/decoding library</Description>
-		<AllowUnsafeBlocks>false</AllowUnsafeBlocks>
-		<GenerateAssemblyInfo>true</GenerateAssemblyInfo>
-		<SignAssembly>true</SignAssembly>
-		<AssemblyOriginatorKeyFile>..\SimpleBase.snk</AssemblyOriginatorKeyFile>
-		<DelaySign>false</DelaySign>
+    <PropertyGroup>
+        <TargetFrameworks>net8.0</TargetFrameworks>
+        <RootNamespace>SimpleBase</RootNamespace>
+        <AssemblyName>SimpleBase</AssemblyName>
+        <Copyright>Copyright 2014-2025 Sedat Kapanoglu</Copyright>
+        <Authors>Sedat Kapanoglu</Authors>
+        <Description>Base16, Base32, Base45, Base58, Base62, Base85 encoding/decoding library</Description>
+        <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+        <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
+        <SignAssembly>true</SignAssembly>
+        <AssemblyOriginatorKeyFile>..\SimpleBase.snk</AssemblyOriginatorKeyFile>
+        <DelaySign>false</DelaySign>
 
 		<PackageVersion>5.5.1</PackageVersion>
 		<DocumentationFile>SimpleBase.xml</DocumentationFile>
@@ -21,40 +21,49 @@
 		<LangVersion>latest</LangVersion>
 		<Nullable>enable</Nullable>
 		<PlatformTarget>AnyCPU</PlatformTarget>
+        <PackageVersion>5.5.0</PackageVersion>
+        <DocumentationFile>SimpleBase.xml</DocumentationFile>
+        <PackageProjectUrl>https://github.com/ssg/SimpleBase</PackageProjectUrl>
+        <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+        <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+        <PackageTags>base16 base32 base36 base45 base58 base62 base85 ascii85 z85 base2 base8 base10 hexadecimal bitcoin ripple flickr crockford extended hex rfc4648 z-base-32 geohash bech32 rfc1924</PackageTags>
+        <LangVersion>latest</LangVersion>
+        <Nullable>enable</Nullable>
+        <PlatformTarget>AnyCPU</PlatformTarget>
         <PackageReadmeFile>README.md</PackageReadmeFile>
-		<PackageReleaseNotes>
-			<![CDATA[
+        <PackageReleaseNotes>
+            <![CDATA[
+## New features
+- `EncodeCheck` and `TryDecodeCheck` variants with variable length version/prefix buffers
+- `EncodeCheckSkipZeroes` that encodes for address formats like Tezos
             
             ]]>
-		</PackageReleaseNotes>
-	</PropertyGroup>
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-	  <IsAotCompatible>True</IsAotCompatible>
-	  <WarningLevel>9999</WarningLevel>
-	</PropertyGroup>
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-	  <IsAotCompatible>True</IsAotCompatible>
-	  <WarningLevel>9999</WarningLevel>
-	</PropertyGroup>
+        </PackageReleaseNotes>
+    </PropertyGroup>
+    <PropertyGroup>
+        <IsAotCompatible>True</IsAotCompatible>
+        <IsTrimmable>true</IsTrimmable>
+        <WarningLevel>9999</WarningLevel>
+    </PropertyGroup>
 
     <ItemGroup>
         <None Include="../README.md" Pack="true" PackagePath="/" />
     </ItemGroup>
 
-	<ItemGroup>
-		<None Remove="SimpleBase.net45.v3.ncrunchproject" />
-		<None Remove="SimpleBase.netstandard1.3.v3.ncrunchproject" />
-		<None Remove="SimpleBase.xml" />
-		<None Remove="stylecop.json" />
-	</ItemGroup>
+    <ItemGroup>
+        <None Remove="SimpleBase.net45.v3.ncrunchproject" />
+        <None Remove="SimpleBase.netstandard1.3.v3.ncrunchproject" />
+        <None Remove="SimpleBase.xml" />
+        <None Remove="stylecop.json" />
+    </ItemGroup>
 
-	<ItemGroup>
-		<AdditionalFiles Include="stylecop.json" />
-	</ItemGroup>
+    <ItemGroup>
+        <AdditionalFiles Include="stylecop.json" />
+    </ItemGroup>
 
-	<ItemGroup>
-		<None Include="..\SimpleBase.snk" Link="SimpleBase.snk" />
-	</ItemGroup>
+    <ItemGroup>
+        <None Include="..\SimpleBase.snk" Link="SimpleBase.snk" />
+    </ItemGroup>
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.CodeAnalysis.PublicApiAnalyzers" Version="3.3.4">
@@ -66,4 +75,15 @@
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
 	</ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="Microsoft.CodeAnalysis.PublicApiAnalyzers" Version="4.14.0">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="System.Memory" Version="4.6.3" />
+        <PackageReference Include="IDisposableAnalyzers" Version="4.0.8">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+    </ItemGroup>
 </Project>
