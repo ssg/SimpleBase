@@ -25,18 +25,25 @@ namespace SimpleBaseTest;
 [Parallelizable]
 public class Base256EmojiTest
 {
-    static readonly string[][] testData =
+    static readonly TestCaseData[] testData =
     [
-        ["", ""],
-        ["\x00", "🚀"],
-        ["\x01", "🪐"],
-        ["ÿ", "❓👶"],
-        ["\x00yes mani !", "🚀🏃✋🌈😅🌷🤤😻🌟😅👏"],
-        ["Hello, World!", "😄✋🍀🍀😓💪😅😑😓🥺🍀😳👏"],
-        ["The quick brown fox", "💋😴✋😅✅🤘🌟💃🙃😅👉🥺😓✔😻😅😚😓😣"],
+        new TestCaseData("", "").SetName("EmptyString"),
+        new TestCaseData("\x00", "🚀").SetName("NullByte"),
+        new TestCaseData("\x01", "🪐").SetName("ByteOne"),
+        new TestCaseData("ÿ", "❓👶").SetName("MaxByte"),
+        new TestCaseData("\x00yes mani !", "🚀🏃✋🌈😅🌷🤤😻🌟😅👏").SetName("YesMani"),
+        new TestCaseData("Hello, World!", "😄✋🍀🍀😓💪😅😑😓🥺🍀😳👏").SetName("HelloWorld"),
+        new TestCaseData("The quick brown fox", "💋😴✋😅✅🤘🌟💃🙃😅👉🥺😓✔😻😅😚😓😣").SetName("QuickBrownFox"),
     ];
 
-    [Test]
+    static readonly object[][] unicodeTestData =
+    [
+        ["🚀", new byte[] { 0 }],           // First emoji
+        ["🥂", new byte[] { 255 }],         // Last emoji  
+        ["🚀🪐", new byte[] { 0, 1 }],       // First two emojis
+        ["📣🥂", new byte[] { 254, 255 }],   // Last two emojis
+    ];
+
     [TestCaseSource(nameof(testData))]
     public void Encode_EncodesCorrectly(string decoded, string encoded)
     {
@@ -45,7 +52,6 @@ public class Base256EmojiTest
         Assert.That(result, Is.EqualTo(encoded));
     }
 
-    [Test]
     [TestCaseSource(nameof(testData))]
     public void Decode_DecodesCorrectly(string decoded, string encoded)
     {
@@ -271,14 +277,6 @@ public class Base256EmojiTest
             Assert.That(bytesWritten, Is.EqualTo(0));
         });
     }
-
-    static readonly object[][] unicodeTestData =
-    [
-        ["🚀", new byte[] { 0 }],           // First emoji
-        ["🥂", new byte[] { 255 }],         // Last emoji  
-        ["🚀🪐", new byte[] { 0, 1 }],       // First two emojis
-        ["📣🥂", new byte[] { 254, 255 }],   // Last two emojis
-    ];
 
     [Test]
     [TestCaseSource(nameof(unicodeTestData))]
