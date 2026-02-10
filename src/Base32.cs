@@ -42,13 +42,6 @@ public sealed class Base32 : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCod
 
     internal Base32(Base32Alphabet alphabet, bool isBigEndian)
     {
-        if (alphabet.PaddingPosition != PaddingPosition.End)
-        {
-            throw new ArgumentException(
-                "Only encoding alphabets with paddings at the end are supported by this implementation",
-                nameof(alphabet));
-        }
-
         Alphabet = alphabet;
         IsBigEndian = isBigEndian;
     }
@@ -502,21 +495,6 @@ public sealed class Base32 : IBaseCoder, IBaseStreamCoder, INonAllocatingBaseCod
         char paddingChar = Alphabet.PaddingChar;
         int result = 0;
         int textLen = text.Length;
-
-        if (Alphabet.PaddingPosition == PaddingPosition.Start)
-        {
-            foreach (char c in text)
-            {
-                if (c != paddingChar)
-                {
-                    return result;
-                }
-
-                result++;
-            }
-
-            return result;
-        }
 
         while (textLen > 0 && text[--textLen] == paddingChar)
         {

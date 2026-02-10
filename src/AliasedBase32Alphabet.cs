@@ -7,6 +7,11 @@ using System.Collections.Generic;
 
 namespace SimpleBase;
 
+/// <summary>
+/// Case-insensitive Base32 alphabet with character aliases. This is useful for alphabets like Crockford or Base32H,
+/// where certain characters are considered equivalent to others (e.g., 'O' is treated as '0', 'I' and 'L' are
+/// treated as '1') to improve readability.
+/// </summary>
 sealed class AliasedBase32Alphabet : Base32Alphabet
 {
     public AliasedBase32Alphabet(string alphabet, IEnumerable<CharMap> map)
@@ -18,9 +23,8 @@ sealed class AliasedBase32Alphabet : Base32Alphabet
     public AliasedBase32Alphabet(
         string alphabet,
         char paddingChar,
-        PaddingPosition paddingPosition,
         IEnumerable<CharMap> map)
-        : base(alphabet, paddingChar, paddingPosition)
+        : base(alphabet, paddingChar)
     {
         setupMap(map);
     }

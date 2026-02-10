@@ -10,11 +10,10 @@ class Base32AlphabetTest
     public void ctorWithPaddingChar_Works()
     {
         // alphabet characters are unimportant here
-        var alpha = new Base32Alphabet("0123456789abcdef0123456789abcdef", '!', PaddingPosition.Start);
+        var alpha = new Base32Alphabet("0123456789abcdef0123456789abcdef", '!');
         Assert.Multiple(() =>
         {
             Assert.That(alpha.PaddingChar, Is.EqualTo('!'));
-            Assert.That(alpha.PaddingPosition, Is.EqualTo(PaddingPosition.Start));
         });
     }
 

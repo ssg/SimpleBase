@@ -47,34 +47,20 @@ public class Base32Alphabet(string alphabet) : CodingAlphabet(32, alphabet, case
                 new('L', '1'),
             ]));
 
-    static readonly Lazy<AliasedBase32Alphabet> base32HAlphabet = new(
-        () => new AliasedBase32Alphabet(
-            "0123456789ABCDEFGHJKLMNPQRTVWXYZ",
-            paddingChar: '0',
-            PaddingPosition.Start,
-            [
-                new('O', '0'),
-                new('I', '1'),
-                new('S', '5'),
-                new('U', 'V'),
-            ]));
-
     /// <summary>
     /// Initializes a new instance of the <see cref="Base32Alphabet"/> class.
     /// </summary>
     /// <param name="alphabet">Encoding alphabet to use.</param>
     /// <param name="paddingChar">Padding character.</param>
-    /// <param name="paddingPosition">Position of the padding characters in the encoder output.</param>
-    public Base32Alphabet(string alphabet, char paddingChar, PaddingPosition paddingPosition)
+    public Base32Alphabet(string alphabet, char paddingChar)
         : this(alphabet)
     {
         PaddingChar = paddingChar;
-        PaddingPosition = paddingPosition;
     }
 
     /// <summary>
     /// Gets Crockford alphabet.
-    /// </summary>gpg
+    /// </summary>
     public static Base32Alphabet Crockford => crockfordAlphabet.Value;
 
     /// <summary>
@@ -108,11 +94,6 @@ public class Base32Alphabet(string alphabet) : CodingAlphabet(32, alphabet, case
     public static Base32Alphabet FileCoin => fileCoinAlphabet.Value;
 
     /// <summary>
-    /// Gets Base32H alphabet.
-    /// </summary>
-    public static Base32Alphabet Base32H => base32HAlphabet.Value;
-
-    /// <summary>
     /// Gets Bech32 alphabet.
     /// </summary>
     public static Base32Alphabet Bech32 => bech32Alphabet.Value;
@@ -121,9 +102,4 @@ public class Base32Alphabet(string alphabet) : CodingAlphabet(32, alphabet, case
     /// Gets the padding character used in encoding.
     /// </summary>
     public char PaddingChar { get; } = '=';
-
-    /// <summary>
-    /// Gets the position of the padding characters in the encoder output.
-    /// </summary>
-    public PaddingPosition PaddingPosition { get; } = PaddingPosition.End;
 }

@@ -43,9 +43,7 @@ SimpleBase.Base32.TryEncode(System.ReadOnlySpan<byte> bytes, System.Span<char> o
 SimpleBase.Base32.TryEncode(System.ReadOnlySpan<byte> bytes, System.Span<char> output, out int numCharsWritten) -> bool
 SimpleBase.Base32Alphabet
 SimpleBase.Base32Alphabet.Base32Alphabet(string! alphabet) -> void
-SimpleBase.Base32Alphabet.Base32Alphabet(string! alphabet, char paddingChar, SimpleBase.PaddingPosition paddingPosition) -> void
 SimpleBase.Base32Alphabet.PaddingChar.get -> char
-SimpleBase.Base32Alphabet.PaddingPosition.get -> SimpleBase.PaddingPosition
 SimpleBase.Base58
 SimpleBase.Base58.Base58(SimpleBase.Base58Alphabet! alphabet) -> void
 SimpleBase.Base58.EncodeCb58(System.ReadOnlySpan<byte> payload) -> string!
@@ -102,9 +100,6 @@ SimpleBase.INumericBaseCoder.DecodeInt64(string! text) -> long
 SimpleBase.INumericBaseCoder.DecodeUInt64(string! text) -> ulong
 SimpleBase.INumericBaseCoder.Encode(long number) -> string!
 SimpleBase.INumericBaseCoder.Encode(ulong number) -> string!
-SimpleBase.PaddingPosition
-SimpleBase.PaddingPosition.End = 1 -> SimpleBase.PaddingPosition
-SimpleBase.PaddingPosition.Start = 0 -> SimpleBase.PaddingPosition
 static SimpleBase.Base16.Decode(string! text) -> System.Span<byte>
 static SimpleBase.Base16.LowerCase.get -> SimpleBase.Base16!
 static SimpleBase.Base16.ModHex.get -> SimpleBase.Base16!
@@ -119,7 +114,6 @@ static SimpleBase.Base32.FileCoin.get -> SimpleBase.Base32!
 static SimpleBase.Base32.Geohash.get -> SimpleBase.Base32!
 static SimpleBase.Base32.Rfc4648.get -> SimpleBase.Base32!
 static SimpleBase.Base32.ZBase32.get -> SimpleBase.Base32!
-static SimpleBase.Base32Alphabet.Base32H.get -> SimpleBase.Base32Alphabet!
 static SimpleBase.Base32Alphabet.Bech32.get -> SimpleBase.Base32Alphabet!
 static SimpleBase.Base32Alphabet.Crockford.get -> SimpleBase.Base32Alphabet!
 static SimpleBase.Base32Alphabet.ExtendedHex.get -> SimpleBase.Base32Alphabet!
