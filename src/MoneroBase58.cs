@@ -4,8 +4,10 @@
 // </copyright>
 
 using System;
+using System.Buffers;
 using System.Buffers.Binary;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 
 namespace SimpleBase;
 
@@ -18,9 +20,9 @@ namespace SimpleBase;
 /// <param name="alphabet">An optional custom alphabet to use. By default, Monero uses Bitcoin alphabet.</param>
 public sealed class MoneroBase58(Base58Alphabet alphabet) : IBaseCoder, INonAllocatingBaseCoder
 {
-    static readonly int[] encodedBlockSizes = [0, 2, 3, 5, 6, 7, 9, 10, 11];
+    static readonly int[] encodedBlockSizes = [0, 2, 3, 5, 6, 7, 9, 10, maxEncodedBlockSize];
     const int blockSize = 8;
-    static readonly int encodedBlockSize = encodedBlockSizes[blockSize];
+    const int maxEncodedBlockSize = 11;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="MoneroBase58"/> class
@@ -54,12 +56,12 @@ public sealed class MoneroBase58(Base58Alphabet alphabet) : IBaseCoder, INonAllo
 
     static int getSafeCharCountForEncoding(int length)
     {
-        return ((length / blockSize) + 1) * encodedBlockSize;
+        return ((length / blockSize) + 1) * maxEncodedBlockSize;
     }
 
     static int getSafeByteCountForDecoding(int length)
     {
-        return (length * blockSize / encodedBlockSize) + 1;
+        return (length * blockSize / maxEncodedBlockSize) + 1;
     }
 
     /// <summary>
@@ -77,8 +79,8 @@ public sealed class MoneroBase58(Base58Alphabet alphabet) : IBaseCoder, INonAllo
         int outputLen = getSafeCharCountForEncoding(bytes.Length);
         Span<char> output = outputLen < Bits.SafeStackMaxAllocSize ? stackalloc char[outputLen] : new char[outputLen];
 
-        return internalEncode(bytes, output, out int numCharsWritten)
-            ? new string(output[..numCharsWritten])
+        return internalEncode(bytes, output, out int charsWritten)
+            ? new string(output[..charsWritten])
             : throw new InvalidOperationException("Output buffer with insufficient size generated");
     }
 
@@ -148,16 +150,16 @@ public sealed class MoneroBase58(Base58Alphabet alphabet) : IBaseCoder, INonAllo
         (int numBlocks, int remainingLength) = Math.DivRem(input.Length, blockSize);
         for (int i = 0; i < numBlocks; i++)
         {
-            var inputBlock = input[offset..(offset + blockSize)];
-            encodeBlock(inputBlock, output[outputOffset..(outputOffset + encodedBlockSize)], alphabet, zeroChar);
+            var inputBlock = input.Slice(offset, blockSize);
+            encodeBlock(inputBlock, output.Slice(outputOffset, maxEncodedBlockSize), alphabet, zeroChar);
             offset += blockSize;
-            outputOffset += encodedBlockSize;
+            outputOffset += maxEncodedBlockSize;
         }
 
         if (remainingLength > 0)
         {
             var remainingInputBlock = input[offset..];
-            Span<char> tempPad = stackalloc char[encodedBlockSize];
+            Span<char> tempPad = stackalloc char[maxEncodedBlockSize];
             encodeBlock(remainingInputBlock, tempPad, alphabet, zeroChar);
             int lastBlockSize = encodedBlockSizes[remainingInputBlock.Length];
             tempPad[..lastBlockSize].CopyTo(output[outputOffset..]);
@@ -168,18 +170,18 @@ public sealed class MoneroBase58(Base58Alphabet alphabet) : IBaseCoder, INonAllo
         return true;
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     static void encodeBlock(ReadOnlySpan<byte> input, Span<char> output, ReadOnlySpan<char> alphabet, char zeroChar)
     {
         Debug.Assert(input.Length <= blockSize, "Input length must be less than or equal to block size");
-        Debug.Assert(output.Length == encodedBlockSize, "Output length must be equal to encoded block size");
+        Debug.Assert(output.Length == maxEncodedBlockSize, "Output length must be equal to encoded block size");
 
         ulong pad = Bits.PartialBigEndianBytesToUInt64(input);
         int lastPos = encodedBlockSizes[input.Length];
-        int i = lastPos;
-        while (i > 0)
+        for (int i = lastPos - 1; i >= 0; i--)
         {
             (pad, ulong remainder) = Math.DivRem(pad, 58);
-            output[--i] = alphabet[(int)remainder];
+            output[i] = alphabet[(int)remainder];
         }
 
         // fill the rest with encoded zeroes
@@ -219,20 +221,20 @@ public sealed class MoneroBase58(Base58Alphabet alphabet) : IBaseCoder, INonAllo
         var table = Alphabet.ReverseLookupTable;
 
         // read 11 char blocks from the input and decode them into 8-byte blocks
-        int numBlocks = input.Length / encodedBlockSize;
-        int wholeEndOffset = numBlocks * encodedBlockSize;
+        int numBlocks = input.Length / maxEncodedBlockSize;
+        int wholeEndOffset = numBlocks * maxEncodedBlockSize;
         bytesWritten = 0;
         int inputOffset = 0;
         while (inputOffset < wholeEndOffset)
         {
-            var inputPad = input[inputOffset..(inputOffset + encodedBlockSize)];
+            var inputPad = input[inputOffset..(inputOffset + maxEncodedBlockSize)];
             var outputPad = output[bytesWritten..(bytesWritten + blockSize)];
             var result = decodeBlock(inputPad, outputPad, table);
             if (result is not (DecodeResult.Success, _))
             {
                 return result;
             }
-            inputOffset += encodedBlockSize;
+            inputOffset += maxEncodedBlockSize;
             bytesWritten += blockSize;
         }
 
