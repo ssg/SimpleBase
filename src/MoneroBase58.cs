@@ -147,11 +147,12 @@ public sealed class MoneroBase58(Base58Alphabet alphabet) : IBaseCoder, INonAllo
         ReadOnlySpan<char> alphabet = Alphabet.Value;
         int offset = 0;
         int outputOffset = 0;
-        (int numBlocks, int remainingLength) = Math.DivRem(input.Length, blockSize);
-        for (int i = 0; i < numBlocks; i++)
+        int remainingLength = input.Length % blockSize;
+        while (offset < input.Length - remainingLength)
         {
             var inputBlock = input.Slice(offset, blockSize);
-            encodeBlock(inputBlock, output.Slice(outputOffset, maxEncodedBlockSize), alphabet, zeroChar);
+            var outputBlock = output.Slice(outputOffset, maxEncodedBlockSize);
+            encodeBlock(inputBlock, outputBlock, alphabet, zeroChar);
             offset += blockSize;
             outputOffset += maxEncodedBlockSize;
         }
