@@ -46,12 +46,11 @@ public abstract class DividingCoder<TAlphabet>(TAlphabet alphabet)
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     static int countPrefixChars(ReadOnlySpan<char> text, char zeroChar)
     {
-        int count = 0;
-        while (count < text.Length && text[count] == zeroChar)
+        return text.IndexOfAnyExcept(zeroChar) switch
         {
-            count += 1;
-        }
-        return count;
+            -1 => text.Length,
+            int index => index
+        };
     }
 
     /// <inheritdoc/>
@@ -119,7 +118,7 @@ public abstract class DividingCoder<TAlphabet>(TAlphabet alphabet)
     /// <inheritdoc/>
     public bool TryEncode(ReadOnlySpan<byte> input, Span<char> output, out int numCharsWritten)
     {
-        return internalEncode(input, output, zeroPrefixLen: -1, out numCharsWritten);
+        return internalEncode(input, output, Bits.CountPrefixingZeroes(input), out numCharsWritten);
     }
 
     /// <inheritdoc/>
@@ -168,17 +167,8 @@ public abstract class DividingCoder<TAlphabet>(TAlphabet alphabet)
         }
 
         ReadOnlySpan<char> alphabet = Alphabet.Value;
-        if (zeroPrefixLen < 0)
+        if (zeroPrefixLen > 0)
         {
-            // zero prefix isn't already calculated - so we do zero encoding while counting
-            for (zeroPrefixLen = 0; zeroPrefixLen < input.Length && input[zeroPrefixLen] == 0; zeroPrefixLen++)
-            {
-                output[zeroPrefixLen] = zeroChar;
-            }
-        }
-        else if (zeroPrefixLen > 0)
-        {
-            // fast fill because we already know prefix count beforehand
             output[..zeroPrefixLen].Fill(zeroChar);
         }
 
