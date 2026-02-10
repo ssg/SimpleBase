@@ -4,7 +4,6 @@ using SimpleBase;
 
 namespace Benchmark;
 
-[MarkdownExporterAttribute.GitHub]
 [MemoryDiagnoser]
 public class EncoderBenchmarks
 {
