@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using BenchmarkDotNet.Attributes;
 using SimpleBase;
 
@@ -7,7 +8,7 @@ namespace Benchmark;
 [MemoryDiagnoser]
 public class EncoderBenchmarks
 {
-    readonly byte[] buffer = new byte[64];
+    readonly byte[] buffer = Enumerable.Range(1, 64).Select(i => (byte)i).ToArray();
 
     [Benchmark]
     public string DotNet_Base64() => Convert.ToBase64String(buffer);
