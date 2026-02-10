@@ -251,7 +251,7 @@ public sealed class MoneroBase58(Base58Alphabet alphabet) : IBaseCoder, INonAllo
             {
                 return result;
             }
-            int tempSize = encodedBlockSizes.AsSpan().IndexOf(remainingBuffer.Length);
+            int tempSize = encodedBlockSizes.IndexOf(remainingBuffer.Length);
             if (tempSize < 0)
             {
                 // invalid length for encoded remaining buffer
