@@ -196,6 +196,7 @@ public sealed class MoneroBase58(Base58Alphabet alphabet) : IBaseCoder, INonAllo
         InvalidCharacter,
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     static (DecodeResult, char?) decodeBlock(ReadOnlySpan<char> input, Span<byte> output, ReadOnlySpan<byte> reverseLookupTable)
     {
         ulong pad = 0;
