@@ -179,4 +179,50 @@ class Rfc4648Test
     {
         _ = Assert.Throws<ArgumentOutOfRangeException>(() => Base32.Rfc4648.Encode(-1));
     }
+
+    static readonly TestCaseData[] int64TestCases =
+    [
+        new TestCaseData(0L, "AA"),
+        new TestCaseData(1L, "AE"),
+        new TestCaseData(0x0000000000000011L, "CE"),
+        new TestCaseData(0x0000000000001122L, "EIIQ"),
+        new TestCaseData(0x0000000000112233L, "GMRBC"),
+        new TestCaseData(0x0000000011223344L, "IQZSEEI"),
+        new TestCaseData(0x0000001122334455L, "KVCDGIQR"),
+        new TestCaseData(0x0000112233445566L, "MZKUIMZCCE"),
+        new TestCaseData(0x0011223344556677L, "O5TFKRBTEIIQ"),
+        new TestCaseData(0x1122334455667788L, "RB3WMVKEGMRBC"),
+    ];
+
+    [Test]
+    [TestCaseSource(nameof(int64TestCases))]
+    public void DecodeInt64_ReturnsExpectedValues(long expectedNumber, string input)
+    {
+        Assert.That(Base32.Rfc4648.DecodeInt64(input), Is.EqualTo(expectedNumber));
+    }
+
+    [Test]
+    public void DecodeInt64_MaxValue_ReturnsExpectedValue()
+    {
+        // Encode long.MaxValue and then decode it back
+        string encoded = Base32.Rfc4648.Encode(long.MaxValue);
+        long decoded = Base32.Rfc4648.DecodeInt64(encoded);
+        Assert.That(decoded, Is.EqualTo(long.MaxValue));
+    }
+
+    [Test]
+    public void DecodeInt64_ValueJustOverMaxInt64_Throws()
+    {
+        // long.MaxValue + 1 (0x8000000000000000) is > long.MaxValue
+        string encodedOverMax = Base32.Rfc4648.Encode((ulong)long.MaxValue + 1);
+        _ = Assert.Throws<ArgumentOutOfRangeException>(() => Base32.Rfc4648.DecodeInt64(encodedOverMax));
+    }
+
+    [Test]
+    public void DecodeInt64_MaxUInt64_Throws()
+    {
+        // ulong.MaxValue is > long.MaxValue
+        string encodedMaxULong = Base32.Rfc4648.Encode(ulong.MaxValue);
+        _ = Assert.Throws<ArgumentOutOfRangeException>(() => Base32.Rfc4648.DecodeInt64(encodedMaxULong));
+    }
 }
