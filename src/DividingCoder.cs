@@ -193,7 +193,7 @@ public abstract class DividingCoder<TAlphabet>(TAlphabet alphabet)
                 && j >= 0; j--, i++)
             {
                 carry += output[j] << 8;
-                carry = Math.DivRem(carry, divisor, out int remainder);
+                (carry, int remainder) = Math.DivRem(carry, divisor);
 
                 // we can't translate on the fly here, because we reuse the
                 // characters in the output buffer for calculating division

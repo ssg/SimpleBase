@@ -57,7 +57,7 @@ public class Base85IPv6(Base85Alphabet alphabet) : Base85(alphabet)
         Span<char> str = stackalloc char[Base85IPv6.ipv6chars];
         for (int n = 0, o = ipv6chars - 1; n < ipv6chars; n++, o--)
         {
-            num = BigInteger.DivRem(num, divisor, out var remainder);
+            (num, BigInteger remainder) = BigInteger.DivRem(num, divisor);
             str[o] = Alphabet.Value[(int)remainder];
         }
 
