@@ -4,7 +4,9 @@
 // </copyright>
 
 using System;
+using System.Buffers.Binary;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 namespace SimpleBase;
 
@@ -137,21 +139,8 @@ public abstract class DividingCoder<TAlphabet>(TAlphabet alphabet)
             zeroPrefixLen,
             out Range rangeWritten);
 
-        output[rangeWritten].CopyTo(output);
         bytesWritten = rangeWritten.End.Value - rangeWritten.Start.Value;
         return result is (DecodeResult.Success, _);
-    }
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    static void translatedCopy(
-        ReadOnlySpan<char> source,
-        Span<char> destination,
-        ReadOnlySpan<char> alphabet)
-    {
-        for (int n = 0; n < source.Length; n++)
-        {
-            destination[n] = alphabet[source[n]];
-        }
     }
 
     bool internalEncode(
@@ -172,29 +161,71 @@ public abstract class DividingCoder<TAlphabet>(TAlphabet alphabet)
             output[..zeroPrefixLen].Fill(zeroChar);
         }
 
-        int numDigits = 0;
-        int index = zeroPrefixLen;
-        int divisor = alphabet.Length;
-        while (index < input.Length)
+        var payload = input[zeroPrefixLen..];
+        if (payload.Length == 0)
         {
-            int carry = input[index++];
-            int i = 0;
-            for (int j = output.Length - 1; (carry != 0 || i < numDigits)
-                && j >= 0; j--, i++)
-            {
-                carry += output[j] << 8;
-                (carry, int remainder) = Math.DivRem(carry, divisor);
-
-                // we can't translate on the fly here, because we reuse the
-                // characters in the output buffer for calculating division
-                // results in this loop.
-                output[j] = (char)remainder;
-            }
-            numDigits = i;
+            charsWritten = zeroPrefixLen;
+            return true;
         }
 
-        translatedCopy(output[^numDigits..], output[zeroPrefixLen..], alphabet);
-        charsWritten = zeroPrefixLen + numDigits;
+        int padCount = (payload.Length + 3) / 4;
+        int alignedByteSize = padCount * 4;
+        int divisor = alphabet.Length;
+
+        Span<uint> pads = alignedByteSize < Bits.SafeStackMaxAllocSize 
+            ? stackalloc uint[padCount] 
+            : new uint[padCount];
+
+        pads.Clear();
+
+        var padsAsBytes = MemoryMarshal.AsBytes(pads);
+        int padding = alignedByteSize - payload.Length;
+        payload.CopyTo(padsAsBytes[padding..]);
+
+        if (BitConverter.IsLittleEndian)
+        {
+            BinaryPrimitives.ReverseEndianness(pads, pads);
+        }
+
+        int digitCount = 0;
+        int startPad = 0;
+
+        while (startPad < padCount)
+        {
+            if (pads[startPad] == 0)
+            {
+                startPad++;
+                continue;
+            }
+
+            ulong remainder = 0;
+            for (int i = startPad; i < padCount; i++)
+            {
+                ulong temp = (remainder << 32) | pads[i];
+                pads[i] = (uint)(temp / (uint)divisor);
+                remainder = temp % (uint)divisor;
+            }
+
+            int writePos = zeroPrefixLen + digitCount;
+            if (writePos >= output.Length)
+            {
+                charsWritten = 0;
+                return false;
+            }
+
+            output[writePos] = (char)remainder;
+            digitCount++;
+        }
+
+        var digits = output.Slice(zeroPrefixLen, digitCount);
+        digits.Reverse();
+
+        for (int i = 0; i < digitCount; i++)
+        {
+            digits[i] = alphabet[digits[i]];
+        }
+
+        charsWritten = zeroPrefixLen + digitCount;
         return true;
     }
 
@@ -212,39 +243,83 @@ public abstract class DividingCoder<TAlphabet>(TAlphabet alphabet)
         out Range rangeWritten)
     {
         var table = Alphabet.ReverseLookupTable;
-        int min = output.Length;
         int divisor = Alphabet.Length;
 
-        for (int i = zeroPrefixLen; i < input.Length; i++)
+        var payload = input[zeroPrefixLen..];
+        if (payload.Length == 0)
         {
-            char c = input[i];
-            int carry = table[c] - 1;
-            if (carry < 0)
+            if (zeroPrefixLen > 0)
+            {
+                output[..zeroPrefixLen].Clear();
+            }
+            rangeWritten = ..zeroPrefixLen;
+            return (DecodeResult.Success, null);
+        }
+
+        int capacityBytes = (payload.Length * reductionFactor / 1000) + 1;
+        int capacityPads = (capacityBytes + 3) / 4;
+
+        Span<uint> pads = (capacityPads * 4) < Bits.SafeStackMaxAllocSize 
+            ? stackalloc uint[capacityPads] 
+            : new uint[capacityPads];
+
+        pads.Clear();
+
+        for (int i = 0; i < payload.Length; i++)
+        {
+            char c = payload[i];
+            int val = table[c] - 1;
+            if (val < 0)
             {
                 rangeWritten = ..0;
                 return (DecodeResult.InvalidCharacter, c);
             }
 
-            for (int o = output.Length - 1; o >= 0; o--)
+            ulong carry = (ulong)val;
+            for (int j = capacityPads - 1; j >= 0; j--)
             {
-                carry += divisor * output[o];
-                output[o] = (byte)carry;
-                if (min > o && carry != 0)
-                {
-                    min = o;
-                }
-
-                carry >>= 8;
+                ulong temp = (ulong)pads[j] * (uint)divisor + carry;
+                pads[j] = (uint)temp;
+                carry = temp >> 32;
             }
+
+            if (carry > 0)
+            {
+                rangeWritten = ..0;
+                return (DecodeResult.InsufficientOutputBuffer, null);
+            }
+        }
+
+        if (BitConverter.IsLittleEndian)
+        {
+            BinaryPrimitives.ReverseEndianness(pads, pads);
+        }
+
+        var resultBytes = MemoryMarshal.AsBytes(pads);
+
+        int skip = 0;
+        while (skip < resultBytes.Length && resultBytes[skip] == 0)
+        {
+            skip++;
+        }
+
+        int payloadLen = resultBytes.Length - skip;
+        int totalLen = zeroPrefixLen + payloadLen;
+
+        if (totalLen > output.Length)
+        {
+            rangeWritten = ..0;
+            return (DecodeResult.InsufficientOutputBuffer, null);
         }
 
         if (zeroPrefixLen > 0)
         {
-            output[(min - zeroPrefixLen)..min].Clear();
-            min -= zeroPrefixLen;
+            output[..zeroPrefixLen].Clear();
         }
 
-        rangeWritten = min..output.Length;
+        resultBytes[skip..].CopyTo(output[zeroPrefixLen..]);
+
+        rangeWritten = ..totalLen;
         return (DecodeResult.Success, null);
     }
 }
