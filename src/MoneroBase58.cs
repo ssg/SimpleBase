@@ -14,7 +14,7 @@ namespace SimpleBase;
 /// <summary>
 /// Monero variant of Base58 Encoding/Decoding algorithm. Differently from other Base58 implementations,
 /// Monero encodes using 8-byte blocks and converts them into 11-byte blocks instead of going byte-by-byte.
-/// This makes Monero a bit less algorihmically complex. If the block size is smaller than 11 bytes, the
+/// This makes Monero a bit less algorithmically complex. If the block size is smaller than 11 bytes, the
 /// rest is padded with encoded zeroes ("1" on Monero Base58 alphabet).
 /// </summary>
 /// <param name="alphabet">An optional custom alphabet to use. By default, Monero uses Bitcoin alphabet.</param>
