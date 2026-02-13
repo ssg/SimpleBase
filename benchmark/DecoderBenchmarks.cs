@@ -6,7 +6,6 @@ using SimpleBase;
 
 namespace Benchmark;
 
-[MarkdownExporterAttribute.GitHub]
 [MemoryDiagnoser]
 public class DecoderBenchmarks
 {
@@ -14,7 +13,7 @@ public class DecoderBenchmarks
     readonly string multibasePrefixed = 'F' + new string('a', 80);
     readonly string base45str = new('A', 81);
     readonly string emojiStr = string.Concat(Enumerable.Repeat("🚀", 80));
-    readonly string allZeroes = new('0', 80);
+    readonly string allOnes = new('1', 80);
     readonly MemoryStream memoryStream = new();
     static readonly byte[] buffer = new byte[80];
 
@@ -22,10 +21,13 @@ public class DecoderBenchmarks
     public byte[] DotNet_Base64() => Convert.FromBase64String(lowercaseA);
 
     [Benchmark]
-    public byte[] Base2_Default() => Base2.Default.Decode(allZeroes);
+    public byte[] Base2_Default() => Base2.Default.Decode(allOnes);
 
     [Benchmark]
-    public byte[] Base8_Default() => Base2.Default.Decode(allZeroes);
+    public byte[] Base8_Default() => Base8.Default.Decode(allOnes);
+
+    [Benchmark]
+    public byte[] Base10_Default() => Base10.Default.Decode(allOnes);
 
     [Benchmark]
     public byte[] Base16_UpperCase() => Base16.UpperCase.Decode(lowercaseA);

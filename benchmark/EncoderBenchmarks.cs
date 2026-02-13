@@ -1,14 +1,14 @@
 ﻿using System;
+using System.Linq;
 using BenchmarkDotNet.Attributes;
 using SimpleBase;
 
 namespace Benchmark;
 
-[MarkdownExporterAttribute.GitHub]
 [MemoryDiagnoser]
 public class EncoderBenchmarks
 {
-    readonly byte[] buffer = new byte[64];
+    readonly byte[] buffer = Enumerable.Range(1, 64).Select(i => (byte)i).ToArray();
 
     [Benchmark]
     public string DotNet_Base64() => Convert.ToBase64String(buffer);
@@ -18,6 +18,9 @@ public class EncoderBenchmarks
 
     [Benchmark]
     public string Base8_Default() => Base8.Default.Encode(buffer);
+
+    [Benchmark]
+    public string Base10_Default() => Base10.Default.Encode(buffer);
 
     [Benchmark]
     public string Base16_UpperCase() => Base16.UpperCase.Encode(buffer);

@@ -53,11 +53,11 @@ namespace SimpleBase
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static int CountPrefixingZeroes(ReadOnlySpan<byte> bytes)
         {
-            int i = 0;
-            for (; i < bytes.Length && bytes[i] == 0; i++)               
+            return bytes.IndexOfAnyExcept<byte>(0) switch
             {
-            }
-            return i;
+                -1 => bytes.Length,
+                int idx => idx
+            };
         }
     }
 }
