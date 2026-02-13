@@ -7,6 +7,10 @@
     "Benchmark --job short": {
       "commandName": "Project",
       "commandLineArgs": "--job short"
+    },
+    "Benchmark (Base58)": {
+      "commandName": "Project",
+      "commandLineArgs": "--job short --filter *Base58*"
     }
   }
 }
