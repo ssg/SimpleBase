@@ -61,5 +61,20 @@ class DefaultTest
         Assert.That(result, Is.True);
         Assert.That(Encoding.UTF8.GetString(output[..bytesWritten]), Is.EqualTo(decoded));
     }
-
+    
+    [Test]
+    public void Roundtrip_DoesNotTruncateHighByte()
+    {
+        // https://github.com/ssg/SimpleBase/issues/79
+        
+        // 2762 is the smallest length where (textLen * 744 / 1000) + 1 underestimates
+        // the required output buffer by 1, dropping the most-significant byte.
+        var bytes = new byte[2762];
+        Array.Fill(bytes, (byte)0xFF);
+        
+        var encoded = Base62.Default.Encode(bytes);
+        var decoded = Base62.Default.Decode(encoded);
+        
+        Assert.That(decoded, Is.EqualTo(bytes));
+    }
 }
