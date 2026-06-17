@@ -21,7 +21,7 @@
 		<LangVersion>latest</LangVersion>
 		<Nullable>enable</Nullable>
 		<PlatformTarget>AnyCPU</PlatformTarget>
-        <PackageVersion>5.6.0</PackageVersion>
+        <PackageVersion>5.6.1</PackageVersion>
         <DocumentationFile>SimpleBase.xml</DocumentationFile>
         <PackageProjectUrl>https://github.com/ssg/SimpleBase</PackageProjectUrl>
         <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
@@ -33,17 +33,15 @@
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageReleaseNotes>
             <![CDATA[
-# 5.6.0
+# 5.6.1
 
-## Improvements
-- This release separately targets .NET 9 and .NET 10 along with .NET 8
-- Remove dependency to System.Memory package
-- Improve IPv6 Base85 encoding/decoding performance
+# Improvements
+- DividingCoder derivatives are now generally faster
+- MoneroBase58 is now faster
+- Update dependencies
 
 ## Fixes
-- Base58.TryDecodeCheck() now consistently returns version 0 in its output for failure cases
-- Base32.DecodeUInt64() and Base32.TryDecodeUInt64() will now always decode correctly for smaller inputs
-- Multiple bugs in Base85 IPv6 decoding have been addressed            
+- Fix a bug in buffer length calculation in DividingCoder derivatives that caused incorrect encoding/decoding (thanks to @marcasburnett)
             ]]>
         </PackageReleaseNotes>
     </PropertyGroup>
