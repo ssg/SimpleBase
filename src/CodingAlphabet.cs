@@ -54,7 +54,7 @@ public abstract class CodingAlphabet : ICodingAlphabet
             char c = alphabet[i];
             if (caseInsensitive && char.IsLetter(c))
             {
-                char c2 = char.IsUpper(c) ? char.ToLower(c) : char.ToUpper(c);
+                char c2 = char.IsUpper(c) ? char.ToLowerInvariant(c) : char.ToUpperInvariant(c);
                 if (alphabet.Contains(c2))
                 {
                     throw new ArgumentException($"Case-sensitivity can't be selected with an alphabet that contains both cases of the same letter", nameof(caseInsensitive));
