@@ -21,8 +21,8 @@
         <ProjectReference Include="..\src\SimpleBase.csproj" />
     </ItemGroup>
     <ItemGroup>
-        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.6.0" />
-        <PackageReference Include="Microsoft.TestPlatform.TestHost" Version="18.6.0" />
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.8.1" />
+        <PackageReference Include="Microsoft.TestPlatform.TestHost" Version="18.8.1" />
         <PackageReference Include="NUnit" Version="4.6.1" />
         <PackageReference Include="NUnit3TestAdapter" Version="6.2.0" />
     </ItemGroup>
