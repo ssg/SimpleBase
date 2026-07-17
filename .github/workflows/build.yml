@@ -1,3 +1,7 @@
+## NOTE: if you rename this file, make sure the badge link
+## in README.md also points to the new filename.
+## https://github.com/ssg/SimpleBase/blob/f970bc70336822c00a8353e37023e5d9869952b9/README.md?plain=1#L4
+
 name: Build, Test, and Deploy
 
 on: [push, release, workflow_dispatch]
