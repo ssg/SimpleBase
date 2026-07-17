@@ -5,6 +5,10 @@ on: [push, release, workflow_dispatch]
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      packages: write
+      contents: read
+      id-token: write
     steps:
     - name: Checkout code
       uses: actions/checkout@v7
@@ -13,6 +17,9 @@ jobs:
       uses: actions/setup-dotnet@v6
       with:
         dotnet-version: 10.0.x
+
+    - name: Install NuGet credential provider
+      run: dotnet nuget add source https://api.nuget.org/v3/index.json --name nuget.org || true
 
     - name: Build
       run: dotnet build --configuration Release
