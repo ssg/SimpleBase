@@ -270,6 +270,18 @@ class CrockfordTest
     }
 
     [Test]
+    [SetCulture("tr-TR")]
+    [TestCase("O0o", "000")]
+    [TestCase("Ll1", "111")]
+    [TestCase("I1i", "111")]
+    public void Decode_TurkishCulture_CrockfordChars_DecodedCorrectly(string equivalent, string actual)
+    {
+        var expectedResult = Base32.Crockford.Decode(actual);
+        var result = Base32.Crockford.Decode(equivalent);
+        Assert.That(result, Is.EqualTo(expectedResult));
+    }
+
+    [Test]
     public void Encode_NullBytes_ReturnsEmptyString()
     {
         Assert.That(Base32.Crockford.Encode(null, true), Is.EqualTo(String.Empty));
