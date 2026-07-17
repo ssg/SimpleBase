@@ -1,6 +1,6 @@
 name: Build, Test, and Deploy
 
-on: [push, workflow_dispatch]
+on: [push, release, workflow_dispatch]
 
 jobs:
   build:
