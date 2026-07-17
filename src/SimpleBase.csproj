@@ -12,16 +12,15 @@
         <AssemblyOriginatorKeyFile>..\SimpleBase.snk</AssemblyOriginatorKeyFile>
         <DelaySign>false</DelaySign>
 
-		<PackageVersion>5.6.0</PackageVersion>
-		<DocumentationFile>SimpleBase.xml</DocumentationFile>
-		<PackageProjectUrl>https://github.com/ssg/SimpleBase</PackageProjectUrl>
-		<PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
-		<PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-		<PackageTags>base16 base32 base36 base45 base58 base62 base85 ascii85 z85 base2 base8 base10 hexadecimal bitcoin ripple flickr crockford extended hex rfc4648 z-base-32 geohash bech32 rfc1924</PackageTags>
-		<LangVersion>latest</LangVersion>
-		<Nullable>enable</Nullable>
-		<PlatformTarget>AnyCPU</PlatformTarget>
-        <PackageVersion>5.6.1</PackageVersion>
+        <PackageVersion>5.6.2</PackageVersion>
+        <DocumentationFile>SimpleBase.xml</DocumentationFile>
+        <PackageProjectUrl>https://github.com/ssg/SimpleBase</PackageProjectUrl>
+        <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+        <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+        <PackageTags>base16 base32 base36 base45 base58 base62 base85 ascii85 z85 base2 base8 base10 hexadecimal bitcoin ripple flickr crockford extended hex rfc4648 z-base-32 geohash bech32 rfc1924</PackageTags>
+        <LangVersion>latest</LangVersion>
+        <Nullable>enable</Nullable>
+        <PlatformTarget>AnyCPU</PlatformTarget>
         <DocumentationFile>SimpleBase.xml</DocumentationFile>
         <PackageProjectUrl>https://github.com/ssg/SimpleBase</PackageProjectUrl>
         <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
@@ -33,15 +32,10 @@
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageReleaseNotes>
             <![CDATA[
-# 5.6.1
-
-# Improvements
-- DividingCoder derivatives are now generally faster
-- MoneroBase58 is now faster
-- Update dependencies
+# 5.6.2
 
 ## Fixes
-- Fix a bug in buffer length calculation in DividingCoder derivatives that caused incorrect encoding/decoding (thanks to @marcasburnett)
+- Fix an regression in Base32 decoder on systems with Turkish culture (thanks, @skacurt)
             ]]>
         </PackageReleaseNotes>
     </PropertyGroup>
