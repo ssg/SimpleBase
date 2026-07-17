@@ -26,6 +26,10 @@ class CodingAlphabetTest
     {
     }
 
+    class DummyAutoAlphabet(string alphabet, bool caseInsensitive) : CodingAlphabet(alphabet.Length, alphabet, caseInsensitive)
+    {
+    }
+
     [Test]
     public void Ctor_WithBothCasesOfLettersAndCaseInsensitive_ShouldThrow()
     {
@@ -42,5 +46,19 @@ class CodingAlphabetTest
     public void Ctor_ProperArguments_ShouldNotThrow()
     {
         Assert.DoesNotThrow(() => new DummyAlphabet("01234567ab"));
+    }
+
+    [Test]
+    [SetCulture("tr-TR")]
+    public void Ctor_ShouldNotThrow_On_Turkish_Locale_With_Lowercase_I()
+    {
+        Assert.DoesNotThrow(() => new DummyAutoAlphabet("i", true));
+    }
+
+    [Test]
+    [SetCulture("tr-TR")]
+    public void Ctor_ShouldNotThrow_On_Turkish_Locale_With_Uppercase_I()
+    {
+        Assert.DoesNotThrow(() => new DummyAutoAlphabet("I", true));
     }
 }
