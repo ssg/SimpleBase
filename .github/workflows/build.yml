@@ -18,9 +18,6 @@ jobs:
       with:
         dotnet-version: 10.0.x
 
-    - name: Install NuGet credential provider
-      run: dotnet nuget add source https://api.nuget.org/v3/index.json --name nuget.org || true
-
     - name: Build
       run: dotnet build --configuration Release
 
