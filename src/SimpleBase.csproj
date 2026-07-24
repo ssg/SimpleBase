@@ -12,7 +12,7 @@
         <AssemblyOriginatorKeyFile>..\SimpleBase.snk</AssemblyOriginatorKeyFile>
         <DelaySign>false</DelaySign>
 
-        <PackageVersion>5.6.2</PackageVersion>
+        <PackageVersion>5.6.3</PackageVersion>
         <DocumentationFile>SimpleBase.xml</DocumentationFile>
         <PackageProjectUrl>https://github.com/ssg/SimpleBase</PackageProjectUrl>
         <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
@@ -32,10 +32,11 @@
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageReleaseNotes>
             <![CDATA[
-# 5.6.2
+# 5.6.3
 
 ## Fixes
-- Fix an regression in Base32 decoder on systems with Turkish culture (thanks, @skacurt)
+- Fix a regression in Base58 encoding with unusual buffer sizes that caused output to be truncated one byte. Thanks @unsafePtr! 
+- Fix an incorrect shortcut encoding bug in Base85.Ascii85 (this fix was also backported to 2.1.1).
             ]]>
         </PackageReleaseNotes>
     </PropertyGroup>
