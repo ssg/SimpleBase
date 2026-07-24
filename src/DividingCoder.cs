@@ -23,7 +23,7 @@ public abstract class DividingCoder<TAlphabet>(TAlphabet alphabet)
     : IBaseCoder, INonAllocatingBaseCoder
     where TAlphabet: CodingAlphabet
 {
-    readonly int reductionFactor = Convert.ToInt32(10_000 * Math.Log2(alphabet.Length) / 8);
+    readonly int reductionFactor = Convert.ToInt32(Math.Ceiling(10_000.0 * Math.Log2(alphabet.Length) / 8.0));
     readonly char zeroChar = alphabet.Value[0];
 
     /// <summary>
