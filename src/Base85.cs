@@ -188,6 +188,8 @@ public class Base85(Base85Alphabet alphabet) : IBaseCoder, IBaseStreamCoder, INo
             return false;
         }
 
+        if (blockLength == stringBlockSize)
+        {
         if (block == 0 && zeroShortcutChar is not null)
         {
             output[0] = zeroShortcutChar.Value; // guaranteed to be non-null
@@ -200,6 +202,7 @@ public class Base85(Base85Alphabet alphabet) : IBaseCoder, IBaseStreamCoder, INo
             output[0] = spaceShortcutChar.Value; // guaranteed to be non-null
             bytesWritten = 1;
             return true;
+        }
         }
 
         if (blockLength > output.Length)
