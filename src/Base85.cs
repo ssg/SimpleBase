@@ -309,16 +309,19 @@ namespace SimpleBase
             bool usesSpaceShortcut)
         {
             // handle shortcuts
-            if (input == 0 && usesZeroShortcut)
+            if (stringLength == stringBlockSize)
             {
-                *pOutput++ = this.alphabet.AllZeroShortcut ?? '!'; // guaranteed to be non-null
-                return;
-            }
+                if (input == 0 && usesZeroShortcut)
+                {
+                    *pOutput++ = this.alphabet.AllZeroShortcut ?? '!'; // guaranteed to be non-null
+                    return;
+                }
 
-            if (input == allSpace && usesSpaceShortcut)
-            {
-                *pOutput++ = this.alphabet.AllSpaceShortcut ?? '!'; // guaranteed to be non-null
-                return;
+                if (input == allSpace && usesSpaceShortcut)
+                {
+                    *pOutput++ = this.alphabet.AllSpaceShortcut ?? '!'; // guaranteed to be non-null
+                    return;
+                }
             }
 
             // map the 4-byte packet to to 5-byte octets
