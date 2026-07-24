@@ -288,6 +288,4 @@ class CrockfordTest
     }
 
     // EncodeCheck is used most commonly with Crockford.
-
-
 }

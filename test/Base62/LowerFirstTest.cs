@@ -62,5 +62,4 @@ class LowerFirstTest
         Assert.That(result, Is.True);
         Assert.That(Encoding.UTF8.GetString(output[..bytesWritten]), Is.EqualTo(decoded));
     }
-
 }
