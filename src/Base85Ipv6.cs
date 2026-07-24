@@ -23,6 +23,8 @@ namespace SimpleBase;
 /// 
 /// So, that's why I only included a proof of concept implementation instead of working on optimizing it.
 /// RFC 1924 should die, and this code should only be used to support some obscure standard or code somewhere.
+///
+/// UPDATE 2026-07-24: Apparently, RFC 1924 was just an April Fools' joke. Shame on you.
 /// </remarks>
 /// <remarks>
 /// Initializes a new instance of the <see cref="Base85IPv6"/> class.
