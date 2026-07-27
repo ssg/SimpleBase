@@ -34,7 +34,7 @@ public class Base2 : IBaseCoder, INonAllocatingBaseCoder, IBaseStreamCoder
     {
         if (text.Length % 8 != 0)
         {
-            throw new ArgumentException("Input length must be multiply of 8", nameof(text));
+            throw new ArgumentException("Input length must be a multiple of 8", nameof(text));
         }
 
         var output = new byte[text.Length / 8];
