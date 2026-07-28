@@ -66,6 +66,10 @@
     </ItemGroup>
 
     <ItemGroup>
+        <PackageReference Include="Microsoft.CodeAnalysis.BannedApiAnalyzers" Version="5.6.0">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
         <PackageReference Include="Microsoft.CodeAnalysis.PublicApiAnalyzers" Version="5.6.0">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
