@@ -39,7 +39,7 @@ public abstract class CodingAlphabet : ICodingAlphabet
     /// <param name="length">Length of the alphabet.</param>
     /// <param name="alphabet">Alphabet character.</param>
     /// <param name="caseInsensitive">Use case-insensitive matching when decoding.</param>
-    public CodingAlphabet(int length, string alphabet, bool caseInsensitive = false)
+    protected CodingAlphabet(int length, string alphabet, bool caseInsensitive = false)
     {
         if (alphabet.Length != length)
         {
@@ -57,7 +57,7 @@ public abstract class CodingAlphabet : ICodingAlphabet
                 char c2 = char.IsUpper(c) ? char.ToLowerInvariant(c) : char.ToUpperInvariant(c);
                 if (alphabet.Contains(c2))
                 {
-                    throw new ArgumentException($"Case-sensitivity can't be selected with an alphabet that contains both cases of the same letter", nameof(caseInsensitive));
+                    throw new ArgumentException("Case-sensitivity can't be selected with an alphabet that contains both cases of the same letter", nameof(caseInsensitive));
                 }
                 Map(c2, i);
             }
