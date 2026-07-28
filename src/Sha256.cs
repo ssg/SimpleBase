@@ -11,7 +11,7 @@ namespace SimpleBase;
 /// <summary>
 /// Internal SHA256 helpers.
 /// </summary>
-class Sha256
+static class Sha256
 {
     public const int Bytes = 32;
     public const int DigestBytes = 4;
