@@ -35,7 +35,7 @@
 # 5.6.0
 
 ## Obsoleted
-- RFC 1924 is now obsolete and will be removed in 6.0.0. It should have never been implemented in the first place.
+- RFC 1924 (Base85Ipv6) is now obsolete and will be removed in 6.0.0. It should have never been implemented in the first place.
             ]]>
         </PackageReleaseNotes>
     </PropertyGroup>
