@@ -116,7 +116,7 @@ public sealed class Base16(Base16Alphabet alphabet) : IBaseCoder, IBaseStreamCod
     /// <param name="output">Stream that the encoded text is written to.</param>
     public void Encode(Stream input, TextWriter output)
     {
-        StreamHelper.Encode(input, output, (buffer, lastBlock) => Encode(buffer.Span));
+        StreamHelper.Encode(input, output, (buffer, _) => Encode(buffer.Span));
     }
 
     /// <summary>
@@ -127,7 +127,7 @@ public sealed class Base16(Base16Alphabet alphabet) : IBaseCoder, IBaseStreamCod
     /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
     public async Task EncodeAsync(Stream input, TextWriter output)
     {
-        await StreamHelper.EncodeAsync(input, output, (buffer, lastBlock) =>
+        await StreamHelper.EncodeAsync(input, output, (buffer, _) =>
             Encode(buffer.Span)).ConfigureAwait(false);
     }
 

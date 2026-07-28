@@ -211,13 +211,13 @@ public class Base8 : IBaseCoder, INonAllocatingBaseCoder, IBaseStreamCoder
     /// <inheritdoc/>
     public void Encode(Stream input, TextWriter output)
     {
-        StreamHelper.Encode(input, output, (input, lastBlock) => Encode(input.Span));
+        StreamHelper.Encode(input, output, (input, _) => Encode(input.Span));
     }
 
     /// <inheritdoc/>
     public async Task EncodeAsync(Stream input, TextWriter output)
     {
-        await StreamHelper.EncodeAsync(input, output, (input, lastBlock) => Encode(input.Span));
+        await StreamHelper.EncodeAsync(input, output, (input, _) => Encode(input.Span));
     }
 
     /// <inheritdoc/>

@@ -213,13 +213,13 @@ public sealed class Base45(Base45Alphabet alphabet) : INonAllocatingBaseCoder, I
     /// <inheritdoc/>
     public void Encode(Stream input, TextWriter output)
     {
-        StreamHelper.Encode(input, output, (buffer, lastBlock) => Encode(buffer.Span));
+        StreamHelper.Encode(input, output, (buffer, _) => Encode(buffer.Span));
     }
 
     /// <inheritdoc/>
     public async Task EncodeAsync(Stream input, TextWriter output)
     {
-        await StreamHelper.EncodeAsync(input, output, (buffer, lastBlock) => Encode(buffer.Span))
+        await StreamHelper.EncodeAsync(input, output, (buffer, _) => Encode(buffer.Span))
             .ConfigureAwait(false);
     }
 

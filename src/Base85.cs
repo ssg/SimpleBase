@@ -106,7 +106,7 @@ public class Base85(Base85Alphabet alphabet) : IBaseCoder, IBaseStreamCoder, INo
     /// <param name="output">Output writer.</param>
     public void Encode(Stream input, TextWriter output)
     {
-        StreamHelper.Encode(input, output, (buffer, lastBlock) => Encode(buffer.Span));
+        StreamHelper.Encode(input, output, (buffer, _) => Encode(buffer.Span));
     }
 
     /// <summary>
@@ -117,7 +117,7 @@ public class Base85(Base85Alphabet alphabet) : IBaseCoder, IBaseStreamCoder, INo
     /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
     public async Task EncodeAsync(Stream input, TextWriter output)
     {
-        await StreamHelper.EncodeAsync(input, output, (buffer, lastBlock) => Encode(buffer.Span))
+        await StreamHelper.EncodeAsync(input, output, (buffer, _) => Encode(buffer.Span))
             .ConfigureAwait(false);
     }
 
