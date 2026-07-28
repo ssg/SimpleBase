@@ -1,3 +1,34 @@
+# 5.6.3
+
+## Fixes
+- Fix a regression in Base58 encoding with unusual buffer sizes that caused output to be truncated one byte. Thanks @unsafePtr! 
+- Fix an incorrect encoding bug in Base85 (this fix was also backported to 2.1.1).
+
+# 2.1.1
+
+Backport the fix for Ascii85 shortcut character encoding
+
+# 5.6.2
+
+## What's Changed
+* Fix exception with Base32 on systems with Turkish culture by @skacurt in https://github.com/ssg/SimpleBase/pull/82
+
+## New Contributors
+* @skacurt made their first contribution in https://github.com/ssg/SimpleBase/pull/82
+
+# 5.6.1
+
+# Improvements
+- DividingCoder derivatives are now generally faster
+- MoneroBase58 is now faster
+- Update dependencies
+
+## Fixes
+- Correct truncation in calculations of byte and character counts. by @marcasburnett in https://github.com/ssg/SimpleBase/pull/80
+
+## New Contributors
+- @marcasburnett made their first contribution in https://github.com/ssg/SimpleBase/pull/80
+
 # 5.6.0
 
 ## Improvements
