@@ -44,7 +44,8 @@ public class DecoderBenchmarks
     [Benchmark]
     public void Base16_UpperCase_TextReader()
     {
-        StringReader reader = new(lowercaseA); // No need to dispose, less overhead, StringReader does not leak anything
+        // No need to dispose, less overhead, StringReader doesn't leak anything, doesn't impact memory allocation metrics
+        StringReader reader = new(lowercaseA); 
         Base16.UpperCase.Decode(reader, memoryStream);
         memoryStream.Position = 0; // Reset output stream, so it does not grow forever, we do not need to read it
     }
