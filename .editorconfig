@@ -132,6 +132,12 @@ csharp_style_allow_blank_line_after_token_in_conditional_expression_experimental
 csharp_style_allow_blank_line_after_token_in_arrow_expression_clause_experimental = true:silent
 csharp_style_prefer_extended_property_pattern = true:suggestion
 
+# RCS1089: Use --/++ operator instead of assignment
+dotnet_diagnostic.RCS1089.severity = none
+
+# RCS1154: Sort enum members
+dotnet_diagnostic.RCS1154.severity = none
+
 [*.vb]
 #### Naming styles ####
 

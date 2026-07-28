@@ -58,7 +58,6 @@ public class RoundtripTest
         Base62.LowerFirst,
 
         Base85.Ascii85,
-        Base85.Rfc1924,
         Base85.Z85,
 
         Base256Emoji.Default,

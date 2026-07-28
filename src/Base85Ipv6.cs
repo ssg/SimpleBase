@@ -14,22 +14,29 @@ namespace SimpleBase;
 /// Base85 implementation with additional IPv6 coding functions.
 /// </summary>
 /// <remarks>
-/// RFC 1924 sucks, arguably because it was a very early proposal in the history of IPv6:
-/// 
+/// <para>RFC 1924 sucks, arguably because it was a very early proposal in the history of IPv6:</para>
+///
+/// <para>
 /// - It contains special chars: It's prone to be confused with other syntactical elements.
 ///   It can even cause security issues due to poor escaping, let alone UX problems.
 /// - Length gains are usually marginal: IPv6 uses zero elimination to reduce the address representation.
 /// - Slow. The algorithm is division based, instead of faster bitwise operations.
-/// 
+/// </para>
+///
+/// <para>
 /// So, that's why I only included a proof of concept implementation instead of working on optimizing it.
 /// RFC 1924 should die, and this code should only be used to support some obscure standard or code somewhere.
+/// </para>
 ///
+/// <para>
 /// UPDATE 2026-07-24: Apparently, RFC 1924 was just an April Fools' joke. Shame on you.
+/// </para>
 /// </remarks>
 /// <remarks>
 /// Initializes a new instance of the <see cref="Base85IPv6"/> class.
 /// </remarks>
 /// <param name="alphabet">Coding alphabet.</param>
+[Obsolete("RFC 1924 should never be used for any purpose")]
 public class Base85IPv6(Base85Alphabet alphabet) : Base85(alphabet)
 {
     const int ipv6bytes = 16;
@@ -94,7 +101,7 @@ public class Base85IPv6(Base85Alphabet alphabet) : Base85(alphabet)
         _ = ((IBinaryInteger<UInt128>)num).WriteBigEndian(buffer);
 
         // IPAddress ctor() expects the buffer always to be 16 bytes
-        return new IPAddress(buffer);            
+        return new IPAddress(buffer);
     }
 
     /// <summary>
@@ -132,5 +139,4 @@ public class Base85IPv6(Base85Alphabet alphabet) : Base85(alphabet)
         ip = new IPAddress(buffer);
         return true;
     }
-
 }

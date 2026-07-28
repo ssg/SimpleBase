@@ -32,11 +32,10 @@
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageReleaseNotes>
             <![CDATA[
-# 5.6.3
+# 5.6.0
 
-## Fixes
-- Fix a regression in Base58 encoding with unusual buffer sizes that caused output to be truncated one byte. Thanks @unsafePtr! 
-- Fix an incorrect shortcut encoding bug in Base85.Ascii85 (this fix was also backported to 2.1.1).
+## Obsoleted
+- RFC 1924 is now obsolete and will be removed in 6.0.0. It should have never been implemented in the first place.
             ]]>
         </PackageReleaseNotes>
     </PropertyGroup>

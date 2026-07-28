@@ -29,6 +29,8 @@ public class Base85(Base85Alphabet alphabet) : IBaseCoder, IBaseStreamCoder, INo
 
     static readonly Lazy<Base85> z85 = new(() => new Base85(Base85Alphabet.Z85));
     static readonly Lazy<Base85> ascii85 = new(() => new Base85(Base85Alphabet.Ascii85));
+
+    [Obsolete]
     static readonly Lazy<Base85IPv6> rfc1924 = new(() => new Base85IPv6(Base85Alphabet.Rfc1924));
 
     /// <summary>
@@ -44,6 +46,7 @@ public class Base85(Base85Alphabet alphabet) : IBaseCoder, IBaseStreamCoder, INo
     /// <summary>
     /// Gets RFC 1924 IPv6 flavor of Base85.
     /// </summary>
+    [Obsolete("RFC 1924 should never be used for any purpose")]
     public static Base85IPv6 Rfc1924 => rfc1924.Value;
 
     /// <summary>

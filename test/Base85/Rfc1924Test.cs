@@ -6,6 +6,7 @@ using System.Net;
 namespace SimpleBaseTest.Base85Test;
 
 [TestFixture]
+[Obsolete]
 public class Rfc1924Test
 {
     // Only test cases that work with the current implementation bugs
