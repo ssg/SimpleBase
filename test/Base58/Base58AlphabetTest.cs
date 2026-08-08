@@ -33,6 +33,6 @@ class Base58AlphabetTest
     public void GetSafeCharCountForEncoding_Works()
     {
         var input = new byte[] { 0, 0, 0, 0, 1, 2, 3, 4 };
-        Assert.That(Base58.Bitcoin.GetSafeCharCountForEncoding(input), Is.EqualTo(10));
+        Assert.That(Base58.Bitcoin.GetSafeCharCountForEncoding(input), Is.EqualTo(11));
     }
 }

@@ -23,7 +23,7 @@ public abstract class DividingCoder<TAlphabet>(TAlphabet alphabet)
     : IBaseCoder, INonAllocatingBaseCoder
     where TAlphabet: CodingAlphabet
 {
-    readonly int reductionFactor = Convert.ToInt32(Math.Ceiling(10_000.0 * Math.Log2(alphabet.Length) / 8.0));
+    readonly double reductionFactor = Math.Log2(alphabet.Length) / 8.0;
     readonly char zeroChar = alphabet.Value[0];
 
     /// <summary>
@@ -40,7 +40,7 @@ public abstract class DividingCoder<TAlphabet>(TAlphabet alphabet)
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     int getSafeByteCountForDecoding(int textLen, int zeroPrefixLen)
     {
-        return zeroPrefixLen + ((textLen - zeroPrefixLen) * reductionFactor / 10_000) + 1;
+        return zeroPrefixLen + Convert.ToInt32(Math.Ceiling((textLen - zeroPrefixLen) * reductionFactor) + 1);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -62,7 +62,7 @@ public abstract class DividingCoder<TAlphabet>(TAlphabet alphabet)
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     int getSafeCharCountForEncoding(int bytesLen, int zeroPrefixLen)
     {
-        return zeroPrefixLen + ((bytesLen - zeroPrefixLen) * 10_000 / reductionFactor) + 1;
+        return zeroPrefixLen + Convert.ToInt32(Math.Ceiling((bytesLen - zeroPrefixLen) / reductionFactor) + 1);
     }
 
     /// <summary>

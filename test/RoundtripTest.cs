@@ -21,12 +21,17 @@ public class RoundtripTest
     }
 
     const int maxBufferLength = 256;
-    static readonly byte[] buffer = new byte[maxBufferLength];
+    static readonly byte[][] buffers =
+    [
+        new byte[maxBufferLength],
+        new byte[maxBufferLength],
+    ];
 
     [OneTimeSetUp]
     public void InitializeBuffer()
     {
-        buffer[0] = 1;
+        buffers[0][0] = 1;
+        Array.Fill(buffers[1], (byte)0xFF);
     }
 
     static readonly IBaseCoder[] encoders =
@@ -65,11 +70,15 @@ public class RoundtripTest
 
     [Test]
     public void Decode_DecodesToTheOriginalEncodedValue([Range(1, maxBufferLength)]int length, 
-        [ValueSource(nameof(encoders))]IBaseCoder coder)
+        [ValueSource(nameof(encoders))]IBaseCoder coder, [ValueSource(nameof(buffers))] byte[] buffer)
     {
         var input = buffer[..length];
         string encodedText = coder.Encode(input);
         var result = coder.Decode(encodedText);
-        Assert.That(result, Is.EquivalentTo(input));
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.Length, Is.EqualTo(input.Length));
+            Assert.That(result, Is.EquivalentTo(input));
+        });
     }
 }
