@@ -2,7 +2,7 @@
 
 ## Supported Versions
 
-4.x and 5.x versions are supported for security related updates.
+2.x and 5.x versions are supported for security related updates.
 
 ## Reporting a Vulnerability
 
