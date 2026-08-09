@@ -41,6 +41,6 @@ jobs:
 
     - name: Publish to NuGet
       if: startsWith(github.ref, 'refs/tags/')
-      run: dotnet nuget push ./nupkg/*.nupkg -s https://api.nuget.org/v3/index.json --api-key ${{steps.login.NUGET_API_KEY}}
+      run: dotnet nuget push ./nupkg/*.nupkg -s https://api.nuget.org/v3/index.json --api-key ${{steps.login.outputs.NUGET_API_KEY}}
 
     
