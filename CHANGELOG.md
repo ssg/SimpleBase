@@ -1,3 +1,9 @@
+# 5.6.4
+
+## Fixes
+- Fix another regression in Base58 encoding with certain buffer sizes that caused output to be truncated one byte. Thanks again, @unsafePtr!
+- Added more test coverage for Base58
+
 # 5.6.3
 
 ## Fixes
